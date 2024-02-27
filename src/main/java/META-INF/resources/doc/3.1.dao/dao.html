@@ -449,16 +449,16 @@ public class SampleTableRelation extends TableRelation {
 	/**
 	 * 外部キーリスト。
 	 */
-	private static List<ForeignKey> foreignKeyList = null;
+	private static List&lt;ForeignKey&gt; foreignKeyList = null;
 
 	/**
 	 * 外部キーリストの定義。
-	 * <pre>
+	 * &lt;pre&gt;
 	 * この初期化処理で外部キーを定義することにより、自動的に外部キーが設定されます。
-	 * </pre>
+	 * &lt;/pre&gt;
 	 */
 	static {
-		foreignKeyList = new ArrayList<ForeignKey>();
+		foreignKeyList = new ArrayList&lt;ForeignKey&gt;();
 		/*
 		 * 以下の定義を有効にすると外部キーHogeTableに対する外部キーを設定します。
 		 * この設定だけでHogeTableとの結合条件も生成されるようになります。
@@ -467,7 +467,7 @@ public class SampleTableRelation extends TableRelation {
 	}
 
 	@Override
-	public List<ForeignKey> getForeignKeyList() {
+	public List&lt;ForeignKey&gt; getForeignKeyList() {
 		return foreignKeyList;
 	}
 
@@ -927,15 +927,15 @@ public class JoinTestTable extends Table {
 			開発ツールでJoinTestTableを作成すると、JoinTestTableRelation.javaというソースファイルが同時に作成されます。
 			このJoinTestTableRelationクラスでJoinTestTableにJoinするテーブルの結合条件を定義します。
 			JoinTestTableRelationクラスでテーブル間の関係を定義するには以下の2つの方法があります。
-			<ol>
-				<li>
-					JoinTestTableRelationクラスで外部キーを定義。
-				</li>
-				<li>
-					JoinTestTableRelationクラスのgetJoinConditionで結合条件を定義。
-				</li>
-			</ol>
 		</p>
+		<ol>
+			<li>
+				JoinTestTableRelationクラスで外部キーを定義。
+			</li>
+			<li>
+				JoinTestTableRelationクラスのgetJoinConditionで結合条件を定義。
+			</li>
+		</ol>
 		<p>
 			以下にJoinTestTableRelationで外部キーを定義した例を示します。
 			自動生成されたJoinTestTableRelationには、static {}の部分にforeignKeyListにForeignKeyクラスの

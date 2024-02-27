@@ -248,18 +248,18 @@
 			dataforms2.jarの中には、既に「基本機能」と「開発ツール」という機能が入っています。
 			機能はJavaのパッケージに対応し、そのパッケージの配下に各種クラスを作成していきます。
 			メニューはこの機能でグルーピングされます。
-			<figure>
-				<figcaption>機能管理画面</figcaption>
-				<img src="function1.png" style="width:50%; height:50%;"/>
-			</figure>
 		</p>
+		<figure>
+			<figcaption>機能管理画面</figcaption>
+			<img src="function1.png" style="width:50%; height:50%;"/>
+		</figure>
 		<p>
 			「+」ボタンを押して行を追加し、以下のように機能を登録してください。
-			<figure>
-				<figcaption>機能追加後の画面</figcaption>
-				<img src="function2.png" style="width:50%; height:50%;"/>
-			</figure>
 		</p>
+		<figure>
+			<figcaption>機能追加後の画面</figcaption>
+			<img src="function2.png" style="width:50%; height:50%;"/>
+		</figure>
 		<p class="topic">
 			この画面では、編集可能テーブル(EditableHtmlTable)というコンポーネントを使用しています。
 			行の追加、削除、ドラッグによる順序変更をサポートしています。
@@ -508,13 +508,13 @@
 			データベースを操作するページの場合、その動作に対応したDAO(Data access object)クラスが必要になります。
 			dataforms.dao.Daoクラスはテーブルへのレコード追加、更新、削除や問合せの実行など基本的な機能を提供するクラスです。
 			このクラスから派生したdataforms.dao.QuerySetDaoクラスは問合せ結果の取得、編集対象の取得、追加、更新、削除の機能を提供します。
-			このクラスは「DAO & ページJavaクラス作成」でページクラスと同時に作成します。
+			このクラスは「DAO &amp; ページJavaクラス作成」でページクラスと同時に作成します。
 		</p>
 		<p>
-			「DAO & ページJavaクラス作成」で「新規登録」ボタンを押下し、以下の様に入力します。
+			「DAO &amp; ページJavaクラス作成」で「新規登録」ボタンを押下し、以下の様に入力します。
 		</p>
 		<figure>
-			<figcaption>DAO & ページJavaクラス作成</figcaption>
+			<figcaption>DAO &amp; ページJavaクラス作成</figcaption>
 			<img src="page1.png" style="width:50%; height:50%;"/>
 		</figure>
 
@@ -644,7 +644,7 @@
 		</p>
 		<table style="table-layout: fixed;">
 			<caption>ツールで作成されたファイル</caption>
-			<head>
+			<thead>
 				<tr>
 					<th style="width:40px;">No.</th>
 					<th style="width:100px;">ツール</th>
@@ -652,8 +652,8 @@
 					<th style="width:200px;">ファイル/情報</th>
 					<th >備考</th>
 				</tr>
-			</head>
-			<body>
+			</thead>
+			<tbody>
 				<tr>
 					<td style="text-align: right;">1</td>
 					<td rowspan="3">機能管理</td>
@@ -764,7 +764,7 @@ sample.page.SamplePage=サンプルページ
 					<td>SamplePage.html</td>
 					<td>ページの情報を表示するHTMLです。</td>
 				</tr>
-			</body>
+			</tbody>
 		</table>
 		<h3>アプリケーションの実行</h3>
 		<p>
