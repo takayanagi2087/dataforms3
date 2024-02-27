@@ -1,0 +1,18 @@
+	// フォーム単位のバリデーションを行う場合は以下のコメントを参考に実装してください。
+	/**
+	 * フォームのバリデーション。
+	 * <pre>
+	 * フォーム内のフィールド関連チェックを実装します。
+	 * </pre>
+	 */
+/*
+	validateForm() {
+		let list = super.validateForm();
+		if (list.length == 0) {
+			if (エラー判定) {
+				list.push(new ValidationError("fieldId", MessagesUtil.getMessage("error.messagekey")));
+			}
+		}
+		return list;
+	}
+*/

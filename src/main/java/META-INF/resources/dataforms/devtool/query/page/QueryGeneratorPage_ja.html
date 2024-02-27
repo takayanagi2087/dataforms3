@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	<style type="text/css">
+		#editForm > table th {
+			min-width: 160px;
+		}
+	</style>
+</head>
+	<body>
+		<div id="mainDiv">
+			<form id="queryForm">
+				<div class="formHeader">検索条件</div>
+				<table class="responsive thtd">
+					<tbody>
+						<tr>
+							<th>機能</th>
+							<td><select id="functionSelect"></select></td>
+						</tr>
+						<tr>
+							<th>パッケージ名</th>
+							<td><input type="text" id="packageName" /></td>
+						</tr>
+						<tr>
+							<th>問合せクラス名</th>
+							<td><input type="text" id="queryClassName" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<input type="submit" id="queryButton" class="largeButton" value="検索">
+				<input type="button" id="resetButton" class="largeButton" value="リセット">&nbsp;
+				<input type="button" id="newButton" class="largeButton" value="新規登録">
+			</form>
+			<form id="queryResultForm">
+				<div class="formHeader">検索結果</div>
+				<!--
+				<input type="hidden" id="packageName" />
+				<input type="hidden" id="queryClassName" />
+				-->
+				<table class="responsive">
+					<tbody>
+					</tbody>
+				</table>
+				<div class="hScrollDiv">
+					<table id="queryResult">
+						<thead>
+							<tr>
+								<th>
+									No.
+								</th>
+								<th>
+									問合せクラス名
+								</th>
+								<th>
+									コメント
+								</th>
+								<th>
+									副問合せ
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<span id="queryResult[0].rowNo"></span>
+									<input type="hidden" id="queryResult[0].packageName" />
+									<input type="hidden" id="queryResult[0].queryClassName" />
+								</td>
+								<td>
+									<a href="javascript:void(0);" id="queryResult[0].updateButton">
+										<span id="queryResult[0].fullClassName"></span>
+									</a>
+								</td>
+								<td>
+									<span id="queryResult[0].queryComment"></span>
+								</td>
+								<td>
+									<span id="queryResult[0].subQuery"></span>
+									<button type="button" id="queryResult[0].generateSubQueryButton">副問合せ作成</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</form>
+			<form id="editForm">
+				<div class="formHeader"><span id="editFormTitle"></span></div>
+				<h2>生成する問合せクラス</h2>
+				<table class="responsive thtdthtdthtd">
+					<tbody>
+						<tr>
+							<th>Javaソース出力先</th>
+							<td><input type="text" id="javaSourcePath"/></td>
+							<th>機能</th>
+							<td><select id="functionSelect"></select></td>
+							<th>パッケージ名</th>
+							<td><input type="text" id="packageName" /></td>
+						</tr>
+						<tr>
+							<th>問合せクラス名</th>
+							<td><input type="text" id="queryClassName" /></td>
+							<th>コメント</th>
+							<td>
+								<input type="text" id="queryComment"/>
+							</td>
+							<th>上書きモード</th>
+							<td>
+								<select id="overwriteMode"></select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="6">
+								<input type="checkbox" id="distinctFlag" value="1"/><label for="distinctFlag">Distinct</label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<h2>問合せる主テーブル</h2>
+				<table class="responsive thtdthtd">
+					<tbody>
+						<tr>
+							<th>機能</th>
+							<td><select id="mainTableFunctionSelect"></select></td>
+							<th>パッケージ</th>
+							<td><input type="text" id="mainTablePackageName" /></td>
+						</tr>
+						<tr>
+							<th>クラス名</th>
+							<td><input type="text" id="mainTableClassName" /></td>
+							<th>別名</th>
+							<td><input type="text" id="aliasName" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<h2>JOINするテーブルリスト</h2>
+				<table id="joinTableList" class="editableTable">
+					<thead>
+						<tr>
+							<th class="buttonColumn" nowrap>
+
+							</th>
+							<th class="buttonColumn" nowrap>
+
+							</th>
+							<th nowrap>
+								No.
+							</th>
+							<th>
+								結合方法
+							</th>
+							<th>
+								機能
+							</th>
+							<th>
+								パッケージ名
+							</th>
+							<th>
+								テーブルクラス名
+							</th>
+							<th>
+								別名
+							</th>
+							<th>
+								結合条件
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width: 32px;">
+								<input type="button" id="joinTableList[0].addButton" value="+"/>
+							</td>
+							<td style="width: 32px;">
+								<input type="button" id="joinTableList[0].deleteButton" value="-"/>
+							</td>
+							<td style="text-align: right; width:32px;">
+								<span id="joinTableList[0].no"></span>
+							</td>
+							<td style="width: 100px;">
+								<select id="joinTableList[0].joinType"></select>
+							</td>
+							<td style="width: 100px;">
+								<select id="joinTableList[0].functionSelect"></select>
+							</td>
+							<td style="width: 200px;">
+								<input type="text" id="joinTableList[0].packageName" />
+							</td>
+							<td style="width: 200px;">
+								<input type="text" id="joinTableList[0].tableClassName" />
+							</td>
+							<td style="width: 200px;">
+								<input type="text" id="joinTableList[0].aliasName" />
+							</td>
+							<td style="width: 300px;">
+								<span id="joinTableList[0].joinCondition" ></span>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th style="width: 21px;">
+								<input type="button" id="joinTableList.addButton" value="+"/>
+							</th>
+							<th colspan="8">
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+				<h2>選択フィールドリスト</h2>
+				<table id="selectFieldList" class="editableTable">
+					<thead>
+						<tr>
+							<th class="buttonColumn" nowrap>
+							</th>
+							<th class="buttonColumn" nowrap>
+							</th>
+							<th>
+								<input type="checkbox" id="selectAll" value="1"/>
+							</th>
+							<th>
+								No.
+							</th>
+							<th>
+								フィールドID
+							</th>
+							<th>
+								フィールドクラス
+							</th>
+							<th>
+								フィールド別名
+							</th>
+							<th>
+								テーブルクラス
+							</th>
+							<th>
+								テーブル別名
+							</th>
+							<th>
+								コメント
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width: 32px;">
+								<button type="button" id="selectFieldList[0].addButton">+</button>
+							</td>
+							<td style="width: 32px;">
+								<button type="button" id="selectFieldList[0].deleteButton">-</button>
+							</td>
+							<td style="width: 100px; text-align: center;">
+								<select id="selectFieldList[0].sel"></select>
+								<input type="hidden" id="selectFieldList[0].tableFullClassName" >
+								<input type="hidden" id="selectFieldList[0].sortOrder" >
+							</td>
+							<td style="text-align: right; width: 32px;">
+								<span id="selectFieldList[0].no" ></span>
+							</td>
+							<td style="width: 180px;">
+								<input type="text" id="selectFieldList[0].fieldId"/>
+							</td>
+							<td style="width: 300px;">
+								<input type="text" id="selectFieldList[0].fieldClassName" />
+							</td>
+							<td style="width: 100px;">
+								<input type="text" id="selectFieldList[0].alias"/>
+							</td>
+							<td style="width: 200px;">
+								<input type="text" id="selectFieldList[0].tableClassName" />
+							</td>
+							<td style="width: 100px;">
+								<input type="text" id="selectFieldList[0].tableAlias" />
+							</td>
+							<td style="width: 300px;">
+								<input type="text"  id="selectFieldList[0].comment" />
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="buttonColumn" nowrap>
+								<button type="button" id="selectFieldList.addButton">+</button>
+							</th>
+							<th colspan="9">
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+				<h2>SQLフィールドリスト</h2>
+				<table id="sqlFieldList" class="editableTable">
+					<thead>
+						<tr>
+							<th class="buttonColumn" nowrap></th>
+							<th class="buttonColumn" nowrap></th>
+							<th>No.</th>
+							<th>フィールドID</th>
+							<th>フィールドクラス</th>
+							<th>長さ</th>
+							<th>SQL</th>
+							<th>コメント</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width: 32px;">
+								<button type="button" id="sqlFieldList[0].addButton">+</button>
+							</td>
+							<td style="width: 32px;">
+								<button type="button" id="sqlFieldList[0].deleteButton">-</button>
+							</td>
+							<td style="text-align: right; width: 32px;">
+								<span id="sqlFieldList[0].no" ></span>
+							</td>
+							<td style="width: 180px;">
+								<input type="text" id="sqlFieldList[0].fieldId"/>
+							</td>
+							<td style="width: 200px;">
+								<select id="sqlFieldList[0].fieldClassName"></select>
+							</td>
+							<td style="width: 54px;">
+								<input type="text"  id="sqlFieldList[0].fieldLength" />
+							</td>
+							<td style="width: 500px;">
+								<input type="text" id="sqlFieldList[0].sql" />
+							</td>
+							<td style="width: 300px;">
+								<input type="text" id="sqlFieldList[0].comment" />
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="buttonColumn" nowrap>
+								<button type="button" id="sqlFieldList.addButton">+</button>
+							</th>
+							<th colspan="7"></th>
+						</tr>
+					</tfoot>
+				</table>
+				<div>
+					<input type="checkbox" id="notUpdateConstractor" value="1"/><label for="updateConstractor">コンストラクタを更新しない(フィールドリストは変更されません)</label>
+					<input type="checkbox" id="notGenerateEntity" value="1" /><label for="updateConstractor">Entityクラスとフィールドゲッターを生成しない</label>
+				</div>
+				<br/>
+				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+				<input type="button" id="saveButton" class="largeButton" value="登録"/>
+				<input type="button" id="resetButton" class="largeButton" value="リセット"/>
+				<input type="button" id="backButton" class="largeButton" value="戻る"/>
+			</form>
+		</div>
+	</body>
+</html>

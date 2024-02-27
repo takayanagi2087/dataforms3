@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+日本語フレーム
+ -->
+<html>
+	<head>
+		<!-- ここから -->
+		<meta charset="UTF-8">
+		<title>layout</title>
+		<!-- ここまでの指定はシステムで置き換えます。 -->
+		<!-- 以下の指定はそのままページに転載されます。 -->
+		<!--  link type="text/css" href="hoge.css" rel="stylesheet"/-->
+	</head>
+	<body>
+		<!-- ヘッダ -->
+		<div id="headerDiv" class="headerDiv">
+			<table>
+				<tbody>
+					<tr>
+						<td class="systemName">
+							<div id="showMenuButton" class="showMenuButton"></div>
+							<div id="systemName" class="systemName">システム名称</div>
+						</td>
+						<td class="pageName"><h1 id="pageName" >ページ名称</h1></td>
+						<td id="loginInfo" class="loginInfo">
+							<form id="loginInfoForm"></form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<table id="bodyTable" class="bodyTable">
+			<tbody>
+				<tr>
+					<td id="leftbarTd" class="leftbarTd">
+						<!-- 左サイドバー -->
+						<div id="menuDiv" class="menuDiv">
+							<div style="width:100%;text-align:center; font-weight: bold;">メニュー</div>
+							<form id="sideMenuForm"></form>
+						</div>
+					</td>
+					<td id="mainTd" class="mainTd">
+						<!-- メイン領域 -->
+						<div id="mainDiv" class="mainDiv">
+							メイン領域
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="footerDiv" class="footerDiv">
+			<div id="dataformsInfo" class="dataformsInfo">
+				dataforms2.jar ver. <span id="dataformsVersion"></span>
+			</div>
+		</div>
+		<div id="lockLayer" class="lockLayer" style="display:none;">
+		</div>
+	</body>
+</html>
+

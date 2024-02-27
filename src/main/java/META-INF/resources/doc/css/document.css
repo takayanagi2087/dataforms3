@@ -1,0 +1,74 @@
+@charset "UTF-8";
+
+
+p {
+	max-width: 1024px;
+}
+
+table {
+	max-width: 1024px;
+	font-weight:normal;
+	border : 0px;
+	margin-left: 40px;
+	margin-bottom: 20px;
+
+	border-collapse: collapse;
+	border-color: #aaaaaa;
+	border-width: lightgr;
+	border-style: solid;
+}
+
+table th,
+table td {
+	border-color: #aaaaaa;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.filecaption {
+	margin-left: 5px;
+	text-align: left;
+	font-weight: bold;
+}
+
+figure figcaption,
+table caption {
+	text-align: left;
+	font-weight: bold;
+}
+
+tr {height: 20px; border : 0px;}
+th {background-color: hsl(207,51%,75.0%); text-align:center; font-weight:normal; border : 0px;}
+td {border:0px;}
+
+/* 番号付きリストのタイトルに使用 */
+h4 {
+	max-width: 1024px;
+	font-weight: normal;
+	margin-left: 40px;
+	margin-bottom: 2px;
+}
+
+ol {
+	max-width: 1024px;
+	margin-top: 2px;
+	margin-left: 40px;
+}
+
+
+
+.wrappre {
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	padding: 4px;
+	margin-left: 5px;
+	margin-bottom: 10px;
+	overflow-x: auto;
+	max-width: 1024px;
+}
+
+.topic {
+	font-size: 10pt;
+	font-weight: bold;
+}

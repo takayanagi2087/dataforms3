@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>BatchProcess</title>
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+	</head>
+	<body>
+		<h1><span>3.6.</span>BatchProcess</h1>
+		<p>
+			バッチ処理を実装するには以下のようにdataforms.controller.BatchProcessクラスから派生したバッチ処理クラスを作成します。
+			このクラスのrunメソッドにバッチ処理を実装します。
+			以下の例ではEnum01Queryの結果をJSONに変換し/tmp/test.jsonに出力しています。
+		</p>
+		<div class="wrappre">
+			<pre>
+package sample.batch;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import dataforms.controller.BatchProcess;
+import dataforms.dao.Dao;
+import dataforms.util.FileUtil;
+import net.arnx.jsonic.JSON;
+import sample.dao.Enum01Query;
+
+public class TestBatch extends BatchProcess {
+	/**
+	 * Logger.
+	 */
+	private static Logger logger = LogManager.getLogger(TestBatch.class);
+
+	@Override
+	public int run(Map&lt;String, Object&gt; params) {
+		try {
+			// DAO&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
+			Dao dao = new Dao(this);
+			// &#21839;&#21512;&#12379;&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
+			Enum01Query query = new Enum01Query();
+			// where&#21477;&#12398;&#26465;&#20214;&#12395;&#12394;&#12426;&#12358;&#12427;&#12501;&#12451;&#12540;&#12523;&#12489;&#12522;&#12473;&#12488;&#12434;&#35373;&#23450;
+			query.setConditionFieldList(query.getFieldList());
+			// where&#21477;&#12398;&#26465;&#20214;&#12487;&#12540;&#12479;&#12398;&#12510;&#12483;&#12503;&#12434;&#35373;&#23450;
+			Enum01Query.Entity cd = new Enum01Query.Entity();
+			cd.setEnumCode(&quot;userLevel&quot;);
+			cd.setLangCode(&quot;ja&quot;);
+			query.setConditionData(cd.getMap());
+			// &#21839;&#21512;&#12379;&#12434;&#23455;&#34892;
+			List&lt;Map&lt;String, Object&gt;&gt; result = (List&lt;Map&lt;String, Object&gt;&gt;) dao.executeQuery(query);
+			String json = JSON.encode(result, true);
+			FileUtil.writeTextFile(&quot;/tmp/test.json&quot;, json, &quot;utf-8&quot;);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return 0;
+	}
+
+}
+			</pre>
+		</div>
+		<p>
+			このバッチ処理もhttp経由で起動しします。
+			wgetやcurlでバッチ処理のURLをアクセスしバッチ処理を起動することができます。
+			ただしBatchProcessのisAuthenticatedメソッドでサーバ自身からのアクセスでないと、動作しないようになっています。
+			dataforms2.jarの中にdataforms.cmd.RunBatchというバッチ起動用のクラスが入っています。
+			以下のコマンドでTestBatchが動作します。
+		</p>
+		<div class="wrappre">
+			<pre>
+C:\eclipse\workspace\sample\src\main\webapp\WEB-INF\lib&gt;java -cp dataforms2.jar dataforms.cmd.RunBatch http://localhost:8080/sample/sample/batch/TestBatch.df
+			</pre>
+		</div>
+		<p>
+			上記のコマンドを実行すると/tmp/test.jsonに以下のjsonが出力されます。
+		</p>
+		<div class="wrappre">
+			<pre>
+[
+	{
+		"enumId": 415,
+		"createUserId": 0,
+		"enumCode": "userLevel",
+		"updateUserId": 0,
+		"langCode": "ja",
+		"memo": "ユーザの権限レベル",
+		"parentId": null,
+		"updateTimestamp": 1589788957349,
+		"createTimestamp": 1589788957349,
+		"sortOrder": null,
+		"enumGroupCode": "userAttribute_001",
+		"enumName": "ユーザレベル"
+	}
+]
+			</pre>
+		</div>
+	</body>
+</html>

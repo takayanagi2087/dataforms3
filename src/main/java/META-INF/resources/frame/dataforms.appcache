@@ -1,0 +1,14 @@
+CACHE MANIFEST
+# version1.0.0 - 2014-04-01
+
+CACHE:
+*.css
+*.png
+*.jpg
+
+NETWORK:
+*.html
+*.df
+
+FALLBACK:
+

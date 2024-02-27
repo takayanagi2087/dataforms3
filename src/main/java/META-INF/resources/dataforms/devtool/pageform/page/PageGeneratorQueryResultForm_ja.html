@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		<form id="queryResultForm">
+			<div class="formHeader">検索結果</div>
+			<div class="hScrollDiv">
+				<table id="queryResult">
+					<thead>
+						<tr>
+							<th>
+								No.
+							</th>
+							<th>
+								ページクラス名
+							</th>
+							<th>
+								DAOクラス名
+							</th>
+							<th>
+								ページの動作
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<span id="queryResult[0].rowNo"></span>
+							</td>
+							<td>
+								<input type="hidden" id="queryResult[0].packageName" />
+								<input type="hidden" id="queryResult[0].pageClassName" />
+								<a href="javascript:void(0);" id="queryResult[0].updateButton">
+									<span id="queryResult[0].fullClassName"></span>
+								</a>
+							</td>
+							<td>
+								<span id="queryResult[0].daoClassName"></span>
+							</td>
+							<td>
+								<span id="queryResult[0].pagePattern"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</body>
+</html>

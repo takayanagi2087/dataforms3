@@ -1,0 +1,36 @@
+/**
+ * @fileOverview {@link ${className}}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+/**
+ * @class ${className}
+ *
+ * @extends ${superClassName}
+ */
+class ${className} extends ${superClassName} {
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 */
+	attach() {
+		super.attach();
+${buttonHandler}
+	}
+
+${callWebMethod}
+
+${setFormData}
+
+${validateForm}
+
+${onCalc}
+}
+

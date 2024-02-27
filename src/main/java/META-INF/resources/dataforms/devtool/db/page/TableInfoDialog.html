@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table information</title>
+	</head>
+	<body>
+		<form id="tableInfoForm">
+			<table class="responsive thtdthtd">
+				<tbody>
+					<tr>
+						<th>
+							Class name
+						</th>
+						<td>
+							<span id="className"></span>
+						</td>
+						<th>
+							Table name
+						</th>
+						<td>
+							<span id="tableName"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Table
+						</th>
+						<td>
+							<span id="status"></span>
+							<input type="hidden" id="statusVal"/>
+						</td>
+						<th>
+							Sequence
+						</th>
+						<td>
+							<span id="sequenceGeneration"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Difference
+						</th>
+						<td>
+							<span id="difference"></span>
+							<input type="hidden" id="differenceVal"/>
+						</td>
+						<th>
+							Records
+						</th>
+						<td>
+							<span id="recordCount"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Create SQL
+						</th>
+						<td colspan="3">
+							<textarea id="createTableSql" rows="20" cols="60" readonly="readonly"  style="width: 100%; height: 300px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="button" id="updateTableButton" class="largeButton" value="Update"/>&nbsp;
+							<input type="button" id="initTableButton" class="largeButton" value="Initialization"/>&nbsp;
+							<input type="button" id="dropTableButton" class="largeButton" value="Delete"/>&nbsp;
+							<input type="button" id="closeButton" class="largeButton" value="Close"/>&nbsp;
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+日本語フレーム
+ -->
+<html>
+	<head>
+		<!-- ここから -->
+		<meta charset="UTF-8">
+		<title>layout</title>
+		<!-- ここまでの指定はシステムで置き換えます。 -->
+		<!-- 以下の指定はそのままページに転載されます。 -->
+		<!--
+			cssファイルを指定する場合、/frame/以下に配置し/frame/を含むパスを指定してください。
+			以下の例では/context/の部分をスクリプトで置き換えます。
+			<link type="text/css" href="/context/frame/flex/hoge.css" rel="stylesheet"/>
+		-->
+	</head>
+	<body>
+		<!-- ヘッダ -->
+		<div id="headerDiv" class="headerDiv">
+			<div class="systemName">
+				<div id="showMenuButton" class="showMenuButton"></div>
+				<div id="systemName">システム名称</div>
+			</div>
+			<div class="pageName"><h1 id="pageName" >ページ名称</h1></div>
+			<div id="loginInfo" class="loginInfo">
+				<form id="loginInfoForm"></form>
+			</div>
+		</div>
+		<div id="bodyDiv" class="bodyDiv">
+			<!-- 左サイドバー -->
+			<div id="leftbarDiv" class="leftbarDiv">
+				<div id="menuDiv" class="menuDiv">
+					<div style="width:100%;text-align:center; font-weight: bold; margin-top: 6px;">メニュー</div>
+					<form id="sideMenuForm"></form>
+				</div>
+			</div>
+			<!-- メイン領域 -->
+			<div id="mainDiv" class="mainDiv">
+				メイン領域
+			</div>
+		</div>
+		<div id="footerDiv" class="footerDiv">
+			<div id="dataformsInfo" class="dataformsInfo">
+				dataforms2.jar ver. <span id="dataformsVersion"></span>
+			</div>
+		</div>
+		<div id="lockLayer" class="lockLayer" style="display:none;">
+		</div>
+	</body>
+</html>
+

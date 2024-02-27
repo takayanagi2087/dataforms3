@@ -1,0 +1,154 @@
+/**
+ * @fileOverview {@link ${className}}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+/**
+ * @class ${className}
+ *
+ * @extends ${superClassName}
+ */
+class ${className} extends ${superClassName} {
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 */
+	attach() {
+		super.attach();
+${buttonHandler}
+	}
+
+${callWebMethod}
+
+${validateForm}
+
+${onCalc}
+
+	// 問合せ結果リスト中に独自のボタンを追加した場合、以下のコメントを参考にしてイベント処理を実装してください。
+	/**
+	 * 問合せ結果にデフォルトイベント処理を設定します。
+	 */
+/*
+	setQueryResultEventHandler() {
+		super.setQueryResultEventHandler();
+		// リスト中のボタンに対してイベント処理を追加。
+		this.find("[id$='\.hogeButton']").click((ev) => {
+			// 押されたボタンと同じ行にあるキー情報を選択。
+			if (this.setSelectedKey($(ev.currentTarget))) {
+				logger.log("this.selectedQueryString=" + this.selectedQueryString);
+				// this.hogeMethod(); // 選択したに対する処理を実行。
+			}
+		});
+	}
+*/
+
+	// フォームの各種動作をカスタマイズするには以下のメソッドをオーバーライドしてください。
+
+${setFormData}
+
+	/**
+	 * 問い合わせ結果を表示します。
+	 * @param {Object} queryResult 問い合わせ結果。
+	 */
+/*
+	setQueryResult(queryResult) {
+		super.setQueryResult(queryResult);
+	}
+*/
+
+	/**
+	 * 先頭ページに遷移します。
+	 */
+/*
+	topPage() {
+		super.topPage();
+	}
+*/
+	/**
+	 * 末尾ページに遷移します。
+	 */
+/*
+	bottomPage() {
+		super.bottomPage();
+	}
+*/
+
+	/**
+	 * 前ページに遷移します。
+	 */
+/*
+	prevPage() {
+		super.prevPage();
+	}
+*/
+	/**
+	 * 次ページに遷移します。
+	 */
+/*
+	nextPage() {
+		super.nextPage();
+	}
+*/
+
+	/**
+	 * ページの更新を行います。
+	 */
+/*
+	changePage() {
+		super.changePage();
+	}
+*/
+
+	/**
+	 * 選択データを更新します。
+	 */
+/*
+	updateData() {
+		super.updateData();
+	}
+*/
+
+	/**
+	 * 選択データをコピーした新規データを登録します。
+	 */
+/*
+	referData() {
+		super.referData();
+	}
+*/
+	/**
+	 * 選択データの削除を行います。
+	 */
+/*
+	deleteData() {
+		super.deleteData();
+	}
+*/
+
+	/**
+	 * ページ関連情報を設定します。
+	 * @param {Object} queryResult 問い合わせ結果。
+	 */
+/*
+	setPagerInfo(queryResult) {
+		super.setPagerInfo(queryResult);
+	}
+*/
+
+	/**
+	 * ページ関連情報を制御します。
+	 */
+/*
+	controlPager() {
+		super.controlPager();
+	}
+*/
+}
+

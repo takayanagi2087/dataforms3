@@ -1,0 +1,5 @@
+"/frame/default" has been deprecated.
+Use "/frame/flex".
+
+"/frame/default"は非推奨になりました。
+"/frame/flex"を使ってください。

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="editForm">
+			<style>
+				div.queryClass input {
+					width: calc(100% - 118px);
+				}
+				div.queryClass button {
+					width: 110px;
+				}
+
+				div.formClass input {
+					width: calc(100% - 118px);
+				}
+				div.formClass select {
+					width: 110px;
+				}
+
+				table.formClass th {
+					width: 300px;
+				}
+				table.formClass tbody td input {
+					width: calc(100% - 208px);
+				}
+				table.formClass td select {
+					width: calc(200px);
+				}
+			</style>
+			<div class="formHeader"><span id="editFormTitle"></span></div>
+			<input type="hidden" id="saveMode" />
+				<h2>ページの機能</h2>
+			<table class="responsive">
+				<tbody>
+					<tr>
+						<th style="width: 14%;">ページの動作</th>
+						<td colspan="5"><select id="pagePattern" class="pageType"></select></td>
+					</tr>
+					<tr>
+						<th style="width: 14%;">説明</th>
+						<td colspan="5">
+							<div id="desc000" class="pageDesc">
+								<!-- DBアクセス無しの説明 -->
+								空のフォームを1つ配置したページクラスを作成します。
+								Javaのフォームクラスに必要なフィールドを配置してから、
+								Webリソース作成でhtmlとjsを作成してください。
+								イベント処理はjsに記述してください。
+							</div>
+							<div id="desc110" class="pageDesc">
+								<!-- 条件入力　→　一覧表示 -->
+								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。
+							</div>
+							<div id="desc111" class="pageDesc">
+								<!-- 条件入力　→　一覧表示　→　1レコード編集 -->
+								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
+								リストを選択すると対応する1レコードを編集します。<br/>
+								検索結果リストには編集するテーブルの主キーを含む必要があります。
+							</div>
+							<div id="desc112" class="pageDesc">
+								<!-- 条件入力　→　一覧表示　→　複数レコード編集 -->
+								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
+								リストを選択すると対応する複数レコードを編集します。<br/>
+								検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
+							</div>
+							<div id="desc102" class="pageDesc">
+								<!-- 条件入力　→　複数レコード編集 -->
+								問合せ条件フォームに入力された検索条件を編集対象取得問合せに渡し、その結果を編集フォームに表示します。<br/>
+								問合せ条件には編集対象のレコードを特定する条件を指定する必要があります。
+							</div>
+							<div id="desc010" class="pageDesc">
+								<!-- 一覧表示 -->
+								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+								一覧取得問合せに条件は指定はされません。<br/>
+								多少の改造でQueryStringで条件指定をすることが可能です。
+							</div>
+							<div id="desc011" class="pageDesc">
+								<!-- 一覧表示　→　1レコード編集 -->
+								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+								一覧取得問合せに条件は指定はされません。<br/>
+								多少の改造でQueryStringで条件指定をすることが可能です。<br/>
+								リストを選択すると対応する1レコードを編集します。<br/>
+								検索結果リストには編集するテーブルの主キーを含む必要があります。
+							</div>
+							<div id="desc012" class="pageDesc">
+								<!-- 一覧表示　→　複数レコード編集 -->
+								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+								一覧取得問合せに条件は指定はされません。<br/>
+								多少の改造でQueryStringで条件指定をすることが可能です。<br/>
+								リストを選択すると対応する複数レコードを編集します。<br/>
+								検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
+							</div>
+							<div id="desc001" class="pageDesc">
+								<!-- 1レコード編集 -->
+								1レコードを新規追加するページです。<br/>
+								QueryStringで主キーを指定すると対象のレコードの編集が可能です。
+							</div>
+							<div id="desc002" class="pageDesc">
+								<!-- 複数レコード編集 -->
+								すべてのレコードを編集するページです。<br/>
+								編集対象のテーブルはレコード件数が少ないものを指定してください。
+							</div>
+						</td>
+					</tr>
+					<!--
+					<tr>
+						<th>問合せ条件</th>
+						<td><select id="queryFormSelect" class="pageType"></select></td>
+						<th>問合せ結果</th>
+						<td><select id="listFormSelect" class="pageType"></select></td>
+						<th>データ編集</th>
+						<td><select id="editFormSelect" class="pageType"></select></td>
+					</tr>
+					<tr>
+						<th>編集対象</th>
+						<td colspan="5"><select id="editTypeSelect" class="pageType editForm"></select></td>
+					</tr>
+					-->
+				</tbody>
+			</table>
+		<h2>生成するクラス</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Javaソース出力先</th>
+						<td><input type="text" id="javaSourcePath" /></td>
+						<th>機能</th>
+						<td><select id="functionSelect"></select></td>
+						<th>ページ名</th>
+						<td><input type="text" id="pageName" /></td>
+					</tr>
+					<tr>
+						<th>ページパッケージ名</th>
+						<td><input type="text" id="packageName" /></td>
+						<th>ページクラス名</th>
+						<td><input type="text" id="pageClassName" /></td>
+						<th>上書きモード</th>
+						<td><select id="pageClassOverwriteMode"></select></td>
+					</tr>
+					<tr>
+						<th>DAOパッケージ名</th>
+						<td><input type="text" id="daoPackageName" /></td>
+						<th>DAOクラス名</th>
+						<td><input type="text" id="daoClassName" /></td>
+						<th>上書きモード</th>
+						<td><select id="daoClassOverwriteMode"></select></td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>フォームとデータベース</h2>
+			<table class="responsive">
+				<thead>
+					<tr>
+						<th style="width: 200px;"></th>
+						<th style="width: 202px;">機能</th>
+						<th>パッケージ</th>
+						<th>テーブルまたは問合せクラス名</th>
+						<th>説明</th>
+					</tr>
+					<tr>
+						<th>空のフォーム</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="formClassName"/>&nbsp;
+								<select id="formClassOverwriteMode"></select>
+							</div>
+						</td>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<th>問合せ条件フォーム</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="queryFormClassName" class="queryForm"/>&nbsp;
+								<select id="queryFormClassOverwriteMode" class="queryForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="queryFormDesc listQueryCondition">このフォームに入力した条件を一覧取得問合せに渡します。</span>
+							<span class="queryFormDesc editQueryCondition">このフォームに入力した条件を編集対象取得問合せに渡します。</span>
+							<span class="queryFormDesc noNextForm">任意の情報を入力するフォームです。入力した情報の処理はアプリケーションで実装する必要があります。</span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="listQueryClassName">一覧取得問合せ</label></th>
+						<td><select id="listQueryFunctionSelect" class="listQuery listForm"></select></td>
+						<td><input type="text" id="listQueryPackageName" class="listForm"/></td>
+						<td>
+							<div class="multiField queryClass">
+								<input type="text" id="listQueryClassName" class="listForm"/>
+								<input type="hidden" id="listQueryConfig" />
+								<button type="button" id="listQueryButton" class="listForm">フィールド設定</button>
+							</div>
+						</td>
+						<td>
+							<span class="queryResultFormDesc">一覧を取得するテーブルまたは問合せクラスを指定します。</span>
+						</td>
+					</tr>
+					<tr>
+						<th>検索結果フォーム</th>
+						<td><span class="funcName" ></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField  formClass">
+								<input type="text" id="queryResultFormClassName" class="listForm" />&nbsp;
+								<select id="queryResultFormClassOverwriteMode" class="listForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="queryResultFormDesc">一覧取得問合せの実行結果を表示するフォームです。</span>
+							<span class="queryResultFormDesc editQueryCondition1">リスト中のリンクをクリックすると、そのキー情報を編集対象取問合せに渡します。</span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="editQueryClassName">編集対象取得問合せ</label></th>
+						<td><select id="editQueryFunctionSelect" class="editForm"></select></td>
+						<td><input type="text" id="editQueryPackageName" class="editForm"/></td>
+						<td>
+							<div class="multiField queryClass">
+								<input type="text" id="editQueryClassName" class="editForm"/>
+								<input type="hidden" id="editQueryConfig" />
+								<button type="button" id="editQueryButton" class="editForm">フィールド設定</button>
+							</div>
+						</td>
+						<td>
+							<span class="editFormDesc">編集対象の情報を取得するテーブルまたは問合せクラス指定します。</span>
+						</td>
+					</tr>
+					<tr>
+						<th>編集フォームクラス名</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="editFormClassName" class="editForm"/>&nbsp;
+								<select id="editFormClassOverwriteMode" class="editForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="editFormDesc">編集対象取問合せで取得したデータを編集し保存します。</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="multiRecoedQueryList">
+				<h3>複数レコード問合せ</h3>
+				<table id="multiRecordQueryList" class="editableTable">
+					<thead>
+						<tr>
+							<th colspan="2" nowrap>
+
+							</th>
+							<th nowrap>
+								No.
+							</th>
+							<th>
+								機能
+							</th>
+							<th>
+								パッケージ名
+							</th>
+							<th>
+								テーブルまたは問合せクラス名
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="buttonColumn">
+								<input type="button" id="multiRecordQueryList[0].addButton" value="+"/>
+							</td>
+							<td class="buttonColumn">
+								<input type="button" id="multiRecordQueryList[0].deleteButton" value="-"/>
+							</td>
+							<td style="text-align: right;" class="rowno">
+								<span id="multiRecordQueryList[0].no"></span>
+							</td>
+							<td>
+								<select id="multiRecordQueryList[0].functionSelect" ></select>
+							</td>
+							<td>
+								<input type="text" id="multiRecordQueryList[0].packageName" />
+							</td>
+							<td>
+								<div class="multiField queryClass">
+									<input type="text" id="multiRecordQueryList[0].queryClassName" />
+									<input type="hidden" id="multiRecordQueryList[0].queryConfig" />
+									<button type="button"  id="multiRecordQueryList[0].fieldButton">フィールド設定</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="buttonColumn">
+								<input type="button" id="multiRecordQueryList.addButton" value="+"/>
+							</th>
+							<th colspan="5">
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<input type="button" id="allErrorButton" class="largeButton" value="全て上書きはエラー"/>
+			<input type="button" id="allSkipButton" class="largeButton" value="全て上書きしない"/>
+			<input type="button" id="allForceOverwriteButton" class="largeButton" value="全て強制上書き"/>
+			<input type="button" id="errorSkipButton" class="largeButton" value="エラーしたものは上書きしない"/>
+			<input type="button" id="errorForceButton" class="largeButton" value="エラーしたものも強制上書き"/><br/>
+			<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+			<input type="button" id="saveButton" class="largeButton" value="登録"/>
+			<input type="button" id="resetButton" class="largeButton" value="リセット"/>
+			<input type="button" id="backButton" class="largeButton" value="戻る"/>
+		</form>
+
+	</body>
+</html>

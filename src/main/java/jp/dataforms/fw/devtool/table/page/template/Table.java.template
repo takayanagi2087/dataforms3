@@ -1,0 +1,26 @@
+package ${packageName};
+
+import java.util.Map;
+import dataforms.dao.Table;
+${importList}
+
+/**
+ * ${tableComment}クラス。
+ *
+ */
+public class ${TableClassShortName} extends Table {
+	/**
+	 * コンストラクタ。
+	 */
+	public ${TableClassShortName}() {
+${constructor}
+	}
+
+	@Override
+	public String getJoinCondition(final Table joinTable, final String alias) {
+		${TableClassShortName}Relation r = new ${TableClassShortName}Relation(this);
+		return r.getJoinCondition(joinTable, alias);
+	}
+
+${entity}
+}

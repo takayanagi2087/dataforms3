@@ -1,0 +1,111 @@
+@charset "UTF-8";
+/*
+ * アコーディオンメニュー用スタイル(開始).
+ */
+ul.accordion {
+	margin: 0px;
+	width:calc(100% - 16px);
+	overflow: hidden;
+	padding:0px;
+	margin: 8px;
+}
+
+
+li{
+	list-style: none;
+	text-align: left;
+}
+
+
+ul.accordion ul{
+	display: none;
+	text-align: left;
+	padding:0px;
+}
+
+/* メニュー1階層目 */
+ul.accordion li p {
+	background-color: var(--menu-level1-background-color);
+	padding-left:6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin:1px 1px 1px 1px;
+	cursor: pointer;/*カーソルを通常の物に*/
+}
+
+/* メニュー2階層目 */
+ul.accordion ul li{
+	background-color: var(--menu-level2-background-color);
+	padding:1px 1px 1px 10px;
+}
+
+ul.accordion ul li:last-child{
+	border:none;
+}
+/*
+ * アコーディオンメニュー用スタイル(終了).
+ */
+
+.menuDiv {
+	z-index: 100;
+}
+
+
+ /* PC  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--pc-screen-min)) {
+	.bodyTable .leftbarTd {
+		width: var(--menu-width);
+		max-width: var(--menu-width);
+	}
+
+	/* 左サイドバー(常に表示されているメニュー) */
+	.menuDiv {
+		display:block;
+		width: var(--menu-width);
+		max-width: var(--menu-width);
+		clear: both;
+		margin: 0px;
+		border:0px;
+	}
+}
+
+/* タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--tb-screen-min)) and (max-width: var(--tb-screen-max)) {
+	.bodyTable .leftbarTd {
+		width: 0px;
+	}
+	/* 左サイドバー(タブレットの場合はプルダウンメニュー) */
+	.menuDiv {
+		display: none;
+		position: absolute;
+    	top:  50px;
+    	left: 10px;
+    	padding-top: 4px;
+		width: var(--menu-width);
+		background-color: var(--menu-box-background-color);
+		border-style: solid;
+		border-width: 1px;
+		border-color: var(--menu-box-border-color);
+	}
+}
+
+/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (max-width: var(--sp-screen-max)) {
+	.bodyTable .leftbarTd {
+		width: 0px;
+	}
+	/* 左サイドバー(携帯の場合はプルダウンメニュー) */
+	.menuDiv {
+		display: none;
+		position: absolute;
+		top: 56px;
+		left: 12px;
+		width: var(--menu-width);
+		background-color: var(--menu-box-background-color);
+		border-style: solid;
+		border-width: 1px;
+		border-color: var(--menu-box-border-color);
+	}
+}
+
+

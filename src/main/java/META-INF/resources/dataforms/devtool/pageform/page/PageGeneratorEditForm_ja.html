@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="editForm">
+			指定されたパッケージに、ページクラスとその中に配置する各種フォームクラスのjavaソースファイルを作成します。
+			<h2>生成するページクラス</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Javaソース出力先</th>
+						<td><input type="text" id="javaSourcePath" ></td>
+						<th>機能</th>
+						<td><select id="functionSelect"></select></td>
+						<th>パッケージ名</th>
+						<td><input type="text" id="packageName"></td>
+					</tr>
+					<tr>
+						<th>クラス名</th>
+						<td>
+							<input type="text" id="pageClassName" >
+						</td>
+						<th>コメント</th>
+						<td>
+							<input type="text" id="pageName">
+						</td>
+						<th>上書モード</th>
+						<td>
+							<select id="pageClassOverwriteMode"></select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>使用するDAOクラス</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>機能</th>
+						<td>
+							<select id="daoFunctionSelect"></select>
+						</td>
+						<th>パッケージ名</th>
+						<td>
+							<input type="text" id="daoPackageName">
+						</td>
+						<th>DAOクラス名</th>
+						<td colspan="5">
+							<input type="text" id="daoClassName">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>作成するフォームクラス</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>問い合わせフォーム</th>
+						<td>
+							<input type="text" id="queryFormClassName">
+						</td>
+						<th>上書モード</th>
+						<td>
+							<select id="queryFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="queryFormClassFlag" value="1"><label for="queryFormClassFlag">作成する</label>
+						</td>
+					</tr>
+					<tr>
+						<th>問い合わせ結果フォーム</th>
+						<td>
+							<input type="text" id="queryResultFormClassName">
+						</td>
+						<th>上書モード</th>
+						<td>
+							<select id="queryResultFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="queryResultFormClassFlag" value="1"><label for="queryResultFormClassFlag">作成する</label>
+						</td>
+					</tr>
+					<tr>
+						<th>編集フォーム</th>
+						<td>
+							<input type="text" id="editFormClassName">
+						</td>
+						<th>上書モード</th>
+						<td>
+							<select id="editFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="editFormClassFlag" value="1"><label for="editFormClassFlag">作成する</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="button" id="allErrorButton" class="largeButton" value="全て上書きはエラー"/>
+			<input type="button" id="allSkipButton" class="largeButton" value="全て上書きしない"/>
+			<input type="button" id="allForceOverwriteButton" class="largeButton" value="全て強制上書き"/>
+			<input type="button" id="errorSkipButton" class="largeButton" value="エラーしたものは上書きしない"/>
+			<input type="button" id="errorForceButton" class="largeButton" value="エラーしたものも強制上書き"/><br/>
+			<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+			<input type="button" id="saveButton" class="largeButton" value="登録"/>
+			<input type="button" id="resetButton" class="largeButton" value="リセット"/>
+			<input type="button" id="backButton" class="largeButton" value="戻る"/>
+		</form>
+	</body>
+</html>

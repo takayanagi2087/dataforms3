@@ -1,0 +1,8 @@
+	{
+		this.setComment("${queryComment}");
+		this.setDistinct(${distinctFlag});
+${newTables}
+${selectFields}
+		this.setMainTable(${mainTable});
+${joinTables}
+	}

@@ -1,0 +1,5 @@
+Send one-time password
+Enter this one-time password on the confirmation screen.
+
+${onetimePassword}
+

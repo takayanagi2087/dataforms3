@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		<div class="pageController">
+			該当件数:<span id="hitCount" class="hitCount"></span>&nbsp;
+			表示行数:
+			<select id="linesPerPage" class="linesPerPage">
+				<option value="10" selected>10</option>
+				<option value="30">30</option>
+				<option value="50">50</option>
+			</select>
+			<input type="button" id="topPageButton" class="topPageButton" value="&lt;&lt;"/>
+			<input type="button" id="prevPageButton" class="prevPageButton" value="&lt;"/>
+			ページNo:<select id="pageNo" class="pageNo"></select>&nbsp;
+			<input type="button" id="nextPageButton" class="nextPageButton" value="&gt;"/>
+			<input type="button" id="bottomPageButton" class="bottomPageButton" value="&gt;&gt;"/>
+		</div>
+	</body>
+</html>

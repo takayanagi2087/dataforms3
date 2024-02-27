@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Page,Form,HtmlTable</title>
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+	</head>
+	<body>
+		<h1><span>3.2.</span>Page,Form,HtmlTable</h1>
+		<h2>ページ内のフォームの連携</h2>
+		<p>
+			dataforms2.jarではページの標準的な構成とその動作が決まっています。
+			ページには通常以下の3種類のフォームが配置されます。
+		</p>
+		<table>
+			<caption>
+				ページに配置する主要フォーム
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th>
+					<th style="width:200px;">基本クラス</th>
+					<th style="width:100px;">ID</th>
+					<th style="width: 500px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>QueryForm</td>
+					<td>queryForm</td>
+					<td>
+						データベースに問い合わせる際の条件を入力します。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>QueryResultForm</td>
+					<td>queryResultForm</td>
+					<td>
+						QueryFormで入力した条件に従ってデータベースを検索し、その結果を表示します。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>EditForm</td>
+					<td>editForm</td>
+					<td>
+						QueryResultFormに表示された結果から選択したレコードを表示し、
+						その内容を修正・登録します。
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			QueryFormに入力された検索条件はバリデーションされたのち、QueryResultFormに渡されます。
+			QueryResultFormはこの条件を使用してデータベースの問合せを行い、その結果を一覧表示します。
+			一覧表示されている結果の一つを選択すると、そのキー情報をEditFormに渡して表示します。
+			EditFormはキー情報をもとに編集対象データを取得し、その内容を編集した後データを更新します。
+		</p>
+		<p>
+			大抵のアプリケーションはこの流れの全部または一部に当てはまると思います。
+			EditFormの配置を省略すると、問合せ条件の入力から問合せ結果の表示するページになります。
+			QueryResultFormの配置を省略すると、問合せ条件を直接EditFormに渡しその条件に合った
+			データを更新するページになります。
+			また、QueryFormを省略すると、いきなり該当データをQueryResultFormに表示するページになります。
+		</p>
+		<p>
+			この流れに沿わないページを作る場合、この3種類のFormをすべて配置せずに、
+			Formクラスから派生した独自のクラスを作成して配置することになります。
+			しかし、このようなページを作ることはほとんどないと思います。
+		</p>
+		<h2>QuerySetDaoの機能</h2>
+		<p>
+			この3種類のフォームのデータベースアクセスを担当するのが、Daoから派生したQuerySetDaoクラスになります。
+			このDaoクラスは開発ツールの「DAO & ページJavaクラス作成」を使用してページクラスと同時に作成します。
+		</p>
+		<p>
+			この画面では「一覧取得用問合せ」と「編集対象取得問合せ」を指定します。
+			このフィールドには問合せだけでなくテーブルクラスも指定できます。
+			テーブルクラスを指定した場合、自動的にSingleTableQueryという問合せクラスを生成して登録します。
+		</p>
+		<p>
+			QueryResultFormは「一覧取得用問合せ」を使用してデータを取得します。
+			この時、QueryFormに配置されたフィールドのリストと入力されたデータのマップを、
+			指定された問合せのsetConditionFieldList、setConditionDataに設定します。
+		</p>
+		<p>
+			EditFormは編集フォーム用問合せを使用して編集するデータを取得します。
+			「編集対象取得問合せ」は1レコード編集と複数レコード編集の2パターンがあります。
+		</p>
+		<h3>１レコード編集のページでそのレコードに関連する複数のレコードも同時に編集する場合</h3>
+		<p>
+			１レコード編集ページでは、「複数レコード問合せ」を複数指定することができます。
+			EditFormはQueryResultFormから渡された主キーの情報を「編集対象取得問合せ」に渡して編集データを取得します。
+			この時「複数レコード問合せ」が指定されているとその問合せも実行され、その結果がEditFormに表示され編集することができます。
+			なお「複数レコード問合せ」は「編集対象取得問合せ」の主キーのフィールドを含んだものである必要があります。
+		</p>
+		<p>
+			「6.Table,Query,Dao」で作成したJoinTestTableはSampleIdFielを持っているので、SampleFieldの関連するテーブルといえます。
+			SampleTableとJoinTestTableを同時に編集するページを作る場合、以下のような設定でDaoを作成します。
+		</p>
+		<figure>
+			<figcaption>DAO & ページJavaクラス作成</figcaption>
+			<img src="daoAndPage1.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			上記の画面で作成したDaoクラスは以下のようになります。
+			このクラスのコンストラクタでsetSingleRecordQueryメソッドにSampleTableのインスタンスを指定し、
+			addMultiRecordQueryListメソッドでJoinTestTableのインスタンスを追加しています。
+		</p>
+		<div class="filecaption">Sample2Dao.javaの生成結果</div>
+		<div class="wrappre">
+			<pre>
+
+	・
+	・
+	・
+
+public class Sample2Dao extends QuerySetDao {
+
+	・
+	・
+	・
+
+	/**
+	 * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	private SampleTable sampleTable = null;
+
+	/**
+	 * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public SampleTable getSampleTable() {
+		return this.sampleTable;
+	}
+
+	/**
+	 * Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	private JoinTestTable joinTestTable = null;
+
+	/**
+	 * Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public JoinTestTable getJoinTestTable() {
+		return this.joinTestTable;
+	}
+
+
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+	 * @throws Exception &#20363;&#22806;&#12290;
+	 */
+	public Sample2Dao() {
+		this.setComment(&quot;&#12469;&#12531;&#12503;&#12523;2&quot;);
+		this.setListQuery(this.sampleTable = new SampleTable());
+		this.setSingleRecordQuery(this.sampleTable);
+		this.addMultiRecordQueryList(this.joinTestTable = new JoinTestTable());
+
+	}
+
+	・
+	・
+	・
+
+}
+
+			</pre>
+		</div>
+		<p>
+			この画面でSample2Page.javaも同時に作成されるので、「Webリソース作成」を使用してこのページのHTMLを作成します。
+		</p>
+		<p>
+			このページを実行し、EditFormを表示すると以下のようになります。
+			SampleTableの1レコードに対してJoinTestTableは複数レコードが対応するため、
+			JoinTestTableの複数レコードを編集するためのテーブルが展開されています。
+			このテーブルはEditableHtmlTableというクラスで実現しているため、行の追加、削除、ドラグによる順序変更をサポートしています。
+		</p>
+		<figure>
+			<figcaption>JoinTestTableも編集できるようにしたページ</figcaption>
+			<img src="page2.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			QuerySetDaoクラスではsetSingleRecordQuery,addMultiRecordQueryListで登録された各問合せの
+			mainTableに対する追加(insertメソッド)・更新(updateメソッド)・削除(deleteメソッド)処理を行う機能を持っています。
+			そのため開発ツールで作成したコードだけで、データのメンテナンス機能が出来上がります。
+		</p>
+		<p>
+			このパターンは見出し部と明細行のある伝票を登録するようなページに応用することができます。
+		</p>
+		<h3>複数レコード編集のページ</h3>
+		<p>
+			EditFormでテーブルの複数レコードを一度に編集することもできます。
+			先ず次のようなテーブルを作成します。
+		</p>
+		<figure>
+			<figcaption>複数レコード編集用テーブル</figcaption>
+			<img src="mtable.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			このテーブルのCode1Fieldが同じ複数のレコードをまとめて編集するようにするため、
+			Code1Fieldの毎のレコード件数を取得する問合せを作成します。
+		</p>
+		<figure>
+			<figcaption>Code1Field毎のレコード数を求める問合せ</figcaption>
+			<img src="mquery.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			この問合せは以下のSQLを生成し、Code1Field毎のレコード件数求める問合せになります。
+		</p>
+		<div class="filecaption">上記問合せに対応するSQL</div>
+		<div class="wrappre">
+			<pre>
+select
+	m.code1 as code1
+	,count(m.multi_test_id) as multi_test_id
+from
+	multi_test as  m
+group by
+	m.code1
+ 			</pre>
+		</div>
+		<p>
+			次の画面でDaoとページクラスを作成します。
+			ページの動作に「条件入力 → 一覧表示 → 複数レコード編集」を指定し、
+			一覧取得用問合せに先に作成したMultiTestCode1Queryを指定します。
+		</p>
+		<figure>
+			<figcaption>複数レコード編集のページクラスの作成</figcaption>
+			<img src="genmpage1.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			編集対象取得問合せにMultiTestTableを指定します。
+			このテーブルのCode1Fieldが同じレコードを編集するだめ、
+			「フィールド設定」ボタンを押下して、編集対象を特定するキーにcode1を指定します。
+		</p>
+		<figure>
+			<figcaption>Pageクラスの作成</figcaption>
+			<img src="genmpage2.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			ページのJavaクラスをデプロイした後、「Webリソース作成」を使用して、このページクラスからHTMLを作成してください。
+			このページで検索を行うと以下のように、コード1毎の件数が表示されます。
+		</p>
+		<figure>
+			<figcaption>複数レコード編集ページのQueryFormとQueryResultFormの表示</figcaption>
+			<img src="mpage1.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			コード1のリンクをクリックすると、コード1の値が同じ複数のレコードをまとめて編集することができます。
+		</p>
+		<figure>
+			<figcaption>複数レコード編集ページのEditFormの表示</figcaption>
+			<img src="mpage2.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			ちなみにmulti_testテーブルのデータは以下のようになっています。
+		</p>
+		<figure>
+			<figcaption>multi_testテーブルのデータ</figcaption>
+			<img src="mdata.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			この状態ではCode1FieldとCode2Fieldに何も入力しない状態でも登録できてしまうので、
+			MultiTestEditFormのcode1フィールドとcode2フィールドに必須バリデータを登録します。
+		</p>
+		<p>
+			生成したMultiTestDaoにCode1FieldとMultiTestTableのインスタンスを取得するgetterが生成されています。
+			以下のようにCode1FieldとMultiTestTablea中のCode2Fieldに必須バリデータを追加します。
+		</p>
+		<div class="filecaption">編集フォームの調整</div>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * コンストラクタ。
+	 */
+	public MultiTestEditForm() {
+		MultiTestDao dao = new MultiTestDao();
+		<b>dao.getCode1Field().addValidator(new RequiredValidator());</b>
+		<b>dao.getMultiTestTable().getCode2Field().addValidator(new RequiredValidator());</b>
+		this.addFields(dao);
+	}
+			</pre>
+		</div>
+		<p>
+			上記コードを実行すると、以下のようにコード1とコード2で必須チェックが行われるようになります。
+		</p>
+		<figure>
+			<figcaption>必須バリデータを追加したMultiTestEditForm</figcaption>
+			<img src="mpage3.png" style="width:50%; height:50%;"/>
+		</figure>
+		<h2>Webリソース作成</h2>
+		<p>
+			Page, Dialog, Form, HtmlTable, Field, FieldValidator の各クラスは全てWebComponentから派生しています。
+			Pageは複数のFormを持つことができます。
+			また、Formは複数のフィールドとHtmlTableを持つことができます。
+			Fieldは複数のFieldValidatorを持つことができます。
+			dataforms2.jarではJavaのページクラスでこれらのWebComponentの関係を定義します。
+			開発ツールの「Webリソース作成」はこのページクラスをもとにHTMLとJavascriptを作成するツールです。
+		</p>
+		<p>
+			基本的に「Webリソース作成」ではQueryFormに処理対象のページクラスを指定し、
+			そのページクラス内に含まれるWebConponentクラスの一覧を表示します。
+			以下の例ではSample2PageクラスとSample2Pageクラス内に含まれるFormクラスの一覧を表示しています。
+		</p>
+		<figure>
+			<figcaption>Webリソース作成</figcaption>
+			<img src="page4.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			Webコンポーネント一覧に表示されたクラス名のリンクをクリックし、
+			そのクラスに対応するHTMLまたはJavascriptを作成します。
+		</p>
+		<h3>ページHTMLの作成</h3>
+		<p>
+			「Webリソース作成」で作成したSample2Page.htmlは以下のように、
+			1つのHTMLファイルに3種類のフォームが展開されています。
+		</p>
+		<div class="filecaption">Sample2Page.htmlの内容</div>
+		<div class="wrappre">
+			<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta charset=&quot;UTF-8&quot;&gt;
+		&lt;title&gt;&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;div id=&quot;mainDiv&quot;&gt;
+			&lt;form id=&quot;queryForm&quot;&gt;
+				&lt;div class=&quot;formHeader&quot;&gt;&#26908;&#32034;&#26465;&#20214;&lt;/div&gt;
+				&lt;div class=&quot;gridLayout&quot;&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleText&quot;&gt;&#25991;&#23383;&#21015;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleText&quot; /&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&#25968;&#23383;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;multiField&quot;&gt;
+							&lt;input type=&quot;text&quot; id=&quot;sampleNumericFrom&quot; class=&quot;rangeField&quot; /&gt;
+							&#65374;
+							&lt;input type=&quot;text&quot; id=&quot;sampleNumericTo&quot; class=&quot;rangeField&quot;/&gt;
+						&lt;/div&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&#26085;&#20184;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;multiField&quot;&gt;
+							&lt;input type=&quot;text&quot; id=&quot;sampleDateFrom&quot; class=&quot;dateRangeField&quot; /&gt;
+							&#65374;
+							&lt;input type=&quot;text&quot; id=&quot;sampleDateTo&quot; class=&quot;dateRangeField&quot;/&gt;
+						&lt;/div&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleSelect&quot;&gt;&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;select id=&quot;sampleSelect&quot;&gt;&lt;/select&gt;&lt;/div&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+				&lt;input type=&quot;submit&quot; id=&quot;queryButton&quot; class=&quot;largeButton&quot; value=&quot;&#26908;&#32034;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;exportButton&quot; class=&quot;largeButton&quot; value=&quot;&#12456;&#12463;&#12473;&#12509;&#12540;&#12488;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;newButton&quot; class=&quot;largeButton&quot; value=&quot;&#26032;&#35215;&#30331;&#37682;&quot;&gt;
+			&lt;/form&gt;
+			&lt;form id=&quot;queryResultForm&quot;&gt;
+				&lt;div class=&quot;formHeader&quot;&gt;&#26908;&#32034;&#32080;&#26524;&lt;/div&gt;
+				&lt;div class=&quot;gridLayout&quot;&gt;
+				&lt;/div&gt;
+				&lt;div&gt;
+					&lt;table id=&quot;queryResult&quot;&gt;
+						&lt;thead&gt;
+							&lt;tr&gt;
+								&lt;th&gt;
+									No.
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#25991;&#23383;&#21015;
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#25968;&#23383;
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#26085;&#20184;
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#25805;&#20316;
+								&lt;/th&gt;
+							&lt;/tr&gt;
+						&lt;/thead&gt;
+						&lt;tbody&gt;
+							&lt;tr&gt;
+								&lt;td&gt;
+									&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].sampleId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].createUserId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].createTimestamp&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].updateUserId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].updateTimestamp&quot; /&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;width: 300px;&quot;&gt;
+									&lt;a id=&quot;queryResult[0].updateButton&quot; href=&quot;javascript:void(0);&quot;&gt;&lt;span id=&quot;queryResult[0].sampleText&quot;&gt;&lt;/span&gt;&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;width: 100px;&quot;&gt;
+									&lt;span id=&quot;queryResult[0].sampleNumeric&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;width: 110px;&quot;&gt;
+									&lt;span id=&quot;queryResult[0].sampleDate&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;width: 126px;&quot;&gt;
+									&lt;span id=&quot;queryResult[0].sampleSelect&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;width: 164px;&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].viewButton&quot; value=&quot;&#34920;&#31034;&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].referButton&quot; value=&quot;&#21442;&#29031;&#30331;&#37682;&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].deleteButton&quot; value=&quot;&#21066;&#38500;&quot;&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						&lt;/tbody&gt;
+					&lt;/table&gt;
+				&lt;/div&gt;
+			&lt;/form&gt;
+			&lt;form id=&quot;editForm&quot;&gt;
+				&lt;div class=&quot;formHeader&quot;&gt;&lt;span id=&quot;editFormTitle&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;saveMode&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;sampleId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;createUserId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;createTimestamp&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;updateUserId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;updateTimestamp&quot; /&gt;
+				&lt;div class=&quot;gridLayout&quot;&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleText&quot;&gt;&#25991;&#23383;&#21015;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleText&quot; /&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleNumeric&quot;&gt;&#25968;&#23383;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleNumeric&quot; /&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleDate&quot;&gt;&#26085;&#20184;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;multiField&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleDate&quot; /&gt;&lt;/div&gt;&lt;/div&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;fieldDiv&quot;&gt;
+						&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleSelect&quot;&gt;&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;&lt;/label&gt;&lt;/div&gt;
+						&lt;div class=&quot;field&quot;&gt;&lt;select id=&quot;sampleSelect&quot;&gt;&lt;/select&gt;&lt;/div&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+				&lt;div&gt;
+					&lt;table id=&quot;joinTestList&quot; class=&quot;editableTable&quot;&gt;
+						&lt;thead&gt;
+							&lt;tr&gt;
+								&lt;th colspan=&quot;2&quot; nowrap&gt;
+
+								&lt;/th&gt;
+								&lt;th nowrap&gt;
+									No.
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#12486;&#12461;&#12473;&#12488;
+								&lt;/th&gt;
+							&lt;/tr&gt;
+						&lt;/thead&gt;
+						&lt;tbody&gt;
+							&lt;tr&gt;
+								&lt;td class=&quot;buttonColumn&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;joinTestList[0].addButton&quot; value=&quot;+&quot;/&gt;
+								&lt;/td&gt;
+								&lt;td class=&quot;buttonColumn&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;joinTestList[0].deleteButton&quot; value=&quot;-&quot;/&gt;
+								&lt;/td&gt;
+								&lt;td style=&quot;text-align: right;&quot; class=&quot;rowno&quot;&gt;
+									&lt;span id=&quot;joinTestList[0].no&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td&gt;
+									&lt;input type=&quot;text&quot; id=&quot;joinTestList[0].joinTestText&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].joinTestId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].sampleId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].createUserId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].createTimestamp&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].updateUserId&quot; /&gt;
+									&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].updateTimestamp&quot; /&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						&lt;/tbody&gt;
+						&lt;tfoot&gt;
+							&lt;tr&gt;
+								&lt;th class=&quot;buttonColumn&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;joinTestList.addButton&quot; value=&quot;+&quot;/&gt;
+								&lt;/th&gt;
+								&lt;th colspan=&quot;3&quot;&gt;
+								&lt;/th&gt;
+							&lt;/tr&gt;
+						&lt;/tfoot&gt;
+					&lt;/table&gt;
+				&lt;/div&gt;
+				&lt;input type=&quot;button&quot; id=&quot;confirmButton&quot; class=&quot;largeButton&quot; value=&quot;&#30906;&#35469;&quot;/&gt;
+				&lt;input type=&quot;button&quot; id=&quot;saveButton&quot; class=&quot;largeButton&quot; value=&quot;&#30331;&#37682;&quot;/&gt;
+				&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;/&gt;
+				&lt;input type=&quot;button&quot; id=&quot;deleteButton&quot; class=&quot;largeButton&quot; value=&quot;&#21066;&#38500;&quot;/&gt;
+				&lt;input type=&quot;button&quot; id=&quot;backButton&quot; class=&quot;largeButton&quot; value=&quot;&#25147;&#12427;&quot;/&gt;
+			&lt;/form&gt;
+
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+			</pre>
+		</div>
+		<p>
+			このサンプルは問題なく動作します。
+			しかし、Sample2EditFormをSample2Page以外のページにも配置したい場合、
+			このフォームを配置した別のページにもフォームのHTMLを作成することになってしまいます。
+		</p>
+		<p>
+			このような場合「フォームは別ファイルに出力」チェックを行いHTMLを作成します。
+		</p>
+		<figure>
+			<figcaption>フォーム別にHTMLを出力</figcaption>
+			<img src="page3.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			上記設定でHTMLを出力すると、以下のようにPageのHTMLは空のformタグを生成します。
+			さらにSample2EditForm.htmlというファイルにフィールドに対応したタグを出力します。
+			(この他にSample2QueryForm.htmlとSample2QueryResultForm.htmlも作成されます)
+		</p>
+		<div class="filecaption">フォームを別ファイルにしたSample2Page.htmlの内容</div>
+		<div class="wrappre">
+			<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta charset=&quot;UTF-8&quot;&gt;
+		&lt;title&gt;&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;div id=&quot;mainDiv&quot;&gt;
+			&lt;form id=&quot;queryForm&quot;&gt;
+			&lt;/form&gt;
+			&lt;form id=&quot;queryResultForm&quot;&gt;
+			&lt;/form&gt;
+			&lt;form id=&quot;editForm&quot;&gt;
+			&lt;/form&gt;
+
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</pre>
+		</div>
+		<div class="filecaption">Sample2EditForm.htmlの内容</div>
+		<div class="wrappre">
+			<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta charset=&quot;UTF-8&quot;&gt;
+		&lt;title&gt;&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;form id=&quot;editForm&quot;&gt;
+			&lt;div class=&quot;formHeader&quot;&gt;&lt;span id=&quot;editFormTitle&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;saveMode&quot; /&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;sampleId&quot; /&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;createUserId&quot; /&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;createTimestamp&quot; /&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;updateUserId&quot; /&gt;
+			&lt;input type=&quot;hidden&quot; id=&quot;updateTimestamp&quot; /&gt;
+			&lt;div class=&quot;gridLayout&quot;&gt;
+				&lt;div class=&quot;fieldDiv&quot;&gt;
+					&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleText&quot;&gt;&#25991;&#23383;&#21015;&lt;/label&gt;&lt;/div&gt;
+					&lt;div class=&quot;field&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleText&quot; /&gt;&lt;/div&gt;
+				&lt;/div&gt;
+				&lt;div class=&quot;fieldDiv&quot;&gt;
+					&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleNumeric&quot;&gt;&#25968;&#23383;&lt;/label&gt;&lt;/div&gt;
+					&lt;div class=&quot;field&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleNumeric&quot; /&gt;&lt;/div&gt;
+				&lt;/div&gt;
+				&lt;div class=&quot;fieldDiv&quot;&gt;
+					&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleDate&quot;&gt;&#26085;&#20184;&lt;/label&gt;&lt;/div&gt;
+					&lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;multiField&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;sampleDate&quot; /&gt;&lt;/div&gt;&lt;/div&gt;
+				&lt;/div&gt;
+				&lt;div class=&quot;fieldDiv&quot;&gt;
+					&lt;div class=&quot;label&quot;&gt;&lt;label for=&quot;sampleSelect&quot;&gt;&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;&lt;/label&gt;&lt;/div&gt;
+					&lt;div class=&quot;field&quot;&gt;&lt;select id=&quot;sampleSelect&quot;&gt;&lt;/select&gt;&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+			&lt;div&gt;
+				&lt;table id=&quot;joinTestList&quot; class=&quot;editableTable&quot;&gt;
+					&lt;thead&gt;
+						&lt;tr&gt;
+							&lt;th colspan=&quot;2&quot; nowrap&gt;
+
+							&lt;/th&gt;
+							&lt;th nowrap&gt;
+								No.
+							&lt;/th&gt;
+							&lt;th&gt;
+								&#12486;&#12461;&#12473;&#12488;
+							&lt;/th&gt;
+						&lt;/tr&gt;
+					&lt;/thead&gt;
+					&lt;tbody&gt;
+						&lt;tr&gt;
+							&lt;td class=&quot;buttonColumn&quot;&gt;
+								&lt;input type=&quot;button&quot; id=&quot;joinTestList[0].addButton&quot; value=&quot;+&quot;/&gt;
+							&lt;/td&gt;
+							&lt;td class=&quot;buttonColumn&quot;&gt;
+								&lt;input type=&quot;button&quot; id=&quot;joinTestList[0].deleteButton&quot; value=&quot;-&quot;/&gt;
+							&lt;/td&gt;
+							&lt;td style=&quot;text-align: right;&quot; class=&quot;rowno&quot;&gt;
+								&lt;span id=&quot;joinTestList[0].no&quot;&gt;&lt;/span&gt;
+							&lt;/td&gt;
+							&lt;td&gt;
+								&lt;input type=&quot;text&quot; id=&quot;joinTestList[0].joinTestText&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].joinTestId&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].sampleId&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].createUserId&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].createTimestamp&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].updateUserId&quot; /&gt;
+								&lt;input type=&quot;hidden&quot; id=&quot;joinTestList[0].updateTimestamp&quot; /&gt;
+							&lt;/td&gt;
+						&lt;/tr&gt;
+					&lt;/tbody&gt;
+					&lt;tfoot&gt;
+						&lt;tr&gt;
+							&lt;th class=&quot;buttonColumn&quot;&gt;
+								&lt;input type=&quot;button&quot; id=&quot;joinTestList.addButton&quot; value=&quot;+&quot;/&gt;
+							&lt;/th&gt;
+							&lt;th colspan=&quot;3&quot;&gt;
+							&lt;/th&gt;
+						&lt;/tr&gt;
+					&lt;/tfoot&gt;
+				&lt;/table&gt;
+			&lt;/div&gt;
+			&lt;input type=&quot;button&quot; id=&quot;confirmButton&quot; class=&quot;largeButton&quot; value=&quot;&#30906;&#35469;&quot;/&gt;
+			&lt;input type=&quot;button&quot; id=&quot;saveButton&quot; class=&quot;largeButton&quot; value=&quot;&#30331;&#37682;&quot;/&gt;
+			&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;/&gt;
+			&lt;input type=&quot;button&quot; id=&quot;deleteButton&quot; class=&quot;largeButton&quot; value=&quot;&#21066;&#38500;&quot;/&gt;
+			&lt;input type=&quot;button&quot; id=&quot;backButton&quot; class=&quot;largeButton&quot; value=&quot;&#25147;&#12427;&quot;/&gt;
+		&lt;/form&gt;
+
+	&lt;/body&gt;
+&lt;/html&gt;
+			</pre>
+		</div>
+		<p>
+			PageのHTMLはページ全体の見た目を定義するため必ず必要になります。
+			FormクラスやDialogクラスはそれぞれのクラス名に対応したHTMLが存在すると、
+			そちらを優先してPageに展開します。
+			つまり、Sample2Page.htmlのeditFormの中に内容を記述しても、
+			Sample2EditForm.htmlが存在すればその内容で上書きされたページが表示されます。
+		</p>
+		<p>
+			したがって、WebComponent以下のクラスで対応するHTMLを作成できるのはPage, Dialog, Formになります。
+			WebComponent以下のクラスは全て対応するJavascriptクラスを作成することができます。
+			このJavascriptクラスを作成し処理を記述することにより、ブラウザ内での独自の動作を規定することができます。
+		</p>
+		<table>
+			<caption>
+				Webリソース作成で作成できるもの
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th>
+					<th style="width:200px;">クラス</th>
+					<th style="width:100px;">HTML作成</th>
+					<th style="width:100px;">Javascript作成</th>
+					<th style="width: 300px;">備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td><td>Page</td><td style="text-align: center;">〇</td><td style="text-align: center;">〇</td>
+					<td>
+						複数のフォーム、複数のダイアログが配置可能。
+						ページのHTMLは常に作成。ページのJavascriptは必要に応じて作成。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td><td>Dialog</td><td style="text-align: center;">〇</td><td style="text-align: center;">〇</td>
+					<td>
+						複数のフォームが配置可能。
+						HTMLは常に作成。ダイアログのJavascriptは必要に応じて作成。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td><td>Form</td><td style="text-align: center;">〇</td><td style="text-align: center;">〇</td>
+					<td>
+						複数のフィールド、複数のHTMLテーブルが配置可能。
+						フォームのHTML、Javascriptは必要に応じて作成。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td><td>HtmlTable</td><td style="text-align: center;">×</td><td style="text-align: center;">〇</td>
+					<td>
+						複数のフィールドを配置可能。
+						Javascriptは必要に応じて作成。HTMLの作成は不可。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td><td>Field</td><td style="text-align: center;">×</td><td style="text-align: center;">〇</td>
+					<td>
+						複数のフィールドバリデータを登録可能。
+						Javascriptは必要に応じて作成。HTMLの作成は不可。
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td><td>FieldValidator</td><td style="text-align: center;">×</td><td style="text-align: center;">〇</td>
+					<td>
+						Javascriptは必要に応じて作成。HTMLの作成は不可。
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>Javascriptクラスのカスタマイズ</h2>
+		<h3>生成されたJavascript</h3>
+		<p>
+			Sample2EditFormのJavascriptを生成した例を以下に示します。
+			constructorにはこのクラスのインスタンスの初期化に必要な処理を記述します。
+			attachメソッドはHTMLのタグに対してWebComponentのインスタンスを結びつけるタイミングで呼び出されるメソッドです。
+			この処理で必要に応じでイベントハンドラを登録します。
+			Formクラスのattachメソッドには独自に追加したボタン押下時の処理がコメントアウトされています。
+			この処理を参考にして、独自の処理を実装してください。
+		</p>
+		<p>
+			Sample2EditFormの基本クラスであるEditFormには様々なメソッドが実装されています。
+			それらのメソッドをカスタマイズすることが必要になる場合があります。
+			自動生成されたコードのコメントにはカスタマイズするケースが多いメソッドが記述されています。
+			これらを参考にカスタマイズしてください。
+		</p>
+		<div class="filecaption">自動生成されたSample2EditForm.js</div>
+		<div class="wrappre">
+			<pre>
+/**
+ * @fileOverview {@link Sample2EditForm}&#12463;&#12521;&#12473;&#12434;&#35352;&#36848;&#12375;&#12383;&#12501;&#12449;&#12452;&#12523;&#12391;&#12377;&#12290;
+ */
+
+'use strict';
+
+/**
+ * @class Sample2EditForm
+ *
+ * @extends EditForm
+ */
+class Sample2EditForm extends EditForm {
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTML&#12456;&#12524;&#12513;&#12531;&#12488;&#12392;&#12398;&#23550;&#24540;&#20184;&#12369;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 */
+	attach() {
+		super.attach();
+		// &#29420;&#33258;&#12398;&#12508;&#12479;&#12531;(id=&quot;webMethodButton&quot;)&#12434;&#36861;&#21152;&#12375;&#12469;&#12540;&#12496;&#12469;&#12452;&#12489;&#12398;&#12513;&#12477;&#12483;&#12489;&#12434;&#21628;&#12403;&#20986;&#12377;&#22580;&#21512;&#12399;&#20197;&#19979;&#12398;&#27096;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+/*
+		this.get(&quot;webMethodButton&quot;).click(() =&gt; {
+			this.callWebMethod();
+			return false;
+		});
+*/
+	}
+
+	// &#29420;&#33258;&#12398;Web&#12513;&#12477;&#12483;&#12489;&#12434;&#21628;&#12403;&#20986;&#12377;&#22580;&#21512;&#12399;&#12289;&#20197;&#19979;&#12398;&#12467;&#12540;&#12489;&#12434;&#21442;&#32771;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+	/**
+	 * Web&#12513;&#12477;&#12483;&#12489;&#12398;&#21628;&#12403;&#20986;&#12375;&#12469;&#12531;&#12503;&#12523;&#12290;
+	 *
+	 */
+/*
+	callWebMethod() {
+		try {
+			if (this.validate()) {
+				this.submit(&quot;webMethod&quot;, (r) =&gt; {
+					this.parent.resetErrorStatus();
+					if (r.status == JsonResponse.SUCCESS) {
+						// TODO:&#25104;&#21151;&#26178;&#12398;&#20966;&#29702;&#12434;&#35352;&#36848;&#12375;&#12414;&#12377;&#12290;
+						// &#24540;&#31572;&#24773;&#22577;&#12434;&#12525;&#12464;&#34920;&#31034;
+						logger.dir(r);
+					} else {
+						this.parent.setErrorInfo(this.getValidationResult(r), this);
+					}
+				});
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+*/
+
+
+	// &#12501;&#12457;&#12540;&#12512;&#21336;&#20301;&#12398;&#12496;&#12522;&#12487;&#12540;&#12471;&#12519;&#12531;&#12434;&#34892;&#12358;&#22580;&#21512;&#12399;&#20197;&#19979;&#12398;&#12467;&#12513;&#12531;&#12488;&#12434;&#21442;&#32771;&#12395;&#23455;&#35013;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+	/**
+	 * &#12501;&#12457;&#12540;&#12512;&#12398;&#12496;&#12522;&#12487;&#12540;&#12471;&#12519;&#12531;&#12290;
+	 * &lt;pre&gt;
+	 * &#12501;&#12457;&#12540;&#12512;&#20869;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;&#38306;&#36899;&#12481;&#12455;&#12483;&#12463;&#12434;&#23455;&#35013;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	validateForm() {
+		let list = super.validateForm();
+		if (list.length == 0) {
+			if (&#12456;&#12521;&#12540;&#21028;&#23450;) {
+				list.push(new ValidationError(&quot;fieldId&quot;, MessagesUtil.getMessage(&quot;error.messagekey&quot;)));
+			}
+		}
+		return list;
+	}
+*/
+
+	// &#12501;&#12457;&#12540;&#12512;&#12398;&#35336;&#31639;&#20966;&#29702;&#12434;&#34892;&#12358;&#22580;&#21512;&#12289;&#20197;&#19979;&#12398;&#20966;&#29702;&#12434;&#21442;&#32771;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+	/**
+	 * &#35336;&#31639;&#12452;&#12505;&#12531;&#12488;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#35336;&#31639;&#12452;&#12505;&#12531;&#12488;&#12501;&#12451;&#12540;&#12523;&#12489;&#12364;&#26356;&#26032;&#12373;&#12428;&#12383;&#22580;&#21512;&#12289;&#12371;&#12398;&#12513;&#12477;&#12483;&#12489;&#12364;&#21628;&#12403;&#20986;&#12373;&#12428;&#12414;&#12377;&#12290;
+	 * &#12487;&#12540;&#12479;&#20837;&#21147;&#26178;&#12398;&#33258;&#21205;&#35336;&#31639;&#12364;&#24517;&#35201;&#12394;&#22580;&#21512;&#12371;&#12398;&#12513;&#12477;&#12483;&#12489;&#12434;&#12458;&#12540;&#12496;&#12540;&#12521;&#12452;&#12489;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+	 * &lt;/pre&gt;
+	 * @param {jQuery} element &#12452;&#12505;&#12531;&#12488;&#12364;&#30330;&#29983;&#12375;&#12383;&#35201;&#32032;&#12290;&#21021;&#26399;&#34920;&#31034;&#12398;&#26178;&#31561;&#29305;&#23450;&#12501;&#12451;&#12540;&#12523;&#12489;&#12364;&#35201;&#22240;&#12391;&#12394;&#12356;&#22580;&#21512;&#12399;null&#12364;&#35373;&#23450;&#12373;&#12428;&#12414;&#12377;&#12290;
+	 *
+	 */
+/*
+	onCalc(element) {
+	}
+*/
+
+
+	// &#12501;&#12457;&#12540;&#12512;&#12398;&#21508;&#31278;&#21205;&#20316;&#12434;&#12459;&#12473;&#12479;&#12510;&#12452;&#12474;&#12377;&#12427;&#12395;&#12399;&#20197;&#19979;&#12398;&#12513;&#12477;&#12483;&#12489;&#12434;&#12458;&#12540;&#12496;&#12540;&#12521;&#12452;&#12489;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+
+	/**
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#26032;&#35215;&#12514;&#12540;&#12489;&#12398;&#22580;&#21512;&#12289;&#21066;&#38500;&#12508;&#12479;&#12531;&#12434;&#38560;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 * @param {Object} data &#12501;&#12457;&#12540;&#12512;&#12487;&#12540;&#12479;.
+	 *
+	 */
+/*
+	setFormData(data) {
+		super.setFormData(data);
+	}
+*/
+
+	/**
+	 * &#32232;&#38598;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#32232;&#38598;&#21487;&#33021;&#29366;&#24907;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	toEditMode() {
+		super.toEditMode();
+	}
+*/
+
+	/**
+	 * &#30906;&#35469;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#32232;&#38598;&#19981;&#21487;&#29366;&#24907;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	toConfirmMode() {
+		super.toConfirmMode();
+	}
+*/
+
+	/**
+	 * &#30906;&#35469;&#12508;&#12479;&#12531;&#12398;&#12452;&#12505;&#12531;&#12488;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;Form&#12398;confirm&#12513;&#12477;&#12483;&#12489;&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#21839;&#38988;&#12394;&#12369;&#12428;&#12400;&#30906;&#35469;&#12514;&#12540;&#12489;&#12395;&#36983;&#31227;&#12375;&#12414;&#12377;&#12290;
+	 * &#12501;&#12449;&#12452;&#12523;&#12450;&#12483;&#12503;&#12525;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12399;&#12469;&#12540;&#12496;&#12540;&#12395;&#36865;&#20449;&#12373;&#12428;&#12414;&#12379;&#12435;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	confirm() {
+		super.confirm();
+	}
+*/
+		/**
+	 * &#26032;&#35215;&#30331;&#37682;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;EditForm&#12398;getNewData&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#21021;&#26399;&#12487;&#12540;&#12479;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#21462;&#24471;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12289;&#32232;&#38598;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	newData() {
+		super.newData();
+	}
+*/
+
+		/**
+	 * &#26356;&#26032;&#30331;&#37682;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;EditForm&#12398;getData&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#32232;&#38598;&#23550;&#35937;&#12487;&#12540;&#12479;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#21462;&#24471;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12289;&#32232;&#38598;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	updateData() {
+		super.updateData();
+	}
+*/
+
+	/**
+	 * &#12487;&#12540;&#12479;&#12434;&#21442;&#29031;&#30331;&#37682;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;EditForm&#12398;getReferData&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#21442;&#29031;&#23550;&#35937;&#12487;&#12540;&#12479;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#21462;&#24471;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12289;&#32232;&#38598;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 *
+	 */
+/*
+	referData() {
+		super.referData();
+	}
+*/
+	/**
+	 * &#12487;&#12540;&#12479;&#12434;&#21442;&#29031;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;EditForm&#12398;getData&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#21442;&#29031;&#23550;&#35937;&#12487;&#12540;&#12479;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#21462;&#24471;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12289;&#21442;&#29031;&#12514;&#12540;&#12489;&#12395;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	viewData() {
+		super.viewData();
+	}
+*/
+
+	/**
+	 * &#20445;&#23384;&#12420;&#21066;&#38500;&#24460;&#12398;&#30011;&#38754;&#29366;&#24907;&#36983;&#31227;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 */
+/*
+	changeStateForAfterUpdate() {
+		super.changeStateForAfterUpdate();
+	}
+*/
+
+	/**
+	 * &#20445;&#23384;&#12508;&#12479;&#12531;&#12398;&#12452;&#12505;&#12531;&#12488;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;Form&#12398;save&#12513;&#12477;&#12483;&#12489;&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#20445;&#23384;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &#12501;&#12449;&#12452;&#12523;&#12450;&#12483;&#12503;&#12525;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12418;&#12469;&#12540;&#12496;&#12540;&#12395;&#36865;&#20449;&#12373;&#12428;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	save() {
+		super.save();
+	}
+*/
+
+	/**
+	 * &#20445;&#23384;&#12508;&#12479;&#12531;&#12398;&#12452;&#12505;&#12531;&#12488;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#23550;&#24540;&#12377;&#12427;EditForm&#12398;delete&#12513;&#12477;&#12483;&#12489;&#12434;&#21628;&#12403;&#20986;&#12375;&#12289;&#20445;&#23384;&#20966;&#29702;&#12434;&#34892;&#12356;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+/*
+	del() {
+		super.del();
+	}
+*/
+}
+
+
+			</pre>
+		</div>
+		<h3>Form中のフィールドの取得</h3>
+		<p>
+			WebComponentにはID.を指定して所有するWebComponentのインスタンスを取得するgetComponentメソッドが存在します。
+			また、ID.を指定して所有するjQueryオブジェクトを取得するgetメソッドが存在します。
+			(getメソットのID.を省略すると、自分自身のjQueryオブジェクトを取得します。)
+			また、jQueryのセレクタを指定してjQueryオブジェクト取得するfindメソッドが存在します。
+		</p>
+		<p>
+			Sample2EditForm.jsのsetFormDataを以下のように修正しSample2EditFormを表示すると、
+			コンソールに実行ログが出力されます。
+		</p>
+		<div class="filecaption">getComponentの例</div>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#12487;&#12540;&#12479;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;pre&gt;
+	 * &#26032;&#35215;&#12514;&#12540;&#12489;&#12398;&#22580;&#21512;&#12289;&#21066;&#38500;&#12508;&#12479;&#12531;&#12434;&#38560;&#12375;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 * @param {Object} data &#12501;&#12457;&#12540;&#12512;&#12487;&#12540;&#12479;.
+	 *
+	 */
+	setFormData(data) {
+		super.setFormData(data);
+		{
+			let f = this.getComponent("sampleNumeric");
+			logger.info(f.constructor.name + ":f.getValue()=" + f.getValue() + "," + typeof f.getValue());
+		}
+		{
+			let jq = this.get("sampleNumeric");
+			logger.info(jq.constructor.name + ":jq.val()=" + jq.val() + "," + typeof jq.val());
+		}
+		{
+			let jq = this.find("#sampleNumeric");
+			logger.info(jq.constructor.name + ":jq.val()=" + jq.val() + "," + typeof jq.val());
+		}
+	}
+			</pre>
+		</div>
+		<p>
+			このログからgetComponentでNumericFieldクラスのインスタンスが取得されていることがわかります。
+			またgetValueメソットの戻り値が数値になっていることがわかると思います。
+			また、getやfindメソッドでjQueryオブジェクトを取得しval()で値を取得すると、
+			フィールドに入力された文字列が取得されていることがわかります。
+		</p>
+		<div class="filecaption">上記のコンソール出力</div>
+		<div class="wrappre">
+			<pre>
+NumericField:f.getValue()=1234,number
+S:jq.val()=1234.00,string
+S:jq.val()=1234.00,string
+			</pre>
+		</div>
+		<h2>HtmlTableクラス</h2>
+		<p>
+			Daoクラスで問合せを実行するとその結果はList&lt;Map&lt;String, Object&gt;&gt;で返ってきます。
+			このデータをそのままFormに渡して表示するためのWebComponentがHtmlTableです。
+		</p>
+		<p>
+			MultiTestQueryResultFormのコンストラクタでは、
+			以下のようにHtmlTableのサブクラスであるPageScrollHtmlTableを配置しています。
+		</p>
+		<div class="filecaption">MultiTestQueryResultFormのフォームの定義</div>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * コンストラクタ。
+	 */
+	public MultiTestQueryResultForm() {
+		MultiTestDao dao = new MultiTestDao();
+		this.addPkFieldList(dao.getEditFormKeyList());
+		PageScrollHtmlTable htmltable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());
+		htmltable.getFieldList().get(MultiTestTable.Entity.ID_CODE1).setSortable(true);
+		htmltable.getFieldList().get(MultiTestTable.Entity.ID_MULTI_TEST_ID).setSortable(true);
+
+		this.addHtmlTable(htmltable);
+	}
+			</pre>
+		</div>
+		<p>
+			上記のフォームに対応するHTMLは以下のようになります。
+			&lt;table id=&quot;queryResult&quot;&gt;...&lt;/table&gt;がJavaクラスの
+			PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());に対応するタグになります。
+
+		</p>
+		<div class="filecaption">MultiTestQueryResultFormのフォームのHTML</div>
+		<div class="wrappre">
+			<pre>
+			&lt;form id=&quot;queryResultForm&quot;&gt;
+				&lt;div class=&quot;formHeader&quot;&gt;&#26908;&#32034;&#32080;&#26524;&lt;/div&gt;
+				&lt;table class=&quot;responsive&quot;&gt;
+					&lt;tbody&gt;
+					&lt;/tbody&gt;
+				&lt;/table&gt;
+				&lt;div class=&quot;hScrollDiv&quot;&gt;
+					<b>
+					&lt;table id=&quot;queryResult&quot;&gt;
+						&lt;thead&gt;
+							&lt;tr&gt;
+								&lt;th&gt;
+									No.
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#12467;&#12540;&#12489;1
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#12524;&#12467;&#12540;&#12489;&#25968;
+								&lt;/th&gt;
+								&lt;th&gt;
+									&#25805;&#20316;
+								&lt;/th&gt;
+							&lt;/tr&gt;
+						&lt;/thead&gt;
+						&lt;tbody&gt;
+							&lt;tr&gt;
+								&lt;td&gt;
+									&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td&gt;
+									&lt;a id=&quot;queryResult[0].updateButton&quot; href=&quot;javascript:void(0);&quot;&gt;&lt;span id=&quot;queryResult[0].code1&quot;&gt;&lt;/span&gt;&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td&gt;
+									&lt;span id=&quot;queryResult[0].multiTestId&quot;&gt;&lt;/span&gt;
+								&lt;/td&gt;
+								&lt;td&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].viewButton&quot; value=&quot;&#34920;&#31034;&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].referButton&quot; value=&quot;&#21442;&#29031;&#30331;&#37682;&quot;&gt;
+									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].deleteButton&quot; value=&quot;&#21066;&#38500;&quot;&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						&lt;/tbody&gt;
+					&lt;/table&gt;
+					</b>
+				&lt;/div&gt;
+			&lt;/form&gt;
+
+			</pre>
+		</div>
+		<p>
+			以下にMultiTestQueryResultFormの表示データを示します。
+			以下のqueryResultがテーブルに対応する表示データです。
+		</p>
+		<div class="filecaption">MultiTestQueryResultFormの表示データ</div>
+		<div class="wrappre">
+			<pre>
+{
+	"contentType": "application/json; charset=utf-8",
+	"result": {
+		"linesPerPage": "10",
+		"hitCount": "2",
+		"code1": null,
+		"pageNo": "0",
+		"sortOrder": null,
+		<b>"queryResult": [
+			{
+				"rowNo": "1",
+				"code1": "aaa",
+				"multiTestId": 3
+			},
+			{
+				"rowNo": "2",
+				"code1": "bbb",
+				"multiTestId": 2
+			}
+		]</b>
+	},
+	"status": 0
+}
+			</pre>
+		</div>
+		<p>
+			PageScrollHtmlTable.jsは、このデータのqueryResultの内容をテーブルに展開します。
+		</p>
+		<figure>
+			<figcaption>テーブルデータの表示結果</figcaption>
+			<img src="mpage1.png" style="width:50%; height:50%;"/>
+		</figure>
+		<h3>HtmlTable</h3>
+		<p>
+			HtmlTableクラスはPageScrollHtmlTable、EditableHtmlTableのベースクラスです。
+			このクラスをフォームに配置すると、単純にList&lt;Map&lt;String, Object&gt;&gt;形式のデータを表示するだけのテーブルになります。
+		</p>
+		<h3>PageScrollHtmlTable</h3>
+		<p>
+			PageScrollHtmlTableクラスはQueryResultFormに配置され、
+			検索結果をページスクロールさせるためのテーブルクラスです。
+		</p>
+		<p>
+			MultiTestQueryResultFormのフォームのHTMLを見るとわかると思いますが、
+			ヒット件数やスクロールボタンなどのタグが存在しません。
+			しかし、テーブルデータの表示結果を見るとこれらの項目が出力されています。
+			これはPageScrollHtmlTable.jsが/frame/PageController.htmlの内容を自動的に展開するためです。
+		</p>
+		<h3>EditableHtmlTable</h3>
+		<p>
+			List&lt;Map&lt;String, Object&gt;&gt;形式のデータを編集するにはEditableHtmlTableを使用します。
+			MultiTestEditFormのコンストラクタでMultiTestDaoのインスタンスをEditFormのaddFieldsメソットに渡しています。
+			このメソッドでdaoのaddMultiRecordQueryListに登録された内容でEditableHtmlTableを配置するようになっています。
+		</p>
+		<p>
+			MultiTestEditFormにはidが"multiTestList"というEditableTableが配置されています。
+			このFormクラスをもとに生成したtableタグは以下のようになります。
+		</p>
+		<div class="filecaption">EditableTableに対応するHTML</div>
+		<div class="wrappre">
+			<pre>
+			&lt;table id=&quot;multiTestList&quot; class=&quot;editableTable&quot;&gt;
+				&lt;thead&gt;
+					&lt;tr&gt;
+						&lt;th colspan=&quot;2&quot; nowrap&gt;
+						&lt;/th&gt;
+						&lt;th nowrap&gt;
+							No.
+						&lt;/th&gt;
+						&lt;th&gt;
+							&#12467;&#12540;&#12489;2
+						&lt;/th&gt;
+						&lt;th&gt;
+							&#12486;&#12461;&#12473;&#12488;
+						&lt;/th&gt;
+					&lt;/tr&gt;
+				&lt;/thead&gt;
+				&lt;tbody&gt;
+					&lt;tr&gt;
+						&lt;td class=&quot;buttonColumn&quot;&gt;
+							&lt;input type=&quot;button&quot; id=&quot;multiTestList[0].addButton&quot; value=&quot;+&quot;/&gt;
+						&lt;/td&gt;
+						&lt;td class=&quot;buttonColumn&quot;&gt;
+							&lt;input type=&quot;button&quot; id=&quot;multiTestList[0].deleteButton&quot; value=&quot;-&quot;/&gt;
+						&lt;/td&gt;
+						&lt;td style=&quot;text-align: right;&quot; class=&quot;rowno&quot;&gt;
+							&lt;span id=&quot;multiTestList[0].no&quot;&gt;&lt;/span&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;input type=&quot;text&quot; id=&quot;multiTestList[0].code2&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].multiTestId&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].sortOrder&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].code1&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].createUserId&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].createTimestamp&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].updateUserId&quot; /&gt;
+							&lt;input type=&quot;hidden&quot; id=&quot;multiTestList[0].updateTimestamp&quot; /&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;input type=&quot;text&quot; id=&quot;multiTestList[0].multitext&quot; /&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/tbody&gt;
+				&lt;tfoot&gt;
+					&lt;tr&gt;
+						&lt;th class=&quot;buttonColumn&quot;&gt;
+							&lt;input type=&quot;button&quot; id=&quot;multiTestList.addButton&quot; value=&quot;+&quot;/&gt;
+						&lt;/th&gt;
+						&lt;th colspan=&quot;4&quot;&gt;
+						&lt;/th&gt;
+					&lt;/tr&gt;
+				&lt;/tfoot&gt;
+			&lt;/table&gt;
+			</pre>
+		</div>
+		<p>
+			生成したtableタグの中にはレコードを追加するaddButtonとレコードを削除するdelButtonが生成されています。
+			EditableHtmlTable.jsに、これらの追加、削除の処理が記述されています。
+			また、テーブルの行をドラッグすることによって、レコードの順序変更することができます。
+			この時idが"sortOrder"のフィールドが存在すると、その値が表示順に設定されます。
+			この値をデータベースに保存し読み取り時にソート順を指定して取得することによって、ソート順を保つことができます。
+		</p>
+		<h3>カラム固定テーブル</h3>
+		<p>
+			カラム数の多いテーブルをHtmlTableに表示すると、横スクロールが発生します。
+			この場合先頭の項目がスクロールアウトしてしまうと表が読みつらくなります。
+			Excelなどではこのような場合ウインドウ枠の固定という機能を使い、
+			キーとなる項目を固定カラムに配置し、それに関連する情報をスクロールさせるように設定します。
+			以前のHTMLでこれをやろうとすると、固定部のテーブルとスクロール部のテープを分けてレイアウトし、
+			各カラムを合わせるという非常に面倒な作業が発生していました。
+		</p>
+		<p>
+			最近のCSSでサポートされた"position: sticky;"を使用すると&lt;th&gt;&lt;/th&gt;&lt;td&gt;&lt;/td&gt;を指定した位置に固定させることができます。
+			HtmlTableクラスではこの機能を使用した、カラム固定機能をサポートしています。
+		</p>
+		<p>
+			この機能を使用するにはsetFixedColumnsメソッドを指定して、固定するカラムの数を指定します。
+		</p>
+		<div class="filecaption">Sample2QueryResultForm.javaでラカム固定テーブルを使用した例</div>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * コンストラクタ。
+	 */
+	public Sample2QueryResultForm() {
+		Sample2Dao dao = new Sample2Dao();
+		this.addPkFieldList(dao.getEditFormKeyList());
+		PageScrollHtmlTable htmltable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());
+		<b>htmltable.setFixedColumns(2); // 先頭2カラムを固定</b>
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setSortable(true);
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setSortable(true);
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setSortable(true);
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_SELECT).setSortable(true);
+
+		this.addHtmlTable(htmltable);
+	}
+			</pre>
+		</div>
+		<p>
+			この機能を使う場合、以下のようにテーブルの各カラムの幅をすべて指定する必要があります。
+			固定カラム数を指定したテーブルクラスを含むフォームのHTMLを生成すると、
+			ヘッダの文字数から適当に絡む幅を指定した&lt;table&gt;タグが出力されます。
+			表示するデータに応じて各カラムの幅を調整してください。
+		</p>
+		<div class="filecaption">カラム幅を指定したテーブル</div>
+		<div class="wrappre">
+			<pre>
+&lt;table id=&quot;queryResult&quot;&gt;
+	&lt;thead&gt;
+		&lt;tr&gt;
+			&lt;th&gt;
+				No.
+			&lt;/th&gt;
+			&lt;th&gt;
+				&#12486;&#12461;&#12473;&#12488;
+			&lt;/th&gt;
+			&lt;th&gt;
+				&#25968;&#20516;
+			&lt;/th&gt;
+			&lt;th&gt;
+				&#26085;&#20184;
+			&lt;/th&gt;
+			&lt;th&gt;
+				&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;
+			&lt;/th&gt;
+			&lt;th&gt;
+				&#25805;&#20316;
+			&lt;/th&gt;
+		&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td class=&quot;rowno&quot;&gt;
+				&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].sampleId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].createUserId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].createTimestamp&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].updateUserId&quot; /&gt;
+				&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].updateTimestamp&quot; /&gt;
+			&lt;/td&gt;
+			&lt;td style=&quot;width: 300px;&quot;&gt;
+				&lt;a id=&quot;queryResult[0].updateButton&quot; href=&quot;javascript:void(0);&quot;&gt;&lt;span id=&quot;queryResult[0].sampleText&quot;&gt;&lt;/span&gt;&lt;/a&gt;
+			&lt;/td&gt;
+			&lt;td style=&quot;width: 100px;&quot;&gt;
+				&lt;span id=&quot;queryResult[0].sampleNumeric&quot;&gt;&lt;/span&gt;
+			&lt;/td&gt;
+			&lt;td style=&quot;width: 110px;&quot;&gt;
+				&lt;span id=&quot;queryResult[0].sampleDate&quot;&gt;&lt;/span&gt;
+			&lt;/td&gt;
+			&lt;td style=&quot;width: 126px;&quot;&gt;
+				&lt;span id=&quot;queryResult[0].sampleSelect&quot;&gt;&lt;/span&gt;
+			&lt;/td&gt;
+			&lt;td style=&quot;width: 164px;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;queryResult[0].viewButton&quot; value=&quot;&#34920;&#31034;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;queryResult[0].referButton&quot; value=&quot;&#21442;&#29031;&#30331;&#37682;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;queryResult[0].deleteButton&quot; value=&quot;&#21066;&#38500;&quot;&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+
+			</pre>
+		</div>
+		<figure>
+			<figcaption>カラム固定されたテーブル</figcaption>
+			<img src="table1.png" style="width:50%; height:50%;"/>
+		</figure>
+	</body>
+</html>

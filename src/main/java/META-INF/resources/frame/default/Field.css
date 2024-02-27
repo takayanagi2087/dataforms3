@@ -1,0 +1,268 @@
+@charset "UTF-8";
+
+/* アンカーのスタイル */
+a:link,
+a:visited {
+	color: var(--anchor-color);
+}
+
+a:hover,
+a:active {
+	color: var(	--anchor-hover-color);
+}
+
+
+/* ボタンのスタイル */
+button, input[type='button'], input[type='submit'] {
+	color: var(--button-color);
+	background-color: var(--button-background-color);
+	border-color: var(--button-border-color);
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 3px;
+	transition: .4s;
+	outline: none;
+}
+
+button:hover,
+input[type='button']:hover,
+input[type='submit']:hover {
+	color: var(--button-hover-color);
+	background: var(--button-hover-background-color);
+	font-weight: bold;
+	cursor: pointer;
+}
+
+button:disabled,
+input[type='button']:disabled,
+input[type='submit']:disabled {
+	color: var(--button-disabled-color);
+	border-color: var(--button-disabled-color);
+	background: var(--button-background-color);
+	font-weight: normal;
+
+}
+
+.largeButton {
+	margin-top: 4px;
+	height: 30px;
+}
+
+button:not(.largeButton),
+input[type='button']:not(.largeButton),
+input[type='submit']:not(.largeButton) {
+	height: 26px;
+}
+
+button.fileFieldButton {
+	width: 16px;
+	padding-left: 0px;
+	padding-right: 0px;
+	color: var(--button-color);
+	background-color: var(--button-background-color);
+	border-style: none;
+}
+
+button.fileFieldButton:hover {
+	color: var(--button-color);
+	background-color: var(--button-background-color);
+	border-style: none;
+	font-weight: normal;
+	cursor: pointer;
+}
+
+/* テキストボックスまたはプルダウンスタイル */
+input[type='text'],
+input[type='password'],
+input[type='number'],
+input[type='email'],
+select,
+textarea {
+	color: var(--textbox-color);
+	background-color: var(--textbox-background-color);
+	border-color: var(--textbox-border-color);
+	border-width: 1px;
+	border-style: solid;
+	outline: none;
+}
+
+input[type='text']:disabled,
+input[type='password']:disabled,
+input[type='number']:disabled,
+input[type='email']:disabled,
+select:disabled,
+textarea:disabled {
+    color: hsl( 207,51%,10%);
+    background-color: rgb(200,200,200);
+    border-color: rgb(128,128,128);
+    border-width: 1px;
+    border-style: solid;
+    outline: none;
+    opacity: 0.7;
+}
+
+input[type='radio'] + label,
+input[type='checkbox'] + label {
+	color: var(--textbox-color);
+}
+/* テーブル行内の背景色を透明に設定 */
+tr.evenTr input[type='button'],
+tr.evenTr button,
+tr.evenTr input[type='text'],
+tr.evenTr input[type='password'],
+tr.evenTr input[type='number'],
+tr.evenTr input[type='email'],
+tr.evenTr select,
+tr.evenTr textarea {
+	background-color: rgba(255,255,255,0.0);
+}
+
+tr.evenTr input[type='button']:hover,
+tr.evenTr button:hover {
+	color: var(--button-hover-color);
+	background: var(--button-hover-background-color);
+}
+
+tr.oddTr input[type='button'],
+tr.oddTr button,
+tr.oddTr input[type='text'],
+tr.oddTr input[type='password'],
+tr.oddTr input[type='number'],
+tr.oddTr input[type='email'],
+tr.oddTr select,
+tr.oddTr textarea {
+	background-color: rgba(255,255,255,0.0);
+}
+
+tr.oddTr input[type='button']:hover,
+tr.oddTr button:hover {
+	color: var(--button-hover-color);
+	background: var(--button-hover-background-color);
+}
+
+
+/* テキストボックスロック時のスタイル */
+/*
+.lockedTextbox {
+
+}
+*/
+
+ /*
+  * jQuery-uiのdatepiker関連の設定(開始)。
+  */
+.ui-datepicker-trigger {
+	line-height: normal;
+	margin: 0px;
+	width: 25px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #808080;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.ui-datepicker { z-index: 100 !important; }
+
+
+ /* Datepickerの設定されたフィールド */
+.hasDatepicker {
+	width: calc(100% - 32px) !important;
+}
+
+/* 範囲フィールドのクラス */
+.rangeField {
+	width: calc((100% - 32px) / 2) !important;
+}
+
+/* 日付範囲フィールドのクラス */
+.dateRangeField {
+	width: calc((100% - 32px) / 2 - 32px) !important;
+}
+
+/*
+ * jQuery-uiのdatepiker関連の設定(終了)。
+ */
+
+/* 必須入力フィールドのスタイル */
+.requiredFieldLabel:after {
+	content: " (*)";
+	display: inline;
+	color: red;
+}
+
+
+/* PC,タブレット (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--tb-screen-min)) {
+	input,select,textarea {
+		font-size:10pt;
+	}
+
+	/* 入力フィールドの高さ */
+	input[type="text"], input[type="email"], input[type="search"], input[type="password"] {
+		height: 20px;
+		width: calc(100% - 6px);
+	}
+
+	input[type="file"] {
+		height: 24px;
+		width: calc(100% - 2px);
+	}
+	textarea {
+		width: calc(100% - 6px);
+		height: calc(100% - 6px);
+	}
+
+	select {
+		height: 24px;
+		width: 100%;
+	}
+
+	/* フィールド値を表示するspanに適したスタイル */
+	.fieldSpan {
+		display:table-cell;
+		height: 20px;
+		vertical-align: middle;
+	}
+
+}
+
+/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (max-width: var(--sp-screen-max)) {
+	input,select,textarea {
+		font-size:11pt;
+	}
+
+	/* 入力フィールドの高さ */
+	input[type="text"], input[type="email"], input[type="search"], input[type="password"], input[type="file"] {
+		height: 32px;
+		width: calc(100% - 6px);
+	}
+
+	textarea {
+		width: calc(100% - 6px);
+		height: calc(100% - 6px);
+	}
+
+	select {
+		height: 38px;
+		width: 100%;
+	}
+
+
+	/* フィールド値を表示するspanに適したスタイル */
+	.fieldSpan {
+		display:table-cell;
+		height: 20px;
+		vertical-align: middle;
+	}
+
+}
+
+
+div.videoPlayer,
+div.audioPlayer {
+	margin-top: 8px;
+}

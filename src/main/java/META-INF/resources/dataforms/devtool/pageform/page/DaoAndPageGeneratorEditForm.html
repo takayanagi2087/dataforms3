@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="editForm">
+			<style>
+				div.queryClass input {
+					width: calc(100% - 118px);
+				}
+				div.queryClass button {
+					width: 110px;
+				}
+
+				div.formClass input {
+					width: calc(100% - 118px);
+				}
+				div.formClass select {
+					width: 110px;
+				}
+
+				table.formClass th {
+					width: 300px;
+				}
+				table.formClass tbody td input {
+					width: calc(100% - 208px);
+				}
+				table.formClass td select {
+					width: calc(200px);
+				}
+			</style>
+			<div class="formHeader"><span id="editFormTitle"></span></div>
+			<input type="hidden" id="saveMode" />
+				<h2>Page features</h2>
+			<table class="responsive">
+				<tbody>
+					<tr>
+						<th style="width: 14%;">Page behavior</th>
+						<td colspan="5"><select id="pagePattern" class="pageType"></select></td>
+					</tr>
+					<tr>
+						<th style="width: 14%;">説明</th>
+						<td colspan="5">
+							<div id="desc000" class="pageDesc">
+								<!-- DBアクセス無しの説明 -->
+								Create a page class with one empty form.
+								Place the required fields in your Java form class, then
+								Please create html and js using web resource creation.
+								Please write event processing in js.							</div>
+							<div id="desc110" class="pageDesc">
+								<!-- 条件入力　→　一覧表示 -->
+								The search conditions entered in the query condition form are passed to the list acquisition query, and the results are displayed in the search results form.
+							</div>
+							<div id="desc111" class="pageDesc">
+								<!-- 条件入力　→　一覧表示　→　1レコード編集 -->
+								The search conditions entered in the query condition form are passed to the list acquisition query, and the results are displayed in the search results form. <br/>
+								Select a list to edit the corresponding record. <br/>
+								The search results list must include the primary key of the table being edited.
+							</div>
+							<div id="desc112" class="pageDesc">
+								<!-- 条件入力　→　一覧表示　→　複数レコード編集 -->
+								The search conditions entered in the query condition form are passed to the list acquisition query, and the results are displayed in the search results form. <br/>
+								Select a list to edit the corresponding multiple records. <br/>
+								The search results list must include a key field that identifies the record to be edited.
+							</div>
+							<div id="desc102" class="pageDesc">
+								<!-- 条件入力　→　複数レコード編集 -->
+								The search conditions entered in the query condition form are passed to the edit target acquisition query, and the results are displayed in the edit form. <br/>
+								The query condition must specify the condition that identifies the record to be edited.
+							</div>
+							<div id="desc010" class="pageDesc">
+								<!-- 一覧表示 -->
+								Displays the execution results of the list acquisition query in the search results form. <br/>
+								No conditions are specified for the list acquisition query. <br/>
+								With some modification, it is possible to specify conditions using QueryString.
+							</div>
+							<div id="desc011" class="pageDesc">
+								<!-- 一覧表示　→　1レコード編集 -->
+								Displays the execution results of the list acquisition query in the search results form. <br/>
+								No conditions are specified for the list acquisition query. <br/>
+								With some modification, it is possible to specify conditions using QueryString. <br/>
+								Select a list to edit the corresponding record. <br/>
+								The search results list must include the primary key of the table being edited.
+							</div>
+							<div id="desc012" class="pageDesc">
+								<!-- 一覧表示　→　複数レコード編集 -->
+								Displays the execution results of the list acquisition query in the search results form. <br/>
+								No conditions are specified for the list acquisition query. <br/>
+								With some modification, it is possible to specify conditions using QueryString. <br/>
+								Select a list to edit the corresponding multiple records. <br/>
+								The search results list must include a key field that identifies the record to be edited.
+							</div>
+							<div id="desc001" class="pageDesc">
+								<!-- 1レコード編集 -->
+								This page adds 1 new record. <br/>
+								You can edit the target record by specifying the primary key in QueryString.
+							</div>
+							<div id="desc002" class="pageDesc">
+								<!-- 複数レコード編集 -->
+								This page is for editing all records. <br/>
+								Please specify a table with a small number of records to be edited.
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		<h2>Class to generate</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Java source output destination</th>
+						<td><input type="text" id="javaSourcePath" /></td>
+						<th>Function</th>
+						<td><select id="functionSelect"></select></td>
+						<th>Page name</th>
+						<td><input type="text" id="pageName" /></td>
+					</tr>
+					<tr>
+						<th>Page package name</th>
+						<td><input type="text" id="packageName" /></td>
+						<th>Page class name</th>
+						<td><input type="text" id="pageClassName" /></td>
+						<th>Overwrite mode</th>
+						<td><select id="pageClassOverwriteMode"></select></td>
+					</tr>
+					<tr>
+						<th>DAO package name</th>
+						<td><input type="text" id="daoPackageName" /></td>
+						<th>DAO class name</th>
+						<td><input type="text" id="daoClassName" /></td>
+						<th>Overwrite mode</th>
+						<td><select id="daoClassOverwriteMode"></select></td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Forms and databases</h2>
+			<table class="responsive">
+				<thead>
+					<tr>
+						<th style="width: 200px;"></th>
+						<th style="width: 202px;">Function</th>
+						<th>Package</th>
+						<th>Table or query class name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<th>Empty form</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="formClassName"/>&nbsp;
+								<select id="formClassOverwriteMode"></select>
+							</div>
+						</td>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<th>Inquiry condition form</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="queryFormClassName" class="queryForm"/>&nbsp;
+								<select id="queryFormClassOverwriteMode" class="queryForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="queryFormDesc listQueryCondition">The conditions entered in this form are passed to the list acquisition query.</span>
+							<span class="queryFormDesc editQueryCondition">The conditions entered in this form are passed to the edit target acquisition query.</span>
+							<span class="queryFormDesc noNextForm">This is a form to enter any information. Processing of the input information must be implemented by the application.</span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="listQueryClassName">List acquisition query</label></th>
+						<td><select id="listQueryFunctionSelect" class="listQuery listForm"></select></td>
+						<td><input type="text" id="listQueryPackageName" class="listForm"/></td>
+						<td>
+							<div class="multiField queryClass">
+								<input type="text" id="listQueryClassName" class="listForm"/>
+								<input type="hidden" id="listQueryConfig" />
+								<button type="button" id="listQueryButton" class="listForm">Field settings</button>
+							</div>
+						</td>
+						<td>
+							<span class="queryResultFormDesc">Specify the table or query class to retrieve the list.</span>
+						</td>
+					</tr>
+					<tr>
+						<th>Search result form</th>
+						<td><span class="funcName" ></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField  formClass">
+								<input type="text" id="queryResultFormClassName" class="listForm" />&nbsp;
+								<select id="queryResultFormClassOverwriteMode" class="listForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="queryResultFormDesc">This form displays the execution results of a list acquisition query.</span>
+							<span class="queryResultFormDesc editQueryCondition1">Clicking a link in the list passes the key information to the query to be edited.</span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="editQueryClassName">Edit target acquisition query</label></th>
+						<td><select id="editQueryFunctionSelect" class="editForm"></select></td>
+						<td><input type="text" id="editQueryPackageName" class="editForm"/></td>
+						<td>
+							<div class="multiField queryClass">
+								<input type="text" id="editQueryClassName" class="editForm"/>
+								<input type="hidden" id="editQueryConfig" />
+								<button type="button" id="editQueryButton" class="editForm">Field settings</button>
+							</div>
+						</td>
+						<td>
+							<span class="editFormDesc">Specify the table or query class to obtain the information to be edited.</span>
+						</td>
+					</tr>
+					<tr>
+						<th>Edit form class name</th>
+						<td><span class="funcName"></span></td>
+						<td><span class="packageName"></span></td>
+						<td>
+							<div class="multiField formClass">
+								<input type="text" id="editFormClassName" class="editForm"/>&nbsp;
+								<select id="editFormClassOverwriteMode" class="editForm"></select>
+							</div>
+						</td>
+						<td>
+							<span class="editFormDesc">Edit and save the data obtained by the query to be edited.</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="multiRecoedQueryList">
+				<h3>Multiple record query</h3>
+				<table id="multiRecordQueryList" class="editableTable">
+					<thead>
+						<tr>
+							<th colspan="2" nowrap>
+
+							</th>
+							<th nowrap>
+								No.
+							</th>
+							<th>
+								Function
+							</th>
+							<th>
+								Package name
+							</th>
+							<th>
+								Table or query class name
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="buttonColumn">
+								<input type="button" id="multiRecordQueryList[0].addButton" value="+"/>
+							</td>
+							<td class="buttonColumn">
+								<input type="button" id="multiRecordQueryList[0].deleteButton" value="-"/>
+							</td>
+							<td style="text-align: right;" class="rowno">
+								<span id="multiRecordQueryList[0].no"></span>
+							</td>
+							<td>
+								<select id="multiRecordQueryList[0].functionSelect" ></select>
+							</td>
+							<td>
+								<input type="text" id="multiRecordQueryList[0].packageName" />
+							</td>
+							<td>
+								<div class="multiField queryClass">
+									<input type="text" id="multiRecordQueryList[0].queryClassName" />
+									<input type="hidden" id="multiRecordQueryList[0].queryConfig" />
+									<button type="button"  id="multiRecordQueryList[0].fieldButton">Field settings</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="buttonColumn">
+								<input type="button" id="multiRecordQueryList.addButton" value="+"/>
+							</th>
+							<th colspan="5">
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<input type="button" id="allErrorButton" class="largeButton" value="All overwrites are errors"/>
+			<input type="button" id="allSkipButton" class="largeButton" value="Do not overwrite all"/>
+			<input type="button" id="allForceOverwriteButton" class="largeButton" value="Force overwrite"/>
+			<input type="button" id="errorSkipButton" class="largeButton" value="Don't overwrite the error"/>
+			<input type="button" id="errorForceButton" class="largeButton" value="Forcibly overwrite the error"/><br/>
+			<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
+			<input type="button" id="saveButton" class="largeButton" value="Save"/>
+			<input type="button" id="resetButton" class="largeButton" value="Reset"/>
+			<input type="button" id="backButton" class="largeButton" value="Back"/>
+		</form>
+
+	</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>テーブルJavaクラス作成</title>
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="queryForm">
+				<div class="formHeader">Query contition</div>
+				<table class="responsive thtd">
+					<tbody>
+						<tr>
+							<th>Function</th>
+							<td><select id="functionSelect"></select></td>
+						</tr>
+						<tr>
+							<th>Package name</th>
+							<td><input type="text" id="packageName" /></td>
+						</tr>
+						<tr>
+							<th>Class name</th>
+							<td><input type="text" id="className" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<input type="submit" id="queryButton" class="largeButton" value="Query">
+				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
+				<input type="button" id="newButton" class="largeButton" value="New">
+			</form>
+			<form id="queryResultForm">
+				<div class="formHeader">Query result</div>
+				<div class="hScrollDiv">
+					<table id="queryResult">
+						<thead>
+							<tr>
+								<th>
+									No.
+								</th>
+								<th>
+									Class name
+								</th>
+								<th>
+									Table name
+								</th>
+								<th>
+									Comment
+								</th>
+								<th>
+									Presence of table
+								</th>
+								<th>
+									Presence of seq.
+								</th>
+								<th>
+									Difference
+								</th>
+								<th>
+									Number of records
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<span id="queryResult[0].rowNo"></span>
+									<input type="hidden" id="queryResult[0].packageName" />
+									<input type="hidden" id="queryResult[0].tableClassName" />
+								</td>
+								<td>
+									<a href="javascript:void(0);" id="queryResult[0].updateButton">
+										<span id="queryResult[0].fullClassName"></span>
+									</a>
+								</td>
+								<td>
+									<span id="queryResult[0].tableName"></span>
+								</td>
+								<td>
+									<span id="queryResult[0].tableComment"></span>
+								</td>
+								<td>
+									<span id="queryResult[0].status"></span>
+									<input type="hidden" id="queryResult[0].statusVal" value=""/>
+								</td>
+								<td>
+									<span id="queryResult[0].sequenceGeneration"></span>
+								</td>
+								<td>
+									<span id="queryResult[0].difference"></span>
+									<input type="hidden" id="queryResult[0].differenceVal" value=""/>
+								</td>
+								<td>
+									<span id="queryResult[0].recordCount"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<input type="button" id="printButton" class="largeButton" value="Table definition"/>
+			</form>
+			<form id="editForm">
+				<div class="formHeader"><span id="editFormTitle"></span></div>
+				<table class="responsive thtdthtdthtd">
+					<tbody>
+						<tr>
+							<td colspan="6"><a id="showImportButton" href="javascript:void(0);">Import existing table ...</a></td>
+						</tr>
+						<tr class="importFields" style="display: none;">
+							<th>Import table name</th>
+							<td><input type="text" id="importTable"/></td>
+							<td colspan="5"><input type="button" id="importButton" value="インポート"/></td>
+						</tr>
+						<tr>
+							<th>Java source path</th>
+							<td>
+								<input type="text" id="javaSourcePath"/>
+							</td>
+							<th>Function</th>
+							<td><select id="functionSelect"></select></td>
+							<th>Package</th>
+							<td><input type="text" id="packageName"/></td>
+						</tr>
+						<tr>
+							<th>Table class</th>
+							<td>
+								<input type="text" id="tableClassName"/>
+							</td>
+							<th>Table comment</th>
+							<td>
+								<input type="text" id="tableComment"/>
+							</td>
+							<th>Overwrite mode</th>
+							<td>
+								<select id="overwriteMode"></select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="6">
+								<input type="checkbox" id="autoIncrementId" value="1"/><label for="autoIncrementId">Automatic primary key generation</label>
+								<input type="checkbox" id="updateInfoFlag" value="1"/><label for="updateInfoFlag">Update information field generation</label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table style="width:100%;">
+					<tbody>
+						<tr>
+							<td>
+								Field list
+							</td>
+							<td style="text-align:right;">
+								<div style="width:100%;text-align:right;">
+									<input type="button" id="allErrorButton" class="largeButton" value="Overwrite all errors"/>
+									<input type="button" id="allSkipButton" class="largeButton" value="Do not overwrite all"/>
+									<input type="button" id="allForceOverwriteButton" class="largeButton" value="All forced overwriting"/>
+									<input type="button" id="errorSkipButton" class="largeButton" value="Do not overwrite errors"/>
+									<input type="button" id="errorForceButton" class="largeButton" value="Forced overwriting of errors"/>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="hScrollDiv">
+					<table id="fieldList" class="editableTable">
+						<thead>
+							<tr>
+								<th class="buttonColumn">
+								</th>
+								<th class="buttonColumn">
+								</th>
+								<th nowrap>
+									No.
+								</th>
+								<th>
+									Package
+								</th>
+								<th>
+									Class
+								</th>
+								<th>
+									Base class package
+								</th>
+								<th>
+									Base class
+								</th>
+								<th>
+									Field ID.
+								</th>
+								<th>
+									Length
+								</th>
+								<th>
+									PK
+								</th>
+								<th>
+									Not null
+								</th>
+								<th>
+									Comment
+								</th>
+								<th>
+									Overwrite
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="buttonColumn">
+									<input type="button" id="fieldList[0].addButton" value="+"/>
+								</td>
+								<td class="buttonColumn">
+									<input type="button" id="fieldList[0].deleteButton" value="-"/>
+								</td>
+								<td style="text-align: right;">
+									<span id="fieldList[0].no"></span>
+									<input type="hidden" id="fieldList[0].isDataformsField" />
+								</td>
+								<td>
+									<input type="text" id="fieldList[0].packageName" style="width:200px;"/>
+								</td>
+								<td>
+									<input type="text" id="fieldList[0].fieldClassName" style="width:160px;"/>
+								</td>
+								<td>
+									<input type="text" id="fieldList[0].superPackageName" style="width:200px;"/>
+								</td>
+								<td>
+									<input type="text" id="fieldList[0].superSimpleClassName" style="width:160px;"/>
+								</td>
+								<td style="width:50px;">
+									<input type="text" id="fieldList[0].fieldId" style="width:160px;"/>
+								</td>
+								<td style="width:48px;">
+									<input type="text" id="fieldList[0].fieldLength" style="text-align: right;"/>
+								</td>
+								<td style="width:32px; text-align: center;">
+									<input type="checkbox" id="fieldList[0].pkFlag" value="1"/>
+								</td>
+								<td style="width:64px; text-align: center;">
+									<input type="checkbox" id="fieldList[0].notNullFlag" value="1"/>
+								</td>
+								<td style="width:220px;">
+									<input type="text" id="fieldList[0].comment" />
+								</td>
+								<td nowrap style="width:160px;">
+									<select id="fieldList[0].overwriteMode"></select>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>
+									<input type="button" id="fieldList.addButton" value="+"/>
+								</th>
+								<th colspan="12">
+								</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
+				<input type="button" id="saveButton" class="largeButton" value="Save"/>
+				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
+				<input type="button" id="deleteButton" class="largeButton" value="Delete"/>
+				<input type="button" id="printButton" class="largeButton" value="Table definition"/>
+				<input type="button" id="backButton" class="largeButton" value="Back"/>
+			</form>
+
+		</div>
+	</body>
+</html>

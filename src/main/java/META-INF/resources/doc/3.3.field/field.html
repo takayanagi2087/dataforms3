@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Field,FieldValidator</title>
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+	</head>
+	<body>
+		<h1><span>3.3.</span>Field,FieldValidator</h1>
+		<p>
+			フィールドクラスはデータベースアクセス用のテーブルや問合せクラスに配置され、データベースの保存するデータの型を決定します。
+			また、フォームクラスにも配置し、HTMLの&lt;input ...&gt;や&lt;select ...&gt;...&lt;/select&gt;などのページ中の入力フィールドに対応します。
+			フィールドクラスとこれらのHTMLタグの対応はidアトリビュートで行います。
+		</p>
+		<p>
+			開発ツールで生成したこれらのタグには、idアトリビュートは生成されていますがnameアトリビュートは生成されていません。
+			Field.jsクラスはnameアトリビュートが設定されていない場合、idアトリビュートの値をコピーするようになっています。
+		</p>
+		<p>
+			フィールドクラスの主な役割はバリデーションとデータ変換になります。
+			整数を入力しデータベースに保存する場合、フォームに入力された"123"という文字列を整数として成立する文字列かどうかをチェックし(バリデーション)、
+			問題になければ整数に変換してデータベースに保存するというステップが必要になります。
+			このようなコードはそれほど難しいものではないのですが、フィールドごとに記述すると大量のコードになりBUGの温床になります。
+			dataforms2.jarではIntegerFieldをフォームとテーブルに配置するだけで、このような処理が自動的に動作するようになっています。
+		</p>
+		<p>
+			また、Javaのフィールドクラスに対応するJavascriptクラスを作成することによって、特殊な入力補助機能を実装することが可能です。
+		</p>
+		<h2>SQLのデータ型に対応したフィールド</h2>
+		<p>
+			以下のフィールドはSQLのデータ型に対応したフィールドになります。
+		</p>
+		<table>
+			<caption>
+				SQLのデータ型に対応したフィールドの一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td><td>CharField</td><td>java.lang.String<br/>char</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>固定長文字列(char)の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td><td>VarcharField</td><td>java.lang.String<br/>varchar</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>可変長文字列(varchar)の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td><td>ClobField</td><td>java.lang.String<br/>clob</td><td>&lt;textarea ...&gt;...&lt;/textarea&gt;</td><td>テキストの入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td><td>SmallintField</td><td>java.lang.Short<br/>smallint</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>2バイト整数の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td><td>IntegerField</td><td>java.lang.Integer<br/>integer</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>4バイト整数の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td><td>BigintField</td><td>java.lang.Long<br/>bigint</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>8バイト整数の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td><td>DoubleField</td><td>java.lang.Double<br/>double</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>実数の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">8</td><td>NumericField</td><td>java.math.BigDecimal<br/>numeric</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>数値の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">9</td><td>DateField</td><td>java.sql.Date<br/>date</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>日付の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">10</td><td>TimeField</td><td>java.sql.Time<br/>time</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>時刻の入力フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">11</td><td>TimestampField</td><td>java.sql.Timestamp<br/>timestamp</td><td>&lt;input type=&quot;text&quot; ...&gt;</td><td>日付時刻の入力フィールド</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>選択フィールド</h2>
+		<p>
+			ラジオボタンやプルダウンのように複数の選択肢から1つを選択するフィールドクラスは以下のようなものがあります。
+		</p>
+		<p>
+			これらのフィールドはSingleSelectFieldクラスから派生しており、
+			setHtmlFieldTypeメソッドでラジオボタンまたはプルダウンを指定することができます。
+			この設定値はWebリソース作成の時に参照され、生成するタグを決定します。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+					<td style="text-align: right;">1</td>
+					<td>BigintSingleSelectField</td>
+					<td>java.lang.Long<br/>igint</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>8バイト整数の選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>CharSingleSelectField</td>
+					<td>java.lang.Long<br/>char</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>文字列の選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>IntegerSingleSelectField</td>
+					<td>java.lang.Integer<br/>integer</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>4バイト整数の選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>SmallintSingleSelectField</td>
+					<td>java.lang.Short<br/>smallint</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>2バイト整数の選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>VarcharSingleSelectField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>可変長文字列の選択フィールド</td>
+				</tr>
+				<!--  -->
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>MasterSingleSelectField</td>
+					<td>java.lang.Long<br/>bigint</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>
+						任意のマスタテーブルから選択肢を取得する選択フィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td>
+					<td>EnumOptionSingleSelectField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>
+						列挙型の選択肢を選択するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">8</td>
+					<td>EnumTypeSingleSelectField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>
+						列挙型グループに含まれる列挙型の選択フィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">9</td>
+					<td>PropertiesSingleSelectField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>*.propertiesファイルから選択肢を取得する選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">10</td>
+					<td>PresenceField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>有無を選択するフィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">11</td>
+					<td>LangCodeField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;radio&quot; ...&gt;<br/>&lt;select&gt;...&lt;/select&gt;</td>
+					<td>システムのサポートする言語コードを選択するフィールド</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>複数選択フィールド</h2>
+		<p>
+			チェックボックスや複数選択リストのように複数の選択肢から1つを選択するフィールドクラスは以下のようなものがあります。
+		</p>
+		<p>
+			これらのフィールドはMultiSelectFieldクラスから派生しており、
+			setHtmlFieldTypeメソッドでチェックボックスまたは複数選択リストを指定することができます。
+			この設定値はWebリソース作成の時に参照され、生成するタグを決定します。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!--  -->
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>MultiSelectField&lt;TYPE&gt;</td>
+					<td>java.lang.List&lt;TYPE&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>複数選択フィールドの基本クラス</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>MasterMultiSelectField</td>
+					<td>java.lang.List&lt;Long&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>任意のマスタテーブルから選択肢を取得する複数選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>EnumOptionMultiSelectField</td>
+					<td>java.lang.List&lt;String&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>列挙型の選択肢の複数選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>PropertiesMultiSelectField</td>
+					<td>java.lang.List&lt;String&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>*.propertiesファイルから選択肢を取得する複数選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>PresenceMultiSelectField</td>
+					<td>java.lang.List&lt;String&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>有無の複数選択フィールド</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>FlagMultiSelectField</td>
+					<td>java.lang.List&lt;String&gt;<br/>clob(json形式)</td>
+					<td>&lt;input type=&quot;checkbox&quot; ...&gt;<br/>&lt;select ... multiple&gt;...&lt;/select&gt;</td>
+					<td>ON/OFFの複数選択フィールド</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>ファイルフィールド</h2>
+		<p>
+			dataforms2.jarでは&lt;input type=&quot;file&quot; ...&gt;で指定されたファイルをBLOBに記録する方法と、
+			所定のフォルダに記録しそのパスをVARCHARに記録2種類の方法をサポートしています。
+			また任意のファイルの他に画像、動画、音声ファイルの専用ファイルフィールドも存在します。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!--  -->
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>BlobStoreFileField</td>
+					<td>dataforms.dao.file.FileObject<br/>blob</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						任意のファイルをblobに保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>FolderStoreFileField</td>
+					<td>dataforms.dao.file.FileObject<br/>varchar</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						任意のファイルをフォルダに保存しvarchar型にそのpathを保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>BlobStoreImageField</td>
+					<td>dataforms.dao.file.ImageData<br/>blob</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						画像ファイルをblobに保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>FolderStoreImageField</td>
+					<td>dataforms.dao.file.ImageData<br/>varchar</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						画像ファイルをフォルダに保存しvarchar型にそのpathを保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>BlobStoreVideoField</td>
+					<td>dataforms.dao.file.VideoData<br/>blob</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						動画ファイルをblobに保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>FolderStoreVideoField</td>
+					<td>dataforms.dao.file.VideoData<br/>varchar</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						動画ファイルをフォルダに保存しvarchar型にそのpathを保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td>
+					<td>BlobStoreAudioField</td>
+					<td>dataforms.dao.file.AudioData<br/>blob</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						音声ファイルをblobに保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">8</td>
+					<td>FolderStoreAudioField</td>
+					<td>dataforms.dao.file.AudioData<br/>varchar</td>
+					<td>&lt;input type=&quot;file&quot; ...&gt;</td>
+					<td>
+						音声ファイルをフォルダに保存しvarchar型にそのpathを保存するフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">9</td>
+					<td>WebResourceImageField</td>
+					<td>dataforms.dao.file.ImageData<br/>-</td>
+					<td>&lt;div ... &gt;&lt;/div&gt;</td>
+					<td>
+						サーバ上の画像を表示するフィールド
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>非表示機能フィールド</h2>
+		<p>
+			&lt;input type=&quot;hidden&quot; .../&gt;に展開されるフィールドも存在します。
+			これらのフィールとはそれぞれ特殊な機能を持っています。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>DeleteFlagField</td>
+					<td>java.lang.String<br/>char</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						削除フラグフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>RecordIdField</td>
+					<td>java.lang.Long<br/>bigint</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						レコードIDフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>SortOrderField</td>
+					<td>java.lang.Short<br/>smallint</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						ソート順フィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>CreateTimestampField</td>
+					<td>java.sql.Timestamp<br/>timestamp</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						登録日時
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>CreateUserIdField</td>
+					<td>java.util.Long<br/>bigint</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						登録ユーザID
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>UpdateTimestampField</td>
+					<td>java.util.Timestamp<br/>timestamp</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						更新日時
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td>
+					<td>UpdateUserIdField</td>
+					<td>java.util.Long<br/>bigint</td>
+					<td>&lt;input type=&quot;hidden&quot; ...&gt;</td>
+					<td>
+						更新ユーザID
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>その他のフィールド</h2>
+		<p>
+			上記以外にも以下のようなフィールドが用意されています。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width:100px;">Java型<br/>SQL型</th><th style="width:300px;">対応するHTML TAG</th><th style="width: 300px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>FlagField</td>
+					<td>java.lang.String<br/>char</td>
+					<td>&lt;input type=&quot;checkbox&quot; value="1""/&gt;</td>
+					<td>
+						フラグフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>FolderField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;text&quot; /&gt;</td>
+					<td>
+						フォルダの入力フィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>ExistingFolderField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;text&quot; /&gt;</td>
+					<td>
+						フォルダの入力フィールド(存在チェック機能付き)
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>MemoField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;text&quot; /&gt;</td>
+					<td>
+						メモフィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>ZipCodeField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;input type=&quot;text&quot; /&gt;</td>
+					<td>
+						郵便番号入力フィールド
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>RowNoField</td>
+					<td>java.lang.String<br/>varchar</td>
+					<td>&lt;span&gt;&lt;/span&gt;</td>
+					<td>
+						検索結果の行番号表示用フィールド
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>問合せで使用する機能フィールド</h2>
+		<p>
+			以下のフィールドはQueryにのみ配置できるティールドです。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width: 400px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!--  -->
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>AliasField</td>
+					<td>
+						カラムの別名を指定するためのフィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>AvgField</td>
+					<td>
+						平均値を求めるための集計フィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>CountField</td>
+					<td>
+						個数を求めるための集計フィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>MaxField</td>
+					<td>
+						最大値を求めるための集計フィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>MinField</td>
+					<td>
+						最小値を求めるための集計フィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>SqlField</td>
+					<td>
+						SQLの任意の式フィールドクラス
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td>
+					<td>SumField</td>
+					<td>
+						合計値を求めるための集計フィールドクラス
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>バリデータ</h2>
+		<p>
+			各種フィールドクラスには適切なバリデータが設定されています。
+			既存のフィールドを使用している場合、必須項目となるフィールドにRequiredValidatorを設定するくらいで済むはずです。
+			バリデータは以下のものが用意されています。
+			新たなフィールドを定義する場合、これらのクラスを参考にして必要なバリデータを実装してください。
+		</p>
+		<table>
+			<caption>
+				フィールド一覧
+			</caption>
+			<thead>
+				<tr>
+					<th style="width:40px;">No.</th><th style="width:200px;">クラス名</th><th style="width: 400px;">用途</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: right;">1</td>
+					<td>FieldValidator</td>
+					<td>フィールドバリデータの基本クラス</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">2</td>
+					<td>RegexpValidator</td>
+					<td>正規表現バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">3</td>
+					<td>AlphaValidator</td>
+					<td>アルファベットバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">4</td>
+					<td>AsciiValidator</td>
+					<td>Ascii文字バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">5</td>
+					<td>DoublebyteValidator</td>
+					<td>全角文字バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">6</td>
+					<td>HankakukatakanaValidator</td>
+					<td>半角カタカナバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">7</td>
+					<td>HiraganaValidator</td>
+					<td>ひらがなバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">8</td>
+					<td>KatakanaValidator</td>
+					<td>全角カタカナバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">9</td>
+					<td>MailAddressValidator</td>
+					<td>メールアドレスバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">10</td>
+					<td>NumberCharValidator</td>
+					<td>数字文字列バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">11</td>
+					<td>ZipCodeValidator</td>
+					<td>郵便番号バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">12</td>
+					<td>DateTimeValidator</td>
+					<td>日付、時刻関連バリデータの基本クラス</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">13</td>
+					<td>DateValidator</td>
+					<td>日付バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">14</td>
+					<td>TimestampValidator</td>
+					<td>日付時刻バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">15</td>
+					<td>TimeValidator</td>
+					<td>時刻バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">16</td>
+					<td>MaxLengthValidator</td>
+					<td>最大長バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">17</td>
+					<td>NumberRangeValidator</td>
+					<td>数値ファイルバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">18</td>
+					<td>NumberValidator</td>
+					<td>数値バリデータ(Numeric以外)</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">19</td>
+					<td>NumericValidator</td>
+					<td>数値バリデータ(Numeric用)</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">20</td>
+					<td>RequiredValidator</td>
+					<td>必須バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">21</td>
+					<td>DisplayedRequiredValidator</td>
+					<td>表示されているとき必須バリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">22</td>
+					<td>DbMatchValidator</td>
+					<td>DBマッチングバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">23</td>
+					<td>ExistingFolderValidator</td>
+					<td>フォルダ存在チェックバリデータ</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">24</td>
+					<td>FileSizeValidator</td>
+					<td>ファイルサイズバリデータ</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,96 @@
+@charset "UTF-8";
+
+/**
+ * 変数宣言用css。
+ *
+ * このファイルは変数宣言専用のcssです。
+ * 拡張子Frame.cssxのように拡張子cssxでアクセスすると、CssFilterが動作し
+ * Frame.cssファイル中の"var(--pc-screen-min)"を"1025px"に置き換えて送付します。
+ * この機能は以下の様に標準的なcssでサポートされない以下の記述を有効にします。
+ *
+ * @media screen and (min-width: var(--pc-screen-min))
+ *
+ */
+
+:root {
+	/* デバイス毎の画面サイズ */
+	--pc-screen-min: 1025px;	/* これ以上をPCと判定 */
+	--tb-screen-max: 1024px;	/* これ以下をタブレットと判定 */
+	--tb-screen-min: 769px;		/* これ以上をタブレットと判定 */
+	--sp-screen-max: 768px;		/* これ以下をスマートフォンと判定 */
+
+	/* 各種サイズ */
+	--body-width: calc(100% - 16px);	/* bodyの幅 */
+	--body-min-width: 320px;			/* bodyの最小幅 */
+
+	/* メニュー関連設定 */
+	--menu-width: 220px;	/* メニューの幅 */
+	--user-info-width: 320px;	/* ユーザ情報の幅 */
+
+	/* フッター関連設定 */
+	--footer-width: 100%;	/* フッターの幅 */
+	--footer-height: 30px;	/* フッターの高さ */
+
+	/* 色の系統指定(最後の色が有効になります) */
+	--base-color: 140,38%;	/* 緑系統 */
+	--base-color: 0,70%;	/* 赤系統 */
+	--base-color: 0,0%;		/* グレー系統 */
+	--base-color: 207,51%;	/* 青系統 */
+
+	--frame-base-color: var(--base-color);	/* フレームのベース色 */
+	--menu-base-color: var(--base-color);	/* メニューのベース色 */
+	--field-base-color: var(--base-color);	/* フィールドのベース色 */
+
+	/* フィールド関連の配色 */
+	--field-text-color: hsl(var(--field-base-color),10%);
+	--field-active-color: hsl(var(--field-base-color),0%);
+	--field-border-color: hsl(var(--field-base-color),60%);
+	--field-background-color: hsl(var(--field-base-color),100%);
+
+
+	/* ボタン関連 */
+	--button-color: var(--field-text-color);
+	--button-background-color: var(--field-background-color);
+	--button-border-color: var(--field-border-color);
+	--button-hover-color: var(--field-background-color);
+	--button-hover-background-color: hsl(var(--field-base-color),75.0%);
+	--button-disabled-color:hsl(var(--field-base-color),80.0%);
+
+	/* テキストボックスまたはプルダウン関連 */
+	--textbox-color: var(--field-text-color);
+	--textbox-background-color: var(--field-background-color);
+	--textbox-border-color: var(--field-border-color);
+
+	/* テーブル関連色 */
+	--th-color: hsl(var(--field-base-color),10%);				/* thの前景色 */
+	--th-background-color: hsl(var(--field-base-color),75.0%);		/* thの背景色 */
+	--even-tr-background-color: hsl(var(--field-base-color),100.0%);
+	--odd-tr-background-color: hsl(var(--field-base-color),85.0%);
+
+	--scrollbar-track-color: hsl(var(--field-base-color),95.0%);
+	--scrollbar-thumb-color: hsl(var(--field-base-color),50.0%);
+
+	/* フォームのボーダー */
+	--form-border-color: var(--field-border-color);
+
+	/* アンカーの色 */
+	--anchor-color: var(--field-text-color);
+	--anchor-hover-color: red;
+
+	/* ヘッター1 */
+	--header1-color: black;
+	--header1-background-color: hsl(var(--frame-base-color),75.0%);
+	--header2-color: black;
+	--header2-background-color: hsl(var(--frame-base-color),90.0%);
+	--footer-color: black;
+	--footer-background-color: hsl(var(--frame-base-color),75.0%);
+
+	/* メニュー BOX*/
+	--menu-box-background-color: hsl(var(--menu-base-color),100.0%);
+	--menu-box-border-color: hsl(var(--menu-base-color),60.0%);
+	/* メニュー1階層目 */
+	--menu-level1-background-color: hsl(var(--menu-base-color),75.0%);
+	/* メニュー2階層目 */
+	--menu-level2-background-color: hsl(var(--menu-base-color),95.0%);
+}
+

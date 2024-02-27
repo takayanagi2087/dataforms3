@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Web resource generation</title>
+	</head>
+	<body>
+		<form id="webResourceForm">
+			<table class="responsive thtd">
+				<tbody>
+					<tr>
+						<th>
+							Field layout
+						</th>
+						<td>
+							<select id="fieldLayout"></select>
+						</td>
+					</tr>
+					<tr>
+						<th >
+							Web resource output destination
+						</th>
+						<td>
+							<input type="text" id="webSourcePath"/>
+						</td>
+					</tr>
+					<tr>
+						<th >
+							Type
+						</th>
+						<td>
+							<select id="webComponentType"></select>
+						</td>
+					</tr>
+					<tr>
+						<th >
+							Class name
+						</th>
+						<td>
+							<input type="text" id="className" />
+						</td>
+					</tr>
+					<tr id="htmlTr">
+						<th style="max-width:250px;">
+							HTML
+						</th>
+						<td>
+							<input type="text" id="htmlPath" style="width: calc(100% - 160px);"/>
+							<select id="htmlStatus"></select>&nbsp;
+							<input type="button" id="generateHtml" value="Generate"/><br/>
+							<input type="checkbox" id="outputFormHtml" value="1" />
+							<label for="outputFormHtml" class="outputFormHtml">Output form to another file</label>
+						</td>
+					</tr>
+					<tr>
+						<th >
+							Javascript
+						</th>
+						<td>
+							<input type="text" id="javascriptPath" style="width: calc(100% - 160px);"/>
+							<select id="javascriptStatus"></select>&nbsp;
+							<input type="button" id="generateJavascript" value="Generate"/>&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<th >
+							Javascript class
+						</th>
+						<td>
+							<input type="text" id="javascriptClass"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="checkbox" id="forceOverwrite" value="1" />
+							<label for="forceOverwrite" class="forceOverwrite">Overwrite the source file.</label>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="button" id="closeButton" class="largeButton" value="Close"/>&nbsp;
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</body>
+</html>

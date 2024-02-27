@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="queryForm">
+			<div class="formHeader">検索条件</div>
+			<table class="responsive thtd">
+				<tbody>
+					<tr>
+						<th>機能</th>
+						<td><select id="functionSelect"></select></td>
+					</tr>
+					<tr>
+						<th>パッケージ名</th>
+						<td><input type="text" id="packageName" /></td>
+					</tr>
+					<tr>
+						<th>クラス名</th>
+						<td><input type="text" id="className" /></td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="submit" id="queryButton" class="largeButton" value="検索">
+			<input type="button" id="resetButton" class="largeButton" value="リセット">&nbsp;
+			<input type="button" id="newButton" class="largeButton" value="新規登録">
+		</form>
+	</body>
+</html>

@@ -1,0 +1,120 @@
+@charset "UTF-8";
+
+/* 各フォームのスタイル */
+.mainDiv form {
+	margin:5px;
+	padding:10px;
+	background: #fff;
+	border-width: 1px;
+	border-color: var(--form-border-color);
+	border-style: solid;
+}
+
+/* 各フォームヘッダのスタイル */
+.formHeader {
+	font-size: 120%;
+	margin-top: 1px;
+	margin-bottom: 5px;
+	padding: 5px;
+/*	border-left-width: 10px;
+	border-left-style: solid;
+	border-left-color: var(--border-color);*/
+	border-bottom-width: 1px;
+	border-bottom-style: dashed;
+	border-bottom-color: var(--form-border-color);
+}
+
+/*スクロールバー全体*/
+::-webkit-scrollbar {
+	width: 16px;
+}
+
+/*スクロールバーの軌道*/
+::-webkit-scrollbar-track {
+	background: var(--scrollbar-track-color);
+	border-radius: 8px;
+}
+
+/*スクロールバーの動く部分*/
+::-webkit-scrollbar-thumb {
+	background: var(--scrollbar-thumb-color);
+	border-radius: 8px;
+}
+
+table.columnFixedTable,
+div.hScrollDiv {
+	scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+
+/* PC,タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--tb-screen-min)) {
+	.mainDiv table.responsive th,
+	.mainDiv table.responsive td {
+		height: 26px;
+	}
+
+	/* レスポンシブテーブルの制御設定 */
+	table.responsive {
+		width: 100%;
+	}
+
+
+	/* レスポンシブテーブルの制御設定 */
+	table.responsive {
+		width: 100%;
+	}
+
+	/* <th></th><td></td>のみのテーブル */
+	table.thtd th {
+		width: 30%;
+	}
+
+	table.thtd td {
+		width: 70%;
+	}
+
+	/* <th></th><td></td>の2回繰り返しテーブル */
+	table.thtdthtd th {
+		width: 20%;
+	}
+
+	table.thtdthtd td {
+		width: 30%;
+	}
+
+	/* <th></th><td></td>の3回繰り返しテーブル */
+	table.thtdthtdthtd th {
+		width: 10%;
+	}
+
+	table.thtdthtdthtd td {
+		width: 15%;
+	}
+}
+
+/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (max-width: var(--sp-screen-max)) {
+	.mainDiv table.responsive th,
+	.mainDiv table.responsive td {
+		height: 40px;
+	}
+
+	/* レスポンシブテーブルの制御設定 */
+	table.responsive {
+		width: 100%;
+	}
+
+	table.responsive tbody tr th,
+	table.responsive tbody tr td
+	{
+		display: inline-block;
+		vertical-align: middle;
+		width: 100%;
+		margin: 1px;
+	}
+
+	table.responsive tbody tr th {
+		padding-top: 12px;
+	}
+}

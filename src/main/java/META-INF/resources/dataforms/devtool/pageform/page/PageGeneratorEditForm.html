@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="editForm">
+			In the specified package, create a java source file of the page class and various form classes to be placed in it.
+			<h2>Page class to generate</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Java source output destination</th>
+						<td><input type="text" id="javaSourcePath" ></td>
+						<th>Function</th>
+						<td><select id="functionSelect"></select></td>
+						<th>Package name</th>
+						<td><input type="text" id="packageName"></td>
+					</tr>
+					<tr>
+						<th>Class name</th>
+						<td>
+							<input type="text" id="pageClassName" >
+						</td>
+						<th>Comment</th>
+						<td>
+							<input type="text" id="pageName">
+						</td>
+						<th>Overwrite mode</th>
+						<td>
+							<select id="pageClassOverwriteMode"></select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>DAO class to use</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Function</th>
+						<td>
+							<select id="daoFunctionSelect"></select>
+						</td>
+						<th>Package name</th>
+						<td>
+							<input type="text" id="daoPackageName">
+						</td>
+						<th>DAO class name</th>
+						<td colspan="5">
+							<input type="text" id="daoClassName">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Form class to create</h2>
+			<table class="responsive thtdthtdthtd">
+				<tbody>
+					<tr>
+						<th>Query form</th>
+						<td>
+							<input type="text" id="queryFormClassName">
+						</td>
+						<th>Overwrite mode</th>
+						<td>
+							<select id="queryFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="queryFormClassFlag" value="1"><label for="queryFormClassFlag">Generate</label>
+						</td>
+					</tr>
+					<tr>
+						<th>Query result form</th>
+						<td>
+							<input type="text" id="queryResultFormClassName">
+						</td>
+						<th>Overwrite mode</th>
+						<td>
+							<select id="queryResultFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="queryResultFormClassFlag" value="1"><label for="queryResultFormClassFlag">Generate</label>
+						</td>
+					</tr>
+					<tr>
+						<th>Edit form</th>
+						<td>
+							<input type="text" id="editFormClassName">
+						</td>
+						<th>Overwrite mode</th>
+						<td>
+							<select id="editFormClassOverwriteMode"></select>
+						</td>
+						<td style="width: 25%;">
+							<input type="checkbox" id="editFormClassFlag" value="1"><label for="editFormClassFlag">Generate</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="button" id="allErrorButton" class="largeButton" value="All overwrites are errors"/>
+			<input type="button" id="allSkipButton" class="largeButton" value="Do not overwrite all"/>
+			<input type="button" id="allForceOverwriteButton" class="largeButton" value="Force overwrite"/>
+			<input type="button" id="errorSkipButton" class="largeButton" value="Don't overwrite the error"/>
+			<input type="button" id="errorForceButton" class="largeButton" value="Forcibly overwrite the error"/><br/>
+			<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
+			<input type="button" id="saveButton" class="largeButton" value="Save"/>
+			<input type="button" id="resetButton" class="largeButton" value="Reset"/>
+			<input type="button" id="backButton" class="largeButton" value="Back"/>
+		</form>
+	</body>
+</html>

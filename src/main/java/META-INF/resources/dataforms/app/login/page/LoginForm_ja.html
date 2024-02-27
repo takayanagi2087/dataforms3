@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>ログイン</title>
+	</head>
+	<body>
+		<form id="loginForm" style="height: 120px; ">
+			<table class="responsive thtd">
+				<tbody>
+					<tr>
+						<th>ユーザID.</th>
+						<td><input type="text" id="loginId" value=""/></td>
+					</tr>
+					<tr>
+						<th>パスワード</th>
+						<td><input type="password" id="password" value=""/></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div>
+								<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">ログインしたままにする</label>
+							</div>
+							<div style="float: right;">
+								<a id="passwordResetLink" href="javascript:void(0);">パスワードを忘れた方はこちら</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button type="submit" id="loginButton" class="largeButton">ログイン</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</body>
+</html>

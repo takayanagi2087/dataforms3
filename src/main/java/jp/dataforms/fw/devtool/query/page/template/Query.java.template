@@ -1,0 +1,20 @@
+package ${packageName};
+
+import dataforms.field.base.FieldList;
+import dataforms.dao.Query;
+${importList}
+${importTables}
+
+/**
+ * ${queryComment}クラスです。
+ *
+ */
+public class ${queryClassName} extends Query {
+${properties}
+	/**
+	 * コンストラクタ.
+	 */
+	public ${queryClassName}() ${constructor}
+
+${entity}
+}

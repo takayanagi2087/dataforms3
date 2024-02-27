@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="editForm">
+				<input type="hidden" id="saveMode" />
+				<input type="hidden" id="updateUserId" />
+				<input type="hidden" id="updateTimestamp" />
+				<table class="responsive">
+					<tbody>
+						<tr>
+							<th>Name</th>
+							<td><span id="userName"></span></td>
+						</tr>
+						<tr>
+							<th>Login ID.</th>
+							<td><input type="text" id="loginId"></td>
+						</tr>
+						<tr>
+							<th>Password</th>
+							<td><input type="password" id="password" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
+				<input type="button" id="saveButton" class="largeButton" value="Save"/>
+				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
+				<input type="button" id="backButton" class="largeButton" value="Back"/>
+			</form>
+		</div>
+	</body>
+</html>

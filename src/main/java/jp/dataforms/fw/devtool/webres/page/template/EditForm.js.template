@@ -1,0 +1,160 @@
+/**
+ * @fileOverview {@link ${className}}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+/**
+ * @class ${className}
+ *
+ * @extends ${superClassName}
+ */
+class ${className} extends ${superClassName} {
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 */
+	attach() {
+		super.attach();
+${buttonHandler}
+	}
+
+${callWebMethod}
+
+${validateForm}
+
+${onCalc}
+
+	// フォームの各種動作をカスタマイズするには以下のメソッドをオーバーライドしてください。
+
+${setFormData}
+
+	/**
+	 * 編集モードにします。
+	 * <pre>
+	 * 各フィールドを編集可能状態にします。
+	 * </pre>
+	 */
+/*
+	toEditMode() {
+		super.toEditMode();
+	}
+*/
+
+	/**
+	 * 確認モードにします。
+	 * <pre>
+	 * 各フィールドを編集不可状態にします。
+	 * </pre>
+	 */
+/*
+	toConfirmMode() {
+		super.toConfirmMode();
+	}
+*/
+
+	/**
+	 * 確認ボタンのイベント処理を行います。
+	 * <pre>
+	 * 対応するFormのconfirmメソッドを呼び出し、問題なければ確認モードに遷移します。
+	 * ファイルアップロードフィールドはサーバーに送信されません。
+	 * </pre>
+	 */
+/*
+	confirm() {
+		super.confirm();
+	}
+*/
+		/**
+	 * 新規登録モードにします。
+	 * <pre>
+	 * 対応するEditFormのgetNewDataを呼び出し、初期データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * </pre>
+	 */
+/*
+	newData() {
+		super.newData();
+	}
+*/
+
+		/**
+	 * 更新登録モードにします。
+	 * <pre>
+	 * 対応するEditFormのgetDataを呼び出し、編集対象データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * </pre>
+	 */
+/*
+	updateData() {
+		super.updateData();
+	}
+*/
+
+	/**
+	 * データを参照登録します。
+	 * <pre>
+	 * 対応するEditFormのgetReferDataを呼び出し、参照対象データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * </pre>
+	 *
+	 */
+/*
+	referData() {
+		super.referData();
+	}
+*/
+	/**
+	 * データを参照します。
+	 * <pre>
+	 * 対応するEditFormのgetDataを呼び出し、参照対象データを取得します。
+	 * 各フィールドに取得データを設定し、参照モードにします。
+	 * </pre>
+	 */
+/*
+	viewData() {
+		super.viewData();
+	}
+*/
+
+	/**
+	 * 保存や削除後の画面状態遷移を行います。
+	 */
+/*
+	changeStateForAfterUpdate() {
+		super.changeStateForAfterUpdate();
+	}
+*/
+
+	/**
+	 * 保存ボタンのイベント処理を行います。
+	 * <pre>
+	 * 対応するFormのsaveメソッドを呼び出し、保存処理を行います。
+	 * ファイルアップロードフィールドもサーバーに送信されます。
+	 * </pre>
+	 */
+/*
+	save() {
+		super.save();
+	}
+*/
+
+	/**
+	 * 保存ボタンのイベント処理を行います。
+	 * <pre>
+	 * 対応するEditFormのdeleteメソッドを呼び出し、保存処理を行います。
+	 * </pre>
+	 */
+/*
+	del() {
+		super.del();
+	}
+*/
+}
+

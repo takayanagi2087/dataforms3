@@ -1,0 +1,7 @@
+User registration request accepted.
+
+${userName}
+
+Please access the following URL and register user information.
+${enableUserPage}
+

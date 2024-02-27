@@ -1,0 +1,19 @@
+	// フォームの各フィールドの関連チェックを行う場合は、以下のvalidateFormメソッドを実装してください。
+	/**
+	 * フォームのデータをチェックします。
+	 * @param p パラメータ。
+	 * @return 判定結果リスト。
+	 * @throws Exception 例外。
+	 */
+/*
+	@Override
+	protected List<ValidationError> validateForm(final Map<String, Object> data) throws Exception {
+		List<ValidationError> list = super.validateForm(data);
+		if (list.size() == 0) {
+			if ( エラー判定 ) {
+				list.add(new ValidationError(HogeTable.Entity.ID_FIELD_ID, MessagesUtil.getMessage(this.getPage(), "error.messagekey")));
+			}
+		}
+		return list;
+	}
+*/

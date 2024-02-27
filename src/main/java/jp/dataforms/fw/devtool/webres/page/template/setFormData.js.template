@@ -1,0 +1,13 @@
+	/**
+	 * 各フィールドにデータを設定します。
+	 * <pre>
+	 * 新規モードの場合、削除ボタンを隠します。
+	 * </pre>
+	 * @param {Object} data フォームデータ.
+	 *
+	 */
+/*
+	setFormData(data) {
+		super.setFormData(data);
+	}
+*/

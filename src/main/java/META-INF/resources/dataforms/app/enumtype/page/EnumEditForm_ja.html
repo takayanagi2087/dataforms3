@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="editForm">
+			<div class="formHeader"><span id="editFormTitle"></span></div>
+			<input type="hidden" id="saveMode" />
+			<input type="hidden" id="enumId" />
+			<input type="hidden" id="parentId" />
+			<input type="hidden" id="sortOrder" />
+			<input type="hidden" id="createUserId" />
+			<input type="hidden" id="createTimestamp" />
+			<input type="hidden" id="updateUserId" />
+			<input type="hidden" id="updateTimestamp" />
+			<table class="responsive">
+				<tbody>
+					<tr>
+						<th>列挙型コード</th>
+						<td><input type="text" id="enumCode" /></td>
+					</tr>
+					<tr>
+						<th>グループコード</th>
+						<td><input type="text" id="enumGroupCode" /></td>
+					</tr>
+					<tr class="typeName">
+						<th>列挙型名称(default)</th>
+						<td><input type="text" id="enumName" /></td>
+					</tr>
+					<tr>
+						<th>メモ</th>
+						<td><input type="text" id="memo" /></td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>選択肢</h2>
+			<div class="hScrollDiv">
+				<table id="optionTable" class="editableTable">
+					<thead>
+						<tr>
+							<th colspan="2" nowrap>
+
+							</th>
+							<th nowrap>
+								No.
+							</th>
+							<th>
+								選択肢コード
+							</th>
+							<th class="optionName">
+								選択肢名称(default)
+							</th>
+							<th>
+								メモ
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="buttonColumn">
+								<input type="button" id="optionTable[0].addButton" value="+"/>
+							</td>
+							<td class="buttonColumn">
+								<input type="button" id="optionTable[0].deleteButton" value="-"/>
+							</td>
+							<td style="text-align: right;" class="rowno">
+								<span id="optionTable[0].no"></span>
+							</td>
+							<td>
+								<input type="text" id="optionTable[0].enumCode" />
+								<input type="hidden" id="optionTable[0].enumId" />
+								<input type="hidden" id="optionTable[0].parentId" />
+								<input type="hidden" id="optionTable[0].sortOrder" />
+								<input type="hidden" id="optionTable[0].createUserId" />
+								<input type="hidden" id="optionTable[0].createTimestamp" />
+								<input type="hidden" id="optionTable[0].updateUserId" />
+								<input type="hidden" id="optionTable[0].updateTimestamp" />
+							</td>
+							<td class="optionName">
+								<input type="text" id="optionTable[0].enumName" />
+							</td>
+							<td>
+								<input type="text" id="optionTable[0].memo" />
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="buttonColumn">
+								<input type="button" id="optionTable.addButton" value="+"/>
+							</th>
+							<th colspan="6" class="footer">
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+			<input type="button" id="saveButton" class="largeButton" value="登録"/>
+			<input type="button" id="resetButton" class="largeButton" value="リセット"/>
+			<input type="button" id="deleteButton" class="largeButton" value="削除"/>
+			<input type="button" id="backButton" class="largeButton" value="戻る"/>
+		</form>
+
+	</body>
+</html>

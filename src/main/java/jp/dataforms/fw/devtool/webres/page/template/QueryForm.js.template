@@ -1,0 +1,70 @@
+/**
+ * @fileOverview {@link ${className}}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+/**
+ * @class ${className}
+ *
+ * @extends ${superClassName}
+ */
+class ${className} extends ${superClassName} {
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 */
+	attach() {
+		super.attach();
+${buttonHandler}
+	}
+
+${callWebMethod}
+
+${validateForm}
+
+${onCalc}
+
+	// フォームの各種動作をカスタマイズするには以下のメソッドをオーバーライドしてください。
+
+${setFormData}
+
+	/**
+	 * 問合せを行います。
+	 */
+/*
+	query() {
+		// TODO:問合せの前処理を実装してください。
+		super.query();
+	}
+*/
+
+	/**
+	 * リセットを行います。
+	 */
+/*
+	reset() {
+		// TODO:リセットの前処理を実装してください。
+		super.reset();
+	}
+*/
+
+
+	/**
+	 * エクスポートを行います。
+	 */
+/*
+	exportData() {
+		// TODO:エクスポートの前処理を実装してください。
+		super.exportData();
+	}
+*/
+
+}
+

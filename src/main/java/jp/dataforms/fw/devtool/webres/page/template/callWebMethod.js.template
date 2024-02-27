@@ -1,0 +1,24 @@
+	// 独自のWebメソッドを呼び出す場合は、以下のコードを参考にしてください。
+	/**
+	 * Webメソッドの呼び出しサンプル。
+	 *
+	 */
+/*
+	async callWebMethod() {
+		try {
+			if (this.validate()) {
+				let r = await this.submit("webMethod");
+				this.parent.resetErrorStatus();
+				if (r.status == JsonResponse.SUCCESS) {
+					// TODO:成功時の処理を記述します。
+					// 応答情報をログ表示
+					logger.dir(r);
+				} else {
+					this.parent.setErrorInfo(this.getValidationResult(r), this);
+				}
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+*/

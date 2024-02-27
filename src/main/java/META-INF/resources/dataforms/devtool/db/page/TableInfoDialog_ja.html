@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>テーブル情報</title>
+	</head>
+	<body>
+		<form id="tableInfoForm">
+			<table class="responsive thtdthtd">
+				<tbody>
+					<tr>
+						<th>
+							クラス名
+						</th>
+						<td>
+							<span id="className"></span>
+						</td>
+						<th>
+							テーブル名
+						</th>
+						<td>
+							<span id="tableName"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							有無
+						</th>
+						<td>
+							<span id="status"></span>
+							<input type="hidden" id="statusVal"/>
+						</td>
+						<th>
+							シーケンス生成
+						</th>
+						<td>
+							<span id="sequenceGeneration"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							構造の差分
+						</th>
+						<td>
+							<span id="difference"></span>
+							<input type="hidden" id="differenceVal"/>
+						</td>
+						<th>
+							レコード件数
+						</th>
+						<td>
+							<span id="recordCount"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							作成SQL
+						</th>
+						<td colspan="3">
+							<textarea id="createTableSql" rows="20" cols="60" readonly="readonly" style="width: 100%; height: 300px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="button" id="updateTableButton" class="largeButton" value="更新"/>&nbsp;
+							<input type="button" id="initTableButton" class="largeButton" value="初期化"/>&nbsp;
+							<input type="button" id="dropTableButton" class="largeButton" value="削除"/>&nbsp;
+							<input type="button" id="closeButton" class="largeButton" value="閉じる"/>&nbsp;
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</body>
+</html>

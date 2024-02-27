@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="updateSqlForm">
+				<div class="formHeader">更新SQL</div>
+				<table class="responsive">
+					<tbody>
+						<tr>
+							<th>機能</th>
+							<td><select id="functionSelect"></select></td>
+						</tr>
+						<tr>
+							<th>パッケージ名</th>
+							<td><input type="text" id="packageName" /></td>
+						</tr>
+						<tr>
+							<th>テーブルクラス名</th>
+							<td><input type="text" id="tableClassName" /></td>
+						</tr>
+						<tr>
+							<th>更新区分</th>
+							<td>
+								<span><input type="radio" id="updateSqlType[0]" name="updateSqlType"/></span>
+								<button type="button" id="generateSqlButton" style="float: right;">SQL作成</button>
+							</td>
+						</tr>
+						<tr>
+							<th>sql</th>
+							<td><textarea id="sql" rows="20" cols="80" style="height: 200px;"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+				<button type="button" id="updateButton">更新</button>
+			</form>
+
+		</div>
+	</body>
+</html>

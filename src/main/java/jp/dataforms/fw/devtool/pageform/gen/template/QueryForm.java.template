@@ -1,0 +1,62 @@
+package ${packageName};
+
+import dataforms.controller.QueryForm;
+${queryFormImportList}
+import ${daoClassFullName};
+
+
+/**
+ * ${pageName}用問合せフォームクラス。
+ */
+public class ${queryFormClassName} extends QueryForm {
+	/**
+	 * コンストラクタ。
+	 */
+	public ${queryFormClassName}() {
+${queryFormFieldList}
+	}
+
+	@Override
+	public void init() throws Exception {
+		super.init();
+		// フィールドに初期値を設定する場合は以下の様にしてください。
+		// this.setFormData("fieldId", "初期値");
+	}
+
+	/**
+	 * エクスポートデータのフィールドリストを作成します。
+	 * @return フィールドリスト。
+	 */
+	@Override
+	protected FieldList getExportDataFieldList(final Map<String, Object> data) throws Exception {
+		${daoClassName} dao = new ${daoClassName}(this);
+		return dao.getListQuery().getFieldList();
+	}
+
+	/**
+	 * エクスポートデータファイルのインスタンスを返します。
+	 * @return エクスポートデータファイルのインスタンス。
+	 */
+	@Override
+	protected ExportDataFile getExportDataFile() {
+		ExportDataFile file = super.getExportDataFile();
+		file.setFileName("export.xlsx");
+		return file;
+	}
+
+	/**
+	 * エクスポートするデータを返します。
+	 * @param data 条件データ。
+	 * @return エクスポートデータ。
+	 */
+	@Override
+	protected List<Map<String, Object>> queryExportData(final Map<String, Object> data) throws Exception {
+		${daoClassName} dao = new ${daoClassName}(this);
+		return dao.query(data, this.getFieldList());
+	}
+
+
+${validateForm}
+
+${webMethod}
+}

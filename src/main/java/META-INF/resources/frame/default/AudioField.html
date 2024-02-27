@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>AudioFieldの追加コンポーネントのレイアウト</title>
+	</head>
+	<body>
+		<span>
+			<button type="button" id='${fieldId}_sel' class='fileFieldButton'>
+				<span class="ui-icon ui-icon-folder-open"></span>
+			</button>
+			<button type="button" id='${fieldId}_del' class='fileFieldButton'>
+				<span class="ui-icon ui-icon-trash"></span>
+			</button>
+			<span id='${fieldId}_selfile'></span>
+			<a id='${fieldId}_link' href=''></a>
+			<input type='hidden' id='${fieldId}_fn' name='${fieldId}_fn' value=''>
+		</span>
+		<div class="audioPlayer">
+			<audio id='${fieldId}_player' controls preload="auto"></audio>
+		</div>
+	</body>
+</html>

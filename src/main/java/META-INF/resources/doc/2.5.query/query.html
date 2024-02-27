@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+		<title>問合せクラスの作成</title>
+	</head>
+	<body>
+		<h1><span>2.5.</span>問合せクラスの作成</h1>
+		<p>
+			<a href="../2.2.devtool/devtool.html">2.2.開発ツールでページを作成</a>では単純なサンプルとするために、1テーブルのみの操作としました。
+			そのため問合せクラスを作る必要がなく、その手順を飛ばしました。
+			そこで、この章では問合せクラスの作成手順を解説します。
+		</p>
+		<h2>今回使用するテーブルの構造</h2>
+		<p>
+			dataforms2.jar中で定義されている列挙型関連テーブルを使用して、複数のテーブルを結合した問合せを試してみます。
+			列挙型は列挙型テーブル(enum)と列挙型名称テーブル(enum_name)で構成しており、以下の構造をしています。
+		</p>
+		<table>
+			<caption>列挙型テーブル(enum)</caption>
+			<thead>
+				<tr>
+					<th>
+						カラム名
+					</th>
+					<th>
+						PK
+					</th>
+					<th>
+						データ型
+					</th>
+					<th>
+						コメント
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>enum_id</td>
+					<td style="text-align: center;">*</td>
+					<td>bigint not null</td>
+					<td>列挙型ID</td>
+				</tr>
+				<tr>
+					<td>parent_id</td>
+					<td></td>
+					<td>bigint</td>
+					<td>親ID(親項目の場合はnull、子項目の場合は親項目enum.enum_idと結合)</td>
+				</tr>
+				<tr>
+					<td>sort_order</td>
+					<td></td>
+					<td>smallint</td>
+					<td>ソート順</td>
+				</tr>
+				<tr>
+					<td>enum_code</td>
+					<td></td>
+					<td>varchar(64)</td>
+					<td>列挙型コード</td>
+				</tr>
+				<tr>
+					<td>enum_group_code</td>
+					<td></td>
+					<td>varchar(64)</td>
+					<td>列挙型グループコード</td>
+				</tr>
+				<tr>
+					<td>memo</td>
+					<td></td>
+					<td>varchar(1024)</td>
+					<td>メモ</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			列挙型テーブル(enum)で列挙型のコードとその中に含む選択肢のコードを定義します。
+			列挙型コードを定義するレコードは親ID(parant_id)がnullになったもので、
+			その中の選択肢は親ID(parant_id)に列挙型コードのIDを保持します。
+			データの具体例を以下に示します。
+		</p>
+		<table>
+			<caption>列挙型テーブル(enum)のデータ例</caption>
+			<thead>
+				<tr>
+					<th>enum_id</th><th>parent_id</th><th>sort_order</th><th>enum_code</th><th>enum_group_code</th><th>memo</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>415</td><td></td><td></td><td>userLevel</td><td>userAttribute_001</td><td>ユーザの権限レベル</td>
+				</tr>
+				<tr>
+					<td>416</td><td>415</td><td>0</td><td>developer</td><td>userAttribute_001</td><td></td>
+				</tr>
+				<tr>
+					<td>417</td><td>415</td><td>1</td><td>admin</td><td>userAttribute_001</td><td></td>
+				</tr>
+				<tr>
+					<td>418</td><td>415</td><td>2</td><td>user</td><td>userAttribute_001</td><td></td>
+				</tr>
+				<tr>
+					<td>419</td><td>415</td><td>3</td><td>guest</td><td>userAttribute_001</td><td></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			列挙型名称テーブル(enum_name)は列挙型とその中の選択肢の名称を記録します。
+			このテーブルの主キーには言語コードを含み、各言語毎の名称を記録します。
+		</p>
+		<table>
+			<caption>列挙型名称テーブル(enum_name)</caption>
+			<thead>
+				<tr>
+					<th>
+						カラム名
+					</th>
+					<th>
+						PK
+					</th>
+					<th>
+						データ型
+					</th>
+					<th>
+						コメント
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>enum_id</td>
+					<td style="text-align: center;">*</td>
+					<td>bigint not null</td>
+					<td>列挙型ID(enum.enum_idと結合)</td>
+				</tr>
+				<tr>
+					<td>lang_code</td>
+					<td style="text-align: center;">*</td>
+					<td>bigint</td>
+					<td>言語コード</td>
+				</tr>
+				<tr>
+					<td>enum_name</td>
+					<td></td>
+					<td>varchar(128)</td>
+					<td>列挙型名称</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			データは以下のようになっています。
+		</p>
+		<table>
+			<caption>列挙型名称テーブル(enum_name)のデータ例</caption>
+			<thead>
+				<tr>
+					<th>enum_id</th><th>lang_code</th><th style="width:300px;">enum_name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>415</td><td>default</td><td>User level</td>
+				</tr>
+				<tr>
+					<td>415</td><td>ja</td><td>ユーザレベル</td>
+				</tr>
+				<tr>
+					<td>416</td><td>default</td><td>Developer</td>
+				</tr>
+				<tr>
+					<td>416</td><td>ja</td><td>開発者</td>
+				</tr>
+				<tr>
+					<td>417</td><td>default</td><td>Admin</td>
+				</tr>
+				<tr>
+					<td>417</td><td>ja</td><td>管理者</td>
+				</tr>
+				<tr>
+					<td>418</td><td>default</td><td>User</td>
+				</tr>
+				<tr>
+					<td>418</td><td>ja</td><td>ユーザ</td>
+				</tr>
+				<tr>
+					<td>419</td><td>default</td><td>guest</td>
+				</tr>
+				<tr>
+					<td>419</td><td>ja</td><td>ゲスト</td>
+				</tr>
+			</tbody>
+		</table>
+		<h2>テーブル関係の定義</h2>
+		<p>
+			上記のテーブル構造を踏まえると、列挙型テーブル(enum)と列挙型名称テーブル(enum_name)の結合と、
+			列挙型テーブル(enum)と列挙型テーブル(enum)の結合が考えられます。
+			以下のEnumTableRelation.javaのgetJoinConditionメソッドでは、
+			列挙型テーブル(enum)に列挙型名称テーブル(enum_name)を結合する際の結合条件を定義してあります。
+			また外部キー(ForeignKey)の設定で、列挙型テーブル(enum)に列挙型テーブル(enum)を結合する際の結合条件を定義しています。
+		</p>
+		<div class="wrappre">
+			<pre>
+package dataforms.app.enumtype.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import dataforms.dao.ForeignKey;
+import dataforms.dao.Table;
+import dataforms.dao.TableRelation;
+
+/**
+ * EnumTable&#12398;&#38306;&#20418;&#12434;&#23450;&#32681;&#12377;&#12427;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
+ *
+ */
+public class EnumTableRelation extends TableRelation {
+
+	/**
+	 * &#22806;&#37096;&#12461;&#12540;&#12522;&#12473;&#12488;&#12290;
+	 */
+	private static List&lt;ForeignKey&gt; foreignKeyList = null;
+
+	/**
+	 * &#22806;&#37096;&#12461;&#12540;&#12522;&#12473;&#12488;&#12398;&#23450;&#32681;&#12290;
+	 * &#12371;&#12398;&#21021;&#26399;&#21270;&#20966;&#29702;&#12391;&#22806;&#37096;&#12461;&#12540;&#12434;&#23450;&#32681;&#12377;&#12427;&#12371;&#12392;&#12395;&#12424;&#12426;&#12289;&#33258;&#21205;&#30340;&#12395;&#22806;&#37096;&#12461;&#12540;&#12364;&#35373;&#23450;&#12373;&#12428;&#12414;&#12377;&#12290;
+	 */
+	static {
+		foreignKeyList = new ArrayList&lt;ForeignKey&gt;();
+		foreignKeyList.add(new ForeignKey(&quot;fkEnumTable01&quot;, EnumTable.Entity.ID_PARENT_ID,
+				EnumTable.class, EnumTable.Entity.ID_ENUM_ID, &quot;error.enumtypedelete&quot;));
+	}
+
+	@Override
+	public List&lt;ForeignKey&gt; getForeignKeyList() {
+		return foreignKeyList;
+	}
+
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+	 * @param table &#23550;&#35937;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public EnumTableRelation(final Table table) {
+		super(table);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getJoinCondition(final Table joinTable, final String alias) {
+		if (joinTable instanceof EnumNameTable) {
+			return this.getTable().getLinkFieldCondition(EnumTable.Entity.ID_ENUM_ID, joinTable, alias);
+		}
+		return super.getJoinCondition(joinTable, alias);
+	}
+}
+
+			</pre>
+		</div>
+		<p class="topic">
+			列挙型テーブル(enum)と列挙型名称テーブル(enum_name)結合の定義で外部キー(ForeignKey)を使わないのは、言語コードの関係で1:nの対応になるためです。
+		</p>
+		<h2>問合せJavaクラス作成</h2>
+		<p>
+			開発ツールの「問合せJavaクラス作成」を使用すると、簡単に問合せクラスを作成することができます。
+			このツールで作成したQueryクラスは、SQLの問合せ構文の"select","from", "xxx join"までを作成します。
+		</p>
+		<p>
+			以下に列挙型テーブル(enum)と列挙型名称テーブル(enum_name)を結合した問合せsample.dao.Enum01Queryを作成例を示します。
+			この例では問合せる主テーブルに列挙型テーブル(enum)を指定し、JOINするテーブルリストに列挙型名称テーブル(enum_name)に対応するテーブルクラスを指定します。
+			列挙型名称テーブル(enum_name)の契合条件にはEnumTableRelation.javaで指定した結合条件が展開されます。
+			問合せの対象となるテーブルを指定すると、選択フィールドリストにそれぞれのテーブルのフィールドリストが展開されます。
+			Noの左隣のチェックボックスをチェックすると、フィールドIDが重複しないフィールドを選択することができます。
+		</p>
+		<figure>
+			<figcaption>単純な結合問合せ</figcaption>
+			<img src="simpleJoin.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			上の画面で作成した問合せクラスは以下のようになります。
+			Enum01Queryのコンストラクタで、テーブルの結合と取得するフィールドを設定しています。
+			その他には取得した問合せ結果を操作するためのEntityクラスと、問合せ中のフィールドを取得するメソッドを生成してあります。
+		</p>
+		<div class="wrappre">
+			<pre>
+package sample.dao;
+
+import dataforms.field.base.FieldList;
+import dataforms.dao.Query;
+import dataforms.app.enumtype.field.EnumIdField;
+import dataforms.app.enumtype.field.EnumNameField;
+import dataforms.field.common.CreateTimestampField;
+import dataforms.app.enumtype.field.ParentIdField;
+import dataforms.field.common.UpdateUserIdField;
+import dataforms.field.common.CreateUserIdField;
+import dataforms.field.common.LangCodeField;
+import dataforms.app.enumtype.field.EnumGroupCodeField;
+import dataforms.util.NumberUtil;
+import java.util.Map;
+import dataforms.field.common.SortOrderField;
+import dataforms.app.enumtype.field.EnumCodeField;
+import dataforms.app.enumtype.field.MemoField;
+import dataforms.field.common.UpdateTimestampField;
+
+import dataforms.app.enumtype.dao.EnumTable;
+import dataforms.app.enumtype.dao.EnumNameTable;
+
+
+
+/**
+ * &#21839;&#12356;&#21512;&#12431;&#12379;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
+ *
+ */
+public class Enum01Query extends Query {
+	/**
+	 * &#21015;&#25369;&#22411;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	private EnumTable enumTable = null;
+
+	/**
+	 * &#21015;&#25369;&#22411;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public EnumTable getEnumTable() {
+		return this.enumTable;
+	}
+
+	/**
+	 * &#21015;&#25369;&#22411;&#21517;&#31216;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	private EnumNameTable enumNameTable = null;
+
+	/**
+	 * &#21015;&#25369;&#22411;&#21517;&#31216;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;&#21517;&#31216;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public EnumNameTable getEnumNameTable() {
+		return this.enumNameTable;
+	}
+
+
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;.
+	 */
+	public Enum01Query() {
+		this.setComment(&quot;&#21336;&#32020;&#12394;&#32080;&#21512;&#21839;&#21512;&#12379;&quot;);
+		this.setDistinct(false);
+		this.enumTable = new EnumTable();
+		this.enumTable.setAlias(&quot;m&quot;);
+		this.enumNameTable = new EnumNameTable();
+		this.enumNameTable.setAlias(&quot;nm&quot;);
+
+		this.setFieldList(new FieldList(
+			this.enumTable.getEnumIdField()
+			, this.enumTable.getParentIdField()
+			, this.enumTable.getSortOrderField()
+			, this.enumTable.getEnumCodeField()
+			, this.enumTable.getEnumGroupCodeField()
+			, this.enumTable.getMemoField()
+			, this.enumTable.getCreateUserIdField()
+			, this.enumTable.getCreateTimestampField()
+			, this.enumTable.getUpdateUserIdField()
+			, this.enumTable.getUpdateTimestampField()
+			, this.enumNameTable.getLangCodeField()
+			, this.enumNameTable.getEnumNameField()
+		));
+		this.setMainTable(enumTable);
+		this.addInnerJoin(enumNameTable);
+
+	}
+
+	/**
+	 * Entity&#25805;&#20316;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
+	 */
+	public static class Entity extends dataforms.dao.Entity {
+		/** &#21015;&#25369;&#22411;ID&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_ENUM_ID = &quot;enumId&quot;;
+		/** &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_PARENT_ID = &quot;parentId&quot;;
+		/** &#12477;&#12540;&#12488;&#38918;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_SORT_ORDER = &quot;sortOrder&quot;;
+		/** &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_ENUM_CODE = &quot;enumCode&quot;;
+		/** &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_ENUM_GROUP_CODE = &quot;enumGroupCode&quot;;
+		/** &#12513;&#12514;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_MEMO = &quot;memo&quot;;
+		/** &#20316;&#25104;&#32773;ID&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_CREATE_USER_ID = &quot;createUserId&quot;;
+		/** &#20316;&#25104;&#26085;&#26178;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_CREATE_TIMESTAMP = &quot;createTimestamp&quot;;
+		/** &#26356;&#26032;&#32773;ID&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_UPDATE_USER_ID = &quot;updateUserId&quot;;
+		/** &#26356;&#26032;&#26085;&#26178;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_UPDATE_TIMESTAMP = &quot;updateTimestamp&quot;;
+		/** &#35328;&#35486;&#12467;&#12540;&#12489;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_LANG_CODE = &quot;langCode&quot;;
+		/** &#21015;&#25369;&#22411;&#21517;&#31216;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		public static final String ID_ENUM_NAME = &quot;enumName&quot;;
+
+		/**
+		 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+		 */
+		public Entity() {
+
+		}
+		/**
+		 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+		 * @param map &#25805;&#20316;&#23550;&#35937;&#12510;&#12483;&#12503;&#12290;
+		 */
+		public Entity(final Map&lt;String, Object&gt; map) {
+			super(map);
+		}
+		/**
+		 * &#21015;&#25369;&#22411;ID&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#21015;&#25369;&#22411;ID&#12290;
+		 */
+		public java.lang.Long getEnumId() {
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_ENUM_ID));
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;ID&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param enumId &#21015;&#25369;&#22411;ID&#12290;
+		 */
+		public void setEnumId(final java.lang.Long enumId) {
+			this.getMap().put(Entity.ID_ENUM_ID, enumId);
+		}
+
+		/**
+		 * &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+		 */
+		public java.lang.Long getParentId() {
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_PARENT_ID));
+		}
+
+		/**
+		 * &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param parentId &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+		 */
+		public void setParentId(final java.lang.Long parentId) {
+			this.getMap().put(Entity.ID_PARENT_ID, parentId);
+		}
+
+		/**
+		 * &#12477;&#12540;&#12488;&#38918;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#12477;&#12540;&#12488;&#38918;&#12290;
+		 */
+		public java.lang.Short getSortOrder() {
+			return NumberUtil.shortValueObject(this.getMap().get(Entity.ID_SORT_ORDER));
+		}
+
+		/**
+		 * &#12477;&#12540;&#12488;&#38918;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param sortOrder &#12477;&#12540;&#12488;&#38918;&#12290;
+		 */
+		public void setSortOrder(final java.lang.Short sortOrder) {
+			this.getMap().put(Entity.ID_SORT_ORDER, sortOrder);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12290;
+		 */
+		public java.lang.String getEnumCode() {
+			return (java.lang.String) this.getMap().get(Entity.ID_ENUM_CODE);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param enumCode &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12290;
+		 */
+		public void setEnumCode(final java.lang.String enumCode) {
+			this.getMap().put(Entity.ID_ENUM_CODE, enumCode);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12290;
+		 */
+		public java.lang.String getEnumGroupCode() {
+			return (java.lang.String) this.getMap().get(Entity.ID_ENUM_GROUP_CODE);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param enumGroupCode &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12290;
+		 */
+		public void setEnumGroupCode(final java.lang.String enumGroupCode) {
+			this.getMap().put(Entity.ID_ENUM_GROUP_CODE, enumGroupCode);
+		}
+
+		/**
+		 * &#12513;&#12514;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#12513;&#12514;&#12290;
+		 */
+		public java.lang.String getMemo() {
+			return (java.lang.String) this.getMap().get(Entity.ID_MEMO);
+		}
+
+		/**
+		 * &#12513;&#12514;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param memo &#12513;&#12514;&#12290;
+		 */
+		public void setMemo(final java.lang.String memo) {
+			this.getMap().put(Entity.ID_MEMO, memo);
+		}
+
+		/**
+		 * &#20316;&#25104;&#32773;ID&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#20316;&#25104;&#32773;ID&#12290;
+		 */
+		public java.lang.Long getCreateUserId() {
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_CREATE_USER_ID));
+		}
+
+		/**
+		 * &#20316;&#25104;&#32773;ID&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param createUserId &#20316;&#25104;&#32773;ID&#12290;
+		 */
+		public void setCreateUserId(final java.lang.Long createUserId) {
+			this.getMap().put(Entity.ID_CREATE_USER_ID, createUserId);
+		}
+
+		/**
+		 * &#20316;&#25104;&#26085;&#26178;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#20316;&#25104;&#26085;&#26178;&#12290;
+		 */
+		public java.sql.Timestamp getCreateTimestamp() {
+			return (java.sql.Timestamp) this.getMap().get(Entity.ID_CREATE_TIMESTAMP);
+		}
+
+		/**
+		 * &#20316;&#25104;&#26085;&#26178;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param createTimestamp &#20316;&#25104;&#26085;&#26178;&#12290;
+		 */
+		public void setCreateTimestamp(final java.sql.Timestamp createTimestamp) {
+			this.getMap().put(Entity.ID_CREATE_TIMESTAMP, createTimestamp);
+		}
+
+		/**
+		 * &#26356;&#26032;&#32773;ID&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#26356;&#26032;&#32773;ID&#12290;
+		 */
+		public java.lang.Long getUpdateUserId() {
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_UPDATE_USER_ID));
+		}
+
+		/**
+		 * &#26356;&#26032;&#32773;ID&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param updateUserId &#26356;&#26032;&#32773;ID&#12290;
+		 */
+		public void setUpdateUserId(final java.lang.Long updateUserId) {
+			this.getMap().put(Entity.ID_UPDATE_USER_ID, updateUserId);
+		}
+
+		/**
+		 * &#26356;&#26032;&#26085;&#26178;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#26356;&#26032;&#26085;&#26178;&#12290;
+		 */
+		public java.sql.Timestamp getUpdateTimestamp() {
+			return (java.sql.Timestamp) this.getMap().get(Entity.ID_UPDATE_TIMESTAMP);
+		}
+
+		/**
+		 * &#26356;&#26032;&#26085;&#26178;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param updateTimestamp &#26356;&#26032;&#26085;&#26178;&#12290;
+		 */
+		public void setUpdateTimestamp(final java.sql.Timestamp updateTimestamp) {
+			this.getMap().put(Entity.ID_UPDATE_TIMESTAMP, updateTimestamp);
+		}
+
+		/**
+		 * &#35328;&#35486;&#12467;&#12540;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#35328;&#35486;&#12467;&#12540;&#12489;&#12290;
+		 */
+		public java.lang.String getLangCode() {
+			return (java.lang.String) this.getMap().get(Entity.ID_LANG_CODE);
+		}
+
+		/**
+		 * &#35328;&#35486;&#12467;&#12540;&#12489;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param langCode &#35328;&#35486;&#12467;&#12540;&#12489;&#12290;
+		 */
+		public void setLangCode(final java.lang.String langCode) {
+			this.getMap().put(Entity.ID_LANG_CODE, langCode);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#21517;&#31216;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#21015;&#25369;&#22411;&#21517;&#31216;&#12290;
+		 */
+		public java.lang.String getEnumName() {
+			return (java.lang.String) this.getMap().get(Entity.ID_ENUM_NAME);
+		}
+
+		/**
+		 * &#21015;&#25369;&#22411;&#21517;&#31216;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param enumName &#21015;&#25369;&#22411;&#21517;&#31216;&#12290;
+		 */
+		public void setEnumName(final java.lang.String enumName) {
+			this.getMap().put(Entity.ID_ENUM_NAME, enumName);
+		}
+
+
+	}
+
+	/**
+	 * &#21015;&#25369;&#22411;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public EnumIdField getEnumIdField() {
+		return (EnumIdField) this.getField(Entity.ID_ENUM_ID);
+	}
+
+	/**
+	 * &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#35242;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public ParentIdField getParentIdField() {
+		return (ParentIdField) this.getField(Entity.ID_PARENT_ID);
+	}
+
+	/**
+	 * &#12477;&#12540;&#12488;&#38918;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#12477;&#12540;&#12488;&#38918;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public SortOrderField getSortOrderField() {
+		return (SortOrderField) this.getField(Entity.ID_SORT_ORDER);
+	}
+
+	/**
+	 * &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;&#12467;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public EnumCodeField getEnumCodeField() {
+		return (EnumCodeField) this.getField(Entity.ID_ENUM_CODE);
+	}
+
+	/**
+	 * &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;&#12464;&#12523;&#12540;&#12503;&#12467;&#12540;&#12489;.&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public EnumGroupCodeField getEnumGroupCodeField() {
+		return (EnumGroupCodeField) this.getField(Entity.ID_ENUM_GROUP_CODE);
+	}
+
+	/**
+	 * &#12513;&#12514;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#12513;&#12514;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public MemoField getMemoField() {
+		return (MemoField) this.getField(Entity.ID_MEMO);
+	}
+
+	/**
+	 * &#20316;&#25104;&#32773;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#20316;&#25104;&#32773;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public CreateUserIdField getCreateUserIdField() {
+		return (CreateUserIdField) this.getField(Entity.ID_CREATE_USER_ID);
+	}
+
+	/**
+	 * &#20316;&#25104;&#26085;&#26178;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#20316;&#25104;&#26085;&#26178;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public CreateTimestampField getCreateTimestampField() {
+		return (CreateTimestampField) this.getField(Entity.ID_CREATE_TIMESTAMP);
+	}
+
+	/**
+	 * &#26356;&#26032;&#32773;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#26356;&#26032;&#32773;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public UpdateUserIdField getUpdateUserIdField() {
+		return (UpdateUserIdField) this.getField(Entity.ID_UPDATE_USER_ID);
+	}
+
+	/**
+	 * &#26356;&#26032;&#26085;&#26178;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#26356;&#26032;&#26085;&#26178;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public UpdateTimestampField getUpdateTimestampField() {
+		return (UpdateTimestampField) this.getField(Entity.ID_UPDATE_TIMESTAMP);
+	}
+
+	/**
+	 * &#35328;&#35486;&#12467;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#35328;&#35486;&#12467;&#12540;&#12489;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public LangCodeField getLangCodeField() {
+		return (LangCodeField) this.getField(Entity.ID_LANG_CODE);
+	}
+
+	/**
+	 * &#21015;&#25369;&#22411;&#21517;&#31216;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#21015;&#25369;&#22411;&#21517;&#31216;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 */
+	public EnumNameField getEnumNameField() {
+		return (EnumNameField) this.getField(Entity.ID_ENUM_NAME);
+	}
+
+
+}
+			</pre>
+		</div>
+		<p>
+			このソースをビルドした後、開発ツールの「問合せ実行」から作成した問合せクラスを指定すると、
+			問合せクラスから作成されたSQLを確認、実行することができます。
+		</p>
+		<figure>
+			<figcaption>単純な結合問合せ</figcaption>
+			<img src="queryExec.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			作成したEnum01Queryに対応するSQLは以下のようになります。
+		</p>
+		<div class="wrappre">
+			<pre>
+select
+m.enum_id as enum_id
+,m.parent_id as parent_id
+,m.sort_order as sort_order
+,m.enum_code as enum_code
+,m.enum_group_code as enum_group_code
+,m.memo as memo
+,m.create_user_id as create_user_id
+,m.create_timestamp as create_timestamp
+,m.update_user_id as update_user_id
+,m.update_timestamp as update_timestamp
+,j0.lang_code as lang_code
+,j0.enum_name as enum_name
+ from enum as  m
+ inner join enum_name as j0 on m.enum_id=j0.enum_id
+ 			</pre>
+		</div>
+		</p>
+		<h2>問合せクラスの実行</h2>
+		<p>
+			プログラムからこの問合せを実行するには以下のようなコードを作成します。
+			このコードでは問合せクラスのsetConditionFieldListメソッドにwhere句の条件式に使用する可能性のあるフィールドのリストを指定しています。
+			さらにsetConditionDataメソッドにはキー"enumCode"に"userLevel"、キー"langCode"に"ja"を設定したマップを作成し設定しています。
+		</p>
+		<div class="wrappre">
+			<pre>
+// DAO&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
+Dao dao = new Dao(this);
+// &#21839;&#21512;&#12379;&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
+Enum01Query query = new Enum01Query();
+// where&#21477;&#12398;&#26465;&#20214;&#12395;&#12394;&#12426;&#12358;&#12427;&#12501;&#12451;&#12540;&#12523;&#12489;&#12522;&#12473;&#12488;&#12434;&#35373;&#23450;
+query.setConditionFieldList(query.getFieldList());
+// where&#21477;&#12398;&#26465;&#20214;&#12487;&#12540;&#12479;&#12398;&#12510;&#12483;&#12503;&#12434;&#35373;&#23450;
+Enum01Query.Entity cd = new Enum01Query.Entity();
+cd.setEnumCode(&quot;userLevel&quot;);
+cd.setLangCode(&quot;ja&quot;);
+query.setConditionData(cd.getMap());
+// &#21839;&#21512;&#12379;&#12434;&#23455;&#34892;
+List&lt;Map&lt;String, Object&gt;&gt; result = (List&lt;Map&lt;String, Object&gt;&gt;) dao.executeQuery(query);
+			</pre>
+		</div>
+		<p>
+			このコードの実行ログは以下のようになります。
+			setConditionFieldListに指定したフィールドのIDでsetConditionDataメソッドに指定されたマップを取得し、値が取得できたフィールドの条件を作成します。
+		</p>
+		<div class="wrappre">
+			<pre>
+2021/11/02 19:53:17.895 [http-nio-8080-exec-2] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select
+m.enum_id as enum_id
+,m.parent_id as parent_id
+,m.sort_order as sort_order
+,m.enum_code as enum_code
+,m.enum_group_code as enum_group_code
+,m.memo as memo
+,m.create_user_id as create_user_id
+,m.create_timestamp as create_timestamp
+,m.update_user_id as update_user_id
+,m.update_timestamp as update_timestamp
+,nm.lang_code as lang_code
+,nm.enum_name as enum_name
+ from enum as  m
+  inner join  enum_name as nm on m.enum_id=nm.enum_id
+ where m.enum_code = :enum_code and nm.lang_code = :lang_code
+2021/11/02 19:53:17.904 [http-nio-8080-exec-2] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :enum_code=userLevel
+2021/11/02 19:53:17.904 [http-nio-8080-exec-2] DEBUG  dataforms.dao.sqlgen.SqlParser 2 :lang_code=ja
+			</pre>
+		</div>
+		<p class="topic">
+			setConditionFieldListで指定された場合、複数のフィールドの条件式が生成された場合"and"で結合されます。
+			"and"や"or"を組み合わせた複雑な条件式を指定する場合、<a href="../javadoc/dataforms/dao/Query.html#setConditionExpression(dataforms.dao.condition.ConditionExpression)">setConditionExpression</a>メソッドを使用してください。
+		</p>
+		<h2>複雑な結合</h2>
+		<p>
+			列挙型テーブル(enum)は列挙型の名称とその選択肢を1つのテーブルで管理し、
+			子である選択肢のレコードはparent_idで親である列挙型名称のレコードにリンクする構造になっています。
+			列挙型テーブル(enum)同士を結合した親(列挙型)子(選択肢)関係のリストを作成し、
+			さらに列挙型名称テーブル(enum_name)から親子それぞれの名称を取得する問合せを作成します。
+		</p>
+		<p>
+			以下の画面では選択肢を取得するEnumTable(別名"m")、親である列挙型を取得するEnumTable(別名"p")、
+			選択肢の名称を取得するEnumNameTable(別名"nm")、列挙型の名称を取得するEnumNameTable(別名"pnm")を結合しています。
+		</p>
+		<figure>
+			<figcaption>複雑な結合の問合せ</figcaption>
+			<img src="complexquery.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			この画面から作成されるQueryクラスは以下のようになります。
+		</p>
+		<div class="wrappre">
+			<pre>
+/**
+ * 問い合わせクラスです。
+ *
+ */
+public class Enum02Query extends Query {
+
+	・
+	・
+	・
+
+
+	/**
+	 * コンストラクタ.
+	 */
+	public Enum02Query() {
+		this.setComment("複雑な問合せ");
+		this.setDistinct(false);
+		this.enumTable = new EnumTable();
+		this.enumTable.setAlias("m");
+		this.enumTableP = new EnumTable();
+		this.enumTableP.setAlias("p");
+		this.enumNameTableMn = new EnumNameTable();
+		this.enumNameTableMn.setAlias("mn");
+		this.enumNameTablePnm = new EnumNameTable();
+		this.enumNameTablePnm.setAlias("pnm");
+
+		this.setFieldList(new FieldList(
+			this.enumTable.getEnumIdField()
+			, this.enumTable.getParentIdField()
+			, this.enumTable.getSortOrderField()
+			, this.enumTable.getEnumCodeField()
+			, this.enumTable.getEnumGroupCodeField()
+			, this.enumTable.getMemoField()
+			, this.enumTable.getCreateUserIdField()
+			, this.enumTable.getCreateTimestampField()
+			, this.enumTable.getUpdateUserIdField()
+			, this.enumTable.getUpdateTimestampField()
+			, new AliasField("parentCode", this.enumTableP.getEnumCodeField())
+			, this.enumNameTableMn.getEnumNameField()
+			, new AliasField("parentName", this.enumNameTablePnm.getEnumNameField())
+		));
+		this.setMainTable(enumTable);
+		this.addInnerJoin(enumTableP);
+		this.addInnerJoin(enumNameTableMn);
+		this.addInnerJoin(enumNameTablePnm);
+	}
+
+	・
+	・
+	・
+
+}
+			</pre>
+		</div>
+		<p>
+			この画面で作った問い合わせには問題が残っています。
+			列挙型の名称を取得するEnumNameTable(別名"pnm")の結合条件が"m.enum_id=pnm.enum_id"となっており、
+			選択肢を取得するEnumTable(別名"m")と結合となってしまっています。
+			正しくはEnumTable(別名"p")への結合です。
+		</p>
+		<p>
+			この問題を解決するには、ツールで作成したソースを以下のように修正します。
+			QueryクラスのaddXXXJoinメソッドに結合条件を生成するための関数インターフェースを指定することができます。
+			この修正でEnumNameTable(別名"pnm")はEnumTable(別名"p")へ結合するようになります。
+		</p>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;.
+	 */
+	public Enum02Query() {
+		this.setComment(&quot;&#35079;&#38609;&#12394;&#21839;&#21512;&#12379;&quot;);
+		this.setDistinct(false);
+		this.enumTable = new EnumTable();
+		this.enumTable.setAlias(&quot;m&quot;);
+		this.enumTableP = new EnumTable();
+		this.enumTableP.setAlias(&quot;p&quot;);
+		this.enumNameTableMn = new EnumNameTable();
+		this.enumNameTableMn.setAlias(&quot;mn&quot;);
+		this.enumNameTablePnm = new EnumNameTable();
+		this.enumNameTablePnm.setAlias(&quot;pnm&quot;);
+
+		this.setFieldList(new FieldList(
+			this.enumTable.getEnumIdField()
+			, this.enumTable.getParentIdField()
+			, this.enumTable.getSortOrderField()
+			, this.enumTable.getEnumCodeField()
+			, this.enumTable.getEnumGroupCodeField()
+			, this.enumTable.getMemoField()
+			, this.enumTable.getCreateUserIdField()
+			, this.enumTable.getCreateTimestampField()
+			, this.enumTable.getUpdateUserIdField()
+			, this.enumTable.getUpdateTimestampField()
+			, new AliasField(&quot;parentCode&quot;, this.enumTableP.getEnumCodeField())
+			, this.enumNameTableMn.getEnumNameField()
+			, new AliasField(&quot;parentName&quot;, this.enumNameTablePnm.getEnumNameField())
+		));
+		this.setMainTable(enumTable);
+		this.addInnerJoin(enumTableP);
+		this.addInnerJoin(enumNameTableMn);
+		<b>this.addInnerJoin(enumNameTablePnm, (Table table) -&gt; {</b>
+			<b>return this.enumTableP.getLinkFieldCondition(EnumTable.Entity.ID_ENUM_ID, table);</b>
+		<b>});</b>
+	}
+			</pre>
+		</div>
+		<p>
+			この問合せを実行すると以下のようになります。
+		</p>
+		<figure>
+			<figcaption> Enum02Queryせの実行</figcaption>
+			<img src="queryExec2.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			DBの設計時に決まる一般的なテーブル結合の定義はXXXTableRelationクラスにまとめておきます。
+			このようにすると、問合せ作成時にER図を参照しながら結合条件を記述するようなことはなくなります。
+			しかし今回の問合せのような特殊な結合も必要になるケースがあります。
+			この場合addXXXJoinのタイミングで特殊な結合条件を指定することができるようになっています。
+		</p>
+	</body>
+</html>

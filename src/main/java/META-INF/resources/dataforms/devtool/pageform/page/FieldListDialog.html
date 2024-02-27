@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="fieldListForm">
+			<table id="fieldList" style="height: 400px;">
+				<thead>
+					<tr>
+						<th nowrap>
+							No.
+						</th>
+						<th>
+							フィールドID
+						</th>
+						<th>
+							フィールド名
+						</th>
+						<th class="listQuery">
+							検索条件
+						</th>
+						<th class="editQuery">
+							編集対象を特定するキー
+						</th>
+						<th class="listQuery">
+							生成するフィールドタグ
+						</th>
+						<th class="editQuery">
+							生成するフィールドタグ
+						</th>
+						<th>
+							フィールドクラス名
+						</th>
+						<th>
+							テーブルクラス名
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align: right;" class="rowno">
+							<span id="fieldList[0].no"></span>
+						</td>
+						<td style="width: 120px;">
+							<input type="text" id="fieldList[0].fieldId" />
+						</td>
+						<td style="width: 120px;">
+							<input type="text" id="fieldList[0].comment" />
+						</td>
+						<td style="width: 200px;" class="listQuery">
+							<select id="fieldList[0].matchType"></select>
+						</td>
+						<td  style="width: 160px; text-align: center;" class="editQuery">
+							<input type="checkbox" id="fieldList[0].editKey" value="1" />
+						</td>
+						<td  style="width: 200px;" class="listQuery">
+							<select id="fieldList[0].listFieldDisplay"></select>
+						</td>
+						<td  style="width: 200px;" class="editQuery">
+							<select id="fieldList[0].editFieldDisplay"></select>
+						</td>
+						<td style="width: 300px;">
+							<input type="text" id="fieldList[0].fieldClassName" />
+						</td>
+						<td style="width: 300px;">
+							<input type="hidden" id="fieldList[0].tableClassName" />
+							<input type="text" id="fieldList[0].tableFullClassName" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="button" id="okButton" class="largeButton">OK</button>
+			<button type="button" id="cancelButton" class="largeButton">Cancel</button>
+		</form>
+	</body>
+</html>

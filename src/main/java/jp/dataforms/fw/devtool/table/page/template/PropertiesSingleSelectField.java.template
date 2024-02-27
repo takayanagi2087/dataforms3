@@ -1,0 +1,45 @@
+package ${fieldPackageName};
+
+import ${superClassName};
+${importList}
+
+/**
+ * ${fieldClassSimpleName}フィールドクラス。
+ *
+ */
+public class ${fieldClassSimpleName} extends ${superSimpleClassName} {
+${constList}
+	/**
+	 * フィールドコメント。
+	 */
+	private static final String COMMENT = "${fieldComment}";
+
+	/**
+	 * プロパティのキー。
+	 */
+	private static final String PROPERTY_KEY = "property"; // 適切に修正して使用してください。
+
+	/**
+	 * コンストラクタ。
+	 */
+	public ${fieldClassSimpleName}() {
+		this(null);
+	}
+
+	/**
+	 * コンストラクタ。
+	 * @param id フィールドID。
+	 */
+	public ${fieldClassSimpleName}(final String id) {
+		super(id${fieldLength}, PROPERTY_KEY);
+		this.setComment(COMMENT);
+	}
+
+	@Override
+	protected void onBind() {
+		super.onBind();
+${validators}
+	}
+
+${webMethod}
+}

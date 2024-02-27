@@ -1,0 +1,38 @@
+package ${fieldPackageName};
+
+import ${superClassName};
+${importList}
+
+/**
+ * ${fieldClassSimpleName}フィールドクラス。
+ *
+ */
+public class ${fieldClassSimpleName} extends ${superSimpleClassName} {
+${constList}
+	/**
+	 * フィールドコメント。
+	 */
+	private static final String COMMENT = "${fieldComment}";
+	/**
+	 * コンストラクタ。
+	 */
+	public ${fieldClassSimpleName}() {
+		this(null);
+	}
+	/**
+	 * コンストラクタ。
+	 * @param id フィールドID。
+	 */
+	public ${fieldClassSimpleName}(final String id) {
+		super(id${fieldLength});
+		this.setComment(COMMENT);
+	}
+
+	@Override
+	protected void onBind() {
+		super.onBind();
+${validators}
+	}
+
+${webMethod}
+}

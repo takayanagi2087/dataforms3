@@ -1,0 +1,341 @@
+@charset "UTF-8";
+
+/**
+ * 各デバイス共通のスタイルシートです。
+ * Fontの指定や配色などを指定します。
+ */
+html body {
+	font-weight: normal;
+	width: var(--body-width);
+	min-width: var(--body-min-width);
+	color: var(--text-color);
+}
+
+/**
+ * ページ名
+ */
+h1 {
+	font-size: 120%;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 4px;
+}
+
+/**
+ *
+ */
+h2 {
+	font-size: 120%;
+}
+
+/**
+ *
+ */
+h3 {
+	font-size: 100%;
+}
+
+.pageName, loginInfo {
+	display: flex;
+	align-items: center;
+}
+
+/*
+ * ヘッダ領域
+ */
+.headerDiv {
+	width: 100%;
+}
+
+
+/* システム名ブロック */
+.headerDiv .systemName {
+	font-size: 130%;
+	text-align: left;
+	color: var(--header1-color);
+	background-color: var(--header1-background-color);
+	vertical-align: middle;
+}
+/* システム名称フィールド */
+.headerDiv #systemName {
+	display: flex;
+	align-items: center;
+	vertical-align: middle;
+	height: 100%;
+}
+
+/* ページ名ブロック */
+.headerDiv .pageName {
+	color: var(--header2-color);
+	background-color: var(--header2-background-color);
+ 	text-align: left;
+}
+
+/* ユーザ情報 */
+.headerDiv .loginInfo {
+	height: 100%;
+	color: var(--header2-color);
+	background-color: var(--header2-background-color);
+	text-align: right;
+}
+
+form.loginInfoForm {
+	margin-right: 4px;
+}
+
+.headerDiv div.loginInfo form div {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+/*
+ * ボディ領域(開始)
+ */
+div.bodyDiv {
+	display: flex;
+	flex-flow: row;
+}
+
+/*
+ * フッター領域
+ */
+.footerDiv {
+	background-color: var(--footer-background-color);
+	width: var(--footer-width);
+	height: var(--footer-height);
+}
+
+/* PC  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--pc-screen-min)) {
+	/* 基本フォントサイズ */
+	html body {
+		font-size:10pt;
+	}
+
+	/* ヘッダ領域 */
+	.headerDiv {
+		display: flex;
+		flex-flow: row;
+	}
+
+	/* ヘッダ部の高さ指定 */
+	.headerDiv div {
+		height: 36px;
+	}
+
+
+
+	/* メニューボタン指定 */
+	.headerDiv .showMenuButton {
+		display: none;
+	}
+
+	/* システム名ブロックサイズ指定 */
+	.headerDiv div.systemName {
+		display: flex;
+		flex-flow: row;
+		white-space: nowrap;
+		width: var(--menu-width);
+		overflow: hidden;
+		padding-left: 4px;
+	}
+
+	/* ページ名ブロック */
+	.headerDiv .pageName {
+		display: flex;
+		align-items: center;
+		width: calc(100% - var(--menu-width) - var(--user-info-width))
+	}
+
+	/* ユーザ情報 */
+	.headerDiv .loginInfo form div {
+		width: var(--user-info-width);
+	}
+
+	div.menuDiv {
+		width: var(--menu-width);
+		max-width: var(--menu-width);
+	}
+
+	div.mainDiv {
+		width: calc(100% - var(--menu-width));
+	}
+}
+
+
+/* タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--tb-screen-min)) and (max-width: var(--tb-screen-max)) {
+	/* 基本フォントサイズ */
+	html body {
+		font-size:10pt;
+	}
+
+	/*
+	 * ヘッダ領域
+	 */
+	.headerDiv {
+		display: flex;
+		flex-flow: row;
+	}
+
+	/* ヘッダ部の高さ指定 */
+	.headerDiv div {
+		height: 36px;
+	}
+
+	/* システム名ブロック */
+	.headerDiv div.systemName {
+		display: flex;
+		flex-flow: row;
+		align-items: center;
+		width: var(--menu-width);
+		white-space: nowrap;
+		line-height: normal;
+		overflow: hidden;
+	}
+
+	/* メニューボタン指定 */
+	.headerDiv .showMenuButton {
+		width: 32px;
+		height: 32px;
+		min-width: 32px;
+		background: url(./image/menu.svg) left top no-repeat;
+		background-size: contain;
+	}
+
+
+	/* ページ名ブロック */
+	.headerDiv .pageName {
+		display: flex;
+		align-items: center;
+		width: calc(100% - var(--menu-width) - var(--user-info-width));
+	}
+
+	/* ユーザ情報 */
+	.headerDiv div.loginInfo form div {
+		width: var(--user-info-width);
+	}
+
+	div.menuDiv {
+		display: none;
+		width: var(--menu-width);
+	}
+
+	div.mainDiv {
+		width: 100%;
+	}
+
+}
+
+/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (max-width: var(--sp-screen-max)) {
+	/* 基本フォントサイズ */
+	html body {
+		font-size:14pt;
+	}
+
+	/* ヘッダ領域 */
+	.headerDiv {
+		display: block;
+		width: 100%;
+	}
+
+	/* システム名ブロック */
+	.headerDiv div.systemName {
+		display: flex;
+		flex-flow: row;
+		align-items: center;
+		width: 100%;
+		height: 44px;
+		white-space: nowrap;
+		line-height: normal;
+	}
+
+	/* メニューボタン指定 */
+	.headerDiv .showMenuButton {
+		width: 44px;
+		height: 44px;
+		background: url(./image/menu.svg) left top no-repeat;
+		background-size: contain;
+	}
+
+	/* ユーザ情報 */
+	.headerDiv div.loginInfo form div {
+		width: 100%;
+	}
+
+	div.menuDiv {
+		display: none;
+		width: 80%;
+	}
+
+	div.mainDiv {
+		width: 100%;
+	}
+
+	.loginInfoForm {
+		font-size: 80%;
+	}
+
+
+	/* ページ名ブロック */
+	.headerDiv .pageName,
+	.headerDiv .loginInfo {
+		height: auto;
+		min-height: 34px;
+	}
+}
+
+/* ページロックDIVのスタイル */
+.lockLayer {
+	background: url(./image/loading.gif) center no-repeat;
+	background-color: rgba(0,0,0,0.0);
+	position: absolute;
+	display: block;
+	left: 0;
+	top: 0;
+	z-index: 10000;
+}
+
+
+/*
+ * エラーメッセージ領域(開始)
+ */
+.errorMessages {color: red;}
+/* エラーが発生したフィールドのスタイル */
+.errorField {background-color:mistyrose !important;}
+/* 警告行 */
+tr.warnTr td {background-color:khaki !important;}
+/* エラー行 */
+tr.errorTr td {background-color:mistyrose !important;}
+
+/*
+ * エラーメッセージ領域(終了)
+ */
+
+
+/* javascript無効エラーメッセージの位置指定 */
+.noscriptDiv {
+	position:fixed;
+	top:0px;
+	left:0px;
+}
+
+/* dataforms2.jarのバージョン情報のスタイル */
+.dataformsInfo {
+	float: right;
+	height: 100%;
+	vertical-align: bottom;
+	line-height: 30px;
+	margin-right: 4px;
+}
+
+/* currentPage.alert(),currentPage.confirm()のスタイル */
+.alertDialog .buttonDiv,
+.confirmDialog .buttonDiv {
+	width: 100%;
+	text-align: center;
+}
+

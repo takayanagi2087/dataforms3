@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>レポート</title>
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+	</head>
+	<body>
+		<h1><span>3.4.</span>Report</h1>
+		<p>
+			dataforms2.jarで帳票を出力する場合は、サーバサイドでExcelファイルまたはPDFファイルを作成しダウンロードすることになります。
+			Excelファイルの作成はApache POIを使用し、PDFの作成はApache FOPを使用しています。
+			帳票を作成するにはdataforms.report.Reportクラスを使用します。
+			Excelファイルを作成するにはReportクラスから派生したExcelReportクラスを使用します。
+			PDFファイルを作成するにはXslFoReportクラスを使用します。
+			これらのレポートクラスから派生したクラスのコンストラクタで、帳票のフィールドやテーブルを配置し、
+			printメソッドに出力するデータのMapを渡します。
+		</p>
+		<h2>Excelレポートの作成</h2>
+		<p>
+			「開発の流れ」で作成したExcelレポートはテーブルの1レコードを1枚のレポートに出力するものでした。
+			今回はMultiTestTable中のデータを一覧表示するレポートを作成します。
+			MultiTestTableのデータは以下のようになっています。
+		</p>
+		<figure>
+			<figcaption>MultiTestTableテープのデータ</figcaption>
+			<img src="data.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			このデータをリスト表示しcode1が変わったタイミングで、改ページするような帳票を作成します。
+			先ず以下のようなExcelテンプレートを作成します。
+		</p>
+		<figure>
+			<figcaption>Excelテンプレート</figcaption>
+			<img src="excelTemplate.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			このExcelテンプレートを処理するためのレポートクラスは以下のようになります。
+			このクラスのコンストラクタで、"list"というIDのReportTableを配置します。
+			このReportTableに配置するフィールドは、MultiTestTableと同じものにします。
+			Reportクラスには複数のReportTableを登録できます。
+			そのうちの1つはデータの件数や条件によって改ページをさせることができるテーブルに設定することができます。
+			以下の例ではIDが"list"のテーブルのデータによって改ページさせるように設定しています。
+		</p>
+		<div class="filecaption">Excelレポートクラス</div>
+		<div class="wrappre">
+			<pre>
+package sample.report;
+
+import dataforms.report.ExcelReport;
+import dataforms.report.ReportTable;
+import sample.dao.MultiTestTable;
+
+/**
+ *
+ * Excelレポートクラス。
+ *
+ */
+public class MultiExcelReport extends ExcelReport {
+	/**
+	 * テーブルのID。
+	 */
+	public static final String ID_LIST = "list";
+
+	/**
+	 * コンストラクタ。
+	 * @param template Excelテンプレートファイルのパス。
+	 */
+	public MultiExcelReport(final String template) {
+		// Excelテンプレートを指定する。
+		this.setTemplatePath(template);
+		// MultiTestTableのフィールドを元にReportTableを作成。
+		MultiTestTable table = new MultiTestTable();
+		ReportTable rtable = new ReportTable(ID_LIST, table.getFieldList());
+		// 行数によって改ページするテーブルのIDを指定。
+		this.setMainTableId(ID_LIST);
+		// 1ページの行数を8に設定。
+		this.setRowsParPage(8);
+		// 値が変化したタイミングで改ページをする項目を設定。
+		this.addBreakField(table.getCode1Field());
+		// レポートテーブル(ID;"list")を追加。
+		this.addReportTable(rtable);
+	}
+}
+			</pre>
+		</div>
+		<p>
+			このレポートの印刷処理は以下のようになります。
+			この処理ではMultiTestTableのデータをcode1,code2のソート順で取得しそのリストをmapに設定します。
+			このmapをMultiExcelReportのprintメソッドに渡すと、Excelファイルを作成することができます。
+		</p>
+		<div class="filecaption">Excelレポートの出力処理</div>
+		<div class="wrappre">
+			<pre>
+/**
+ * 印刷処理。
+ * @param p &#12497;&#12521;&#12513;&#12540;&#12479;&#12290;
+ * @return &#24540;&#31572;&#24773;&#22577;&#12290;
+ * @throws Exception &#20363;&#22806;&#12290;
+ */
+@WebMethod
+public Response print(final Map&lt;String, Object&gt; p) throws Exception {
+	Response ret = null;
+	// Form&#12363;&#12425;&#36865;&#20449;&#12373;&#12428;&#12383;&#12487;&#12540;&#12479;&#12434;&#30906;&#35469;&#12375;&#12414;&#12377;&#12290;
+	List&lt;ValidationError&gt; list = this.validate(p);
+	if (list.size() == 0) {
+		// MultiTestTable&#12434;&#21462;&#24471;&#12377;&#12427;Query&#12434;&#20316;&#25104;
+		MultiTestTable table = new MultiTestTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		// &#12477;&#12540;&#12488;&#38918;&#12434;code1, code2&#12398;&#35373;&#23450;&#12290;
+		query.setOrderByFieldList(new FieldList(table.getCode1Field(), table.getCode2Field()));
+		// &#21839;&#21512;&#12379;&#12398;&#23455;&#34892;
+		Dao dao = new Dao(this);
+		List&lt;Map&lt;String, Object&gt;&gt; mlist = dao.executeQuery(query);
+		// &#21360;&#21047;&#29992;&#12487;&#12540;&#12479;&#12510;&#12483;&#12503;&#12398;&#20316;&#35069;
+		Map&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
+		data.put(MultiExcelReport.ID_LIST, mlist);
+		// &#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12501;&#12449;&#12452;&#12523;&#12497;&#12473;&#12434;&#21462;&#24471;
+		String template = SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/exceltemplate/multi.xlsx&quot;);
+		// &#12524;&#12509;&#12540;&#12488;&#12398;&#12463;&#12521;&#12473;&#12434;&#20316;&#25104;&#12290;
+		MultiExcelReport rep = new MultiExcelReport(template);
+		// Excel&#12501;&#12449;&#12452;&#12523;&#12434;&#24540;&#31572;&#12377;&#12427;&#12290;
+		BinaryResponse bresp = new BinaryResponse(rep.print(data));
+		bresp.setFileName(&quot;sample.xlsx&quot;);
+		return bresp;
+	} else {
+		// &#30906;&#35469;&#12391;&#21839;&#38988;&#12364;&#12354;&#12387;&#12383;&#22580;&#21512;&#12381;&#12398;&#24773;&#22577;&#12434;&#36820;&#20449;&#12375;&#12414;&#12377;&#12290;
+		ret = new JsonResponse(JsonResponse.INVALID, list);
+	}
+	return ret;
+}
+			</pre>
+		</div>
+		<p>
+			この処理の出力結果は以下のようになります。
+		</p>
+		<figure>
+			<figcaption>Excelレポートの出力結果</figcaption>
+			<img src="excelResult.png" style="width:50%; height:50%;"/>
+		</figure>
+		<h2>PDFレポートの作成</h2>
+		<p>
+			dataforms2.jarではApache FOPを使用してPDFを作成します。
+			Apache FOPはXSL-FOという形式でレポートのフォーマットを定義します。
+			XSL-FOはXMLでレポートのレイアウトを定義するのですが、この構造を理解して記述するのは困難です。
+			そこで、ExcelテンプレートをXSL-FO形式に変換するツールを作成しました。
+			<a href="https://github.com/takayanagi2087/ExcelToXSLFO" target="_blank">GitHub</a>のReleasesからExcelToXSLFOXXXX.zipをダウロードしてください。
+		</p>
+		<p>
+			ダウンロードしたzipファイルをC:\ExcelToXSLFOに展開し、C:\ExcelToXSLFO\libにPOIのjarを展開します。
+			ディレクトリ構成は以下のようになります。
+		</p>
+		<div class="filecaption">C:\ExcelToXSLFOのディレクトリ構成</div>
+		<div class="wrappre">
+			<pre>
+C:\ExcelToXSLFO>tree /f
+フォルダー パスの一覧
+ボリューム シリアル番号は 92E1-9CA5 です
+C:.
+│  excel2xslfo.bat
+│  excel2xslfo.jar
+│  excel2xslfo.sh
+│  sample.fo
+│  sample.xlsx
+│
+└─lib
+        commons-codec-1.10.jar
+        commons-collections4-4.1.jar
+        commons-logging-1.2.jar
+        curvesapi-1.04.jar
+        junit-4.12.jar
+        log4j-1.2.17.jar
+        poi-3.17.jar
+        poi-examples-3.17.jar
+        poi-excelant-3.17.jar
+        poi-ooxml-3.17.jar
+        poi-ooxml-schemas-3.17.jar
+        poi-scratchpad-3.17.jar
+        xmlbeans-2.6.0.jar
+			</pre>
+		</div>
+		<p>
+			C:\ExcelToXSLFOに作成したExcelテンプレート(multi.xlsx)をコピーし以下のコマンドを実行します。
+		</p>
+		<div class="filecaption">ExcelテンプレートからXSL-FOファイルの作成</div>
+		<div class="wrappre">
+			<pre>
+C:\ExcelToXSLFO&gt;<b>excel2xslfo multi.xlsx multi.fo</b>
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.poi.openxml4j.util.ZipSecureFile$1 (file:/C:/ExcelToXSLFO/lib/poi-ooxml-3.17.jar) to field java.io.FilterInputStream.in
+WARNING: Please consider reporting this to the maintainers of org.apache.poi.openxml4j.util.ZipSecureFile$1
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+
+C:\ExcelToXSLFO&gt;dir
+ &#12489;&#12521;&#12452;&#12502; C &#12398;&#12508;&#12522;&#12517;&#12540;&#12512; &#12521;&#12505;&#12523;&#12364;&#12354;&#12426;&#12414;&#12379;&#12435;&#12290;
+ &#12508;&#12522;&#12517;&#12540;&#12512; &#12471;&#12522;&#12450;&#12523;&#30058;&#21495;&#12399; 92E1-9CA5 &#12391;&#12377;
+
+ C:\ExcelToXSLFO &#12398;&#12487;&#12451;&#12524;&#12463;&#12488;&#12522;
+
+2021/11/19  10:59    &lt;DIR&gt;          .
+2018/05/21  14:25               361 excel2xslfo.bat
+2018/06/08  22:32            20,382 excel2xslfo.jar
+2018/05/21  15:45               226 excel2xslfo.sh
+2021/11/19  10:27    &lt;DIR&gt;          lib
+2021/11/19  10:59             9,072 <b>multi.fo</b>
+2021/11/18  17:16            10,177 multi.xlsx
+2021/11/19  10:28            26,987 sample.fo
+2018/05/21  16:19            12,526 sample.xlsx
+               7 &#20491;&#12398;&#12501;&#12449;&#12452;&#12523;              79,731 &#12496;&#12452;&#12488;
+               2 &#20491;&#12398;&#12487;&#12451;&#12524;&#12463;&#12488;&#12522;  571,530,108,928 &#12496;&#12452;&#12488;&#12398;&#31354;&#12365;&#38936;&#22495;
+			</pre>
+		</div>
+		<p>
+			この操作でmulti.xlsxからmulti.foというファイルが作成されます。
+			このmulti.foをC:\eclipse\workspace\sample\src\main\webapp\fotemplateにコピーします。
+			multi.foを出力するテンプレートクラスは以下のようになります。
+			MultiExcelReportとの違いはXslFoReportクラスから派生しているだけで、内容はほとんど変わりません。
+		</p>
+		<div class="filecaption">PDFレポートクラス</div>
+		<div class="wrappre">
+			<pre>
+package sample.report;
+
+import dataforms.report.ReportTable;
+import dataforms.report.XslFoReport;
+import sample.dao.MultiTestTable;
+
+/**
+ * PDFレポートクラス。
+ *
+ */
+public class MultiPdfReport extends XslFoReport {
+	/**
+	 * テーブルのID。
+	 */
+	public static final String ID_LIST = "list";
+
+	/**
+	 * コンストラクタ。
+	 * @param template テンプレートのパス。
+	 */
+	public MultiPdfReport(final String template) {
+		this.setTemplatePath(template);
+		// MultiTestTableのフィールドを元にReportTableを作成。
+		MultiTestTable table = new MultiTestTable();
+		ReportTable rtable = new ReportTable(ID_LIST, table.getFieldList());
+		// 行数によって改ページするテーブルのIDを指定。
+		this.setMainTableId(ID_LIST);
+		// 1ページの行数を8に設定。
+		this.setRowsParPage(8);
+		// 値が変化したタイミングで改ページをする項目を設定。
+		this.addBreakField(table.getCode1Field());
+		// レポートテーブル(ID;"list")を追加。
+		this.addReportTable(rtable);
+	}
+
+}
+			</pre>
+		</div>
+		<p>
+			このレポートを出力する処理は以下のようになります。
+			この処理もExcelの場合とほとんど同じです。
+		</p>
+		<div class="filecaption">PDFの出力処理</div>
+		<div class="wrappre">
+			<pre>
+/**
+ * PDF&#12398;&#20986;&#21147;&#20966;&#29702;&#12290;
+ * @param p &#12497;&#12521;&#12513;&#12540;&#12479;&#12290;
+ * @return &#24540;&#31572;&#24773;&#22577;&#12290;
+ * @throws Exception &#20363;&#22806;&#12290;
+ */
+@WebMethod
+public Response print(final Map&lt;String, Object&gt; p) throws Exception {
+	Response ret = null;
+	// Form&#12363;&#12425;&#36865;&#20449;&#12373;&#12428;&#12383;&#12487;&#12540;&#12479;&#12434;&#30906;&#35469;&#12375;&#12414;&#12377;&#12290;
+	List&lt;ValidationError&gt; list = this.validate(p);
+	if (list.size() == 0) {
+		// MultiTestTable&#12434;&#21462;&#24471;&#12377;&#12427;Query&#12434;&#20316;&#25104;
+		MultiTestTable table = new MultiTestTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		// &#12477;&#12540;&#12488;&#38918;&#12434;code1, code2&#12398;&#35373;&#23450;&#12290;
+		query.setOrderByFieldList(new FieldList(table.getCode1Field(), table.getCode2Field()));
+		// &#21839;&#21512;&#12379;&#12398;&#23455;&#34892;
+		Dao dao = new Dao(this);
+		List&lt;Map&lt;String, Object&gt;&gt; mlist = dao.executeQuery(query);
+		// &#21360;&#21047;&#29992;&#12487;&#12540;&#12479;&#12510;&#12483;&#12503;&#12398;&#20316;&#35069;
+		Map&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
+		data.put(MultiExcelReport.ID_LIST, mlist);
+		// &#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12501;&#12449;&#12452;&#12523;&#12497;&#12473;&#12434;&#21462;&#24471;
+		String template = SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/fotemplate/multi.fo&quot;);
+		// &#12524;&#12509;&#12540;&#12488;&#12398;&#12463;&#12521;&#12473;&#12434;&#20316;&#25104;&#12290;
+		MultiPdfReport rep = new MultiPdfReport(template);
+		// Excel&#12501;&#12449;&#12452;&#12523;&#12434;&#24540;&#31572;&#12377;&#12427;&#12290;
+		BinaryResponse bresp = new BinaryResponse(rep.print(data));
+		bresp.setFileName(&quot;sample.pdf&quot;);
+		return bresp;
+	} else {
+		// &#30906;&#35469;&#12391;&#21839;&#38988;&#12364;&#12354;&#12387;&#12383;&#22580;&#21512;&#12381;&#12398;&#24773;&#22577;&#12434;&#36820;&#20449;&#12375;&#12414;&#12377;&#12290;
+		ret = new JsonResponse(JsonResponse.INVALID, list);
+	}
+	return ret;
+}
+			</pre>
+		</div>
+		<p>
+			この処理で出力したPDF配下のようになります。
+		</p>
+		<figure>
+			<figcaption>出力したPDF</figcaption>
+			<embed src="sample.pdf" type="application/pdf" width="100%" height="400px">
+		</figure>
+	</body>
+</html>

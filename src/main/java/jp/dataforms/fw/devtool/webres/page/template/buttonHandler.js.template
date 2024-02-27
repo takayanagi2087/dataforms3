@@ -1,0 +1,7 @@
+		// 独自のボタン(id="webMethodButton")を追加しサーバサイドのメソッドを呼び出す場合は以下の様にしてください。
+/*
+		this.get("webMethodButton").click(() => {
+			this.callWebMethod();
+			return false;
+		});
+*/

@@ -1,0 +1,197 @@
+@charset "UTF-8";
+
+/**
+ * HtmlTable.jsで使用するスタイル。
+ *
+ */
+
+table { font-weight:normal; border : 0px;}
+table caption {
+	font-weight: bold;
+	text-align: left;
+}
+
+th {
+	color: var(--th-color);
+	background-color: var(--th-background-color);
+	text-align:center;
+	font-weight:normal;
+	border : 0px;
+}
+
+/* テーブル奇数行のスタイル */
+.oddTr {
+	background-color:var(--odd-tr-background-color);
+}
+
+/* テーブルの偶数行のスタイル*/
+.evenTr {
+	background-color:var(--even-tr-background-color);
+}
+
+/* 横スクロール用DIV */
+.hScrollDiv {
+	display: block;
+	width: 100%;
+	overflow-x:auto;
+}
+
+ /* 編集可能テーブル用スタイル */
+.editableTable {
+	table-layout: fixed;
+}
+
+.rowno {
+	width: 48px;
+}
+
+/*
+ * カラムソートヘッダ関連(開始)
+ */
+.sortableMark {
+}
+
+.sortableLabel {
+}
+/*
+ * カラムソートヘッダ関連(終了)
+ */
+
+/*
+ * カラム固定テーブル用のスタイル(開始)
+ *
+ */
+table.columnFixedTable {
+	display: block;
+	position: relative;
+	overflow: scroll;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table.columnFixedTable thead,
+table.columnFixedTable tbody,
+table.columnFixedTable tfoot {
+	display: block;
+}
+
+table.columnFixedTable tr {
+	height: 26px;
+	line-height: 26px;
+}
+
+div.hScrollDiv table:not(.columnFixedTable) th,
+div.hScrollDiv table:not(.columnFixedTable) td {
+	height: 26px;
+}
+
+table.columnFixedTable th,
+table.columnFixedTable td {
+	display: inline-block;
+	padding: 1px;
+	height: 26px;
+	border-color: #ffffff;
+	border-width: 2px;
+	border-style: solid;
+}
+
+table.columnFixedTable tr td:not(:first-child),
+table.columnFixedTable tr th:not(:first-child) {
+	border-left-style: none;
+}
+
+table.columnFixedTable thead tr:not(:first-child) th,
+table.columnFixedTable tr td {
+	border-top-style: none;
+}
+
+/* --- ボーダー色を背景色以外にする場合以下の設定をコメントアウトしてください。 */
+table.columnFixedTable tr th,
+table.columnFixedTable tr td {
+	border-left-style: none;
+	border-top-style: none;
+}
+/* --- */
+
+table.columnFixedTable tfoot th {
+	border-color: #e0e0ff;
+}
+
+table.columnFixedTable thead {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0px;
+	z-index: 2;
+}
+
+table.columnFixedTable .fixedColumn {
+	position: -webkit-sticky;
+	position: sticky;
+}
+
+/* 編集可能テーブル(追加削除ボタンカラムのスタイル) */
+.editableTable .buttonColumn {
+	width: 34px;
+}
+
+.editableTable [data-id$='addButton'],
+.editableTable [data-id$='deleteButton'],
+.editableTable [id$='addButton'],
+.editableTable [id$='deleteButton'] {
+	width: 32px;
+}
+
+/* 検索結果フォームのページ制御関連のスタイル */
+.queryResultForm .linesPerPage,
+.queryResultForm .pageNo {
+	width: 64px;
+}
+
+/* PC,タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (min-width: var(--tb-screen-min)) {
+	.queryResultForm .topPageButton,
+	.queryResultForm .prevPageButton,
+	.queryResultForm .nextPageButton,
+	.queryResultForm .bottomPageButton {
+		width: 32px;
+	}
+	table.columnFixedTable {
+		font-size: 0px;
+
+	}
+	table.columnFixedTable caption,
+	table.columnFixedTable th,
+	table.columnFixedTable td {
+		font-size: 10pt;
+	}
+}
+
+/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+@media screen and (max-width: var(--sp-screen-max)) {
+	table.columnFixedTable tr {
+		height: 40px;
+		line-height: 40px;
+	}
+
+	table.columnFixedTable th,
+	table.columnFixedTable td {
+		height: 38px;
+	}
+
+	table.columnFixedTable {
+		font-size: 0px;
+
+	}
+	table.columnFixedTable caption,
+	table.columnFixedTable th,
+	table.columnFixedTable td {
+		font-size: 11pt;
+	}
+
+	.queryResultForm .topPageButton,
+	.queryResultForm .prevPageButton,
+	.queryResultForm .nextPageButton,
+	.queryResultForm .bottomPageButton {
+		width: 48px;
+	}
+}

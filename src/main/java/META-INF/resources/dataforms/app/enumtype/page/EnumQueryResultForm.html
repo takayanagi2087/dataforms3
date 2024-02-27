@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form id="queryResultForm">
+			<div class="formHeader">Query result</div>
+			<table class="responsive">
+				<tbody>
+				</tbody>
+			</table>
+			<div class="hScrollDiv">
+				<table id="queryResult">
+					<thead>
+						<tr>
+							<th>
+								No.
+							</th>
+							<th>
+								Enumeration group code
+							</th>
+							<th>
+								Enumeration code
+							</th>
+							<th>
+								Memo
+							</th>
+							<th>
+								Delete
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<span id="queryResult[0].rowNo"></span>
+								<input type="hidden" id="queryResult[0].enumId" />
+								<input type="hidden" id="queryResult[0].parentId" />
+								<input type="hidden" id="queryResult[0].sortOrder" />
+								<input type="hidden" id="queryResult[0].createUserId" />
+								<input type="hidden" id="queryResult[0].createTimestamp" />
+								<input type="hidden" id="queryResult[0].updateUserId" />
+								<input type="hidden" id="queryResult[0].updateTimestamp" />
+							</td>
+							<td>
+								<span id="queryResult[0].enumGroupCode"></span>
+							</td>
+							<td>
+								<a id="queryResult[0].updateButton" href="javascript:void(0);"><span id="queryResult[0].enumCode"></span></a>
+							</td>
+							<td>
+								<span id="queryResult[0].memo"></span>
+							</td>
+							<td>
+								<input type="button" id="queryResult[0].deleteButton" value="Delete">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</form>
+
+	</body>
+</html>
