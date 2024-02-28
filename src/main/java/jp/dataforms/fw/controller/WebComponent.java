@@ -28,6 +28,8 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.PathPackageConverter;
 import jp.dataforms.fw.util.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -61,6 +63,13 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	private static ThreadLocal<WebEntryPoint> entryPoint = new ThreadLocal<WebEntryPoint>();
 
+	/**
+	 * Pathとパッケージの変換クラス。
+	 */
+	@Getter
+	@Setter
+	private static PathPackageConverter pathPackageConverter = null;
+	
 	/**
 	 * コンポーネントマップ。
 	 */
@@ -204,7 +213,7 @@ public class WebComponent implements JDBCConnectableObject {
 		String clsname = this.getClass().getName();
 //		return clsname.replaceAll("\\.", "/");
 		
-		PathPackageConverter conv = new PathPackageConverter();
+		PathPackageConverter conv = WebComponent.getPathPackageConverter();
 		return conv.getWebPath(clsname);
 	}
 
@@ -218,7 +227,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	public String getWebResourcePath(final Class<?> cls) {
 		String clsname = cls.getName();
-		PathPackageConverter conv = new PathPackageConverter();
+		PathPackageConverter conv = WebComponent.getPathPackageConverter();
 		return conv.getWebPath(clsname);
 
 //		String htmlpath = clsname.replaceAll("\\.", "/");

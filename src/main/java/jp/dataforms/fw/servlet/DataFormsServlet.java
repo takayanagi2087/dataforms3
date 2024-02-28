@@ -481,6 +481,8 @@ public class DataFormsServlet extends HttpServlet {
 		// 制約マップを作成します。
 		this.makeConstraintMap();
 		this.setupServletInstanceBean();
+		// パスとパッケージの対応表を設定する。
+		WebComponent.setPathPackageConverter(new PathPackageConverter());
 	}
 
 	/**
@@ -1053,7 +1055,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return クラス名。
 	 */
 	private String getTargetClassName(final String context, final String uri) {
-		PathPackageConverter conv = new PathPackageConverter();
+		PathPackageConverter conv = WebComponent.getPathPackageConverter();
 		String ret = conv.getWebComponentClass(context, uri);
 		logger.debug("*** path=" + ret);
 		return ret;
