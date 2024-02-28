@@ -28,6 +28,7 @@ import jp.dataforms.fw.dao.QuerySetDao;
 import jp.dataforms.fw.devtool.field.PagePatternSelectField;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.htmltable.HtmlTable;
+import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.menu.Menu;
 import jp.dataforms.fw.response.HtmlResponse;
 import jp.dataforms.fw.response.JsonResponse;
@@ -37,7 +38,6 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.MessagesUtil;
-import jp.dataforms.fw.util.PathPackageConverter;
 import jp.dataforms.fw.util.SequentialProperties;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.FieldValidator;
@@ -1203,7 +1203,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		String ret = null;
 		String clsname = this.getClass().getName();
 		
-		PathPackageConverter conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getPathPackageConverter();
 		String pp = conv.getWebPath(clsname);
 		logger.debug("pp=" + pp);
 		

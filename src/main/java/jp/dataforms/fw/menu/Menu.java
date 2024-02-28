@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import jp.dataforms.fw.controller.WebComponent;
-import jp.dataforms.fw.util.PathPackageConverter;
 
 // TODO:メニューのリストをセッションにキャッシュするようにした方が良いかも。
 
@@ -70,7 +69,7 @@ public class Menu extends WebComponent {
 	 * @param pageList ページリスト。
 	 */
 	public void setPageList(final List<Map<String, Object>> pageList) {
-		PathPackageConverter conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getPathPackageConverter();
 		this.pageList = pageList;
 		String cpath = Menu.getServlet().getServletContext().getContextPath();
 		for (Map<String, Object> m : pageList) {

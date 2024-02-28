@@ -62,6 +62,7 @@ import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.exception.ApplicationException.ResponseMode;
 import jp.dataforms.fw.exception.AuthoricationException;
 import jp.dataforms.fw.mail.MailSender;
+import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.menu.SideMenu;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
@@ -72,7 +73,6 @@ import jp.dataforms.fw.util.HttpRangeInfo;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.MessagesUtil.ClientMessageTransfer;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
-import jp.dataforms.fw.util.PathPackageConverter;
 import jp.dataforms.fw.util.StringUtil;
 import net.arnx.jsonic.JSON;
 
@@ -482,7 +482,7 @@ public class DataFormsServlet extends HttpServlet {
 		this.makeConstraintMap();
 		this.setupServletInstanceBean();
 		// パスとパッケージの対応表を設定する。
-		WebComponent.setPathPackageConverter(new PathPackageConverter());
+		WebComponent.setPathPackageConverter(new FunctionMap());
 	}
 
 	/**
@@ -1055,7 +1055,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return クラス名。
 	 */
 	private String getTargetClassName(final String context, final String uri) {
-		PathPackageConverter conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getPathPackageConverter();
 		String ret = conv.getWebComponentClass(context, uri);
 		logger.debug("*** path=" + ret);
 		return ret;

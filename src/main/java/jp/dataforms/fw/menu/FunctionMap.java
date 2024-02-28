@@ -1,4 +1,4 @@
-package jp.dataforms.fw.util;
+package jp.dataforms.fw.menu;
 
 import java.util.ArrayList;
 
@@ -6,18 +6,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.WebComponent;
-import jp.dataforms.fw.util.PathPackageConverter.PathPackage;
+import jp.dataforms.fw.menu.FunctionMap.PathPackage;
 import lombok.Getter;
 
 /**
  *  Pathとパッケージの変換を行うクラス。
  */
-public class PathPackageConverter extends ArrayList<PathPackage> {
+public class FunctionMap extends ArrayList<PathPackage> {
 	
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(PathPackageConverter.class);
+	private static Logger logger = LogManager.getLogger(FunctionMap.class);
 	
 	/**
 	 * Pathに対応するJavaクラスのパッケージ。
@@ -47,7 +47,7 @@ public class PathPackageConverter extends ArrayList<PathPackage> {
 	/**
 	 * コンストラクタ。
 	 */
-	public PathPackageConverter() {
+	public FunctionMap() {
 		this.add(new PathPackage("/dataforms", WebComponent.BASE_PACKAGE));
 	}
 	

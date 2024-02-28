@@ -24,9 +24,9 @@ import jp.dataforms.fw.app.menu.page.MenuForm;
 import jp.dataforms.fw.dao.JDBCConnectableObject;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.htmltable.HtmlTable;
+import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
-import jp.dataforms.fw.util.PathPackageConverter;
 import jp.dataforms.fw.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,7 +68,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	@Getter
 	@Setter
-	private static PathPackageConverter pathPackageConverter = null;
+	private static FunctionMap pathPackageConverter = null;
 	
 	/**
 	 * コンポーネントマップ。
@@ -213,7 +213,7 @@ public class WebComponent implements JDBCConnectableObject {
 		String clsname = this.getClass().getName();
 //		return clsname.replaceAll("\\.", "/");
 		
-		PathPackageConverter conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getPathPackageConverter();
 		return conv.getWebPath(clsname);
 	}
 
@@ -227,7 +227,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	public String getWebResourcePath(final Class<?> cls) {
 		String clsname = cls.getName();
-		PathPackageConverter conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getPathPackageConverter();
 		return conv.getWebPath(clsname);
 
 //		String htmlpath = clsname.replaceAll("\\.", "/");
@@ -288,7 +288,7 @@ public class WebComponent implements JDBCConnectableObject {
 			return "/" + cmp.getWebResourcePath(cls) + ".js";
 		} else {
 			String clsname = cls.getName();
-			PathPackageConverter conv = new PathPackageConverter();
+			FunctionMap conv = new FunctionMap();
 			String ret = conv.getWebPath(clsname) + ".js";
 			logger.debug("getClassScriptPath() = " + ret);
 			return ret;
