@@ -7,14 +7,6 @@
 	<version>3.0.1-SNAPSHOT</version>
 	<name>dataforms version 3</name>
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
-		<!-- 
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>2.2</version>
-		</dependency>
-		-->
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

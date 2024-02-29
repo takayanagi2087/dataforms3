@@ -484,14 +484,31 @@ public class DataFormsServlet extends HttpServlet {
 		// パスとパッケージの対応表を設定する。
 		WebComponent.setFunctionMap(new FunctionMap());
 		
-/*		{
-			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
+		{
+/*			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
 			
-			Yaml yaml = new Yaml();
-			logger.debug("yaml 1:\n" + yaml.dumpAsMap(WebComponent.getFunctionMap()));
+			String json = """
+			// comment
+			{
+				"key1": "text1", "key2": "text2"
+			}
+			""";
+			logger.debug("json=" + json);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = (Map<String, Object>) JSON.decode(json, HashMap.class);
+			logger.debug("map=" + map);
+*/			
+/*			ObjectMapper mapper = new ObjectMapper();
+			try {
+				Map<String, Object> map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+				logger.debug("map=" + map);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+*/
 			
 		}
-*/
+
 	}
 
 	/**

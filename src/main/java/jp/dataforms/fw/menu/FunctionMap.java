@@ -128,19 +128,19 @@ public class FunctionMap {
 		 */
 		@Setter
 		@Getter
-		private String menuId = null;
+		private String path = null;
 		
 		/**
 		 * コンストラクタ。
-		 * @param menuId メニューID。
+		 * @param path メニューID。
 		 * @param names 言語毎の名称リスト。
 		 * <pre>
 		 *  国コードを指定する場合次のように\tで区切って指定	"ja\tname"
 		 *  デフォルト言語の場合名称のみを指定					"name"
 		 * </pre>
 		 */
-		public Menu(final String menuId, final String ...names) {
-			this.menuId = menuId;
+		public Menu(final String path, final String ...names) {
+			this.path = path;
 			this.langNameMap = new LangNameMap(names);
 		}
 	}
@@ -186,7 +186,7 @@ public class FunctionMap {
 		 */
 		@Setter
 		@Getter
-		private String menuId = null;
+		private String menuPath = null;
 		/**
 		 * ページクラス。
 		 */
@@ -202,16 +202,16 @@ public class FunctionMap {
 		
 		/**
 		 * コンストラクタ。
-		 * @param menuId メニューID。
+		 * @param menuPath メニューID。
 		 * @param classname ページクラス。
 		 * @param names 言語毎の名称リスト。
 		 */
-		public PageInfo(final String menuId, final Class<? extends WebComponent> cls, final String... names) {
-			if (menuId != null) {
-				this.menuId = menuId;
+		public PageInfo(final String menuPath, final Class<? extends WebComponent> cls, final String... names) {
+			if (menuPath != null) {
+				this.menuPath = menuPath;
 			} else {
 				PathPackage pp = FunctionMap.this.findPath(cls.getName());
-				this.menuId = pp.getPath();
+				this.menuPath = pp.getPath();
 			}
 			this.pageClass = cls.getName();
 			if (this.langNameMap == null) {
