@@ -342,18 +342,6 @@ public class FunctionMap {
 			, "DAO & Page Java class generation | I make a page Java class and a form Java class to belong to it."
 			, "ja\tDAO & ページJavaクラス作成 | ページJavaクラスとそれに属するフォームJavaクラスを作成します。"
 		));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.dao.page.DaoGeneratorPage.class
-			, "DAO Java class generation | I make a DAO Java class."
-			, "ja\tDAO Javaクラス作成 | DAO Javaクラスを作成します。"
-		));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.dao.page.DaoGeneratorPage.class
-			, "DAO Java class generation | I make a DAO Java class."
-			, "ja\tDAO Javaクラス作成 | DAO Javaクラスを作成します。"
-		));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.PageGeneratorPage.class
-			, "Page Java class generation | I make a page Java class and a form Java class to belong to it."
-			, "ja\tページJavaクラス作成 | ページJavaクラスとそれに属するフォームJavaクラスを作成します。"
-		));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.webres.page.WebResourcePage.class
 			, "Web resource generation | I search Web components in an appointed page and make HTML corresponding to it or Javascript."
 			, "ja\tWebリソース作成 | 指定されたページ中のWebコンポーネントを検索し、それに対応したHTMLまたはJavascriptを作成します。"

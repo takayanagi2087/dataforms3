@@ -192,30 +192,6 @@
 		},
 		{
 			"langNameMap": {
-				"default": "DAO Java class generation | I make a DAO Java class.",
-				"ja": "DAO Javaクラス作成 | DAO Javaクラスを作成します。"
-			},
-			"menuPath": "/dataforms/devtool",
-			"pageClass": "jp.dataforms.fw.devtool.dao.page.DaoGeneratorPage"
-		},
-		{
-			"langNameMap": {
-				"default": "DAO Java class generation | I make a DAO Java class.",
-				"ja": "DAO Javaクラス作成 | DAO Javaクラスを作成します。"
-			},
-			"menuPath": "/dataforms/devtool",
-			"pageClass": "jp.dataforms.fw.devtool.dao.page.DaoGeneratorPage"
-		},
-		{
-			"langNameMap": {
-				"default": "Page Java class generation | I make a page Java class and a form Java class to belong to it.",
-				"ja": "ページJavaクラス作成 | ページJavaクラスとそれに属するフォームJavaクラスを作成します。"
-			},
-			"menuPath": "/dataforms/devtool",
-			"pageClass": "jp.dataforms.fw.devtool.pageform.page.PageGeneratorPage"
-		},
-		{
-			"langNameMap": {
 				"default": "Web resource generation | I search Web components in an appointed page and make HTML corresponding to it or Javascript.",
 				"ja": "Webリソース作成 | 指定されたページ中のWebコンポーネントを検索し、それに対応したHTMLまたはJavascriptを作成します。"
 			},

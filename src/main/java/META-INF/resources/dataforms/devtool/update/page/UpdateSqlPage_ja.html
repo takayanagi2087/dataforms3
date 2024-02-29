@@ -2,29 +2,29 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Update data </title>
-		<meta name="description" content="Execute SQL to update data.">
+		<title>データ更新</title>
+		<meta name="description" content="データを更新するSQLを実行します。">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="updateSqlForm">
-				<div class="formHeader">Update SQL</div>
+				<div class="formHeader">更新SQL</div>
 				<table class="responsive">
 					<tbody>
 						<tr>
-							<th>Function</th>
+							<th>機能</th>
 							<td><select id="functionSelect"></select></td>
 						</tr>
 						<tr>
-							<th>Package</th>
+							<th>パッケージ名</th>
 							<td><input type="text" id="packageName" /></td>
 						</tr>
 						<tr>
-							<th>Table class</th>
+							<th>テーブルクラス名</th>
 							<td><input type="text" id="tableClassName" /></td>
 						</tr>
 						<tr>
-							<th>Update type</th>
+							<th>更新区分</th>
 							<td>
 								<span><input type="radio" id="updateSqlType[0]" name="updateSqlType"/></span>
 								<button type="button" id="generateSqlButton" style="float: right;">SQL作成</button>
@@ -36,7 +36,7 @@
 						</tr>
 					</tbody>
 				</table>
-				<button type="button" id="updateButton">Update</button>
+				<button type="button" id="updateButton">更新</button>
 			</form>
 
 		</div>
