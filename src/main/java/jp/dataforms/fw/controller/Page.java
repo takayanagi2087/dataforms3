@@ -1203,7 +1203,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		String ret = null;
 		String clsname = this.getClass().getName();
 		
-		FunctionMap conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getFunctionMap();
 		String pp = conv.getWebPath(clsname);
 		logger.debug("pp=" + pp);
 		

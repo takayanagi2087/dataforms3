@@ -482,7 +482,16 @@ public class DataFormsServlet extends HttpServlet {
 		this.makeConstraintMap();
 		this.setupServletInstanceBean();
 		// パスとパッケージの対応表を設定する。
-		WebComponent.setPathPackageConverter(new FunctionMap());
+		WebComponent.setFunctionMap(new FunctionMap());
+		
+/*		{
+			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
+			
+			Yaml yaml = new Yaml();
+			logger.debug("yaml 1:\n" + yaml.dumpAsMap(WebComponent.getFunctionMap()));
+			
+		}
+*/
 	}
 
 	/**
@@ -1055,18 +1064,10 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return クラス名。
 	 */
 	private String getTargetClassName(final String context, final String uri) {
-		FunctionMap conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getFunctionMap();
 		String ret = conv.getWebComponentClass(context, uri);
 		logger.debug("*** path=" + ret);
 		return ret;
-/*		String path = uri.substring(context.length() + 1);
-		int idx = path.lastIndexOf(".");
-		if (idx >= 0) {
-			path = "jp/" + path.substring(0, idx);
-		}
-		path = path.replaceAll("/", ".");
-		logger.debug("*** path=" + ret);
-		return path;*/
 	}
 
 	/**
@@ -1076,6 +1077,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @throws Exception 例外。
 	 */
 	private WebEntryPoint newWebEntryPointInstance(final String classname) throws Exception {
+		logger.debug("c=" + classname);
 		@SuppressWarnings("unchecked")
 		Class<? extends Page> clazz = (Class<? extends Page>) Class.forName(classname);
 		WebEntryPoint dataforms = clazz.getDeclaredConstructor().newInstance();

@@ -69,7 +69,7 @@ public class Menu extends WebComponent {
 	 * @param pageList ページリスト。
 	 */
 	public void setPageList(final List<Map<String, Object>> pageList) {
-		FunctionMap conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getFunctionMap();
 		this.pageList = pageList;
 		String cpath = Menu.getServlet().getServletContext().getContextPath();
 		for (Map<String, Object> m : pageList) {

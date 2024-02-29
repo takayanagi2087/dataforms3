@@ -68,7 +68,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	@Getter
 	@Setter
-	private static FunctionMap pathPackageConverter = null;
+	private static FunctionMap functionMap = null;
 	
 	/**
 	 * コンポーネントマップ。
@@ -213,7 +213,7 @@ public class WebComponent implements JDBCConnectableObject {
 		String clsname = this.getClass().getName();
 //		return clsname.replaceAll("\\.", "/");
 		
-		FunctionMap conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getFunctionMap();
 		return conv.getWebPath(clsname);
 	}
 
@@ -227,7 +227,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	public String getWebResourcePath(final Class<?> cls) {
 		String clsname = cls.getName();
-		FunctionMap conv = WebComponent.getPathPackageConverter();
+		FunctionMap conv = WebComponent.getFunctionMap();
 		return conv.getWebPath(clsname);
 
 //		String htmlpath = clsname.replaceAll("\\.", "/");
