@@ -2,13 +2,14 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>サイトマップ</title>
+		<title>Site map</title>
+		<meta name="description" content="Displays a list of site features.">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="siteMapForm">
 				<div id="menu" style="width:100%;">
-					<table id="menu[0]" style="width:100%;">
+					<table id="menu[0]" style="width:100%;" class="responsive">
 						<thead>
 							<tr>
 								<th id="menu[0].name" colspan="2"></th>
@@ -16,12 +17,12 @@
 						</thead>
 						<tbody id="menu[0].pageList">
 							<tr>
-								<td style="width:200px;">
+								<td class="menuLink">
 									<a id="menu[0].pageList[0].url">
 										<span id="menu[0].pageList[0].name">Menu item</span>
 									</a>
 								</td>
-								<td>
+								<td class="menuDescription">
 									<span id="menu[0].pageList[0].description">Description</span>
 								</td>
 							</tr>

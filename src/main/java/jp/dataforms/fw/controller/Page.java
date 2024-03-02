@@ -1093,6 +1093,7 @@ public class Page extends DataForms implements WebEntryPoint {
 
 	@Override
 	public void init() throws Exception {
+		WebComponent.getFunctionMap().init();
 		this.initDataformsVersion();
 		super.init();
 		this.initRealId("mainDiv");

@@ -1,28 +1,29 @@
-/**
- * @fileOverview {@link MenuForm}クラスを記述したファイルです。
- */
 
 'use strict';
 
 /**
- * @class MenuForm
- *
- * @extends Form
+ * メニューフォーム.
  */
 class MenuForm extends Form {
 	/**
-	 * コンストラクタ。
+	 *
 	 */
-	constructor() {
-		super();
+	attach() {
+		super.attach(this);
 	}
 
 	/**
-	 * HTMLエレメントとの対応付けを行います。
+	 * メニュー項目を更新する.
 	 */
-	attach() {
-		super.attach();
+	async update() {
+		let thisForm = this;
+		let method = this.getWebMethod("getMenu");
+		let ret = await method.execute("");
+		if (ret.status == JsonResponse.SUCCESS) {
+			thisForm.menu.menuGroupList = ret.result.menuGroupList;
+			thisForm.menu.update();
+		}
 	}
-
 }
+
 

@@ -19,10 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jp.dataforms.fw.app.login.page.LoginInfoForm;
-import jp.dataforms.fw.app.menu.page.MenuForm;
 import jp.dataforms.fw.dao.JDBCConnectableObject;
-import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -276,7 +273,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	protected String getClassScriptPath(final Class<?> cls) {
 		logger.debug("getClassScriptPath:cls=" + cls.getName());
-		if (MenuForm.class.isAssignableFrom(cls) || LoginInfoForm.class.isAssignableFrom(cls)) {
+/*		if (MenuForm.class.isAssignableFrom(cls) || LoginInfoForm.class.isAssignableFrom(cls)) {
 			// MenuForm等はframeのパスにある。
 			WebComponent cmp = null;
 			try {
@@ -287,14 +284,14 @@ public class WebComponent implements JDBCConnectableObject {
 			}
 			return "/" + cmp.getWebResourcePath(cls) + ".js";
 		} else {
-			String clsname = cls.getName();
+*/			String clsname = cls.getName();
 			FunctionMap conv = new FunctionMap();
 			String ret = conv.getWebPath(clsname) + ".js";
 			logger.debug("getClassScriptPath() = " + ret);
 			return ret;
 			// String jspath = clsname.replaceAll("\\.", "/") + ".js";
 			// return "/" + jspath;
-		}
+//		}
 	}
 
 

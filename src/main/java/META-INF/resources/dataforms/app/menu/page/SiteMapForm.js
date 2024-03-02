@@ -1,28 +1,21 @@
 /**
- * @fileOverview {@link SiteMapForm}クラスを記述したファイルです。
+ * メニューフォーム.
  */
 
 'use strict';
 
 /**
- * @class SiteMapForm
- *
- * @extends MenuForm
+ * メニューフォーム.
  */
 class SiteMapForm extends MenuForm {
 	/**
-	 * コンストラクタ。
-	 */
-	constructor() {
-		super();
-	}
-
-	/**
-	 * HTMLエレメントとの対応付けを行います。
+	 * ページの各エレメントとの対応付け.
 	 */
 	attach() {
 		super.attach();
+		this.menu = this.newInstance(this.menu);
+		this.menu.init();
+		this.menu.attach();
 	}
-
 }
 
