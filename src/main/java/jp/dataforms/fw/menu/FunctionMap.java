@@ -1,11 +1,14 @@
 package jp.dataforms.fw.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.HtmlUtil;
@@ -257,6 +260,32 @@ public class FunctionMap {
 			
 		}
 
+		/**
+		 * 言語毎の名称を取得します。
+		 * @param lang 言語コード。
+		 * @return ページの名称。
+		 */
+		public String getName(final String lang) {
+			String ret = this.langNameMap.get(lang);
+			if (ret == null) {
+				ret = this.langNameMap.get(LangNameMap.LANG_DEFAULT);
+			}
+			return ret;
+		}
+
+		/**
+		 * 言語毎の説明を取得します。
+		 * @param lang 言語コード。
+		 * @return ページの説明。
+		 */
+		public String getDesc(final String lang) {
+			String ret = this.langDescMap.get(lang);
+			if (ret == null) {
+				ret = this.langDescMap.get(LangNameMap.LANG_DEFAULT);
+			}
+			return ret;
+		}
+
 	}
 	
 	/**
@@ -437,4 +466,48 @@ public class FunctionMap {
 		path =  path.replaceAll("\\.", "/");
 		return path;
 	}
+	
+	/**
+	 * メニューグループの名称を取得します。
+	 * @param lang 言語コード。
+	 * @param menuPath メニューのパス。
+	 * @return メニューの名称。
+	 */
+	private String getMenuGroupName(final String lang, final String menuPath) {
+		String ret = null;
+		for (Menu m: this.getMenuList()) {
+			if (menuPath.equals(m.getPath())) {
+				ret = m.getLangNameMap().get(lang);
+				if (ret == null) {
+					ret = m.getLangNameMap().get(LangNameMap.LANG_DEFAULT);
+				}
+				break;
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * システムのページリストを取得します。
+	 * @param page ページ。
+	 * @return システムのページリスト。
+	 */
+	public List<Map<String, Object>> getMenuList(final Page page) {
+		String lang = DataFormsServlet.getFixedLanguage();
+		if (lang == null) {
+			lang = page.getRequest().getLocale().getLanguage();
+		}
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (PageInfo p: this.pageList) {
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("menuGroup", p.getMenuPath());
+			m.put("menuGroupName", this.getMenuGroupName(lang, p.getMenuPath()));
+			m.put("pageClass", p.getPageClass());
+			m.put("menuName", p.getName(lang));
+			m.put("description", p.getDesc(lang));
+			list.add(m);
+		}
+		return list;
+	}
+	
 }

@@ -47,7 +47,7 @@ public class Menu extends WebComponent {
 	 * @param id メニューID。
 	 * @param list ページリスト。
 	 */
-	public Menu(final String id, final List<Map<String, Object>> list) {
+/*	public Menu(final String id, final List<Map<String, Object>> list) {
 		if (id == null) {
 			this.setId(this.getDefaultId());
 		} else {
@@ -55,7 +55,7 @@ public class Menu extends WebComponent {
 		}
 		this.setPageList(list);
 	}
-
+*/
 	/**
 	 * ページリストを取得します。
 	 * @return ページリスト。

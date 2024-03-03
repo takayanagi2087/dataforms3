@@ -485,9 +485,9 @@ public class DataFormsServlet extends HttpServlet {
 		WebComponent.setFunctionMap(new FunctionMap());
 		
 		{
-/*			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
+			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
 			
-			String json = """
+/*			String json = """
 			// comment
 			{
 				"key1": "text1", "key2": "text2"
