@@ -117,6 +117,19 @@ public class FunctionMap {
 			this.path = path;
 			this.langNameMap = new LangNameMap(names);
 		}
+		
+		/**
+		 * メニューの名称を取得する。
+		 * @param lang 言語コード。
+		 * @return 名称。
+		 */
+		public String getName(final String lang) {
+			String name = this.langNameMap.get(lang);
+			if (name == null) {
+				name = this.getName(LangNameMap.LANG_DEFAULT);
+			}
+			return name;
+		}
 	}
 	
 	/**
@@ -333,8 +346,8 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.PasswordResetMailPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.PasswordResetPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.enumtype.page.EnumPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.app.enumtype.page.EnumPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.PasswordReencryptPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.app.backuprestore.page.BackupRestorePage.class));
 	}
 	
 	/**
@@ -399,7 +412,7 @@ public class FunctionMap {
 	 * @param path パス。
 	 * @return Pathパッケージ対応表。
 	 */
-	private PathPackage findBasePackage(final String path) {
+	public PathPackage findBasePackage(final String path) {
 		PathPackage ret = null;
 		int len = 0;
 		for (PathPackage e: this.pathPackageList) {
@@ -516,7 +529,7 @@ public class FunctionMap {
 	 * @param page ページ。
 	 * @return 言語コード。
 	 */
-	private String getLang(final Page page) {
+	public String getLang(final Page page) {
 		String lang = DataFormsServlet.getFixedLanguage();
 		if (lang == null) {
 			lang = page.getRequest().getLocale().getLanguage();

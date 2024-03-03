@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.app.func.field.FunctionMultiSelectField;
 import jp.dataforms.fw.controller.Form;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.response.JsonResponse;
@@ -111,7 +112,8 @@ public class BackupForm extends Form {
 				TableManagerDao dao = new TableManagerDao(this);
 				List<Map<String, Object>> tbllist = new ArrayList<Map<String, Object>>();
 				for (String path: list) {
-					String pkg = path.substring(1).replaceAll("/", ".");
+					String pkg = WebComponent.getFunctionMap().findBasePackage(path).getBasePackage();
+					logger.debug("+++ pkg=" + pkg);
 					tbllist.addAll(dao.queryTableClass(pkg, ""));
 				}
 				File bkdir = new File(DataFormsServlet.getTempDir() + "/backup");
