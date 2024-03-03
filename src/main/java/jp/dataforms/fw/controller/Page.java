@@ -28,7 +28,6 @@ import jp.dataforms.fw.dao.QuerySetDao;
 import jp.dataforms.fw.devtool.field.PagePatternSelectField;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.htmltable.HtmlTable;
-import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.menu.Menu;
 import jp.dataforms.fw.response.HtmlResponse;
 import jp.dataforms.fw.response.JsonResponse;
@@ -38,7 +37,6 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.MessagesUtil;
-import jp.dataforms.fw.util.SequentialProperties;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.FieldValidator;
 
@@ -1196,37 +1194,12 @@ public class Page extends DataForms implements WebEntryPoint {
 	}
 
 	/**
-	 * ページ名称をFunction.propertiesから取得します。
+	 * ページ名称を取得します。
 	 * @return ページ名称。
 	 * @throws Exception 例外。
 	 */
 	protected String getPageTitle() throws Exception {
-		String ret = null;
-		String clsname = this.getClass().getName();
-		
-		FunctionMap conv = WebComponent.getFunctionMap();
-		String pp = conv.getWebPath(clsname);
-		logger.debug("pp=" + pp);
-		
-		String[] dirs = pp.split("/");
-
-		String path = "";
-		for (int i = 1; i < dirs.length - 1; i++) {
-			path += ("/" + dirs[i]);
-			String funcprop = this.getAppropriateLangPath(path + "/Function.properties", this.getRequest());
-			logger.debug(() -> "funcprop=" + funcprop);
-			if (funcprop != null) {
-				String str = this.getWebResource(funcprop);
-				SequentialProperties p = new SequentialProperties();
-				p.loadText(str);
-				String v = p.getProperty(clsname);
-				if (v != null) {
-					String [] t = v.split("\\|");
-					ret = t[0];
-				}
-				break;
-			}
-		}
+		String ret = WebComponent.getFunctionMap().getPageName(this);
 		logger.debug("getPageTitle()=" + ret);
 		return ret;
 	}

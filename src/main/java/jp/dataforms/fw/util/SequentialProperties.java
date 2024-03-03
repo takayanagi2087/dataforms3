@@ -15,11 +15,6 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 /**
  * 順序を保持したプロパティクラス。
  *
- * <pre>
- * 各機能フォルダ中のFunction.propertiesのアクセスするためのクラスです。
- * Function.propertiesには機能名と各ページの名称リストが記録されいます。
- * メニューはFunction.propertiesの登録順で表示されます。
- * </pre>
  */
 public class SequentialProperties extends Properties {
 	/**

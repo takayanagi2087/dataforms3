@@ -87,7 +87,6 @@ public class MenuForm extends Form {
 	 * <pre>
 	 * 機能のリストを取得し、各機能に対応したパッケージ内のPageクラスの一覧を作成し、
 	 * ログインユーザが使用可能なページをリストアップします。
-	 * メニューに表示する名称は各機能のパスのFunction.propertiesから取得します。
 	 * </pre>
 	 * @return メニュリスト。
 	 * @throws Exception 例外。

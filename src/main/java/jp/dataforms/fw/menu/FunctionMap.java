@@ -266,6 +266,9 @@ public class FunctionMap {
 		 * @return ページの名称。
 		 */
 		public String getName(final String lang) {
+			if (this.langNameMap == null) {
+				return "";
+			}
 			String ret = this.langNameMap.get(lang);
 			if (ret == null) {
 				ret = this.langNameMap.get(LangNameMap.LANG_DEFAULT);
@@ -493,10 +496,7 @@ public class FunctionMap {
 	 * @return システムのページリスト。
 	 */
 	public List<Map<String, Object>> getMenuList(final Page page) {
-		String lang = DataFormsServlet.getFixedLanguage();
-		if (lang == null) {
-			lang = page.getRequest().getLocale().getLanguage();
-		}
+		String lang = getLang(page);
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (PageInfo p: this.pageList) {
 			Map<String, Object> m = new HashMap<String, Object>();
@@ -508,6 +508,35 @@ public class FunctionMap {
 			list.add(m);
 		}
 		return list;
+	}
+
+
+	/**
+	 * 言語を取得します。
+	 * @param page ページ。
+	 * @return 言語コード。
+	 */
+	private String getLang(final Page page) {
+		String lang = DataFormsServlet.getFixedLanguage();
+		if (lang == null) {
+			lang = page.getRequest().getLocale().getLanguage();
+		}
+		return lang;
+	}
+	
+	/**
+	 * ページの名称を取得します。
+	 * @param page ページ。
+	 * @return ページの名称。
+	 */
+	public String getPageName(final Page page) {
+		String ret = null;
+		for (PageInfo p: this.pageList) {
+			if (page.getClass().getName().equals(p.getPageClass())) {
+				ret = p.getName(this.getLang(page));
+			}
+		}
+		return ret;
 	}
 	
 }

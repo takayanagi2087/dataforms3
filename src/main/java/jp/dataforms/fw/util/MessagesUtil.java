@@ -146,7 +146,6 @@ public final class MessagesUtil {
 	 * 順序付プロパティファイルを取得します。
 	 * <pre>
 	 * 指定されたパスのプロパティファイルを順序情報を含めて読み込みます。
-	 * 基本的にFunction.properties用のメソッドです。
 	 * </pre>
 	 * @param epoint ページ情報。言語の判定などに使用します。
 	 * @param path パス。
