@@ -113,7 +113,6 @@ public class BackupForm extends Form {
 				List<Map<String, Object>> tbllist = new ArrayList<Map<String, Object>>();
 				for (String path: list) {
 					String pkg = WebComponent.getFunctionMap().findBasePackage(path).getBasePackage();
-					logger.debug("+++ pkg=" + pkg);
 					tbllist.addAll(dao.queryTableClass(pkg, ""));
 				}
 				File bkdir = new File(DataFormsServlet.getTempDir() + "/backup");
