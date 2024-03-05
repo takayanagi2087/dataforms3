@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jp.dataforms.fw.app.func.dao.FuncInfoDao;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.SingleSelectField;
+import jp.dataforms.fw.menu.FunctionMap.Menu;
 
 /**
  * 機能選択フィールドクラス。
@@ -50,13 +52,15 @@ public class FunctionSelectField extends SingleSelectField<Long> {
 	@Override
 	public void init() throws Exception {
 		super.init();
-		FuncInfoDao dao = new FuncInfoDao(this);
-		List<Map<String, Object>> list = dao.queryFuncList(true);
+		String lang = this.getPage().getRequest().getLocale().getLanguage();
+		List<Menu> list = WebComponent.getFunctionMap().getMenuList();
 		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
-		for (Map<String, Object> m: list) {
+		for (Menu m: list) {
+			String value = m.getPath();
+			String name = m.getName(lang);
 			Map<String, Object> opt = new HashMap<String, Object>();
-			opt.put("value", m.get("funcPath"));
-			opt.put("name", m.get("funcPath"));
+			opt.put(SelectField.OptionEntity.ID_VALUE, value);
+			opt.put(SelectField.OptionEntity.ID_NAME, name);
 			options.add(opt);
 		}
 		this.setOptionList(options);
