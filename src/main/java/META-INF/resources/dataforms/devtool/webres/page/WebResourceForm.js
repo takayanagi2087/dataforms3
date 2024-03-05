@@ -34,10 +34,6 @@ class WebResourceForm extends Form {
 	setFormData(data) {
 		this.get("generateHtml").prop("checked", false);
 		this.get("generateJavascript").prop("checked", false);
-		if (data.className != null) {
-			data.htmlPath = "/" + data.className.replace(/\./g, "/") + ".html";
-			data.javascriptPath = "/" + data.className.replace(/\./g, "/") + ".js";
-		}
 		super.setFormData(data);
 		if (data.htmlStatus == "0" || data.htmlStatus == "1") {
 			this.get("htmlTr").show();

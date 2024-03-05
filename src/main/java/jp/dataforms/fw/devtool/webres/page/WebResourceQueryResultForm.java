@@ -21,6 +21,7 @@ import jp.dataforms.fw.devtool.field.JavascriptClassField;
 import jp.dataforms.fw.devtool.field.WebComponentTypeField;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.PresenceField;
 import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.HtmlTable;
@@ -32,6 +33,10 @@ import jp.dataforms.fw.validator.FieldValidator;
  * 問い合わせ結果フォームクラス。
  */
 public class WebResourceQueryResultForm extends QueryResultForm {
+	/**
+	 * Webリソースのパス。
+	 */
+	private static final String ID_WEB_REOURCE_PATH = "webReourcePath";
 	/**
 	 * WebコンポーネントタイプフィールドID。
 	 */
@@ -66,6 +71,7 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 		HtmlTable htmltbl = new HtmlTable(Page.ID_QUERY_RESULT
 			, new RowNoField()
 			, new ClassNameField()
+			, new TextField(ID_WEB_REOURCE_PATH)
 			, new WebComponentTypeField()
 			, new PresenceField(ID_HTML_STATUS)
 			, new PresenceField(ID_JAVASCRIPT_STATUS)
@@ -169,7 +175,8 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 	 */
 	private String getHtmlStatus(final Class<?> c, final String webResourcePath) throws Exception {
 		if (Page.class.isAssignableFrom(c) || Dialog.class.isAssignableFrom(c) || Form.class.isAssignableFrom(c)) {
-			String respath =  "/" + this.getWebResourcePath(c) + ".html";
+			String respath =  this.getWebResourcePath(c) + ".html";
+//			logger.debug("getHtmlStatus respath=" + respath);
 			String ret = this.getWebResource(respath);
 			File resfile = new File(webResourcePath + respath);
 			if ((!resfile.exists()) && StringUtil.isBlank(ret)) {
@@ -190,7 +197,8 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 	 * @throws Exception 例外。
 	 */
 	private String getJavascriptStatus(final Class<?> c, final String webResourcePath) throws Exception {
-		String respath = "/" + this.getWebResourcePath(c) + ".js";
+		String respath = this.getWebResourcePath(c) + ".js";
+//		logger.debug("getJavascriptStatus respath=" + respath);
 		File resfile = new File(webResourcePath + respath);
 		String ret = this.getWebResource(respath);
 		if ((!resfile.exists()) && StringUtil.isBlank(ret)) {
@@ -209,11 +217,11 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 	private String getJavascriptClass(final Class<?> c) throws Exception {
 		Class<?> sc = c;
 		String classname = sc.getSimpleName();
-		String respath = "/" + this.getWebResourcePath(sc) + ".js";
+		String respath = this.getWebResourcePath(sc) + ".js";
 		String ret = this.getWebResource(respath);
 		while (StringUtil.isBlank(ret)) {
 			sc = sc.getSuperclass();
-			respath = "/" + this.getWebResourcePath(sc) + ".js";
+			respath = this.getWebResourcePath(sc) + ".js";
 			ret = this.getWebResource(respath);
 			classname = sc.getSimpleName();
 		}
@@ -306,6 +314,9 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 				m.put(ID_HTML_STATUS, htmlStatus);
 				m.put(ID_JAVASCRIPT_STATUS, javascriptStatus);
 				m.put(ID_JAVASCRIPT_CLASS, this.getJavascriptClass(c));
+				String respath =  this.getWebResourcePath(c);
+				m.put(ID_WEB_REOURCE_PATH, respath);
+
 				queryResult.add(m);
 			}
 		}

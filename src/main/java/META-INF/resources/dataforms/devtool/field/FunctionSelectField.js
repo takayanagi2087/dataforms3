@@ -34,7 +34,8 @@ class FunctionSelectField extends SingleSelectField {
 		let funcname = jq.val();
 		if (funcname != null && funcname.length > 0) {
 			for (let i = 0; i < this.packageOption.length; i++) {
-				let packageName = funcname.replace(/\//g, ".").substr(1);
+//				let packageName = funcname.replace(/\//g, ".").substr(1);
+				let packageName = this.pathPackageMap[funcname];
 				if (this.packageOption[i].length > 0) {
 					packageName +=  "." + this.packageOption[i];
 				}

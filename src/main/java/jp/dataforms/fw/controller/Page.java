@@ -1340,20 +1340,23 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @throws Exception 例外。
 	 */
 	private Dao getDaoInstance() throws Exception {
-		Method m = this.getClass().getMethod("getDaoClass");
-		if (m != null) {
-			@SuppressWarnings("unchecked")
-			Class<? extends Dao> cl = (Class<? extends Dao>) m.invoke(this);
-			if (cl != null) {
-				return cl.getConstructor().newInstance();
+		try {
+			Method m = this.getClass().getMethod("getDaoClass");
+			if (m != null) {
+				@SuppressWarnings("unchecked")
+				Class<? extends Dao> cl = (Class<? extends Dao>) m.invoke(this);
+				if (cl != null) {
+					return cl.getConstructor().newInstance();
+				} else {
+					return null;
+				}
 			} else {
 				return null;
 			}
-		} else {
+		} catch (NoSuchMethodException e) {
 			return null;
 		}
 	}
-
 	/**
 	 * ページパータンを取得します。
 	 * @return ページパータン。

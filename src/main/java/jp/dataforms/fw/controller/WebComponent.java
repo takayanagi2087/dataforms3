@@ -226,9 +226,6 @@ public class WebComponent implements JDBCConnectableObject {
 		String clsname = cls.getName();
 		FunctionMap conv = WebComponent.getFunctionMap();
 		return conv.getWebPath(clsname);
-
-//		String htmlpath = clsname.replaceAll("\\.", "/");
-//		return htmlpath;
 	}
 
 	/**

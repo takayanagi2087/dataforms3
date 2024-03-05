@@ -10,6 +10,7 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.SingleSelectField;
 import jp.dataforms.fw.menu.FunctionMap.Menu;
+import jp.dataforms.fw.menu.FunctionMap.PathPackage;
 
 /**
  * 機能選択フィールドクラス。
@@ -114,6 +115,11 @@ public class FunctionSelectField extends SingleSelectField<Long> {
 		Map<String, Object> ret = super.getProperties();
 		ret.put("packageFieldId", this.getPackageFieldId());
 		ret.put("packageOption", this.getPackageOption());
+		Map<String, String> pathPackageMap = new HashMap<String, String>();
+		for (PathPackage pp: WebComponent.getFunctionMap().getPathPackageList()) {
+			pathPackageMap.put(pp.getPath(), pp.getBasePackage());
+		}
+		ret.put("pathPackageMap", pathPackageMap);
 		return ret;
 	}
 }

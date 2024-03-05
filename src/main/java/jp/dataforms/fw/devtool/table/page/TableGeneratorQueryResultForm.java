@@ -68,9 +68,6 @@ public class TableGeneratorQueryResultForm extends QueryResultForm {
     	List<String> clslist = new ArrayList<String>();
     	for (Map<String, Object> r: queryResult) {
     		String className = (String) r.get("className");
-/*    		int idx = className.lastIndexOf(".");
-    		r.put("packageName", className.substring(0, idx));
-    		r.put("tableClassName", className.substring(idx + 1));*/
     		r.put("packageName", ClassNameUtil.getPackageName(className));
     		r.put("tableClassName", ClassNameUtil.getSimpleClassName(className));
     		r.put("fullClassName", className);

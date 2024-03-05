@@ -229,13 +229,14 @@ public class WebResourceForm extends Form {
 		String forceOverwrite = (String) data.get("forceOverwrite");
 		String sourcePath = (String) data.get("webSourcePath");
 		String fullClassName = (String) data.get("className");
+		String htmlPath = (String) data.get("htmlPath");
 		String gensrc = "";
 		if ("page".equals(webComponentType) || "dialog".equals(webComponentType)) {
 			gensrc = this.getDataformsHtml(fullClassName, sourcePath, outputFormHtml, fieldLayout);
 			if ("1".equals(outputFormHtml)) {
 				this.outputForms(fullClassName, sourcePath, forceOverwrite, fieldLayout);
 			}
-			String srcpath = sourcePath + "/" + fullClassName.replaceAll("\\.", "/") + ".html";
+			String srcpath = sourcePath + htmlPath;
 			File f = new File(srcpath);
 			if ((!f.exists()) || "1".equals(forceOverwrite)) {
 				if (!f.getParentFile().exists()) {
@@ -342,6 +343,7 @@ public class WebResourceForm extends Form {
 		String forceOverwrite = (String) data.get("forceOverwrite");
 		String sourcePath = (String) data.get("webSourcePath");
 		String fullClassName = (String) data.get("className");
+		String javascriptPath = (String) data.get("javascriptPath");
 		Class<?> cls = Class.forName(fullClassName);
 		cls.getSuperclass().getSimpleName();
 		String superClassName = cls.getSuperclass().getSimpleName();
@@ -354,7 +356,7 @@ public class WebResourceForm extends Form {
 		gensrc = gensrc.replaceAll("\\$\\{buttonHandler\\}", buttonHandler);
 		gensrc = gensrc.replaceAll("\\$\\{callWebMethod\\}", callWebMethod);
 		gensrc = gensrc.replaceAll("\\$\\{onCalc\\}", onCalc);
-		String srcpath = sourcePath + "/" + fullClassName.replaceAll("\\.", "/") + ".js";
+		String srcpath = sourcePath + javascriptPath;
 		File f = new File(srcpath);
 		if ((!f.exists()) || "1".equals(forceOverwrite)) {
 			if (!f.getParentFile().exists()) {

@@ -61,14 +61,6 @@ public final class MessagesUtil {
 	 	 * message, app-messageはJavascriptで使用不可となります。
 		 */
 		CLIENT_ONLY,
-		/**
-	 	 * 旧バージョンとの互換性を維持するためのモードです。
-		 * 初期化時にclient-message,app-client-messageとXXXPage.propertiesのみ送信します。
-	 	 * message, app-messageは必要な時に送信されますが、その通信は同期通信を使用するため
-	 	 * 将来的に使用できなくなる可能性があります。
-		 */
-		@Deprecated
-		SEND_AT_ANY_TIME
 	}
 
 
@@ -245,7 +237,7 @@ public final class MessagesUtil {
 	public static String getMessage(final WebEntryPoint epoint, final String messageKey) {
 
 		String clsname = epoint.getClass().getName();
-		String pageprop = "/" + clsname.replaceAll("\\.", "/");
+		String pageprop = WebComponent.getFunctionMap().getWebPath(clsname);
 		Map<String, String> pageMap = MessagesUtil.getMessageMap(epoint, pageprop);
 		String msg =  pageMap.get(messageKey);
 		if (msg != null) {
@@ -311,7 +303,9 @@ public final class MessagesUtil {
 			ret.putAll(map2);
 		}
 		String clsname = page.getClass().getName();
-		String pageprop = "/" + clsname.replaceAll("\\.", "/");
+		String pageprop = WebComponent.getFunctionMap().getWebPath(clsname);
+		logger.debug("appClientMessagesName=" + appClientMessagesName);
+		logger.debug("pageprop=" + pageprop);
 		Map<String, String> map3 = MessagesUtil.getMessageMap(page, pageprop);
 		if (map0 != null) {
 			ret.putAll(map3);
