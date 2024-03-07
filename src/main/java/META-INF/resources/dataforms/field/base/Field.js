@@ -509,7 +509,7 @@ class Field extends WebComponent {
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			for (let i = 0; i < this.validatorList.length; i++) {
 				let v = this.newInstance(this.validatorList[i]);
-				if (v instanceof RequiredValidator) {
+				if (v.constructor.name == "RequiredValidator") {
 					return true;
 				}
 			}
