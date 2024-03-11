@@ -12,6 +12,9 @@ import jp.dataforms.fw.controller.QueryResultForm;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.IntegerField;
+import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.util.StringUtil;
@@ -37,6 +40,11 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 	 * コンストラクタ。
 	 */
 	public QueryExecutorQueryResultForm() {
+		// TODO: jsでimportを利用して改善したい。
+		this.addField(new DateField("dummyDate"));
+		this.addField(new TimestampField("dummyTimestamp"));
+		this.addField(new IntegerField("dummyNumber"));
+		
 		this.htmlTable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT);
 		this.addHtmlTable(this.htmlTable);
 	}
