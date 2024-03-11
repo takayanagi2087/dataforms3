@@ -6,22 +6,21 @@
 	</head>
 	<body>
 		<form id="databaseInfoForm">
-		<div class="formHeader">Database information</div>
-		<table class="responsive thtdthtdthtd">
-			<thead></thead>
-			<tbody>
-				<tr>
-					<th>Database product</th>
-					<td><span id="dbServerName" class="fieldSpan"></span></td>
-					<th>Version</th>
-					<td><span id="dbServerVersion" class="fieldSpan"></span></td>
-					<th>URL.</th>
-					<td>
-						<span id="dbServerURL" class="fieldSpan"></span>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+			<div class="formHeader">Database information</div>
+			<div class="gridLayout" style="grid-template-columns: 1fr 1fr 1fr;">
+				<div class="fieldDiv">
+					<div class="label"><label for="dbServerName">Database product</label></div>
+					<div class="field"><span id="dbServerName" class="fieldSpan"></span></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="dbServerVersion">Version</label></div>
+					<div class="field"><span id="dbServerVersion" class="fieldSpan"></span></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="dbServerURL">URL.</label></div>
+					<div class="field"><span id="dbServerURL" class="fieldSpan"></span></div>
+				</div>
+			</div>
 		</form>
 	</body>
 </html>

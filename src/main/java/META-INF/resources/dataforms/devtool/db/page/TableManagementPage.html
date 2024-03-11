@@ -2,31 +2,30 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Table management</title>
-		<meta name="description" content="I make the table corresponding to the table Java class on DB.">
+		<title>テーブル管理</title>
+		<meta name="description" content="テーブルJavaクラスに対応したテーブルをDB上に作成します。">
 	</head>
 	<body>
 		<div id="mainDiv">
-			<div class="errorMessages" id="errorMessages"><!-- エラーメッセージ領域  --></div>
 			<form id="databaseInfoForm">
 			</form>
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtdthtdthtd">
-					<thead></thead>
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" value=""/></td>
-							<th>Class name</th>
-							<td><input type="text" id="className" value=""/></td>
-						</tr>
-					</tbody>
-				</table>
-				<input type="submit" id="queryButton" class="largeButton" value="Query">&nbsp;
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="className">Class name</label></div>
+						<div class="field"><input type="text" id="className" /></div>
+					</div>
+				</div>
+				<input type="submit" id="queryButton" class="largeButton" value="Query">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Table class list</div>
@@ -86,9 +85,9 @@
 									<input type="hidden" id="queryResult[0].differenceVal" value=""/>
 								</td>
 								<td>
-									<span id="queryResult[0].backupTable"></span>
+									<span id="queryResult[0].backupTable"></span>&nbsp;
 									<span style="float: right;" class="backupButtons">
-										<button type="button" id="queryResult[0].dropButton" class="dropButton" >Drop</button>
+										<button type="button" id="queryResult[0].dropButton" class="dropButton" >削除</button>
 									</span>
 								</td>
 								<td style="text-align: right;">

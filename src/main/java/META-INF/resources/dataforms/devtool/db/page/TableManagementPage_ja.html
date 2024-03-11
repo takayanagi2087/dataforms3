@@ -7,26 +7,25 @@
 	</head>
 	<body>
 		<div id="mainDiv">
-			<div class="errorMessages" id="errorMessages"><!-- エラーメッセージ領域  --></div>
 			<form id="databaseInfoForm">
 			</form>
 			<form id="queryForm">
 				<div class="formHeader">検索条件</div>
-				<table class="responsive thtdthtdthtd">
-					<thead></thead>
-					<tbody>
-						<tr>
-							<th>機能</th>
-							<td><select id="functionSelect"></select></td>
-							<th>パッケージ名</th>
-							<td><input type="text" id="packageName" value=""/></td>
-							<th>クラス名</th>
-							<td><input type="text" id="className" value=""/></td>
-						</tr>
-					</tbody>
-				</table>
-				<input type="submit" id="queryButton" class="largeButton" value="検索">&nbsp;
-				<input type="button" id="resetButton" class="largeButton" value="リセット">&nbsp;
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">機能</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">パッケージ名</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="className">クラス名</label></div>
+						<div class="field"><input type="text" id="className" /></div>
+					</div>
+				</div>
+				<input type="submit" id="queryButton" class="largeButton" value="検索">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">テーブルクラス一覧</div>
