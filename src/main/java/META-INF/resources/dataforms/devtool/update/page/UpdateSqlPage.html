@@ -8,34 +8,32 @@
 	<body>
 		<div id="mainDiv">
 			<form id="updateSqlForm">
-				<div class="formHeader">Update SQL</div>
-				<table class="responsive">
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-						</tr>
-						<tr>
-							<th>Package</th>
-							<td><input type="text" id="packageName" /></td>
-						</tr>
-						<tr>
-							<th>Table class</th>
-							<td><input type="text" id="tableClassName" /></td>
-						</tr>
-						<tr>
-							<th>Update type</th>
-							<td>
-								<span><input type="radio" id="updateSqlType[0]" name="updateSqlType"/></span>
-								<button type="button" id="generateSqlButton" style="float: right;">Generate SQL</button>
-							</td>
-						</tr>
-						<tr>
-							<th>sql</th>
-							<td><textarea id="sql" rows="20" cols="80" style="height: 200px;"></textarea></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="formHeader">Update SQL execution</div>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="tableClassName">Table class</label></div>
+						<div class="field"><input type="text" id="tableClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="updateSqlType">Update type</label></div>
+						<div class="field">
+							<span><input type="radio" id="updateSqlType[0]" name="updateSqlType"/></span>
+							<button type="button" id="generateSqlButton" style="float: right;">Generate SQL</button>
+						</div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="sql">sql</label></div>
+						<div class="field"><textarea id="sql" rows="20" cols="80"></textarea></div>
+					</div>
+				</div>
 				<button type="button" id="updateButton">Update</button>
 			</form>
 

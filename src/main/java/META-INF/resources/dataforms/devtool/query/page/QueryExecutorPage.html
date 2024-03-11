@@ -9,50 +9,45 @@
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-						</tr>
-						<tr>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" /></td>
-						</tr>
-						<tr>
-							<th>Query class name</th>
-							<td><input type="text" id="queryClassName" /></td>
-						</tr>
-						<tr>
-							<th>SQL</th>
-							<td><textarea id="sql" rows="20" cols="80" style="width:100%; height:200px;"></textarea></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="queryClassName">Query class name</label></div>
+						<div class="field"><input type="text" id="queryClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="sql">SQL</label></div>
+						<div class="field"><textarea id="sql" rows="20" cols="80"></textarea></div>
+					</div>
+				</div>
 				<input type="submit" id="queryButton" class="largeButton" value="Query">
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
-				<input type="button" id="newButton" class="largeButton" value="New">
 				<input type="button" id="exportButton" value="Download" style="float: right;">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Query result</div>
-				<table class="responsive">
-					<tbody>
-					</tbody>
-				</table>
-				<div style="overflow-x:scroll;width:100%">
-					<div class="hScrollDiv">
-						<table id="queryResult">
-							<thead>
-								<tr>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+				<div class="gridLayout">
+				</div>
+				<div>
+					<table id="queryResult">
+						<thead>
+							<tr>
+								<th>
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</form>
 
