@@ -9,38 +9,31 @@
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>File name</th>
-							<td><input type="text" id="fileName" /></td>
-						</tr>
-						<tr>
-							<th>Query option</th>
-							<td><input type="checkbox" id="regexpFlag" value="1"/><label for="regexpFlag">Use regular expressions</label></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="fileName">File name</label></div>
+						<div class="field"><input type="text" id="fileName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="regexpFlag">Query option</label></div>
+						<div class="field">
+							<input type="checkbox" id="regexpFlag" value="1"/>
+							<label for="regexpFlag">Use regular expressions</label>
+						</div>
+					</div>
+				</div>
 				<input type="submit" id="queryButton" class="largeButton" value="Query">
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
-				<input type="button" id="newButton" class="largeButton" value="New">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Query result</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>
-								Web resource output path
-							</th>
-							<td>
-								<input type="text" id="webSourcePath"/>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="webSourcePath">Web resource output path</label></div>
+						<div class="field"><input type="text" id="webSourcePath" /></div>
+					</div>
+				</div>
 				<input type="button" id="selectNotExportedButton" value="Select what is not exported"/>
-				<div class="hScrollDiv">
+				<div>
 					<table id="queryResult">
 						<thead>
 						<tr>
