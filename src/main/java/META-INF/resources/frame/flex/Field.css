@@ -198,6 +198,12 @@ tr.oddTr button:hover {
 	color: red;
 }
 
+div.fieldDiv > div {
+	display: flex;
+	align-items: center;
+	height: 32px;
+}
+
 
 /* PC,タブレット (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--tb-screen-min)) {
@@ -226,12 +232,10 @@ tr.oddTr button:hover {
 	}
 
 	/* フィールド値を表示するspanに適したスタイル */
-	.fieldSpan {
+/*	.fieldSpan {
 		display:table-cell;
-		height: 32px;
-		vertical-align: middle;
 	}
-
+*/
 }
 
 /* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
