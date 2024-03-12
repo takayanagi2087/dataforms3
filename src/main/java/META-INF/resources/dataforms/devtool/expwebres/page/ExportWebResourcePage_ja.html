@@ -9,38 +9,31 @@
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">検索条件</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>ファイル名</th>
-							<td><input type="text" id="fileName" /></td>
-						</tr>
-						<tr>
-							<th>検索オプション</th>
-							<td><input type="checkbox" id="regexpFlag" value="1"/><label for="regexpFlag">正規表現を使用する</label></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="fileName">ファイル名</label></div>
+						<div class="field"><input type="text" id="fileName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="regexpFlag">検索オプション</label></div>
+						<div class="field">
+							<input type="checkbox" id="regexpFlag" value="1"/>
+							<label for="regexpFlag">正規表現を使用する</label>
+						</div>
+					</div>
+				</div>
 				<input type="submit" id="queryButton" class="largeButton" value="検索">
-				<input type="button" id="resetButton" class="largeButton" value="リセット">&nbsp;
-				<input type="button" id="newButton" class="largeButton" value="新規登録">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">検索結果</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>
-								Webリソース出力パス
-							</th>
-							<td>
-								<input type="text" id="webSourcePath"/>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="webSourcePath">フォルダのパス。</label></div>
+						<div class="field"><input type="text" id="webSourcePath" /></div>
+					</div>
+				</div>
 				<input type="button" id="selectNotExportedButton" value="エクスポートされていないものを選択"/>
-				<div class="hScrollDiv">
+				<div>
 					<table id="queryResult">
 						<thead>
 						<tr>
