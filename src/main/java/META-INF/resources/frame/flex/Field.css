@@ -207,7 +207,7 @@ div.fieldDiv > div {
 div.textAreaDiv > div {
 	display: flex;
 	align-items: center;
-	height: 300px;
+	height: auto;
 }
 
 
