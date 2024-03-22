@@ -2,87 +2,65 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Web resource generation</title>
+		<title>Webリソース作成</title>
 	</head>
 	<body>
 		<form id="webResourceForm">
-			<table class="responsive thtd">
-				<tbody>
-					<tr>
-						<th>
-							Field layout
-						</th>
-						<td>
-							<select id="fieldLayout"></select>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Web resource output destination
-						</th>
-						<td>
-							<input type="text" id="webSourcePath"/>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Type
-						</th>
-						<td>
-							<select id="webComponentType"></select>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Class name
-						</th>
-						<td>
-							<input type="text" id="className" />
-						</td>
-					</tr>
-					<tr id="htmlTr">
-						<th style="max-width:250px;">
-							HTML
-						</th>
-						<td>
-							<input type="text" id="htmlPath" style="width: calc(100% - 160px);"/>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label"><label for="fieldLayout">Field layout</label></div>
+					<div class="field"><select id="fieldLayout"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="webSourcePath">Web resource output path</label></div>
+					<div class="field"><input type="text" id="webSourcePath" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="webComponentType">Type</label></div>
+					<div class="field"><select id="webComponentType"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="className">Class name</label></div>
+					<div class="field"><input type="text" id="className" /></div>
+				</div>
+				<div class="fieldDiv" >
+					<div class="label" style="height: 50px;"><label for="htmlPath">HTML</label></div>
+					<div class="field" style="flex-wrap: wrap; height: 50px;">
+						<div style="width: calc(100% - 160px);">
+							<input type="text" id="htmlPath" />
+						</div>
+						<div style="width: 158px; text-align: right;">
 							<select id="htmlStatus"></select>&nbsp;
-							<input type="button" id="generateHtml" value="Generate"/><br/>
+							<input type="button" id="generateHtml" value="Generate"/>
+						</div>
+						<div style="width: 100%;">
 							<input type="checkbox" id="outputFormHtml" value="1" />
 							<label for="outputFormHtml" class="outputFormHtml">Output form to another file</label>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Javascript
-						</th>
-						<td>
-							<input type="text" id="javascriptPath" style="width: calc(100% - 160px);"/>
+						</div>
+					</div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="javascriptPath">Javascript</label></div>
+					<div class="field">
+						<input type="text" id="javascriptPath" style="width: calc(100% - 160px);"/>
+						<div style="width: 158px; text-align: right;">
 							<select id="javascriptStatus"></select>&nbsp;
-							<input type="button" id="generateJavascript" value="Generate"/>&nbsp;
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Javascript class
-						</th>
-						<td>
-							<input type="text" id="javascriptClass"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<input type="checkbox" id="forceOverwrite" value="1" />
-							<label for="forceOverwrite" class="forceOverwrite">Overwrite the source file.</label>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<input type="button" id="closeButton" class="largeButton" value="Close"/>&nbsp;
-						</td>
-					</tr>
-				</tbody>
-			</table>
+							<input type="button" id="generateJavascript" value="Generate"/>
+						</div>
+					</div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="javascriptClass">Javascript class</label></div>
+					<div class="field"><input type="text" id="javascriptClass" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="field">
+						<input type="checkbox" id="forceOverwrite" value="1"/>
+						<label for="forceOverwrite" class="forceOverwrite">Overwrite the source file.</label>
+					</div>
+				</div>
+			</div>
+			<input type="button" id="closeButton" class="largeButton" value="閉じる"/>&nbsp;
 		</form>
 	</body>
 </html>

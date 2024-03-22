@@ -3,58 +3,50 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Web resource generation</title>
-		<meta name="description" content="Generate *.html, *.js files corresponding to pages, forms, etc.">
+		<meta name="description" content="I search Web components in an appointed page and make HTML corresponding to it or Javascript.">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtdthtd">
-					<thead></thead>
-					<tbody>
-						<tr>
-							<th>
-								Web resource output destination
-							</th>
-							<td colspan="3">
-								<input type="text" id="webSourcePath" />
-							</td>
-						</tr>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" value="" /></td>
-						</tr>
-						<tr>
-							<th>Page class name</th>
-							<td colspan="5"><input type="text" id="pageClassName" value="" /></td>
-						</tr>
-						<tr>
-							<th>Component type</th>
-							<td colspan="5" style="height: auto; white-space: normal;">
-								<span>
-									<input type="checkbox" id="webComponentTypeList[0]" name="webComponentTypeList"/>
-								</span>
-								<input type="button" id="checkAllTypeButton" value="Select all"/>
-								<input type="button" id="uncheckAllTypeButton" value="Release all"/>
-							</td>
-						</tr>
-						<tr>
-							<th>Source generation status</th>
-							<td colspan="5">
-								<input type="checkbox" id="generatableOnly" value="1" checked/>
-								<label for="generatableOnly">Show only those that can generate HTML or javascript</label>
-							</td>
-						</tr>
-						<tr>
-							<th>Class name</th>
-							<td colspan="5"><input type="text" id="className"/></td>
-						</tr>
-					</tbody>
-				</table>
-				<input type="submit" id="queryButton" class="largeButton" value="Query">&nbsp;
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="webSourcePath">Web resource output path</label></div>
+						<div class="field"><input type="text" id="webSourcePath" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="pageClassName">Page class name</label></div>
+						<div class="field"><input type="text" id="pageClassName" /></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="webComponentTypeList">Component type</label></div>
+						<div class="field">
+							<span><input type="checkbox" id="webComponentTypeList[0]" name="webComponentTypeList"/></span>&nbsp;
+							<input type="button" id="checkAllTypeButton" value="Select all"/>&nbsp;
+							<input type="button" id="uncheckAllTypeButton" value="Release all"/>
+						</div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="generatableOnly">Source generation status</label></div>
+						<div class="field">
+							<input type="checkbox" id="generatableOnly" value="1"/>
+							<label for="generatableOnly">Show only those that can generate HTML or javascript</label>
+						</div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="className">Class name</label></div>
+						<div class="field"><input type="text" id="className" /></div>
+					</div>
+				</div>
+				<input type="submit" id="queryButton" class="largeButton" value="Query">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Web component list</div>

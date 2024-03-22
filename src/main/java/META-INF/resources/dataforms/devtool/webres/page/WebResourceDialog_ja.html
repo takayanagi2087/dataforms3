@@ -6,83 +6,61 @@
 	</head>
 	<body>
 		<form id="webResourceForm">
-			<table class="responsive thtd">
-				<tbody>
-					<tr>
-						<th>
-							フィールドレイアウト
-						</th>
-						<td>
-							<select id="fieldLayout"></select>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Webリソース出力先
-						</th>
-						<td>
-							<input type="text" id="webSourcePath"/>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							種類
-						</th>
-						<td>
-							<select id="webComponentType"></select>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							クラス名
-						</th>
-						<td>
-							<input type="text" id="className" />
-						</td>
-					</tr>
-					<tr id="htmlTr">
-						<th style="max-width:250px;">
-							HTML
-						</th>
-						<td>
-							<input type="text" id="htmlPath" style="width: calc(100% - 80px);"/>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label"><label for="fieldLayout">フィールドレイアウト</label></div>
+					<div class="field"><select id="fieldLayout"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="webSourcePath">Webリソース出力先</label></div>
+					<div class="field"><input type="text" id="webSourcePath" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="webComponentType">種類</label></div>
+					<div class="field"><select id="webComponentType"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="className">クラス名</label></div>
+					<div class="field"><input type="text" id="className" /></div>
+				</div>
+				<div class="fieldDiv" >
+					<div class="label" style="height: 50px;"><label for="htmlPath">HTML</label></div>
+					<div class="field" style="flex-wrap: wrap; height: 50px;">
+						<div style="width: calc(100% - 80px);">
+							<input type="text" id="htmlPath" />
+						</div>
+						<div style="width: 78px;">
 							<select id="htmlStatus"></select>&nbsp;
-							<input type="button" id="generateHtml" value="作成"/><br/>
+							<input type="button" id="generateHtml" value="作成"/>
+						</div>
+						<div style="width: 100%;">
 							<input type="checkbox" id="outputFormHtml" value="1" />
 							<label for="outputFormHtml" class="outputFormHtml">フォームは別ファイルに出力</label>
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Javascript
-						</th>
-						<td>
-							<input type="text" id="javascriptPath" style="width: calc(100% - 80px);"/>
+						</div>
+					</div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="javascriptPath">Javascript</label></div>
+					<div class="field">
+						<input type="text" id="javascriptPath" style="width: calc(100% - 80px);"/>
+						<div style="width: 78px;">
 							<select id="javascriptStatus"></select>&nbsp;
-							<input type="button" id="generateJavascript" value="作成"/>&nbsp;
-						</td>
-					</tr>
-					<tr>
-						<th >
-							Javascriptクラス
-						</th>
-						<td>
-							<input type="text" id="javascriptClass"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<input type="checkbox" id="forceOverwrite" value="1" />
-							<label for="forceOverwrite" class="forceOverwrite">ソースファイルを上書きする。</label>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<input type="button" id="closeButton" class="largeButton" value="閉じる"/>&nbsp;
-						</td>
-					</tr>
-				</tbody>
-			</table>
+							<input type="button" id="generateJavascript" value="作成"/>
+						</div>
+					</div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="javascriptClass">Javascriptクラス</label></div>
+					<div class="field"><input type="text" id="javascriptClass" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="field">
+						<input type="checkbox" id="forceOverwrite" value="1"/>
+						<label for="forceOverwrite" class="forceOverwrite">ソースファイルを上書きする。</label>
+					</div>
+				</div>
+			</div>
+			<input type="button" id="closeButton" class="largeButton" value="閉じる"/>&nbsp;
 		</form>
 	</body>
 </html>
