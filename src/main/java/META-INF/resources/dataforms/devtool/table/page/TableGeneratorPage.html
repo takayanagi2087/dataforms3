@@ -9,159 +9,147 @@
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-						</tr>
-						<tr>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" /></td>
-						</tr>
-						<tr>
-							<th>Class name</th>
-							<td><input type="text" id="className" /></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 /3;">
+						<div class="label"><label for="className">Class name</label></div>
+						<div class="field"><input type="text" id="className" /></div>
+					</div>
+				</div>
 				<input type="submit" id="queryButton" class="largeButton" value="Query">
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
 				<input type="button" id="newButton" class="largeButton" value="New">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Query result</div>
-				<div class="hScrollDiv">
-					<table id="queryResult">
-						<thead>
-							<tr>
-								<th>
-									No.
-								</th>
-								<th>
-									Class name
-								</th>
-								<th>
-									Table name
-								</th>
-								<th>
-									Comment
-								</th>
-								<th>
-									Presence of table
-								</th>
-								<th>
-									Presence of seq.
-								</th>
-								<th>
-									Difference
-								</th>
-								<th>
-									Number of records
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<span id="queryResult[0].rowNo"></span>
-									<input type="hidden" id="queryResult[0].packageName" />
-									<input type="hidden" id="queryResult[0].tableClassName" />
-								</td>
-								<td>
-									<a href="javascript:void(0);" id="queryResult[0].updateButton">
-										<span id="queryResult[0].fullClassName"></span>
-									</a>
-								</td>
-								<td>
-									<span id="queryResult[0].tableName"></span>
-								</td>
-								<td>
-									<span id="queryResult[0].tableComment"></span>
-								</td>
-								<td>
-									<span id="queryResult[0].status"></span>
-									<input type="hidden" id="queryResult[0].statusVal" value=""/>
-								</td>
-								<td>
-									<span id="queryResult[0].sequenceGeneration"></span>
-								</td>
-								<td>
-									<span id="queryResult[0].difference"></span>
-									<input type="hidden" id="queryResult[0].differenceVal" value=""/>
-								</td>
-								<td>
-									<span id="queryResult[0].recordCount"></span>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<table id="queryResult">
+					<thead>
+						<tr>
+							<th>
+								No.
+							</th>
+							<th>
+								Class name
+							</th>
+							<th>
+								Table name
+							</th>
+							<th>
+								Comment
+							</th>
+							<th>
+								Presence of table
+							</th>
+							<th>
+								Presence of seq.
+							</th>
+							<th>
+								Difference
+							</th>
+							<th>
+								Number of records
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="text-align: right;">
+								<span id="queryResult[0].rowNo"></span>
+								<input type="hidden" id="queryResult[0].packageName" />
+								<input type="hidden" id="queryResult[0].tableClassName" />
+							</td>
+							<td>
+								<a href="javascript:void(0);" id="queryResult[0].updateButton">
+									<span id="queryResult[0].fullClassName"></span>
+								</a>
+							</td>
+							<td>
+								<span id="queryResult[0].tableName"></span>
+							</td>
+							<td>
+								<span id="queryResult[0].tableComment"></span>
+							</td>
+							<td>
+								<span id="queryResult[0].status"></span>
+								<input type="hidden" id="queryResult[0].statusVal" value=""/>
+							</td>
+							<td>
+								<span id="queryResult[0].sequenceGeneration"></span>
+							</td>
+							<td>
+								<span id="queryResult[0].difference"></span>
+								<input type="hidden" id="queryResult[0].differenceVal" value=""/>
+							</td>
+							<td  style="text-align: right;">
+								<span id="queryResult[0].recordCount"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 				<input type="button" id="printButton" class="largeButton" value="Table definition"/>
 			</form>
 			<form id="editForm">
 				<div class="formHeader"><span id="editFormTitle"></span></div>
-				<table class="responsive thtdthtdthtd">
-					<tbody>
-						<tr>
-							<td colspan="6"><a id="showImportButton" href="javascript:void(0);">Import existing table ...</a></td>
-						</tr>
-						<tr class="importFields" style="display: none;">
-							<th>Import table name</th>
-							<td><input type="text" id="importTable"/></td>
-							<td colspan="5"><input type="button" id="importButton" value="インポート"/></td>
-						</tr>
-						<tr>
-							<th>Java source path</th>
-							<td>
-								<input type="text" id="javaSourcePath"/>
-							</td>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-							<th>Package</th>
-							<td><input type="text" id="packageName"/></td>
-						</tr>
-						<tr>
-							<th>Table class</th>
-							<td>
-								<input type="text" id="tableClassName"/>
-							</td>
-							<th>Table comment</th>
-							<td>
-								<input type="text" id="tableComment"/>
-							</td>
-							<th>Overwrite mode</th>
-							<td>
-								<select id="overwriteMode"></select>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="6">
-								<input type="checkbox" id="autoIncrementId" value="1"/><label for="autoIncrementId">Automatic primary key generation</label>
-								<input type="checkbox" id="updateInfoFlag" value="1"/><label for="updateInfoFlag">Update information field generation</label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<table style="width:100%;">
-					<tbody>
-						<tr>
-							<td>
-								Field list
-							</td>
-							<td style="text-align:right;">
-								<div style="width:100%;text-align:right;">
-									<input type="button" id="allErrorButton" class="largeButton" value="Overwrite all errors"/>
-									<input type="button" id="allSkipButton" class="largeButton" value="Do not overwrite all"/>
-									<input type="button" id="allForceOverwriteButton" class="largeButton" value="All forced overwriting"/>
-									<input type="button" id="errorSkipButton" class="largeButton" value="Do not overwrite errors"/>
-									<input type="button" id="errorForceButton" class="largeButton" value="Forced overwriting of errors"/>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<div class="hScrollDiv">
+				<input type="hidden" id="saveMode" />
+				<a id="showImportButton" href="javascript:void(0);">Import existing table ...</a>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv importFields" style="grid-column: 1 / 3; display: none;">
+						<div class="label"><label for="importTable">Import table name</label></div>
+						<div class="field">
+							<input type="text" id="importTable" style="width: calc(100% - 80px);"/>
+							<input type="button" id="importButton" value="Import" />
+						</div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="javaSourcePath">Java source path</label></div>
+						<div class="field"><input type="text" id="javaSourcePath" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="overwriteMode">Overwrite mode</label></div>
+						<div class="field"><select id="overwriteMode"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="tableClassName">Table class</label></div>
+						<div class="field"><input type="text" id="tableClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="tableComment">Table comment</label></div>
+						<div class="field"><input type="text" id="tableComment" /></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="field" style="justify-content: left;">
+							<input type="checkbox" id="autoIncrementId" value="1"/>
+							<label for="autoIncrementId">Automatic primary key generation</label>
+							<input type="checkbox" id="updateInfoFlag" value="1"/>
+							<label for="updateInfoFlag">Update information field generation</label>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div>Field list</div>
+						<div style="float: right;">
+							<input type="button" id="allErrorButton" class="largeButton" value="Overwrite all errors"/>
+							<input type="button" id="allSkipButton" class="largeButton" value="Do not overwrite all"/>
+							<input type="button" id="allForceOverwriteButton" class="largeButton" value="All forced overwriting"/>
+							<input type="button" id="errorSkipButton" class="largeButton" value="Do not overwrite errors"/>
+							<input type="button" id="errorForceButton" class="largeButton" value="Forced overwriting of errors"/>
+						</div>
+					</div>
 					<table id="fieldList" class="editableTable">
 						<thead>
 							<tr>
@@ -189,7 +177,7 @@
 								</th>
 								<th>
 									Length
-								</th>
+								</th >
 								<th>
 									PK
 								</th>
@@ -232,7 +220,7 @@
 									<input type="text" id="fieldList[0].fieldId" style="width:160px;"/>
 								</td>
 								<td style="width:48px;">
-									<input type="text" id="fieldList[0].fieldLength" style="text-align: right;"/>
+									<input type="text" id="fieldList[0].fieldLength" style="text-align: right;" />
 								</td>
 								<td style="width:32px; text-align: center;">
 									<input type="checkbox" id="fieldList[0].pkFlag" value="1"/>
@@ -261,12 +249,9 @@
 				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
 				<input type="button" id="saveButton" class="largeButton" value="Save"/>
-				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
-				<input type="button" id="deleteButton" class="largeButton" value="Delete"/>
 				<input type="button" id="printButton" class="largeButton" value="Table definition"/>
 				<input type="button" id="backButton" class="largeButton" value="Back"/>
 			</form>
-
 		</div>
 	</body>
 </html>
