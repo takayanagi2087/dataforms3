@@ -143,7 +143,8 @@ public class WebResourceForm extends Form {
 					continue;
 				}
 				if ("0".equals(outputFormHtml)) {
-					String srcpath = sourcePath + "/" + f.getClass().getName().replaceAll("\\.", "/") + ".html";
+//					String srcpath = sourcePath + "/" + f.getClass().getName().replaceAll("\\.", "/") + ".html";
+					String srcpath = sourcePath + "/" + this.getWebResourcePath(f.getClass()) + ".html";
 					File srcfile = new File(srcpath);
 					srcfile.delete();
 				}
@@ -170,7 +171,8 @@ public class WebResourceForm extends Form {
 		StringBuilder sb = new StringBuilder();
 		sb.append(gen.generateFormHtml("0"));
 		String gensrc = src.replaceAll("\\$\\{form\\}", sb.toString());
-		String srcpath = sourcePath + "/" + f.getClass().getName().replaceAll("\\.", "/") + ".html";
+//		String srcpath = sourcePath + "/" + f.getClass().getName().replaceAll("\\.", "/") + ".html";
+		String srcpath = sourcePath + "/" + this.getWebResourcePath(f.getClass()) + ".html";
 		File file = new File(srcpath);
 		if ((!file.exists()) || "1".equals(forceOverwrite)) {
 			if (!file.getParentFile().exists()) {
@@ -201,6 +203,7 @@ public class WebResourceForm extends Form {
 				if (isCommonForm(f)) {
 					continue;
 				}
+				logger.debug("f.getClass().getName()=" + f.getClass().getName());
 				this.outputFormHtml(f, sourcePath, forceOverwrite, fieldLayout);
 			}
 		}
@@ -233,6 +236,7 @@ public class WebResourceForm extends Form {
 		String gensrc = "";
 		if ("page".equals(webComponentType) || "dialog".equals(webComponentType)) {
 			gensrc = this.getDataformsHtml(fullClassName, sourcePath, outputFormHtml, fieldLayout);
+			logger.debug("outputFormHtml=" + outputFormHtml);
 			if ("1".equals(outputFormHtml)) {
 				this.outputForms(fullClassName, sourcePath, forceOverwrite, fieldLayout);
 			}
