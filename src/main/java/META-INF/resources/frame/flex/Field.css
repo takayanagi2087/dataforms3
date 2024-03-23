@@ -201,6 +201,7 @@ tr.oddTr button:hover {
 div.fieldDiv > div {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	height: 32px;
 }
 
