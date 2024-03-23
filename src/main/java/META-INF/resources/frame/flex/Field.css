@@ -198,17 +198,13 @@ tr.oddTr button:hover {
 	color: red;
 }
 
+/* 1フィールドの領域 */
 div.fieldDiv > div {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	height: 32px;
-}
-
-div.textAreaDiv > div {
-	display: flex;
-	align-items: center;
 	height: auto;
+	min-height: 32px;
 }
 
 
@@ -282,7 +278,7 @@ div.textAreaDiv > div {
 		height: 40px;
 	}
 	
-	div.textAreaDiv > div.label {
+	div.fieldDiv > div.label {
 		height: 32px;
 	}
 
