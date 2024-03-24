@@ -2,48 +2,32 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Query Java class generation</title>
-		<meta name="description" content="I make a query Java class.">
-		<style type="text/css">
-			#editForm > table th {
-				min-width: 160px;
-			}
-		</style>
+		<title>問合せJavaクラス作成</title>
+		<meta name="description" content="問合せJavaクラスを作成します。">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="queryForm">
 				<div class="formHeader">Query contition</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-						</tr>
-						<tr>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" /></td>
-						</tr>
-						<tr>
-							<th>Class name</th>
-							<td><input type="text" id="queryClassName" /></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 3;">
+						<div class="label"><label for="queryClassName">Class name</label></div>
+						<div class="field"><input type="text" id="queryClassName" /></div>
+					</div>
+				</div>
 				<input type="submit" id="queryButton" class="largeButton" value="Query">
-				<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
 				<input type="button" id="newButton" class="largeButton" value="New">
 			</form>
 			<form id="queryResultForm">
 				<div class="formHeader">Query result</div>
-				<!--
-				<input type="hidden" id="packageName" />
-				<input type="hidden" id="queryClassName" />
-				-->
-				<table class="responsive">
-					<tbody>
-					</tbody>
-				</table>
 				<div class="hScrollDiv">
 					<table id="queryResult">
 						<thead>
@@ -55,7 +39,7 @@
 									Query class name
 								</th>
 								<th>
-									Comment
+									Commwnt
 								</th>
 								<th>
 									Sub query
@@ -79,7 +63,7 @@
 								</td>
 								<td>
 									<span id="queryResult[0].subQuery"></span>
-									<button type="button" id="queryResult[0].generateSubQueryButton">Generate sub query</button>
+									<button type="button" id="queryResult[0].generateSubQueryButton">副問合せ作成</button>
 								</td>
 							</tr>
 						</tbody>
@@ -88,53 +72,65 @@
 			</form>
 			<form id="editForm">
 				<div class="formHeader"><span id="editFormTitle"></span></div>
+				<input type="hidden" id="saveMode" />
 				<h2>Query class to generate</h2>
-				<table class="responsive thtdthtdthtd">
-					<tbody>
-						<tr>
-							<th>Java source output destination</th>
-							<td><input type="text" id="javaSourcePath"/></td>
-							<th>Function</th>
-							<td><select id="functionSelect"></select></td>
-							<th>Package name</th>
-							<td><input type="text" id="packageName" /></td>
-						</tr>
-						<tr>
-							<th>Query class name</th>
-							<td><input type="text" id="queryClassName" /></td>
-							<th>Comment</th>
-							<td>
-								<input type="text" id="queryComment"/>
-							</td>
-							<th>Overwrite mode</th>
-							<td>
-								<select id="overwriteMode"></select>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="6">
-								<input type="checkbox" id="distinctFlag" value="1"/><label for="distinctFlag">Distinct</label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="javaSourcePath">Java source output path</label></div>
+						<div class="field"><input type="text" id="javaSourcePath" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">Function</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">Package name</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="queryClassName">Query class name</label></div>
+						<div class="field"><input type="text" id="queryClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="queryComment">Comment</label></div>
+						<div class="field"><input type="text" id="queryComment" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="overwriteMode">Overwrite mode</label></div>
+						<div class="field"><select id="overwriteMode"></select></div>
+					</div>
+					<div class="fieldDiv" style="grid-column: 1 / 4;">
+						<div class="field">
+							<div>
+								<input type="checkbox" id="distinctFlag" value="1"/>
+								<label for="distinctFlag">Distinct</label>
+								<input type="checkbox" id="notUpdateConstractor" value="1"/>
+								<label for="notUpdateConstractor">コンストラクタを更新しない(フィールドリストは変更されません)</label>
+								<input type="checkbox" id="notGenerateEntity" value="1"/>
+								<label for="notGenerateEntity">Entityクラスとフィールドゲッターを生成しない</label>
+							</div>
+						</div>
+					</div>
+				</div>
 				<h2>Main table to query</h2>
-				<table class="responsive thtdthtd">
-					<tbody>
-						<tr>
-							<th>Function</th>
-							<td><select id="mainTableFunctionSelect"></select></td>
-							<th>Package</th>
-							<td><input type="text" id="mainTablePackageName" /></td>
-						</tr>
-						<tr>
-							<th>Class name</th>
-							<td><input type="text" id="mainTableClassName" /></td>
-							<th>Alias</th>
-							<td><input type="text" id="aliasName" /></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
+					<div class="fieldDiv">
+						<div class="label"><label for="mainTableFunctionSelect">Function</label></div>
+						<div class="field"><select id="mainTableFunctionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="mainTablePackageName">Package</label></div>
+						<div class="field"><input type="text" id="mainTablePackageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="mainTableClassName">Class name</label></div>
+						<div class="field"><input type="text" id="mainTableClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="aliasName">Alias</label></div>
+						<div class="field"><input type="text" id="aliasName" /></div>
+					</div>
+				</div>	
 				<h2>List of tables to join</h2>
 				<table id="joinTableList" class="editableTable">
 					<thead>
@@ -340,17 +336,11 @@
 						</tr>
 					</tfoot>
 				</table>
-				<div>
-					<input type="checkbox" id="notUpdateConstractor" value="1"/><label for="updateConstractor">Don't update constructor (field list doesn't change)</label>
-					<input type="checkbox" id="notGenerateEntity" value="1" /><label for="updateConstractor">Do not generate Entity classes and field getters</label>
-				</div>
-				<br/>
-				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
-				<input type="button" id="saveButton" class="largeButton" value="Save"/>
-				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
-				<input type="button" id="backButton" class="largeButton" value="Back"/>
-
+				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+				<input type="button" id="saveButton" class="largeButton" value="登録"/>
+				<input type="button" id="backButton" class="largeButton" value="戻る"/>
 			</form>
+
 		</div>
 	</body>
 </html>
