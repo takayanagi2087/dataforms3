@@ -13,14 +13,14 @@
 				div.queryClass button {
 					width: 110px;
 				}
-
+	
 				div.formClass input {
 					width: calc(100% - 118px);
 				}
 				div.formClass select {
 					width: 110px;
 				}
-
+	
 				table.formClass th {
 					width: 300px;
 				}
@@ -33,123 +33,117 @@
 			</style>
 			<div class="formHeader"><span id="editFormTitle"></span></div>
 			<input type="hidden" id="saveMode" />
-				<h2>ページの機能</h2>
-			<table class="responsive">
-				<tbody>
-					<tr>
-						<th style="width: 14%;">ページの動作</th>
-						<td colspan="5"><select id="pagePattern" class="pageType"></select></td>
-					</tr>
-					<tr>
-						<th style="width: 14%;">説明</th>
-						<td colspan="5">
-							<div id="desc000" class="pageDesc">
-								<!-- DBアクセス無しの説明 -->
-								空のフォームを1つ配置したページクラスを作成します。
-								Javaのフォームクラスに必要なフィールドを配置してから、
-								Webリソース作成でhtmlとjsを作成してください。
-								イベント処理はjsに記述してください。
-							</div>
-							<div id="desc110" class="pageDesc">
-								<!-- 条件入力　→　一覧表示 -->
-								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。
-							</div>
-							<div id="desc111" class="pageDesc">
-								<!-- 条件入力　→　一覧表示　→　1レコード編集 -->
-								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
-								リストを選択すると対応する1レコードを編集します。<br/>
-								検索結果リストには編集するテーブルの主キーを含む必要があります。
-							</div>
-							<div id="desc112" class="pageDesc">
-								<!-- 条件入力　→　一覧表示　→　複数レコード編集 -->
-								問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
-								リストを選択すると対応する複数レコードを編集します。<br/>
-								検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
-							</div>
-							<div id="desc102" class="pageDesc">
-								<!-- 条件入力　→　複数レコード編集 -->
-								問合せ条件フォームに入力された検索条件を編集対象取得問合せに渡し、その結果を編集フォームに表示します。<br/>
-								問合せ条件には編集対象のレコードを特定する条件を指定する必要があります。
-							</div>
-							<div id="desc010" class="pageDesc">
-								<!-- 一覧表示 -->
-								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
-								一覧取得問合せに条件は指定はされません。<br/>
-								多少の改造でQueryStringで条件指定をすることが可能です。
-							</div>
-							<div id="desc011" class="pageDesc">
-								<!-- 一覧表示　→　1レコード編集 -->
-								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
-								一覧取得問合せに条件は指定はされません。<br/>
-								多少の改造でQueryStringで条件指定をすることが可能です。<br/>
-								リストを選択すると対応する1レコードを編集します。<br/>
-								検索結果リストには編集するテーブルの主キーを含む必要があります。
-							</div>
-							<div id="desc012" class="pageDesc">
-								<!-- 一覧表示　→　複数レコード編集 -->
-								一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
-								一覧取得問合せに条件は指定はされません。<br/>
-								多少の改造でQueryStringで条件指定をすることが可能です。<br/>
-								リストを選択すると対応する複数レコードを編集します。<br/>
-								検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
-							</div>
-							<div id="desc001" class="pageDesc">
-								<!-- 1レコード編集 -->
-								1レコードを新規追加するページです。<br/>
-								QueryStringで主キーを指定すると対象のレコードの編集が可能です。
-							</div>
-							<div id="desc002" class="pageDesc">
-								<!-- 複数レコード編集 -->
-								すべてのレコードを編集するページです。<br/>
-								編集対象のテーブルはレコード件数が少ないものを指定してください。
-							</div>
-						</td>
-					</tr>
-					<!--
-					<tr>
-						<th>問合せ条件</th>
-						<td><select id="queryFormSelect" class="pageType"></select></td>
-						<th>問合せ結果</th>
-						<td><select id="listFormSelect" class="pageType"></select></td>
-						<th>データ編集</th>
-						<td><select id="editFormSelect" class="pageType"></select></td>
-					</tr>
-					<tr>
-						<th>編集対象</th>
-						<td colspan="5"><select id="editTypeSelect" class="pageType editForm"></select></td>
-					</tr>
-					-->
-				</tbody>
-			</table>
-		<h2>生成するクラス</h2>
-			<table class="responsive thtdthtdthtd">
-				<tbody>
-					<tr>
-						<th>Javaソース出力先</th>
-						<td><input type="text" id="javaSourcePath" /></td>
-						<th>機能</th>
-						<td><select id="functionSelect"></select></td>
-						<th>ページ名</th>
-						<td><input type="text" id="pageName" /></td>
-					</tr>
-					<tr>
-						<th>ページパッケージ名</th>
-						<td><input type="text" id="packageName" /></td>
-						<th>ページクラス名</th>
-						<td><input type="text" id="pageClassName" /></td>
-						<th>上書きモード</th>
-						<td><select id="pageClassOverwriteMode"></select></td>
-					</tr>
-					<tr>
-						<th>DAOパッケージ名</th>
-						<td><input type="text" id="daoPackageName" /></td>
-						<th>DAOクラス名</th>
-						<td><input type="text" id="daoClassName" /></td>
-						<th>上書きモード</th>
-						<td><select id="daoClassOverwriteMode"></select></td>
-					</tr>
-				</tbody>
-			</table>
+			<h2>ページの機能</h2>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label"><label for="pagePattern">ページの動作</label></div>
+					<div class="field"><select id="pagePattern"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">説明</div>
+					<div class="field">
+						<div id="desc000" class="pageDesc">
+							<!-- DBアクセス無しの説明 -->
+							空のフォームを1つ配置したページクラスを作成します。
+							Javaのフォームクラスに必要なフィールドを配置してから、
+							Webリソース作成でhtmlとjsを作成してください。
+							イベント処理はjsに記述してください。
+						</div>
+						<div id="desc110" class="pageDesc">
+							<!-- 条件入力　→　一覧表示 -->
+							問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。
+						</div>
+						<div id="desc111" class="pageDesc">
+							<!-- 条件入力　→　一覧表示　→　1レコード編集 -->
+							問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
+							リストを選択すると対応する1レコードを編集します。<br/>
+							検索結果リストには編集するテーブルの主キーを含む必要があります。
+						</div>
+						<div id="desc112" class="pageDesc">
+							<!-- 条件入力　→　一覧表示　→　複数レコード編集 -->
+							問合せ条件フォームに入力された検索条件を一覧取得問合せに渡し、その結果を検索結果フォームに表示します。<br/>
+							リストを選択すると対応する複数レコードを編集します。<br/>
+							検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
+						</div>
+						<div id="desc102" class="pageDesc">
+							<!-- 条件入力　→　複数レコード編集 -->
+							問合せ条件フォームに入力された検索条件を編集対象取得問合せに渡し、その結果を編集フォームに表示します。<br/>
+							問合せ条件には編集対象のレコードを特定する条件を指定する必要があります。
+						</div>
+						<div id="desc010" class="pageDesc">
+							<!-- 一覧表示 -->
+							一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+							一覧取得問合せに条件は指定はされません。<br/>
+							多少の改造でQueryStringで条件指定をすることが可能です。
+						</div>
+						<div id="desc011" class="pageDesc">
+							<!-- 一覧表示　→　1レコード編集 -->
+							一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+							一覧取得問合せに条件は指定はされません。<br/>
+							多少の改造でQueryStringで条件指定をすることが可能です。<br/>
+							リストを選択すると対応する1レコードを編集します。<br/>
+							検索結果リストには編集するテーブルの主キーを含む必要があります。
+						</div>
+						<div id="desc012" class="pageDesc">
+							<!-- 一覧表示　→　複数レコード編集 -->
+							一覧取得問合せの実行結果を検索結果フォームに表示します。<br/>
+							一覧取得問合せに条件は指定はされません。<br/>
+							多少の改造でQueryStringで条件指定をすることが可能です。<br/>
+							リストを選択すると対応する複数レコードを編集します。<br/>
+							検索結果リストには編集対象レコードを特定するキーフィールドを含む必要があります。
+						</div>
+						<div id="desc001" class="pageDesc">
+							<!-- 1レコード編集 -->
+							1レコードを新規追加するページです。<br/>
+							QueryStringで主キーを指定すると対象のレコードの編集が可能です。
+						</div>
+						<div id="desc002" class="pageDesc">
+							<!-- 複数レコード編集 -->
+							すべてのレコードを編集するページです。<br/>
+							編集対象のテーブルはレコード件数が少ないものを指定してください。
+						</div>
+					</div>
+				</div>
+			</div>
+			<h2>生成するクラス</h2>
+			<div class="gridLayout" style="grid-template-columns: 1fr 1fr 1fr;">
+				<div class="fieldDiv">
+					<div class="label"><label for="javaSourcePath">Javaソース出力先</label></div>
+					<div class="field"><input type="text" id="javaSourcePath" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="functionSelect">機能</label></div>
+					<div class="field"><select id="functionSelect"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="pageName">ページ名</label></div>
+					<div class="field"><input type="text" id="pageName" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="packageName">ページパッケージ名</label></div>
+					<div class="field"><input type="text" id="packageName" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="pageClassName">ページクラス名</label></div>
+					<div class="field"><input type="text" id="pageClassName" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="pageClassOverwriteMode">pageClassOverwriteMode</label></div>
+					<div class="field"><select id="pageClassOverwriteMode"></select></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="daoPackageName">DAOパッケージ名</label></div>
+					<div class="field"><input type="text" id="daoPackageName" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="daoClassName">DAOクラス名</label></div>
+					<div class="field"><input type="text" id="daoClassName" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="daoClassOverwriteMode">daoClassOverwriteMode</label></div>
+					<div class="field"><select id="daoClassOverwriteMode"></select></div>
+				</div>
+			</div>
 			<h2>フォームとデータベース</h2>
 			<table class="responsive">
 				<thead>
@@ -316,7 +310,6 @@
 			<input type="button" id="errorForceButton" class="largeButton" value="エラーしたものも強制上書き"/><br/>
 			<input type="button" id="confirmButton" class="largeButton" value="確認"/>
 			<input type="button" id="saveButton" class="largeButton" value="登録"/>
-			<input type="button" id="resetButton" class="largeButton" value="リセット"/>
 			<input type="button" id="backButton" class="largeButton" value="戻る"/>
 		</form>
 
