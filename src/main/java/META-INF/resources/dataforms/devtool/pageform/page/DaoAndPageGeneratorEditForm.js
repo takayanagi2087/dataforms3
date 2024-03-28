@@ -84,11 +84,21 @@ class DaoAndPageGeneratorEditForm extends EditForm {
 	onUpdateClassName(pc) {
 		let pcname = pc.val();
 		let n = pcname.replace(/Page$/, "");
-		this.setFieldValue("daoClassName", n + "Dao");
-		this.setFieldValue("formClassName", n + "Form");
-		this.setFieldValue("queryFormClassName", n + "QueryForm");
-		this.setFieldValue("queryResultFormClassName", n + "QueryResultForm");
-		this.setFieldValue("editFormClassName", n + "EditForm");
+		if (!this.get("daoClassName").prop("disabled")) {
+			this.setFieldValue("daoClassName", n + "Dao");
+		}
+		if (!this.get("formClassName").prop("disabled")) {
+			this.setFieldValue("formClassName", n + "Form");
+		}
+		if (!this.get("queryFormClassName").prop("disabled")) {
+			this.setFieldValue("queryFormClassName", n + "QueryForm");
+		}
+		if (!this.get("queryResultFormClassName").prop("disabled")) {
+			this.setFieldValue("queryResultFormClassName", n + "QueryResultForm");
+		}
+		if (!this.get("editFormClassName").prop("disabled")) {
+			this.setFieldValue("editFormClassName", n + "EditForm");
+		}
 
 	}
 
@@ -372,7 +382,13 @@ class DaoAndPageGeneratorEditForm extends EditForm {
 				logger.log("editFieldList=", flist);
 			}
 			let qfc = this.get("queryFormClassName").val();
+			if (this.get("queryFormClassName").prop("disabled")) {
+				qfc = "";
+			}
 			let qrfc = this.get("queryResultFormClassName").val();
+			if (this.get("queryResultFormClassName").prop("disabled")) {
+				qrfc = "";
+			}
 			if (qfc.length > 0 || qrfc.length > 0) {
 				let lqc = this.get("listQueryClassName").val();
 				if (lqc.length == 0) {
@@ -381,6 +397,9 @@ class DaoAndPageGeneratorEditForm extends EditForm {
 				}
 			}
 			let efc = this.get("editFormClassName").val();
+			if (this.get("editFormClassName").prop("disabled")) {
+				efc = "";
+			}
 			if (efc.length > 0) {
 				let eqc = this.get("editQueryClassName").val();
 				if (eqc.length == 0) {
