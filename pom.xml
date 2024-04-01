@@ -44,12 +44,14 @@
 			<groupId>jakarta.activation</groupId>
 			<artifactId>jakarta.activation-api</artifactId>
 			<version>2.1.2</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
 		<dependency>
 			<groupId>jakarta.mail</groupId>
 			<artifactId>jakarta.mail-api</artifactId>
 			<version>2.1.2</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Apache commons -->
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->

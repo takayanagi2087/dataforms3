@@ -6,33 +6,25 @@
 	</head>
 	<body>
 		<form id="loginForm" style="height: 120px; ">
-			<table class="responsive thtd">
-				<tbody>
-					<tr>
-						<th>ユーザID.</th>
-						<td><input type="text" id="loginId" value=""/></td>
-					</tr>
-					<tr>
-						<th>パスワード</th>
-						<td><input type="password" id="password" value=""/></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div>
-								<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">ログインしたままにする</label>
-							</div>
-							<div style="float: right;">
-								<a id="passwordResetLink" href="javascript:void(0);">パスワードを忘れた方はこちら</a>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<button type="submit" id="loginButton" class="largeButton">ログイン</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label">ユーザID.</div>
+					<div class="field"><input type="text" id="loginId" value=""/></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">パスワード</div>
+					<div class="field"><input type="password" id="password" value=""/></div>
+				</div>
+				<div class="fieldDiv" style="justify-content: space-between;">
+					<div>
+						<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">ログインしたままにする</label>
+					</div>
+					<div>
+						<a id="passwordResetLink" href="javascript:void(0);">パスワードを忘れた方はこちら</a>
+					</div>
+				</div>
+			</div>
+			<button type="submit" id="loginButton" class="largeButton">ログイン</button>
 		</form>
 	</body>
 </html>

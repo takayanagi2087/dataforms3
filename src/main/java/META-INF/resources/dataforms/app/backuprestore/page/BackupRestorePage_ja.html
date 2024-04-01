@@ -4,38 +4,35 @@
 		<meta charset="UTF-8">
 		<title>バックアップ、リストア</title>
 		<meta name="description" content="データベースのバックアップ、リストアを行います。">
-		<style type="text/css">
-		</style>
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="backupForm">
 				<div class="formHeader">バックアップ対象を選択してください</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>機能</th>
-							<td><span><input type="checkbox" id="functionMultiSelect[0]" name="functionMultiSelect"/></span></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="functionMultiSelect">機能</label></div>
+						<div class="field"><span><input type="checkbox" id="functionMultiSelect[0]" name="functionMultiSelect"/></span></div>
+					</div>
+				</div>
 				<button type="button" id="backupButton" class="largeButton">バックアップ</button>
 			</form>
 			<form id="restoreForm">
 				<div class="formHeader">リストアするファイルを指定してください</div>
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>バックアップファイル</th>
-							<td><input type="file" id="backupFile" accept=".zip"/></td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<input type="checkbox" id="deleteDataFlag" value="1"/><label for="deleteDataFlag">既存データを削除する</label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="backupFile">バックアップファイル</label></div>
+						<div class="field"><input type="file" id="backupFile" accept=".zip"/></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="field">
+							<div>
+								<input type="checkbox" id="deleteDataFlag" value="1"/>
+								<label for="deleteDataFlag">既存データを削除する</label>
+							</div>
+						</div>
+					</div>
+				</div>
 				<button type="button" id="restoreButton" class="largeButton">リストア</button>
 			</form>
 		</div>
