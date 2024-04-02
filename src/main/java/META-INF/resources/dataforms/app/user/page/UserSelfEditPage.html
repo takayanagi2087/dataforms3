@@ -8,29 +8,23 @@
 	<body>
 		<div id="mainDiv">
 			<form id="editForm">
-				<table  class="responsive thtd">
-					<thead></thead>
-					<tbody>
-						<tr>
-							<th>Login ID</th>
-							<td>
-								<input type="text" id="loginId" value="" />
-							</td>
-						</tr>
-						<tr>
-							<th>Name</th>
-							<td><input type="text" id="userName" value=""/></td>
-						</tr>
-						<tr>
-							<th>E-Mail</th>
-							<td><input type="text" id="mailAddress" value=""/></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label">Login ID</div>
+						<div class="field"><input type="text" id="loginId" value="" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Name</div>
+						<div class="field"><input type="text" id="userName" value=""/></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">E-Mail</div>
+						<div class="field"><input type="text" id="mailAddress" value=""/></div>
+					</div>
+				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
 				<input type="button" id="saveButton" class="largeButton" value="Save"/>
 				<input type="button" id="backButton" class="largeButton" value="Back"/>
-				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
 			</form>
 		</div>
 	</body>

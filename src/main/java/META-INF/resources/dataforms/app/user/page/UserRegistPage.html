@@ -9,37 +9,34 @@
 		<div id="mainDiv">
 			<form id="editForm">
 				<input type="hidden" id="saveMode" />
-				<table class="responsive thtd">
-					<tbody>
-						<tr>
-							<th>Login ID.</th>
-							<td><input type="text" id="loginId" /></td>
-						</tr>
-						<tr>
-							<th>Mail address</th>
-							<td><input type="text" id="mailAddress" /></td>
-						</tr>
-						<tr>
-							<th>Mail address(Confirm)</th>
-							<td><input type="text" id="mailAddressCheck" /></td>
-						</tr>
-						<tr>
-							<th>Name</th>
-							<td><input type="text" id="userName" /></td>
-						</tr>
-						<tr>
-							<th>Password</th>
-							<td><input type="password" id="password" /></td>
-						</tr>
-						<tr>
-							<th>Password(Confirm)</th>
-							<td><input type="password" id="passwordCheck" /></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label">Login ID.</div>
+						<div class="field"><input type="text" id="loginId" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Mail address</div>
+						<div class="field"><input type="text" id="mailAddress" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Mail address(Confirm)</div>
+						<div class="field"><input type="text" id="mailAddressCheck" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Name</div>
+						<div class="field"><input type="text" id="userName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Password</div>
+						<div class="field"><input type="password" id="password" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label">Password(Confirm)</div>
+						<div class="field"><input type="password" id="passwordCheck" /></div>
+					</div>
+				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
 				<input type="button" id="saveButton" class="largeButton" value="Save"/>
-				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
 				<input type="button" id="backButton" class="largeButton" value="Back"/>
 			</form>
 

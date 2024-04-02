@@ -11,25 +11,22 @@
 				<input type="hidden" id="saveMode" />
 				<input type="hidden" id="updateUserId" />
 				<input type="hidden" id="updateTimestamp" />
-				<table class="responsive">
-					<tbody>
-						<tr>
-							<th>Name</th>
-							<td><span id="userName"></span></td>
-						</tr>
-						<tr>
-							<th>Login ID.</th>
-							<td><input type="text" id="loginId"></td>
-						</tr>
-						<tr>
-							<th>Password</th>
-							<td><input type="password" id="password" /></td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label">Name</div>
+						<div class="field"><span id="userName"></span></div>
+					</div>
+					<div class="fieldDiv passwordTr">
+						<div class="label">Login ID.</div>
+						<div class="field"><input type="text" id="loginId"></div>
+					</div>
+					<div class="fieldDiv passwordTr">
+						<div class="label">Password</div>
+						<div class="field"><input type="password" id="password" /></div>
+					</div>
+				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
 				<input type="button" id="saveButton" class="largeButton" value="Save"/>
-				<input type="button" id="resetButton" class="largeButton" value="Reset"/>
 				<input type="button" id="backButton" class="largeButton" value="Back"/>
 			</form>
 		</div>
