@@ -7,24 +7,21 @@
 	<body>
 		<form id="queryForm">
 			<div class="formHeader">Query contition</div>
-			<table class="responsive">
-				<tbody>
-					<tr>
-						<th>Enumeration code</th>
-						<td><input type="text" id="enumCode" /></td>
-					</tr>
-					<tr>
-						<th>Enumeration group code</th>
-						<td><input type="text" id="enumGroupCode" /></td>
-					</tr>
-					<tr>
-						<th>Memo</th>
-						<td><input type="text" id="memo" /></td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label">Enumeration code</div>
+					<div class="field"><input type="text" id="enumCode" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">Enumeration group code</div>
+					<div class="field"><input type="text" id="enumGroupCode" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">Memo</div>
+					<div class="field"><input type="text" id="memo" /></div>
+				</div>
+			</div>
 			<input type="submit" id="queryButton" class="largeButton" value="Query">
-			<input type="button" id="resetButton" class="largeButton" value="Reset">&nbsp;
 			<input type="button" id="newButton" class="largeButton" value="New">
 			<input type="button" id="exportInitDataButton" class="largeButton" value="Export as initialization data">
 			<input type="button" id="importDataButton" class="largeButton" value="Import initialization data">

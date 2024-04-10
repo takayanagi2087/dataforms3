@@ -7,24 +7,21 @@
 	<body>
 		<form id="queryForm">
 			<div class="formHeader">検索条件</div>
-			<table class="responsive">
-				<tbody>
-					<tr>
-						<th>列挙型コード</th>
-						<td><input type="text" id="enumCode" /></td>
-					</tr>
-					<tr>
-						<th>グループコード</th>
-						<td><input type="text" id="enumGroupCode" /></td>
-					</tr>
-					<tr>
-						<th>メモ</th>
-						<td><input type="text" id="memo" /></td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="gridLayout">
+				<div class="fieldDiv">
+					<div class="label">列挙型コード</div>
+					<div class="field"><input type="text" id="enumCode" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">グループコード</div>
+					<div class="field"><input type="text" id="enumGroupCode" /></div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label">メモ</div>
+					<div class="field"><input type="text" id="memo" /></div>
+				</div>
+			</div>
 			<input type="submit" id="queryButton" class="largeButton"  value="検索">
-			<input type="button" id="resetButton"  class="largeButton"  value="リセット">&nbsp;
 			<input type="button" id="newButton" class="largeButton"  value="新規登録">
 			<input type="button" id="exportInitDataButton" class="largeButton"  value="初期化データとしてエクスポート">
 			<input type="button" id="importDataButton" class="largeButton" value="初期化データをインポート">
