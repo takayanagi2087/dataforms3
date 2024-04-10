@@ -463,13 +463,6 @@ public class DataFormsServlet extends HttpServlet {
 		logger.info(() -> "init:checkUserImport=" + checkUserImport);
 		DeveloperEditForm.setCheckUserImport(checkUserImport);
 
-		String ieSupportJson = this.getServletContext().getInitParameter("ie-support");
-		logger.debug(() -> "ieSupport=" + ieSupportJson);
-		if (!StringUtil.isBlank(ieSupportJson)) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> p = JSON.decode(ieSupportJson, HashMap.class);
-			DataFormsServlet.setIeSupport(p);
-		}
 		this.getUserEditFormConf();
 		this.getUserRegistConf();
 		super.init();
@@ -510,62 +503,6 @@ public class DataFormsServlet extends HttpServlet {
 		}
 
 	}
-
-	/**
-	 * IEサポート情報。
-	 */
-	private static Map<String, Object> ieSupport = null;
-
-
-	/**
-	 * IEサポート情報を取得します。
-	 * @return IEサポート情報。
-	 */
-	public static Map<String, Object> getIeSupport() {
-		if (DataFormsServlet.ieSupport == null) {
-			DataFormsServlet.ieSupport = new HashMap<String, Object>();
-			DataFormsServlet.ieSupport.put(ALLOW_IE, false);
-			DataFormsServlet.ieSupport.put(BABEL_COMMAND, BABEL_STANDALONE);
-		}
-		return DataFormsServlet.ieSupport;
-	}
-
-	/**
-	 * IE許可フラグを取得します。
-	 * @return IE許可フラグ。
-	 */
-	public static Boolean allowIe() {
-		Boolean ret = (Boolean) DataFormsServlet.getIeSupport().get(ALLOW_IE);
-		return ret;
-	}
-
-	/**
-	 * BABELのコマンドを取得します。
-	 * @return BABELのコマンド。
-	 */
-	public static String getBabelCommand() {
-		String ret = (String) DataFormsServlet.getIeSupport().get(BABEL_COMMAND);
-		return ret;
-	}
-
-
-	/**
-	 * BABELの作業領域を取得します。
-	 * @return BABELの作業領域。
-	 */
-	public static String getBabelWork() {
-		String ret = (String) DataFormsServlet.getIeSupport().get(BABEL_WORK);
-		return ret;
-	}
-
-	/**
-	 * IEサポート情報を設定します。
-	 * @param ieSupport IEサポート設定。
-	 */
-	public static void setIeSupport(final Map<String, Object> ieSupport) {
-		DataFormsServlet.ieSupport = ieSupport;
-	}
-
 
 
 	/**

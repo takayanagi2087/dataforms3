@@ -409,15 +409,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		String jspath = this.getAppropriatePath(js, this.getRequest());
 		if (jspath != null) {
 			String t = this.getLastUpdate(jspath);
-			if (this.isIE()) {
-				if (DataFormsServlet.BABEL_STANDALONE.equals(DataFormsServlet.getBabelCommand())) {
-					sb.append("\t\t<script type=\"text/babel\" data-presets=\"es2015,stage-2\"  src=\"" + context + jspath + "?t=" + t + "\"></script>\n");
-				} else {
-					sb.append("\t\t<script src=\"" + context + jspath + "b?t=" + t + "\"></script>\n");
-				}
-			} else {
-				sb.append("\t\t<script src=\"" + context + jspath + "?t=" + t + "\"></script>\n");
-			}
+			sb.append("\t\t<script src=\"" + context + jspath + "?t=" + t + "\"></script>\n");
 		}
 	}
 
@@ -822,12 +814,10 @@ public class Page extends DataForms implements WebEntryPoint {
      */
 	public Response getHtml(final Map<String, Object> params) throws Exception {
 		HttpServletRequest req = this.getRequest();
-		if (!DataFormsServlet.allowIe()) {
-			if (this.isIE()) {
-				String url = this.getAppropriateLangPath("/dataforms/app/errorpage/IeNotSupport.html", req);
-				logger.debug(() -> "url=" + url);
-				return new RedirectResponse(req.getContextPath() + url);
-			}
+		if (this.isIE()) {
+			String url = this.getAppropriateLangPath("/dataforms/app/errorpage/IeNotSupport.html", req);
+			logger.debug(() -> "url=" + url);
+			return new RedirectResponse(req.getContextPath() + url);
 		}
     	this.processQueryString(params);
 		String uri = req.getRequestURI();
@@ -839,13 +829,6 @@ public class Page extends DataForms implements WebEntryPoint {
 		String htmltext = this.getHtmlText(req, context);
 
 		String scripts = this.getWebResource(DataFormsServlet.getCssAndScript());
-		if (this.isIE()) {
-			String babel = this.getWebResource("/frame/babel.html");
-			if (DataFormsServlet.BABEL_STANDALONE.equals(DataFormsServlet.getBabelCommand())) {
-				babel = this.getWebResource("/frame/babelStandalone.html") + babel;
-			}
-			scripts = babel + scripts;
-		}
 		scripts = scripts.replaceAll("\\$\\{context\\}", req.getContextPath());
 
     	HtmlResponse resp = new HtmlResponse(this.editHtml(htmltext, scripts, context));
