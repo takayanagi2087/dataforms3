@@ -3,6 +3,7 @@ package jp.dataforms.fw.util;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -402,7 +403,8 @@ public class WebClient {
 			}
 		}
 		logger.debug("url={}", url);
-		URL u = new URL(url);
+		URI uri = new URI(url);
+		URL u = uri.toURL();
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 		conn.setRequestMethod(this.httpMethod);
 		for (Map<String, String> m: this.requestHeaderList) {

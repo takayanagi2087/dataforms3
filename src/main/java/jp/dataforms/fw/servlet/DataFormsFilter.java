@@ -2,6 +2,7 @@ package jp.dataforms.fw.servlet;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +48,8 @@ public class DataFormsFilter {
 	 * @throws Exception 例外。
 	 */
 	public String getWebResourceUrl(final HttpServletRequest req, final String path) throws Exception {
-		URL accessurl = new URL(req.getRequestURL().toString());
+		URI uri = new URI(req.getRequestURL().toString());
+		URL accessurl = uri.toURL();
 		String url = null;
 		if (StringUtil.isBlank(DataFormsServlet.getWebResourceUrl())) {
 			url = accessurl.getProtocol() + "://" + req.getServerName() + ":" + req.getServerPort() + path;
@@ -68,7 +70,8 @@ public class DataFormsFilter {
 	 */
 	protected String readWebResource(final HttpServletRequest req, final String path) throws Exception {
 		logger.debug("readWebResource path={}", path);
-		URL url = new URL(getWebResourceUrl(req, path));
+		URI uri = new URI(getWebResourceUrl(req, path));
+		URL url = uri.toURL();
 		String ret = null;
 		logger.debug(() -> "webResourceUrl=" + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();

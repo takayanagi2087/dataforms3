@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -17,7 +18,8 @@ public class RunBatch {
 	 * @throws Exception 例外。
 	 */
 	private int run(final String url) throws Exception {
-		URL u = new URL(url);
+		URI uri = new URI(url);
+		URL u = uri.toURL();
 		int ret = 0;
 		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 		try  {

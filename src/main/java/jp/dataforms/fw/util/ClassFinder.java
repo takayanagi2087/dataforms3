@@ -2,6 +2,7 @@ package jp.dataforms.fw.util;
 
 import java.io.File;
 import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -131,13 +132,15 @@ public class ClassFinder {
 				// WebLogicは何故かzip:から始まるurlで返してきて、weblogic独自のクラスで展開しようとする。
 				// それをjar:形式のURLに変換し、java標準クラスで処理するようにする。
 				String u = url.toString().replaceAll("^zip\\:", "jar:file:/");
-				URL jarurl = new URL(u);
+				URI uri = new URI(u);
+				URL jarurl = uri.toURL();
 				return jarurl;
 			} else if ("vfs".equals(url.getProtocol())) {
 				// jboss(wildfly)対応
 				String u = url.toString().replaceAll("^vfs\\:", "jar:file:").replaceAll("\\.jar\\/", "\\.jar\\!/");
 //				log.info("JARURL = " + u);
-				URL jarurl = new URL(u);
+				URI uri = new URI(u);
+				URL jarurl = uri.toURL();
 				return jarurl;
 			} else {
 				return url;

@@ -3,6 +3,7 @@ package jp.dataforms.fw.controller;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -574,7 +575,8 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	public byte[] getBinaryWebResource(final String path) throws Exception {
 		byte[] ret = null;
-		URL url = new URL(getWebResourceUrl(path));
+		URI uri = new URI(getWebResourceUrl(path));
+		URL url = uri.toURL();
 		logger.debug("webResourceUrl=" + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.connect();
@@ -596,7 +598,8 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @throws Exception 例外。
 	 */
 	private String readWebResource(final String path) throws Exception {
-		URL url = new URL(getWebResourceUrl(path));
+		URI uri = new URI(getWebResourceUrl(path));
+		URL url = uri.toURL();
 		String ret = "";
 		logger.debug(() -> "webResourceUrl=" + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -633,7 +636,8 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @throws Exception 例外。
 	 */
 	public byte[] readBinaryWebResource(final String path) throws Exception {
-		URL url = new URL(getWebResourceUrl(path));
+		URI uri = new URI(getWebResourceUrl(path));
+		URL url = uri.toURL();
 		byte[] ret = null;
 		logger.debug(() -> "webResourceUrl=" + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -658,7 +662,8 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	public String getWebResourceUrl(final String path) throws Exception {
 		HttpServletRequest req = this.getWebEntryPoint().getRequest();
-		URL accessurl = new URL(req.getRequestURL().toString());
+		URI uri = new URI(req.getRequestURL().toString());
+		URL accessurl = uri.toURL();
 		String url = null;
 		if (StringUtil.isBlank(DataFormsServlet.getWebResourceUrl())) {
 			url = accessurl.getProtocol() + "://" + req.getServerName() + ":" + req.getServerPort() + req.getContextPath() + path;
