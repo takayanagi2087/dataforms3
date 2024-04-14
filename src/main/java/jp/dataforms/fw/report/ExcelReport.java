@@ -44,9 +44,9 @@ import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.util.FileUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MapUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 
 /**
@@ -655,7 +655,7 @@ public class ExcelReport extends Report {
 										logger.debug("s=" + s);
 									}
 									@SuppressWarnings("unchecked")
-									Map<String, Object> opt = (Map<String, Object>) JSON.decode(sp[sp.length - 1], Map.class);
+									Map<String, Object> opt = (Map<String, Object>) JsonUtil.decode(sp[sp.length - 1], HashMap.class);
 									logger.debug("opt=" + opt.toString());
 									if (opt.containsKey("aspect")) {
 										p.setAspect((String) opt.get("aspect"));

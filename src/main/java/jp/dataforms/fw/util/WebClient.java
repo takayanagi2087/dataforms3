@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.arnx.jsonic.JSON;
-
 /**
  * httpアクセス用のクラス。
  *
@@ -163,7 +161,7 @@ public class WebClient {
 			// 文字列以外はJSON形式でPOST
 			this.setHttpMethod(METHOD_POST);
 			this.setContentType("application/json");
-			return JSON.encode(p);
+			return JsonUtil.encode(p);
 		}
 	}
 
@@ -378,7 +376,7 @@ public class WebClient {
 		Object ret = this.convertToText(buf, contentType, encoding);
 		if (contentType != null) {
 			if (contentType.indexOf("application/json") >= 0) {
-				ret = JSON.decode((String) ret, HashMap.class);
+				ret = JsonUtil.decode((String) ret, HashMap.class);
 			}
 		}
 		return ret;

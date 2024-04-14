@@ -21,8 +21,8 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * QuerySetDao生成クラス。
@@ -129,7 +129,7 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 		String json = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CONFIG);
 		logger.debug("*** editQueryConfig=" + json);
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> list = JSON.decode(json, ArrayList.class);
+		List<Map<String, Object>> list = (List<Map<String, Object>>) JsonUtil.decode(json, ArrayList.class);
 		return list;
 	}
 

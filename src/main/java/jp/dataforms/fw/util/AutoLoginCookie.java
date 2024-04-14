@@ -15,7 +15,6 @@ import jp.dataforms.fw.controller.WebEntryPoint;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.servlet.DataFormsServlet;
-import net.arnx.jsonic.JSON;
 
 /**
  * 自動ログイン制御クラス。
@@ -118,7 +117,7 @@ public final class AutoLoginCookie {
 						if (tmdao.isDatabaseInitialized()) {
 							UserDao dao = new UserDao(page);
 							@SuppressWarnings("unchecked")
-							Map<String, Object> p = JSON.decode(json, HashMap.class);
+							Map<String, Object> p = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
 							UserInfoTable.Entity pe = new UserInfoTable.Entity(p);
 							try {
 								Map<String, Object> userInfo = dao.login(pe.getMap(), false);
@@ -153,7 +152,7 @@ public final class AutoLoginCookie {
 				Map<String, String> loginInfo = new HashMap<String, String>();
 				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
 				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
-				String json = JSON.encode(loginInfo);
+				String json = JsonUtil.encode(loginInfo);
 				String userInfo = CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword());
 				logger.debug(() -> "json=" + json + ",userInfo=" + userInfo);
 				cookie = new Cookie(ID_AUTO_LOGIN_INFO, userInfo);

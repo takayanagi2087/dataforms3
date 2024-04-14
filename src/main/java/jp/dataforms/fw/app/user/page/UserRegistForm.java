@@ -23,12 +23,12 @@ import jp.dataforms.fw.mail.MailSender;
 import jp.dataforms.fw.mail.MailTemplate;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 import jp.dataforms.fw.validator.MailAddressValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
-import net.arnx.jsonic.JSON;
 
 /**
  * 外部ユーザ登録フォーム。
@@ -197,7 +197,7 @@ public class UserRegistForm extends EditForm {
 //		m.put(UserInfoTable.Entity.ID_LOGIN_ID, data.get(UserInfoTable.Entity.ID_LOGIN_ID));
 		m.put(UserInfoTable.Entity.ID_MAIL_ADDRESS, data.get(UserInfoTable.Entity.ID_MAIL_ADDRESS));
 //		m.put(UserInfoTable.Entity.ID_USER_NAME, data.get(UserInfoTable.Entity.ID_USER_NAME));
-		String json = JSON.encode(m);
+		String json = JsonUtil.encode(m);
 		String key = CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword());
 		String enckey = java.net.URLEncoder.encode(key, DataFormsServlet.getEncoding());
 		url += "?key=" + enckey;

@@ -18,9 +18,9 @@ import jp.dataforms.fw.mail.MailSender;
 import jp.dataforms.fw.mail.MailTemplate;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
-import net.arnx.jsonic.JSON;
 
 /**
  * パスワードリセットメール送信フォームクラス。
@@ -76,7 +76,7 @@ public class PasswordResetMailForm extends EditForm {
 		UserInfoTable.Entity e = new UserInfoTable.Entity(data);
 		UserDao dao = new UserDao(this);
 		List<Map<String, Object>> list = dao.queryUserListByMail(e.getMailAddress());
-		logger.debug(() -> "userInfo=" + JSON.encode(list, true));
+		logger.debug(() -> "userInfo=" + JsonUtil.encode(list, true));
 		String path = this.getAppropriatePath("/mailTemplate/passwordResetMail.txt", this.getPage().getRequest());
 		String text = this.getWebResource(path);
 		logger.debug(() -> "template=" + text);
@@ -94,7 +94,7 @@ public class PasswordResetMailForm extends EditForm {
 			m.put(UserInfoTable.Entity.ID_LOGIN_ID, ue.getLoginId());
 			m.put(UserInfoTable.Entity.ID_USER_NAME, ue.getUserName());
 			m.put(UserInfoTable.Entity.ID_MAIL_ADDRESS, ue.getMailAddress());
-			String json = JSON.encode(m);
+			String json = JsonUtil.encode(m);
 			String key = CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword());
 			String enckey = java.net.URLEncoder.encode(key, DataFormsServlet.getEncoding());
 			logger.debug("url={}", url);

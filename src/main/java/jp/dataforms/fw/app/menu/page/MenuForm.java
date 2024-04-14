@@ -15,7 +15,7 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.menu.Menu;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * メニューフォームクラス。
@@ -93,7 +93,7 @@ public class MenuForm extends Form {
 	 */
 	protected List<Map<String, Object>> getMenuList() throws Exception {
 		List<Map<String, Object>> list = WebComponent.getFunctionMap().getMenuList(this.getPage());
-		logger.debug(() -> "menu list=" + JSON.encode(list, true));
+		logger.debug(() -> "menu list=" + JsonUtil.encode(list, true));
 		List<Map<String, Object>> mlist = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
 			String classname = DataFormsServlet.convertPageClassName((String) m.get("pageClass"));
@@ -122,7 +122,7 @@ public class MenuForm extends Form {
 				logger.error(() -> e.getMessage(), e);
 			}
 		}
-		logger.debug(() -> "menuList=" + JSON.encode(mlist, true));
+		logger.debug(() -> "menuList=" + JsonUtil.encode(mlist, true));
 		return mlist;
 	}
 

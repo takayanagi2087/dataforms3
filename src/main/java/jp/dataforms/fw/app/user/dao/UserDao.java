@@ -17,9 +17,9 @@ import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.util.CryptUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  *
@@ -267,7 +267,7 @@ public class UserDao extends Dao {
 		p.setUserId(userId);
 		query.setConditionData(p.getMap());
 		Map<String, Object> user = this.executeRecordQuery(query);
-		logger.info("userInfo=" + JSON.encode(user, true));
+		logger.info("userInfo=" + JsonUtil.encode(user, true));
 
 		UserInfoTable.Entity e = new UserInfoTable.Entity(user);
 		return e.getPassword();

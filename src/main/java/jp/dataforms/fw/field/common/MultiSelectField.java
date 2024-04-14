@@ -7,8 +7,8 @@ import jp.dataforms.fw.dao.sqldatatype.SqlClob;
 import jp.dataforms.fw.dao.sqlgen.mysql.MysqlSqlGenerator;
 import jp.dataforms.fw.dao.sqlgen.pgsql.PgsqlSqlGenerator;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * 複数選択可能な選択肢フィールドクラス。
@@ -95,7 +95,7 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	public Object getDBValue() {
 		String ret = null;
 		if (!StringUtil.isBlank(this.getValue())) {
-			ret = JSON.encode(this.getValue(), true);
+			ret = JsonUtil.encode(this.getValue(), true);
 		}
 		return ret;
 	}
@@ -106,11 +106,12 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	 * DBにから取得したjson形式の文字列を、リスト形式に変換します。
 	 * </pre>
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setDBValue(final Object value) {
 		List<TYPE> list = new ArrayList<TYPE>();
 		if (!StringUtil.isBlank(value)) {
-			list = JSON.decode(value.toString());
+			list = (List<TYPE>) JsonUtil.decode(value.toString(), ArrayList.class);
 		}
 		super.setValue(list);
 	}

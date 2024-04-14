@@ -70,11 +70,11 @@ import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.HttpRangeInfo;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.MessagesUtil.ClientMessageTransfer;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * DataForms用サーブレットクラスです。
@@ -290,7 +290,8 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	private void initPageOverrideMap() {
 		String json = this.getServletContext().getInitParameter("page-override");
-		ArrayList<ArrayList<String>> list = JSON.decode(json);
+		@SuppressWarnings("unchecked")
+		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) JsonUtil.decode(json, ArrayList.class);
 		for (int i = 0; i < list.size(); i++) {
 			DataFormsServlet.pageOverrideMap.put(list.get(i).get(0), list.get(i).get(1));
 		}
@@ -422,7 +423,7 @@ public class DataFormsServlet extends HttpServlet {
 		logger.debug(() -> "streamingBlockSize=" + streamingBlockSize);
 		if (!StringUtil.isBlank(streamingBlockSize)) {
 			@SuppressWarnings("unchecked")
-			List<LinkedHashMap<String, Object>> bslist = (List<LinkedHashMap<String, Object>>) JSON.decode(streamingBlockSize, ArrayList.class);
+			List<LinkedHashMap<String, Object>> bslist = (List<LinkedHashMap<String, Object>>) JsonUtil.decode(streamingBlockSize, ArrayList.class);
 			HttpRangeInfo.setBlockSizeList(bslist);
 		}
 
@@ -430,7 +431,7 @@ public class DataFormsServlet extends HttpServlet {
 		logger.debug(() -> "contentTypeList=" + contentTypeList);
 		if (!StringUtil.isBlank(contentTypeList)) {
 			@SuppressWarnings("unchecked")
-			List<LinkedHashMap<String, String>> ctlist = (List<LinkedHashMap<String, String>>) JSON.decode(contentTypeList, ArrayList.class);
+			List<LinkedHashMap<String, String>> ctlist = (List<LinkedHashMap<String, String>>) JsonUtil.decode(contentTypeList, ArrayList.class);
 			FileObject.setContentTypeList(ctlist);
 		}
 		String backupFileName = this.getServletContext().getInitParameter("backup-file-name");
@@ -478,7 +479,7 @@ public class DataFormsServlet extends HttpServlet {
 		WebComponent.setFunctionMap(new FunctionMap());
 		
 		{
-			logger.debug("function json=" + JSON.encode(WebComponent.getFunctionMap(), true));
+			logger.debug("function json=" + JsonUtil.encode(WebComponent.getFunctionMap(), true));
 			
 /*			String json = """
 			// comment
@@ -528,7 +529,8 @@ public class DataFormsServlet extends HttpServlet {
 		if (conf == null) {
 			conf = DEFAULT_CRYPT_CONFIG;
 		}
-		Map<String, Object> m = JSON.decode(conf);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
 		String algorithm = (String) m.get(CryptUtil.ALGORITHM);
 		CryptUtil.setAlgorithm(algorithm);
 		String initialVector = (String) m.get(CryptUtil.AES_INITIAL_VECTOR);
@@ -560,7 +562,8 @@ public class DataFormsServlet extends HttpServlet {
 	private void initOnetimePassword() {
 		String conf = this.getServletContext().getInitParameter(OnetimePasswordUtil.CONFIG_KEY);
 		if (conf != null) {
-			Map<String, Object> m = JSON.decode(conf);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
 			OnetimePasswordUtil.setConfig(m);
 		}
 	}
@@ -588,7 +591,8 @@ public class DataFormsServlet extends HttpServlet {
 		if (conf == null) {
 			conf = "{\"requiredMailAddress\": true}";
 		}
-		Map<String, Object> m = JSON.decode(conf);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
 		UserEditForm.setConfig(m);
 	}
 
@@ -606,7 +610,8 @@ public class DataFormsServlet extends HttpServlet {
 			conf = "{\"loginIdIsMail\": true, \"mailCheck\": true, \"sendUserEnableMail\": true}";
 			logger.debug("user-regist-page-config is missing. use default. " + conf);
 		}
-		Map<String, Object> m = JSON.decode(conf);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
 		logger.debug(() -> "m.class=" + m.getClass().getName());
 		logger.debug(() -> "conf=" + m.toString());
 		UserRegistForm.setConfig(m);
@@ -1129,7 +1134,7 @@ public class DataFormsServlet extends HttpServlet {
 				}
 			}
 		}
-		logger.debug(() -> "queryString=" + JSON.encode(ret, true));
+		logger.debug(() -> "queryString=" + JsonUtil.encode(ret, true));
 		return ret;
 
 	}
@@ -1353,7 +1358,7 @@ public class DataFormsServlet extends HttpServlet {
 			if (contentType != null && contentType.indexOf("application/json") >= 0) {
 				Map<String, Object> ret = new HashMap<String, Object>();
 				try (InputStream is = req.getInputStream()) {
-					ret = JSON.decode(is, HashMap.class);
+					ret = (Map<String, Object>) JsonUtil.decode(is, HashMap.class);
 				}
 				return ret;
 			} else {

@@ -19,8 +19,8 @@ import jp.dataforms.fw.devtool.base.page.DeveloperPage;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.field.base.Field.MatchType;
 import jp.dataforms.fw.response.JsonResponse;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
-import net.arnx.jsonic.JSON;
 
 
 
@@ -55,8 +55,8 @@ public class EnumQueryForm extends QueryForm {
 		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
 			TableManagerDao dao = new TableManagerDao(this);
 			String initialDataPath =  DeveloperPage.getExportInitalDataPath(this.getPage()); //DeveloperPage.getWebSourcePath() + "/WEB-INF/initialdata";
-			dao.exportData("dataforms.app.enumtype.dao.EnumTable", initialDataPath);
-			dao.exportData("dataforms.app.enumtype.dao.EnumNameTable", initialDataPath);
+			dao.exportData("jp.dataforms.fw.app.enumtype.dao.EnumTable", initialDataPath);
+			dao.exportData("jp.dataforms.fw.app.enumtype.dao.EnumNameTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initializationdatacreated"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
@@ -78,8 +78,8 @@ public class EnumQueryForm extends QueryForm {
 			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata");
 			dao.executeUpdate("delete from " + new EnumNameTable().getTableName(), new HashMap<String, Object>());
 			dao.executeUpdate("delete from " + new EnumTable().getTableName(), new HashMap<String, Object>());
-			dao.importData("dataforms.app.enumtype.dao.EnumTable", initialDataPath);
-			dao.importData("dataforms.app.enumtype.dao.EnumNameTable", initialDataPath);
+			dao.importData("jp.dataforms.fw.app.enumtype.dao.EnumTable", initialDataPath);
+			dao.importData("jp.dataforms.fw.app.enumtype.dao.EnumNameTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
@@ -91,7 +91,7 @@ public class EnumQueryForm extends QueryForm {
 	private List<Map<String, Object>> readJson(final String json) throws Exception {
 		List<Map<String, Object>> ret = null;
 		try (InputStream is = new FileInputStream(json)) {
-			ret = (List<Map<String, Object>>) JSON.decode(is, ArrayList.class);
+			ret = (List<Map<String, Object>>) JsonUtil.decode(is, ArrayList.class);
 		}
 		return ret;
 	}
@@ -148,7 +148,7 @@ public class EnumQueryForm extends QueryForm {
 		, final List<Map<String, Object>> enumOptionList) {
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> list = this.sort(enumOptionList);
-		logger.info("list json=" + JSON.encode(list));
+		logger.info("list json=" + JsonUtil.encode(list));
 		Map<String, String> groupMap = this.getGroupMap(enumGroupList);
 		long pid = 1;
 		long id = 1;
@@ -252,7 +252,7 @@ public class EnumQueryForm extends QueryForm {
 
 			List<Map<String, Object>> enumList = this.getEnumTable(enumGroupList, enumOptionList);
 			List<Map<String, Object>> enumNameList = this.getEnumNameTable(enumList, enumTypeNameList, enumOptionNameList);
-			logger.debug("enumNameList json=" + JSON.encode(enumNameList));
+			logger.debug("enumNameList json=" + JsonUtil.encode(enumNameList));
 			dao.executeUpdate("delete from " + new EnumNameTable().getTableName(), new HashMap<String, Object>());
 			dao.executeUpdate("delete from " + new EnumTable().getTableName(), new HashMap<String, Object>());
 			dao.executeInsert(new EnumTable(), enumList);

@@ -17,8 +17,8 @@ import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 
 /**
@@ -99,7 +99,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		}
 		this.htmlTable.getFieldList().getOrderByFieldList(sortOrder);
 		ret.put("htmlTable", htmlTable.getProperties());
-		logger.debug("result=" + JSON.encode(ret, true));
+		logger.debug("result=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 

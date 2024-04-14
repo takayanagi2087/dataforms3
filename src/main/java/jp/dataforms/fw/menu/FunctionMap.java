@@ -193,7 +193,7 @@ public class FunctionMap {
 		
 		/**
 		 * コンストラクタ。
-		 * @param menuPath メニューID。
+		 * @param menuPath メニューのパス。
 		 * @param cls ページクラス。
 		 */
 		public PageInfo(final String menuPath, final Class<? extends WebComponent> cls) {
@@ -205,6 +205,16 @@ public class FunctionMap {
 			}
 			this.pageClass = cls.getName();
 		}
+
+		/**
+		 * コンストラクタ。
+		 * @param cls ページクラス。
+		 */
+		public PageInfo(final Class<? extends WebComponent> cls) {
+			this(null, cls);
+			
+		}
+		
 
 		/**
 		 * ページのHTMLを取得します。
@@ -222,15 +232,6 @@ public class FunctionMap {
 			return html;
 		}
 		
-		
-		/**
-		 * コンストラクタ。
-		 * @param cls ページクラス。
-		 */
-		public PageInfo(final Class<? extends WebComponent> cls) {
-			this(null, cls);
-			
-		}
 		
 		/**
 		 * 言語ごとのページ名のマップを取得します。

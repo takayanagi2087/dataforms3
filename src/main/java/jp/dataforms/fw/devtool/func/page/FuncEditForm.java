@@ -164,7 +164,7 @@ public class FuncEditForm extends EditForm {
 		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
 			TableManagerDao dao = new TableManagerDao(this);
 			String initialDataPath =  DeveloperPage.getExportInitalDataPath(this.getPage()); //DeveloperPage.getWebSourcePath() + "/WEB-INF/initialdata";
-			dao.exportData("dataforms.app.func.dao.FuncInfoTable", initialDataPath);
+			dao.exportData("jp.dataforms.fw.app.func.dao.FuncInfoTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initializationdatacreated"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
@@ -186,7 +186,7 @@ public class FuncEditForm extends EditForm {
 			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata");
 			logger.debug("initialDataPath=" + initialDataPath);
 			dao.executeUpdate("delete from " + new FuncInfoTable().getTableName(), new HashMap<String, Object>());
-			dao.importData("dataforms.app.func.dao.FuncInfoTable", initialDataPath);
+			dao.importData("jp.dataforms.fw.app.func.dao.FuncInfoTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));

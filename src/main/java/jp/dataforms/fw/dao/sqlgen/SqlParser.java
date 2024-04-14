@@ -14,8 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.dao.file.FileObject;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * SQLパーサークラス。
@@ -114,7 +114,7 @@ public class SqlParser {
 			String json = (String) param.get(StringUtil.snakeToCamel(sp[0]));
 //			log.debug("json=" + json);
 			@SuppressWarnings("unchecked")
-			List<Object> list = (List<Object>) JSON.decode(json);
+			List<Object> list = (List<Object>) JsonUtil.decode(json, ArrayList.class);
 			int idx = Integer.parseInt(sp[1]);
 			return list.get(idx);
 		} else if (sp.length == 3) {

@@ -1,6 +1,5 @@
 package jp.dataforms.fw.util;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.Cookie;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.servlet.DataFormsServlet;
-import net.arnx.jsonic.JSON;
 
 /**
  * ワンタイムパスワードユーティリティ。
@@ -141,9 +139,9 @@ public class OnetimePasswordUtil {
 	public static void setConfig(Map<String, Object> conf) {
 		Boolean useOnetime = (Boolean) conf.get("useOnetimePassword");
 		OnetimePasswordUtil.useOnetimePassword = useOnetime;
-		int length = ((BigDecimal) conf.get("length")).intValue();
+		int length = ((Double) conf.get("length")).intValue();
 		OnetimePasswordUtil.onetimePasswordLength = length;
-		int expiration = ((BigDecimal) conf.get("cookieExpiration")).intValue();
+		int expiration = ((Double) conf.get("cookieExpiration")).intValue();
 		OnetimePasswordUtil.cookieExpiration = expiration;
 		logger.debug("useOnetimePassword=" + OnetimePasswordUtil.useOnetimePassword);
 		logger.debug("onetimePasswordLength=" + OnetimePasswordUtil.onetimePasswordLength);
@@ -184,7 +182,7 @@ public class OnetimePasswordUtil {
 			loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
 //			loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
 			loginInfo.put(UserInfoTable.Entity.ID_MAIL_ADDRESS, mailAddress);
-			String json = JSON.encode(loginInfo);
+			String json = JsonUtil.encode(loginInfo);
 			String userInfo = CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword());
 			logger.debug(() -> "json=" + json + ",userInfo=" + userInfo);
 			cookie = new Cookie(SKIP_ONETIME, userInfo);
@@ -215,7 +213,8 @@ public class OnetimePasswordUtil {
 				String value = cookie.getValue();
 				String json = CryptUtil.decrypt(value, DataFormsServlet.getQueryStringCryptPassword());
 				logger.debug("skipOnetime=" + json);
-				Map<String, Object> map = JSON.decode(json);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
 				String loginId = (String) userInfo.get(UserInfoTable.Entity.ID_LOGIN_ID);
 				String loginId0 = (String) map.get(UserInfoTable.Entity.ID_LOGIN_ID);
 				logger.debug(loginId + ":" + loginId0);

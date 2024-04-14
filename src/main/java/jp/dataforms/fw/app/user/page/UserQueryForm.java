@@ -23,9 +23,9 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * ユーザ検索フォームクラス。
@@ -148,7 +148,7 @@ public class UserQueryForm extends QueryForm {
 		for (Map<String, Object> m: list) {
 			m.put("rowNo", Integer.valueOf(rowNo++));
 		}
-		logger.debug(() -> "userList=" + JSON.encode(list));
+		logger.debug(() -> "userList=" + JsonUtil.encode(list));
 		return list;
 	}
 }

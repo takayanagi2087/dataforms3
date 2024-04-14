@@ -12,7 +12,7 @@ import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.file.WebResource;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * レポートの基本クラス。
@@ -371,7 +371,7 @@ public abstract class Report {
 	protected void buildReport(final Map<String, Object> data) throws Exception {
 		this.pageStartPositionList = new ArrayList<Integer>();
 		this.getWebResource(data);
-		logger.debug(() -> "data=" + JSON.encode(data, true));
+		logger.debug(() -> "data=" + JsonUtil.encode(data, true));
 		int pages = this.countPage(data);
 		this.initPage(pages);
 		for (int i = 0; i < pages; i++) {

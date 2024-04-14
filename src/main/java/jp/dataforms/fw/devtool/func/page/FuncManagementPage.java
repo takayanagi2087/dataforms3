@@ -7,6 +7,12 @@ import jp.dataforms.fw.devtool.base.page.DeveloperPage;
  *
  */
 public class FuncManagementPage extends DeveloperPage {
+	
+	/**
+	 * Logger.
+	 */
+//	private static Logger logger = LogManager.getLogger(FuncManagementPage.class);
+	
 	/**
 	 * コンストラクタ。
 	 */

@@ -7,7 +7,7 @@ import java.util.Map;
 import jp.dataforms.fw.devtool.field.PagePatternSelectField;
 import jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorEditForm;
 import jp.dataforms.fw.devtool.query.page.SelectFieldHtmlTable;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * 検索結果フォームのJavaソースジェネレータ。
@@ -41,7 +41,7 @@ public class EditFormGenerator extends FormSrcGenerator {
 	 */
 	private String getFieldConfig(final String cls, final String conf) {
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> list = JSON.decode(conf, ArrayList.class);
+		List<Map<String, Object>> list = (List<Map<String, Object>>) JsonUtil.decode(conf, ArrayList.class);
 		StringBuilder sb = new StringBuilder();
 		for (Map<String, Object> m: list) {
 			if (sb.length() > 0) {
@@ -68,7 +68,7 @@ public class EditFormGenerator extends FormSrcGenerator {
 		if ("2".equals(ef)) {
 			String conf = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CONFIG);
 			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> list = JSON.decode(conf, ArrayList.class);
+			List<Map<String, Object>> list = (List<Map<String, Object>>) JsonUtil.decode(conf, ArrayList.class);
 			for (Map<String, Object> m: list) {
 				String editKey = (String) m.get(SelectFieldHtmlTable.ID_EDIT_KEY);
 				if ("1".equals(editKey)) {

@@ -57,11 +57,11 @@ import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.SequentialProperties;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
-import net.arnx.jsonic.JSON;
 
 /**
  * ページDbPageGenerator作成フォームクラス。
@@ -526,7 +526,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 			QueryForm qf = (QueryForm) p.getComponent(Page.ID_QUERY_FORM);
 			QueryResultForm qrf = (QueryResultForm) p.getComponent(Page.ID_QUERY_RESULT_FORM);
 			List<Map<String, Object>> list = this.getListQueryFieldConf(flist, qf, qrf, querySetDao);
-			ret.put(ID_LIST_QUERY_CONFIG, JSON.encode(list));
+			ret.put(ID_LIST_QUERY_CONFIG, JsonUtil.encode(list));
 
 		}
 		Query editQuery = querySetDao.getSingleRecordQuery();
@@ -547,7 +547,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 			EditForm ef = (EditForm) p.getComponent(Page.ID_EDIT_FORM);
 			List<Map<String, Object>> list = this.getEditQueryFieldConf(editQuery, ef);
 			this.setEditKey(querySetDao, list);
-			ret.put(ID_EDIT_QUERY_CONFIG, JSON.encode(list));
+			ret.put(ID_EDIT_QUERY_CONFIG, JsonUtil.encode(list));
 			List<Query> qlist = querySetDao.getMultiRecordQueryList();
 			List<Map<String, Object>> multiRecordQueryList = new ArrayList<Map<String, Object>>();
 			if (qlist != null && qlist.size() > 0) {
@@ -562,7 +562,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 					m.put(ID_PACKAGE_NAME, pkg);
 					m.put(ID_QUERY_CLASS_NAME, cls);
 					List<Map<String, Object>> mflist = this.getEditQueryFieldConf(q, ef);
-					m.put(ID_QUERY_CONFIG, JSON.encode(mflist));
+					m.put(ID_QUERY_CONFIG, JsonUtil.encode(mflist));
 					multiRecordQueryList.add(m);
 				}
 				ret.put(ID_MULTI_RECORD_QUERY_LIST, multiRecordQueryList);

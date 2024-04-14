@@ -1,6 +1,7 @@
 package jp.dataforms.fw.dao.file;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.fileupload2.core.DiskFileItem;
@@ -11,7 +12,7 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.FileUtil;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * ファイル保存領域クラス。
@@ -133,7 +134,7 @@ public abstract class FileStore {
 	 * @return 暗号化されたダウンロードパラメータ。
 	 */
 	public String encryptDownloadParameter(final Map<String, Object> p) {
-		String json = JSON.encode(p, false);
+		String json = JsonUtil.encode(p, false);
 		String ret = "";
 		try {
 			ret = java.net.URLEncoder.encode(CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword()), DataFormsServlet.getEncoding());
@@ -148,12 +149,13 @@ public abstract class FileStore {
 	 * @param p 暗号化されたダウンロードパラメータ。
 	 * @return ダウンロードパラメータマップ。
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<String, Object> decryptDownloadParameter(final String p) {
 		Map<String, Object> ret = null;
 		try {
 			String json = CryptUtil.decrypt(p, DataFormsServlet.getQueryStringCryptPassword());
 			logger.debug(() -> "json=" + json);
-			ret =  JSON.decode(json);
+			ret =  (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

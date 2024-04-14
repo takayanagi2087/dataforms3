@@ -52,9 +52,9 @@ import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * データアクセスクラス。
@@ -1452,7 +1452,7 @@ public class Dao implements JDBCConnectableObject {
 					Object value = rset.getObject(i + 1);
 					m.put(name, value);
 				}
-				logger.info("md=" + JSON.encode(m, true));
+				logger.info("md=" + JsonUtil.encode(m, true));
 				Object nu = m.get("nonUnique");
 				Boolean nonUnique = this.getNonUnique(nu);
 				logger.debug(() -> "nu=" + nu + ", nonUnique=" + nonUnique);
@@ -1484,7 +1484,7 @@ public class Dao implements JDBCConnectableObject {
 		String tablename = gen.convertTableNameForDatabaseMetaData(table.getTableName());
 		List<Map<String, Object>> ret = this.getCurrentDBIndexInfo(md, catalog, schema, tablename, true);
 		ret.addAll(this.getCurrentDBIndexInfo(md, catalog, schema, tablename, false));
-		logger.debug(() -> "indexInfo=" + JSON.encode(ret, true));
+		logger.debug(() -> "indexInfo=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 
@@ -1538,7 +1538,7 @@ public class Dao implements JDBCConnectableObject {
 		logger.debug(() -> "currentSchema=" + schema);
 		String tablename = gen.convertTableNameForDatabaseMetaData(table.getTableName());
 		List<Map<String, Object>> ret = this.getCurrentDBForeignKeyInfo(md, catalog, schema, tablename);
-		logger.debug(() -> "ForeignKey Info=" + JSON.encode(ret, true));
+		logger.debug(() -> "ForeignKey Info=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 

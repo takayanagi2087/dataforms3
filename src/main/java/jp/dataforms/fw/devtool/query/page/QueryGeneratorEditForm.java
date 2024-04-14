@@ -44,11 +44,11 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
-import net.arnx.jsonic.JSON;
 
 /**
  * 問合せJavaクラス作成編集フォーム。
@@ -264,7 +264,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		this.setFlags(q, ret);
 
-		logger.debug("flags=" + JSON.encode(ret));
+		logger.debug("flags=" + JsonUtil.encode(ret));
 
 		ret.put(ID_JAVA_SOURCE_PATH, DeveloperPage.getJavaSourcePath());
 		ret.put(ID_PACKAGE_NAME, packageName);
@@ -1054,7 +1054,7 @@ public class QueryGeneratorEditForm extends EditForm {
 				classCount.put(cls, cnt);
 			}
 		}
-		logger.debug("cset=" + JSON.encode(classCount, true));
+		logger.debug("cset=" + JsonUtil.encode(classCount, true));
 		for (Map<String, Object> m: list) {
 			String packageName = (String) m.get(ID_PACKAGE_NAME);
 			String tableClassName = (String) m.get(JoinHtmlTable.ID_TABLE_CLASS_NAME);

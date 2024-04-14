@@ -15,9 +15,9 @@ import jp.dataforms.fw.dao.TableList;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * ユーザ問い合わせクラス。
@@ -102,7 +102,7 @@ public class UserQuery extends Query {
 	public UserQuery(final FieldList flist, final Map<String, Object> data) {
 		@SuppressWarnings("unchecked")
 		List<String> atlist = (List<String>) data.get("userAttributeList");
-		logger.debug(() -> "atlist=" + JSON.encode(atlist));
+		logger.debug(() -> "atlist=" + JsonUtil.encode(atlist));
 		this.setDistinct(true);
 		UserInfoTable mtbl = UserInfoTableUtil.newUserInfoTable(); //new UserInfoTable();
 		FieldList fl = new FieldList();

@@ -12,7 +12,7 @@ import jp.dataforms.fw.exception.AuthoricationException;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * パスワードリセットページ。
@@ -48,7 +48,7 @@ public class PasswordResetPage extends BasePage {
 				String json = CryptUtil.decrypt(key, DataFormsServlet.getQueryStringCryptPassword());
 				logger.debug(() -> "json=" + json);
 				@SuppressWarnings("unchecked")
-				Map<String, Object> userInfo = (Map<String, Object>) JSON.decode(json, HashMap.class);
+				Map<String, Object> userInfo = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
 				logger.debug(() -> "userInfo=" + userInfo);
 				this.getPage().getRequest().getSession().setAttribute(PASSWORD_RESET_INFO, userInfo);
 			} catch (java.lang.IllegalArgumentException e) {

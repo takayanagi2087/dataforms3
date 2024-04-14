@@ -26,8 +26,8 @@ import jp.dataforms.fw.field.common.UpdateUserIdField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * テーブルの基本クラスです。
@@ -426,7 +426,7 @@ public class Table {
 				return false;
 			}
 			List<Map<String, Object>> dbfklist = dao.getCurrentDBForeignKeyInfo(this);
-			logger.debug(() -> "dbfklist=" + JSON.encode(dbfklist, true));
+			logger.debug(() -> "dbfklist=" + JsonUtil.encode(dbfklist, true));
 			for (ForeignKey fk : fklist) {
 				if (!fk.structureAccords(dbfklist)) {
 					return false;
@@ -672,7 +672,7 @@ public class Table {
 		if (is != null) {
 			try {
 				String json = new String(FileUtil.readInputStream(is), DataFormsServlet.getEncoding());
-				list = (List<Map<String, Object>>) JSON.decode(json);
+				list = (List<Map<String, Object>>) JsonUtil.decode(json, ArrayList.class);
 			} finally {
 				is.close();
 			}

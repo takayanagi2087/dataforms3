@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
-import net.arnx.jsonic.JSON;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * Jsonの応答情報クラスです。
@@ -98,7 +98,7 @@ public class JsonResponse extends Response {
 		PrintWriter out = resp.getWriter();
 		try {
 			if (obj != null) {
-				String json = JSON.encode(obj);
+				String json = JsonUtil.encode(obj);
 				out.print(json);
 			}
 		} finally {
@@ -125,7 +125,7 @@ public class JsonResponse extends Response {
 
 	@Override
 	public String toString() {
-		String ret = super.toString() + ": " + JSON.encode(this, DataFormsServlet.isJsonDebug());
+		String ret = super.toString() + ": " + JsonUtil.encode(this, DataFormsServlet.isJsonDebug());
 		return ret;
 	}
 }

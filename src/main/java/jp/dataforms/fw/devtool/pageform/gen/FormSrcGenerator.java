@@ -18,8 +18,8 @@ import jp.dataforms.fw.field.base.Field.Display;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
-import net.arnx.jsonic.JSON;
 
 /**
  * フォームソースジェネレータの基本クラス。
@@ -124,7 +124,7 @@ public abstract class FormSrcGenerator extends JavaSrcGenerator {
 			ret = new FieldList();
 			String json = (String) data.get(confid);
 			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> list =  JSON.decode(json, ArrayList.class);
+			List<Map<String, Object>> list =  (List<Map<String, Object>>) JsonUtil.decode(json, ArrayList.class);
 			for (Map<String, Object> m: list) {
 				String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
 				String matchType = (String) m.get(SelectFieldHtmlTable.ID_MATCH_TYPE);

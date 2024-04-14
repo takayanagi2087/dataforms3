@@ -41,11 +41,11 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
-import net.arnx.jsonic.JSON;
 
 /**
  * 編集フォームクラス。
@@ -241,7 +241,7 @@ public class TableGeneratorEditForm extends EditForm {
 	 */
 	private List<ValidationError> validateSourceExistence(final Map<String, Object> data) throws Exception {
 		List<ValidationError> ret = new ArrayList<ValidationError>();
-		logger.debug("data=\n" + JSON.encode(data, true));
+		logger.debug("data=\n" + JsonUtil.encode(data, true));
 		String packageName = (String) data.get("packageName");
 		String javaSrc = (String) data.get("javaSourcePath");
 		{
@@ -454,7 +454,7 @@ public class TableGeneratorEditForm extends EditForm {
 
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
-		logger.debug("data=" + JSON.encode(data, true));
+		logger.debug("data=" + JsonUtil.encode(data, true));
 		this.writeTableJavaSource(data);
 	}
 
@@ -594,7 +594,7 @@ public class TableGeneratorEditForm extends EditForm {
 		if (!relationFile.exists()) {
 			srcmap.put(rclass, this.generateRelationJavaSource(data));
 		}
-		logger.debug("srcmap=" + JSON.encode(srcmap));
+		logger.debug("srcmap=" + JsonUtil.encode(srcmap));
 		this.writeJavaSource(path, srcmap);
 	}
 
@@ -676,7 +676,7 @@ public class TableGeneratorEditForm extends EditForm {
 	public List<Map<String, Object>> queryFieldList(final String func, final String tableName) throws Exception {
 		TableManagerDao dao = new TableManagerDao(this);
 		List<Map<String, Object>> ret = dao.getTableColumnList(func, tableName);
-		logger.debug("ret=" + JSON.encode(ret, true));
+		logger.debug("ret=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 
