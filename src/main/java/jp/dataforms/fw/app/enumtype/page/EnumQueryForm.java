@@ -230,37 +230,4 @@ public class EnumQueryForm extends QueryForm {
 		}
 		return ret;
 	}
-
-
-	/**
-	 * ユーザ関連テーブルのV1.x形式の初期化データのインポートを行います。
-	 * @param p パラメータ。
-	 * @return エクスポート結果。
-	 * @throws Exception 例外。
-	 */
-	@WebMethod
-	public JsonResponse importV1Data(final Map<String, Object> p) throws Exception {
-		JsonResponse ret = null;
-		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
-			TableManagerDao dao = new TableManagerDao(this);
-			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata_v1");
-			String enumPath = initialDataPath + "/dataforms/app/dao/enumeration/";
-			List<Map<String, Object>> enumGroupList = this.readJson(enumPath + "EnumGroupTable.data.json");
-			List<Map<String, Object>> enumOptionList = this.readJson(enumPath + "EnumOptionTable.data.json");
-			List<Map<String, Object>> enumTypeNameList = this.readJson(enumPath + "EnumTypeNameTable.data.json");
-			List<Map<String, Object>> enumOptionNameList = this.readJson(enumPath + "EnumOptionNameTable.data.json");
-
-			List<Map<String, Object>> enumList = this.getEnumTable(enumGroupList, enumOptionList);
-			List<Map<String, Object>> enumNameList = this.getEnumNameTable(enumList, enumTypeNameList, enumOptionNameList);
-			logger.debug("enumNameList json=" + JsonUtil.encode(enumNameList));
-			dao.executeUpdate("delete from " + new EnumNameTable().getTableName(), new HashMap<String, Object>());
-			dao.executeUpdate("delete from " + new EnumTable().getTableName(), new HashMap<String, Object>());
-			dao.executeInsert(new EnumTable(), enumList);
-			dao.executeInsert(new EnumNameTable(), enumNameList);
-			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
-		} else {
-			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
-		}
-		return ret;
-	}
 }

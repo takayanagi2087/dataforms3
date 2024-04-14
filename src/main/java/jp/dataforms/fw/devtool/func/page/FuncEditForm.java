@@ -194,27 +194,5 @@ public class FuncEditForm extends EditForm {
 		return ret;
 	}
 
-	/**
-	 * ユーザ関連テーブルのV1.x形式の初期化データのインポートを行います。
-	 * @param p パラメータ。
-	 * @return エクスポート結果。
-	 * @throws Exception 例外。
-	 */
-	@WebMethod
-	public JsonResponse importV1Data(final Map<String, Object> p) throws Exception {
-		JsonResponse ret = null;
-		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
-			TableManagerDao dao = new TableManagerDao(this);
-			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata_v1");
-			logger.debug("initialDataPath=" + initialDataPath);
-			dao.executeUpdate("delete from " + new FuncInfoTable().getTableName(), new HashMap<String, Object>());
-			dao.importV1Data("dataforms.app.func.dao.FuncInfoTable", "/dataforms/app/dao/func/FuncInfoTable.data.json", initialDataPath);
-			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
-		} else {
-			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
-		}
-		return ret;
-	}
-
 
 }

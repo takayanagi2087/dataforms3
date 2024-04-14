@@ -42,7 +42,6 @@ import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.file.FileStore;
 import jp.dataforms.fw.dao.file.TableFolderFileStore;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
-import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
@@ -567,30 +566,6 @@ public class TableManagerDao extends Dao {
 				this.importJson(is, tbl, path);
 				this.adjustSequence(tbl);
 			}
-		}
-	}
-
-
-	/**
-	 * 指定フォルダのデータをインポートします。
-	 * @param classname テーブルクラス名。
-	 * @param jsonpath var1.xのjsonファイルのパス。
-	 * @param path データのパス。
-	 * @throws Exception データ。
-	 */
-	public void importV1Data(final String classname, final String jsonpath, final String path) throws Exception {
-		final Table tbl = Table.newInstance(classname);
-		String file = path + jsonpath;
-		if (new File(file).exists()) {
-			InputStream is = new FileInputStream(file);
-			try {
-				this.importJson(is, tbl, path);
-				this.adjustSequence(tbl);
-			} finally {
-				is.close();
-			}
-		} else {
-			throw new ApplicationException(this.getPage(), "error.ver1datanotexist", file.replaceAll("\\\\", "/"));
 		}
 	}
 

@@ -72,8 +72,8 @@ public class UserQueryForm extends QueryForm {
 		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
 			TableManagerDao dao = new TableManagerDao(this);
 			String initialDataPath =  DeveloperPage.getExportInitalDataPath(this.getPage()); // DeveloperPage.getWebSourcePath() + "/WEB-INF/initialdata";
-			dao.exportData("dataforms.app.user.dao.UserInfoTable", initialDataPath);
-			dao.exportData("dataforms.app.user.dao.UserAttributeTable", initialDataPath);
+			dao.exportData("jp.dataforms.fw.app.user.dao.UserInfoTable", initialDataPath);
+			dao.exportData("jp.dataforms.fw.app.user.dao.UserAttributeTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initializationdatacreated"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
@@ -96,31 +96,8 @@ public class UserQueryForm extends QueryForm {
 			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata");
 			dao.executeUpdate("delete from " + new UserAttributeTable().getTableName(), new HashMap<String, Object>());
 			dao.executeUpdate("delete from " + UserInfoTableUtil.newUserInfoTable().getTableName(), new HashMap<String, Object>());
-			dao.importData("dataforms.app.user.dao.UserInfoTable", initialDataPath);
-			dao.importData("dataforms.app.user.dao.UserAttributeTable", initialDataPath);
-			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
-		} else {
-			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
-		}
-		return ret;
-	}
-
-	/**
-	 * ユーザ関連テーブルのV1.x形式の初期化データのインポートを行います。
-	 * @param p パラメータ。
-	 * @return エクスポート結果。
-	 * @throws Exception 例外。
-	 */
-	@WebMethod
-	public JsonResponse importV1Data(final Map<String, Object> p) throws Exception {
-		JsonResponse ret = null;
-		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
-			TableManagerDao dao = new TableManagerDao(this);
-			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata_v1");
-			dao.executeUpdate("delete from " + new UserAttributeTable().getTableName(), new HashMap<String, Object>());
-			dao.executeUpdate("delete from " + UserInfoTableUtil.newUserInfoTable().getTableName(), new HashMap<String, Object>());
-			dao.importV1Data("dataforms.app.user.dao.UserInfoTable", "/dataforms/app/dao/user/UserInfoTable.data.json", initialDataPath);
-			dao.importV1Data("dataforms.app.user.dao.UserAttributeTable", "/dataforms/app/dao/user/UserAttributeTable.data.json", initialDataPath);
+			dao.importData("jp.dataforms.fw.app.user.dao.UserInfoTable", initialDataPath);
+			dao.importData("jp.dataforms.fw.app.user.dao.UserAttributeTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
