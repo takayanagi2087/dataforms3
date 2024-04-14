@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1351,10 +1352,11 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	protected Map<String, Object> getParameterMap(final HttpServletRequest req) throws Exception {
+		String contentType = req.getHeader("Content-Type");
+		logger.debug("post data content-type=" + contentType);
 		if (JakartaServletFileUpload.isMultipartContent(req)) {
 			return this.getParameterMapForMultipart(req);
 		} else {
-			String contentType = req.getHeader("Content-Type");
 			if (contentType != null && contentType.indexOf("application/json") >= 0) {
 				Map<String, Object> ret = new HashMap<String, Object>();
 				try (InputStream is = req.getInputStream()) {
@@ -1426,6 +1428,7 @@ public class DataFormsServlet extends HttpServlet {
 
 
 	/**
+	 * TODO:commons-fileuploadをやめて@MultipartConfigに書き換える。
 	 * File Uploadがある場合のパラメータ解析を行います。
 	 * @param req HTTPリクエスト。
 	 * @return パラメータ解析結果。
@@ -1443,7 +1446,7 @@ public class DataFormsServlet extends HttpServlet {
 			String key = item.getFieldName();
 			if (key != null) {
 				if (item.isFormField()) {
-					String value = item.getString(); // item.getString(encoding);
+					String value = item.getString(Charset.forName(DataFormsServlet.getEncoding()));
 					this.addParamMap(map, key, value);
 				} else {
 					String filename = item.getName();
