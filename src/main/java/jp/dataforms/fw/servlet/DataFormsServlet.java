@@ -477,33 +477,11 @@ public class DataFormsServlet extends HttpServlet {
 		this.makeConstraintMap();
 		this.setupServletInstanceBean();
 		// パスとパッケージの対応表を設定する。
-		WebComponent.setFunctionMap(new FunctionMap());
-		
-		{
-			logger.debug("function json=" + JsonUtil.encode(WebComponent.getFunctionMap(), true));
-			
-/*			String json = """
-			// comment
-			{
-				"key1": "text1", "key2": "text2"
-			}
-			""";
-			logger.debug("json=" + json);
-			@SuppressWarnings("unchecked")
-			Map<String, Object> map = (Map<String, Object>) JSON.decode(json, HashMap.class);
-			logger.debug("map=" + map);
-*/			
-/*			ObjectMapper mapper = new ObjectMapper();
-			try {
-				Map<String, Object> map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
-				logger.debug("map=" + map);
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-*/
-			
+		try {
+			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
-
 	}
 
 
@@ -859,7 +837,6 @@ public class DataFormsServlet extends HttpServlet {
 					}
 				}
 			}
-			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
 		} catch (Exception e) {
 			logger.debug(() -> e.getMessage(), e);
 		}

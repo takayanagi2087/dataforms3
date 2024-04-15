@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.annotation.ApplicationFunctionMap;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.devtool.menu.page.MenuEditForm;
+import jp.dataforms.fw.devtool.menu.page.MenuTable;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.HtmlUtil;
@@ -358,6 +360,7 @@ public class FunctionMap {
 	 */
 	private void addDeveloperPage() {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.InitializeDatabasePage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.devtool.menu.page.MenuEditPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.table.page.TableGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorPage.class));
@@ -407,6 +410,43 @@ public class FunctionMap {
 			}
 			this.initialized = true;
 		}
+	}
+	
+	/**
+	 * パッケージを取得する。
+	 * @param menu メニュー。
+	 * @return パッケージ名。
+	 */
+	private String getPackage(final Menu menu) {
+		String ret = null;
+		List<PathPackage> pplist = this.getPathPackageList();
+		for (PathPackage pp: pplist) {
+			if (pp.getPath().equals(menu.getPath())) {
+				ret = pp.getBasePackage();
+			}
+		}
+		return ret;
+	}
+	
+	
+	/**
+	 * Menuの編集情報を取得します。
+	 * @return Menuの編集情報。
+	 */
+	public Map<String, Object> getMenuMap() {
+		Map<String, Object> ret = new HashMap<String, Object>();
+		ret.put(MenuEditForm.ID_APP_BASE_PACKAGE, this.getAppBasePackage());
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<Menu> mlist = this.getMenuList();
+		for (Menu m: mlist) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put(MenuTable.ID_PATH, m.getPath());
+			map.put(MenuTable.ID_PACKAGE_NAME, this.getPackage(m));
+			map.put(MenuTable.ID_DEFAULT_NAME, m.getName("default"));
+			list.add(map);
+		}
+		ret.put(MenuTable.ID_MENU_LIST, list);
+		return ret;
 	}
 	
 	/**
@@ -561,6 +601,7 @@ public class FunctionMap {
 	public String getAppBasePackage() {
 		return null;
 	}
+
 	
 	/**
 	 * アプリケーションの機能マップを取得します。

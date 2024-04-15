@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>メニュー作成</title>
+		<meta name="description" content="アプリケーションのメニューを作成します。">
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="editForm">
+				<div class="formHeader"><span id="editFormTitle"></span></div>
+				<input type="hidden" id="saveMode" />
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="appBasePackage">基本パッケージ</label></div>
+						<div class="field"><input type="text" id="appBasePackage" /></div>
+					</div>
+				</div>
+				<div>
+					<table id="menuList" class="editableTable">
+						<thead>
+							<tr>
+								<th colspan="2" nowrap>
+									
+								</th>
+								<th nowrap>
+									No.
+								</th>
+								<th>
+									パス
+								</th>
+								<th>
+									パッケージ名
+								</th>
+								<th>
+									デフォルト言語
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="buttonColumn">
+									<input type="button" id="menuList[0].addButton" value="+"/>
+								</td>
+								<td class="buttonColumn">
+									<input type="button" id="menuList[0].deleteButton" value="-"/>
+								</td>
+								<td style="text-align: right;" class="rowno">
+									<span id="menuList[0].no"></span>
+								</td>
+								<td>
+									<input type="text" id="menuList[0].path" />
+								</td>
+								<td>
+									<input type="text" id="menuList[0].packageName" />
+								</td>
+								<td>
+									<input type="text" id="menuList[0].defaultName" />
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th class="buttonColumn">
+									<input type="button" id="menuList.addButton" value="+"/>
+								</th>
+								<th colspan="5">
+								</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+				<input type="button" id="saveButton" class="largeButton" value="登録"/>
+				<input type="button" id="backButton" class="largeButton" value="戻る"/>
+			</form>
+		</div>
+	</body>
+</html>
