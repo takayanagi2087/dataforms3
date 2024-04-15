@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.stream.JsonWriter;
 
-import jp.dataforms.fw.app.func.dao.FuncInfoTable;
+import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.ForeignKey;
@@ -80,7 +80,7 @@ public class TableManagerDao extends Dao {
 	 * @throws Exception 例外。
 	 */
 	public boolean isDatabaseInitialized() throws Exception {
-		FuncInfoTable table = new FuncInfoTable();
+		UserInfoTable table = new UserInfoTable();
 		return this.tableExists(table.getTableName());
 	}
 

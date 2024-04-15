@@ -358,7 +358,6 @@ public class FunctionMap {
 	 */
 	private void addDeveloperPage() {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.InitializeDatabasePage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.func.page.FuncManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.table.page.TableGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorPage.class));
