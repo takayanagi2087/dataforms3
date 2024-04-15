@@ -22,7 +22,7 @@ public class ClassFinder {
     /**
      * Logger.
      */
-    private static Logger log = LogManager.getLogger(ClassFinder.class.getName());
+    private static Logger logger = LogManager.getLogger(ClassFinder.class.getName());
 
 
     /**
@@ -69,13 +69,21 @@ public class ClassFinder {
 		for (String path : dir.list()) {
 			File entry = new File(dir, path);
 			if (entry.isFile() && isClassFile(entry.getName())) {
-				Class<?> clazz = classLoader.loadClass(packageName + "." + fileNameToClassName(entry.getName()));
+				String classname = packageName + "." + fileNameToClassName(entry.getName());
+				if (classname.charAt(0) == '.') {
+					classname = classname.substring(1);
+				}
+				Class<?> clazz = classLoader.loadClass(classname);
 				if (baseclass.isAssignableFrom(clazz)) {
 					classes.add(clazz);
 				}
 			} else if (entry.isDirectory()) {
+				String pname = packageName + "." + entry.getName();
+				if (pname.charAt(0) == '.') {
+					pname = pname.substring(1);
+				}
 				classes.addAll(findClassesWithFile(
-						packageName + "." + entry.getName(), entry, baseclass));
+						pname, entry, baseclass));
 			}
 		}
 		return classes;
@@ -157,16 +165,19 @@ public class ClassFinder {
 	 * @return クラスのリスト。
 	 * @throws Exception 例外。
 	 */
-	public List<Class<?>> findClasses(final String rootpackage, final Class<?> c) throws Exception {
+	public List<Class<?>> findClasses(String rootpackage, final Class<?> c) throws Exception {
 		List<Class<?>> ret = new ArrayList<Class<?>>();
-		if (rootpackage == null) {
-			return ret;
+		String resourceName = null;
+		if (rootpackage == null || rootpackage.length() == 0) {
+			rootpackage = "";
+			resourceName = "";
+		} else {
+			resourceName = rootpackage.replace('.', '/');
 		}
-		String resourceName = rootpackage.replace('.', '/');
 		URL url = this.convertUrl(classLoader.getResource(resourceName));
 		if (url != null) {
-			log.info("findClasses:URL = " + url);
-			log.info("findClasses:Protocol = " + url.getProtocol());
+			logger.info("findClasses:URL = " + url);
+			logger.info("findClasses:Protocol = " + url.getProtocol());
 			if ("file".equals(url.getProtocol())) {
 				String fname = url.getFile().replaceAll("%20", " "); // パスのスペース対応。
 				ret = this.findClassesWithFile(rootpackage, new File(fname), c);
@@ -247,11 +258,11 @@ public class ClassFinder {
 	 */
 	public List<String> findResource(final String path) throws Exception {
 		URL url = this.convertUrl(this.classLoader.getResource(path));
-		log.debug("url=" + url.toString());
+		logger.debug("url=" + url.toString());
 		List<String> ret = null;
 		if ("file".equals(url.getProtocol())) {
 			String fname = url.getFile().replaceAll("%20", " "); // パスのスペース対応。
-			log.debug("fname=" + fname);
+			logger.debug("fname=" + fname);
 			ret = this.findFile(new File(fname), path);
 		} else {
 			ret = this.findJarFile(url, path);

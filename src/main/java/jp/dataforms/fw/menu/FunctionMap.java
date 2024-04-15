@@ -8,9 +8,11 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.annotation.AppMenu;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.HtmlUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -553,4 +555,33 @@ public class FunctionMap {
 		return ret;
 	}
 	
+	/**
+	 * アプリケーションの機能マップを取得します。
+	 * @return アプリケーションの機能マップ。
+	 * @throws Exception 例外。
+	 */
+	public static FunctionMap getAppFunctionMap() throws Exception {
+		logger.debug("getAppMenu");
+		FunctionMap ret = null;
+		ClassFinder cf = new ClassFinder();
+		List<Class<?>> list = cf.findClasses(null, FunctionMap.class);
+		long cnt = 0;
+		for (Class<?> c: list) {
+			AppMenu a = c.getAnnotation(AppMenu.class);
+			if (a != null) {
+				ret = (FunctionMap) c.getConstructor().newInstance();
+				cnt++;
+			}
+		}
+		if (ret == null) {
+			ret = new FunctionMap();
+			logger.warn("AppFunctionMap class not found. Use the " + ret.getClass().getName() + " class.");
+		}
+		if (cnt != 1) {
+			logger.warn("There are multiple AppFunctionMap classes. Use the " + ret.getClass().getName() + " class.");
+		} else {
+			logger.info("Use the " + ret.getClass().getName() + " class.");
+		}
+		return ret;
+	}
 }

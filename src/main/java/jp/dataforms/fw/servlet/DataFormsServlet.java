@@ -859,6 +859,7 @@ public class DataFormsServlet extends HttpServlet {
 					}
 				}
 			}
+			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
 		} catch (Exception e) {
 			logger.debug(() -> e.getMessage(), e);
 		}
