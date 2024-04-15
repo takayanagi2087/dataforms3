@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.annotation.AppMenu;
+import jp.dataforms.fw.annotation.ApplicationFunctionMap;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -555,6 +555,14 @@ public class FunctionMap {
 	}
 	
 	/**
+	 * アプリケーションのベースパッケージを返します。
+	 * @return アプリケーションのベースパッケージ。
+	 */
+	public String getAppBasePackage() {
+		return null;
+	}
+	
+	/**
 	 * アプリケーションの機能マップを取得します。
 	 * @return アプリケーションの機能マップ。
 	 * @throws Exception 例外。
@@ -566,7 +574,7 @@ public class FunctionMap {
 		List<Class<?>> list = cf.findClasses(null, FunctionMap.class);
 		long cnt = 0;
 		for (Class<?> c: list) {
-			AppMenu a = c.getAnnotation(AppMenu.class);
+			ApplicationFunctionMap a = c.getAnnotation(ApplicationFunctionMap.class);
 			if (a != null) {
 				ret = (FunctionMap) c.getConstructor().newInstance();
 				cnt++;
