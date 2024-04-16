@@ -34,10 +34,14 @@ class PathNameField extends VarcharField {
 */
 	}
 
+	/**
+	 * 変更イベント処理を行います。
+	 * @param {Event} ev イベント情報。
+	 */
 	onChange(ev) {
 		if (typeof(this.parent.setPackageName) == "function") {
 			this.parent.setPackageName(ev);
-		} 
+		}
 	}
 
 	// 独自のWebメソッドを呼び出す場合は、以下のコメントを参考にしてください。
