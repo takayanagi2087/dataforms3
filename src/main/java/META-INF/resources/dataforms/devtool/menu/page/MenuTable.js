@@ -53,6 +53,22 @@ class MenuTable extends EditableHtmlTable {
 			}
 		}
 	}
+	
+	/**
+	 * パスの入力時にパッケージを自動展開する。
+	 * @param {Event} ev イベント情報。
+	 */
+	setPackageName(ev) {
+		let pf = $(ev.currentTarget);
+		let path = $(ev.currentTarget).val();
+		let form = this.getParentForm();
+		let basePackage = form.get("appBasePackage").val();
+		logger.log("path=" + path);
+		logger.log("basePackage=" + basePackage);
+		let fld = this.getSameRowField(pf, "packageName");
+		let pkg = basePackage + path;
+		fld.val(pkg.replace("/", "."));
+	}
 
 	/**
 	 * テーブルのデータを設定します。

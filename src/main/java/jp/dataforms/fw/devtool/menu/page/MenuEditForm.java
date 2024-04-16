@@ -52,14 +52,13 @@ public class MenuEditForm extends EditForm {
 
 	@Override
 	protected boolean isUpdate(Map<String, Object> data) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		// 常に更新モード。
+		return true;
 	}
 
 	@Override
 	protected void insertData(Map<String, Object> data) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-
+		// 使用しない
 	}
 
 	@Override
@@ -70,8 +69,7 @@ public class MenuEditForm extends EditForm {
 
 	@Override
 	public void deleteData(Map<String, Object> data) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-
+		// 使用しない
 	}
 
 }
