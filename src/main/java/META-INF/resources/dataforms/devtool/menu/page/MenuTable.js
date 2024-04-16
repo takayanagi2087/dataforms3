@@ -37,5 +37,30 @@ class MenuTable extends EditableHtmlTable {
 		this.find("th.footer").attr("colspan", 5 + cnt);
 		super.attach();
 	}
+	
+	/**
+	 * Dataformsのメニューをロックします。
+	 */
+	lockDataformsMenu() {
+		let table = this;
+		for (let i = 0; i < table.getRowCount(); i++) {
+			let path = table.getRowField(i, "path").getValue();
+			if (path.indexOf("/dataforms") == 0) {
+				for (let j = 0; j < this.fields.length; j++) {
+					let fld = table.getRowField(i, this.fields[j].id);
+					fld.lock(true);
+				}		
+			}
+		}
+	}
+
+	/**
+	 * テーブルのデータを設定します。
+	 * @param {Array} data テーブルデータ。
+	 */
+/*	setTableData(data) {
+		super.setTableData(data);
+	}
+*/
 }
 
