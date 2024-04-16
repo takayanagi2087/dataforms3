@@ -438,11 +438,16 @@ public class FunctionMap {
 		ret.put(MenuEditForm.ID_APP_BASE_PACKAGE, this.getAppBasePackage());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Menu> mlist = this.getMenuList();
+		String[] langList = DataFormsServlet.getSupportLanguage().split(",");
 		for (Menu m: mlist) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put(MenuTable.ID_PATH, m.getPath());
 			map.put(MenuTable.ID_PACKAGE_NAME, this.getPackage(m));
 			map.put(MenuTable.ID_DEFAULT_NAME, m.getName("default"));
+			for (String lang: langList) {
+				lang = lang.trim();
+				map.put(lang + "Name", m.getName(lang));
+			}
 			list.add(map);
 		}
 		ret.put(MenuTable.ID_MENU_LIST, list);
