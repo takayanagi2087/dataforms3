@@ -555,7 +555,7 @@ public class FunctionMap {
 	 * @param page ページ。
 	 * @return システムのページリスト。
 	 */
-	public List<Map<String, Object>> getMenuList(final Page page) {
+	public List<Map<String, Object>> getPageList(final Page page) {
 		String lang = getLang(page);
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (PageInfo p: this.pageList) {

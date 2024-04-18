@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.EditForm;
 import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.devtool.menu.gen.AppFunctionMapGenerator;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.util.JsonUtil;
@@ -63,8 +64,8 @@ public class MenuEditForm extends EditForm {
 
 	@Override
 	protected void updateData(Map<String, Object> data) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-
+		AppFunctionMapGenerator gen = new AppFunctionMapGenerator();
+		gen.generage(this, data);
 	}
 
 	@Override

@@ -92,7 +92,7 @@ public class MenuForm extends Form {
 	 * @throws Exception 例外。
 	 */
 	protected List<Map<String, Object>> getMenuList() throws Exception {
-		List<Map<String, Object>> list = WebComponent.getFunctionMap().getMenuList(this.getPage());
+		List<Map<String, Object>> list = WebComponent.getFunctionMap().getPageList(this.getPage());
 		logger.debug(() -> "menu list=" + JsonUtil.encode(list, true));
 		List<Map<String, Object>> mlist = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {

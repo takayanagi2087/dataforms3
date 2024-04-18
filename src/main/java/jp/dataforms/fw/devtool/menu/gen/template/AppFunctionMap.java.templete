@@ -1,0 +1,41 @@
+package ${basePackage}.menu;
+
+import jp.dataforms.fw.annotation.ApplicationFunctionMap;
+import jp.dataforms.fw.menu.FunctionMap;
+
+/**
+ * アプリケーションの機能マップを定義するクラスです。
+ */
+@ApplicationFunctionMap
+public class AppFunctionMap extends FunctionMap {
+	/**
+	 * アプリケーションのベースパッケージを返します。
+	 */
+	@Override
+	public String getAppBasePackage() {
+		return "${basePackage}";
+	}
+	
+	/**
+	 * アプリケーションのパスとパッケージの対応表を作成します。
+	 */
+	@Override
+	protected void addAppPathPackage() {
+${appPathPackage}
+	}
+	
+	/**
+	 * アプリケーションのメニューを追加します。
+	 */
+	@Override
+	protected void addAppMenu() {
+${appMenu}
+	}
+	
+	/**
+	 * アプリケーションのページを追加します。
+	 */
+	public void addAppPage() {
+${appPage}
+	}
+}
