@@ -189,13 +189,13 @@ public final class FieldListUtil {
 			sb.append("\t\t */\n");
 			sb.append("\t\tpublic " + vtype + " get" + uFieldId+ "() {\n");
 			if ("java.lang.Short".equals(valueType.getName())) {
-				implist.add("dataforms.util.NumberUtil");
+				implist.add("jp.dataforms.fw.util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.shortValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else if ("java.lang.Integer".equals(valueType.getName())) {
-				implist.add("dataforms.util.NumberUtil");
+				implist.add("jp.dataforms.fw.util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.integerValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else if ("java.lang.Long".equals(valueType.getName())) {
-				implist.add("dataforms.util.NumberUtil");
+				implist.add("jp.dataforms.fw.util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.longValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else {
 				sb.append("\t\t\treturn (" + vtype + ") this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + ");\n");

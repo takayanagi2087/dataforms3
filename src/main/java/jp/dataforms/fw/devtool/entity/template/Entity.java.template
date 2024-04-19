@@ -1,7 +1,7 @@
 	/**
 	 * Entity操作クラスです。
 	 */
-	public static class Entity extends dataforms.dao.Entity {
+	public static class Entity extends jp.dataforms.fw.dao.Entity {
 ${idConstants}
 		/**
 		 * コンストラクタ。

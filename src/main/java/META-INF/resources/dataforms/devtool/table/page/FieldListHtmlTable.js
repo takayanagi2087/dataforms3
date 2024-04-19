@@ -33,7 +33,7 @@ class FieldListHtmlTable extends EditableHtmlTable {
 			pkg.val(tpkgname.replace(".dao", ".field"));
 		}
 		if (spkg.val().length == 0) {
-			spkg.val("dataforms");
+			spkg.val("jp.dataforms.fw");
 		}
 	}
 }

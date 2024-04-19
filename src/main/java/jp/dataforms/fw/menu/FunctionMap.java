@@ -397,7 +397,7 @@ public class FunctionMap {
 		this.addFwMenu();
 		this.addAppPage();
 		this.addFwPage();
-		
+		logger.debug("menu size=" + this.getMenuList().size());
 	}
 
 	/**

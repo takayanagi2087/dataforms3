@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.common.SelectField;
@@ -17,6 +20,11 @@ import jp.dataforms.fw.menu.FunctionMap.PathPackage;
  *
  */
 public class FunctionSelectField extends SingleSelectField<Long> {
+
+	/**
+	 * Logger.
+	 */
+	private static Logger logger = LogManager.getLogger(FunctionSelectField.class);
 
 	/**
 	 * フィールドコメント。
@@ -55,6 +63,7 @@ public class FunctionSelectField extends SingleSelectField<Long> {
 		super.init();
 		String lang = this.getPage().getRequest().getLocale().getLanguage();
 		List<Menu> list = WebComponent.getFunctionMap().getMenuList();
+		logger.debug("function list.size()=" + list.size());
 		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 		for (Menu m: list) {
 			String value = m.getPath();

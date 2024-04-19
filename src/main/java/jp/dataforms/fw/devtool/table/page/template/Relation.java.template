@@ -2,9 +2,9 @@ package ${packageName};
 
 import java.util.List;
 import java.util.ArrayList;
-import dataforms.dao.ForeignKey;
-import dataforms.dao.Table;
-import dataforms.dao.TableRelation;
+import jp.dataforms.fw.dao.ForeignKey;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.dao.TableRelation;
 
 /**
  * ${TableClassShortName}の関係を定義するクラスです。
