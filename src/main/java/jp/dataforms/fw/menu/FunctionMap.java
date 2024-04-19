@@ -80,9 +80,9 @@ public class FunctionMap {
 	 * フレームワークのPath-Package対応表の登録を行う。
 	 */
 	protected void addFwPathPackage() {
-		this.addPathPackage(new PathPackage("/dataforms/devtool", "jp.dataforms.fw.devtool"));
-		this.addPathPackage(new PathPackage("/dataforms/app", "jp.dataforms.fw.app"));
-		this.addPathPackage(new PathPackage("/dataforms", "jp.dataforms.fw"));
+		this.addPathPackage(new PathPackage("/dataforms/devtool", WebComponent.BASE_PACKAGE + ".devtool"));
+		this.addPathPackage(new PathPackage("/dataforms/app", WebComponent.BASE_PACKAGE + ".app"));
+		this.addPathPackage(new PathPackage("/dataforms", WebComponent.BASE_PACKAGE));
 	}
 
 	/**

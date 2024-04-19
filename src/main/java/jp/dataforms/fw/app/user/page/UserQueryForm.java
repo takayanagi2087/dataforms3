@@ -17,6 +17,7 @@ import jp.dataforms.fw.app.user.field.UserAttributeValueField;
 import jp.dataforms.fw.app.user.field.UserNameField;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.QueryForm;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.base.page.DeveloperPage;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.field.base.Field;
@@ -72,8 +73,8 @@ public class UserQueryForm extends QueryForm {
 		if (this.getPage().checkUserAttribute("userLevel", "developer")) {
 			TableManagerDao dao = new TableManagerDao(this);
 			String initialDataPath =  DeveloperPage.getExportInitalDataPath(this.getPage()); // DeveloperPage.getWebSourcePath() + "/WEB-INF/initialdata";
-			dao.exportData("jp.dataforms.fw.app.user.dao.UserInfoTable", initialDataPath);
-			dao.exportData("jp.dataforms.fw.app.user.dao.UserAttributeTable", initialDataPath);
+			dao.exportData(WebComponent.BASE_PACKAGE + ".app.user.dao.UserInfoTable", initialDataPath);
+			dao.exportData(WebComponent.BASE_PACKAGE + ".app.user.dao.UserAttributeTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initializationdatacreated"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));
@@ -96,8 +97,8 @@ public class UserQueryForm extends QueryForm {
 			String initialDataPath = Page.getServlet().getServletContext().getRealPath("/WEB-INF/initialdata");
 			dao.executeUpdate("delete from " + new UserAttributeTable().getTableName(), new HashMap<String, Object>());
 			dao.executeUpdate("delete from " + UserInfoTableUtil.newUserInfoTable().getTableName(), new HashMap<String, Object>());
-			dao.importData("jp.dataforms.fw.app.user.dao.UserInfoTable", initialDataPath);
-			dao.importData("jp.dataforms.fw.app.user.dao.UserAttributeTable", initialDataPath);
+			dao.importData(WebComponent.BASE_PACKAGE + ".app.user.dao.UserInfoTable", initialDataPath);
+			dao.importData(WebComponent.BASE_PACKAGE + ".app.user.dao.UserAttributeTable", initialDataPath);
 			ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.initialDataImported"));
 		} else {
 			ret = new JsonResponse(JsonResponse.INVALID, MessagesUtil.getMessage(this.getPage(), "error.permission"));

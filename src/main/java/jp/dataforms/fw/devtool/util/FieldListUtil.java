@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.dao.file.VideoData;
@@ -189,13 +190,13 @@ public final class FieldListUtil {
 			sb.append("\t\t */\n");
 			sb.append("\t\tpublic " + vtype + " get" + uFieldId+ "() {\n");
 			if ("java.lang.Short".equals(valueType.getName())) {
-				implist.add("jp.dataforms.fw.util.NumberUtil");
+				implist.add(WebComponent.BASE_PACKAGE + ".util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.shortValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else if ("java.lang.Integer".equals(valueType.getName())) {
-				implist.add("jp.dataforms.fw.util.NumberUtil");
+				implist.add(WebComponent.BASE_PACKAGE + ".util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.integerValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else if ("java.lang.Long".equals(valueType.getName())) {
-				implist.add("jp.dataforms.fw.util.NumberUtil");
+				implist.add(WebComponent.BASE_PACKAGE + ".util.NumberUtil");
 				sb.append("\t\t\treturn NumberUtil.longValueObject(this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + "));\n");
 			} else {
 				sb.append("\t\t\treturn (" + vtype + ") this.getMap().get(Entity.ID_" + StringUtil.camelToUpperCaseSnake(fieldId) + ");\n");

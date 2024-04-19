@@ -1240,7 +1240,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	 */
 	public static boolean isDataformsField(final String classname) {
 		boolean ret = false;
-		if (classname.indexOf("dataforms.") >= 0) {
+		if (classname.indexOf(WebComponent.BASE_PACKAGE) >= 0) {
 			try {
 				Class<?> cls = Class.forName(classname);
 				if (cls != null) {
