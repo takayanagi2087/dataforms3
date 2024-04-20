@@ -1,6 +1,6 @@
 package ${packageName};
 
-import dataforms.controller.QueryForm;
+import jp.dataforms.fw.controller.QueryForm;
 ${queryFormImportList}
 import ${daoClassFullName};
 

@@ -2,6 +2,7 @@ package jp.dataforms.fw.devtool.pageform.gen;
 
 import java.util.Map;
 
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorEditForm;
 import jp.dataforms.fw.field.base.Field;
@@ -49,9 +50,9 @@ public class QueryFormGenerator extends FormSrcGenerator {
 	private String getQueryFormFieldList(final Map<String, Object> data, final ImportUtil implist) throws Exception {
 		implist.add("java.util.List");
 		implist.add("java.util.Map");
-		implist.add("dataforms.report.ExportDataFile");
-		implist.add("dataforms.field.base.FieldList");
-		implist.add("dataforms.field.base.Field.MatchType");
+		implist.add(WebComponent.BASE_PACKAGE + ".report.ExportDataFile");
+		implist.add(WebComponent.BASE_PACKAGE + ".field.base.FieldList");
+		implist.add(WebComponent.BASE_PACKAGE + ".field.base.Field.MatchType");
 
 		FieldList flist = this.getQueryFormFieldList(data);
 		StringBuilder sb = new StringBuilder();

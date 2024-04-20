@@ -2,9 +2,9 @@ package ${packageName};
 
 import java.util.Map;
 
-import dataforms.controller.EditForm;
-import dataforms.dao.Table;
-import dataforms.field.base.Field.Display;
+import jp.dataforms.fw.controller.EditForm;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.field.base.Field.Display;
 import ${daoClassFullName};
 
 /**

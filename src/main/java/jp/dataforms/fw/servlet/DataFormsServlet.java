@@ -1177,7 +1177,7 @@ public class DataFormsServlet extends HttpServlet {
 			userId = e.getLoginId() + "(" + e.getUserId() + ")";
 		}
 		accessLogger.info("{}:{}#{} finish.", userId, comp.getClass().getName(), m.getName());
-		accessLogger.debug("{}:{}", userId, resp.toString());
+//		accessLogger.debug("{}:{}", userId, resp.toString());
 	}
 
 

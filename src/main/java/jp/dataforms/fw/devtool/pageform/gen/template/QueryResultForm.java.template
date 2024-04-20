@@ -1,11 +1,11 @@
 package ${packageName};
 
 import java.util.Map;
-import dataforms.controller.Page;
-import dataforms.controller.QueryResultForm;
-import dataforms.field.base.FieldList;
-import dataforms.field.base.Field.Display;
-import dataforms.htmltable.PageScrollHtmlTable;
+import jp.dataforms.fw.controller.Page;
+import jp.dataforms.fw.controller.QueryResultForm;
+import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.base.Field.Display;
+import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import ${daoClassFullName};
 ${queryResultFormImportList}
 

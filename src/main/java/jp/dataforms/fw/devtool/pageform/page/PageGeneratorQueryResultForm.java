@@ -1,10 +1,14 @@
 package jp.dataforms.fw.devtool.pageform.page;
 
+
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.QueryResultForm;
@@ -27,7 +31,7 @@ public class PageGeneratorQueryResultForm extends QueryResultForm {
 	/**
 	 * Log.
 	 */
-//	private Logger log = Logger.getLogger(PageGeneratorQueryResultForm.class);
+	private Logger logger = LogManager.getLogger(PageGeneratorQueryResultForm.class);
 
 	/**
 	 * コンストラクタ。
@@ -95,10 +99,11 @@ public class PageGeneratorQueryResultForm extends QueryResultForm {
 			Class<?> cls = Class.forName(className);
 			Page p = (Page) cls.getDeclaredConstructor().newInstance();
 			PageClassInfo pi = new PageClassInfo(p);
-			r.put("daoClassName", pi.getDaoClass());
+			r.put("daoClassName", ((Class<?>) pi.getDaoClass()).getName());
 		}
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("queryResult", queryResult);
+		logger.info("queryResult=" + queryResult);
 		return result;
 	}
 

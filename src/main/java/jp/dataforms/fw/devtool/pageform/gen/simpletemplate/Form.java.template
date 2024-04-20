@@ -1,6 +1,6 @@
 package ${packageName};
 
-import dataforms.controller.Form;
+import jp.dataforms.fw.controller.Form;
 
 /**
  * ${pageName} 用フォームクラス。

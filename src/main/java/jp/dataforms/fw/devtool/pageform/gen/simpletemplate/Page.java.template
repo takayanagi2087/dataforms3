@@ -1,7 +1,7 @@
 package ${packageName};
 
-import dataforms.app.base.page.BasePage;
-import dataforms.dao.Dao;
+import jp.dataforms.fw.app.base.page.BasePage;
+import jp.dataforms.fw.dao.Dao;
 
 
 /**
