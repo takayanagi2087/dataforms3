@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.VarcharSingleSelectField;
@@ -47,13 +48,13 @@ public class DbColumnSelectField extends VarcharSingleSelectField {
 	}
 
 	/**
-	 * 選択肢リストを取得ます。
+	 * 選択肢リストを取得します。
 	 * @return 選択肢リスト。
 	 * @throws Exception 例外。
 	 */
 	private List<Map<String, Object>> queryOptionList() throws Exception {
 		ClassFinder finder = new ClassFinder();
-		List<Class<?>> classList = (List<Class<?>>) finder.findClasses("dataforms.field.sqltype", Field.class);
+		List<Class<?>> classList = (List<Class<?>>) finder.findClasses(WebComponent.BASE_PACKAGE + ".field.sqltype", Field.class);
 		List<Map<String, Object>> optlist = new ArrayList<Map<String, Object>>();
 		logger.debug(() -> "optlist=" + optlist.size());
 		for (Class<?> c: classList) {

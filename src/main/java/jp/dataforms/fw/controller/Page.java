@@ -260,7 +260,7 @@ public class Page extends DataForms implements WebEntryPoint {
 			basicJsCache.addAll(this.findJsClassTree(WebComponent.BASE_PACKAGE + ".field", Field.class));
 
 			basicJsCache.add("/dataforms/validator/ValidationError.js");
-			basicJsCache.addAll(this.findJsClassTree("dataforms.validator", FieldValidator.class));
+			basicJsCache.addAll(this.findJsClassTree(WebComponent.BASE_PACKAGE + ".validator", FieldValidator.class));
 		}
 //		logger.debug("basicJsCache=" + JSON.encode(basicJsCache, true));
 		return basicJsCache;

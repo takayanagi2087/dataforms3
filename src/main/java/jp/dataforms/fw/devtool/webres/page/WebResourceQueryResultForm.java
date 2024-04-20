@@ -289,10 +289,10 @@ public class WebResourceQueryResultForm extends QueryResultForm {
 		int no = 1;
 		for (Map<String, Object> m: result) {
 			String classname = (String) m.get("className");
-			if ("dataforms.app.menu.page.SideMenuForm".equals(classname)
-				|| "dataforms.app.login.page.LoginInfoForm".equals(classname)
-				|| "dataforms.app.field.user.LoginIdField".equals(classname)
-				|| "dataforms.app.field.user.UserNameField".equals(classname)) {
+			if ((WebComponent.BASE_PACKAGE + "app.menu.page.SideMenuForm").equals(classname)
+				|| (WebComponent.BASE_PACKAGE + ".app.login.page.LoginInfoForm").equals(classname)
+				|| (WebComponent.BASE_PACKAGE + ".app.field.user.LoginIdField").equals(classname)
+				|| (WebComponent.BASE_PACKAGE + ".app.field.user.UserNameField").equals(classname)) {
 				continue;
 			}
 			if (!StringUtil.isBlank(className)) {

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.Form;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.SingleTableQuery;
 import jp.dataforms.fw.dao.Table;
@@ -349,7 +350,7 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 			if (Table.class.isAssignableFrom(cls)) {
 				implist.add(SingleTableQuery.class);
 			}
-			implist.add("dataforms.field.base.FieldList");
+			implist.add(WebComponent.BASE_PACKAGE + ".field.base.FieldList");
 			return sb.toString();
 		} else {
 			return "";

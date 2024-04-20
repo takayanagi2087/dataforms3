@@ -253,7 +253,7 @@ public final class FieldListUtil {
 			String uFieldId = StringUtil.firstLetterToUpperCase(fieldId);
 			String fieldClassName = (String) m.get("fieldClassName");
 			String fsel = (String) m.get("sel");
-			if ("dataforms.field.sqlfunc.CountField".equals(fsel)) {
+			if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(fsel)) {
 				BigintField bifld = new BigintField(fieldId);
 				fieldClassName = bifld.getClass().getName();
 			}

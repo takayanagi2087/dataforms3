@@ -28,6 +28,7 @@ import com.google.gson.stream.JsonWriter;
 
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.Page;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.ForeignKey;
 import jp.dataforms.fw.dao.Index;
@@ -972,7 +973,7 @@ public class TableManagerDao extends Dao {
 		if (func != null && func.length() > 0) {
 			colinfo.put("packageName", func.substring(1) + ".field");
 		}
-		colinfo.put("superPackageName", "dataforms.field.sqltype");
+		colinfo.put("superPackageName", WebComponent.BASE_PACKAGE + ".field.sqltype");
 		String type = rs.getString("TYPE_NAME");
 		int size = rs.getInt("COLUMN_SIZE");
 		int scale = rs.getInt("DECIMAL_DIGITS");

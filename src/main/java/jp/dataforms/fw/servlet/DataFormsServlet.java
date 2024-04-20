@@ -746,7 +746,7 @@ public class DataFormsServlet extends HttpServlet {
 				};
 				TableManagerDao dao = new TableManagerDao(cobj);
 				if (dao.isDatabaseInitialized()) {
-					List<Map<String, Object>> list = dao.queryTableClass("dataforms.app", "");
+					List<Map<String, Object>> list = dao.queryTableClass(WebComponent.BASE_PACKAGE + ".app", "");
 					for (Map<String, Object> m: list) {
 						String differenceVal = (String) m.get("differenceVal");
 						if ("1".equals(differenceVal)) {

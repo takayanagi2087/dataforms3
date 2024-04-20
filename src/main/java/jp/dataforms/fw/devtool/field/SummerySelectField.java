@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.VarcharSingleSelectField;
 
@@ -38,11 +39,11 @@ public class SummerySelectField extends VarcharSingleSelectField {
 	private static final String[][] OPTIONS = {
 		{"0", ""}
 		, {"1", "&#10004;"}
-		, {"dataforms.field.sqlfunc.CountField", "CountField"}
-		, {"dataforms.field.sqlfunc.AvgField", "AvgField"}
-		, {"dataforms.field.sqlfunc.MaxField", "MaxField"}
-		, {"dataforms.field.sqlfunc.MinField", "MinField"}
-		, {"dataforms.field.sqlfunc.SumField", "SumField"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "CountField"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "AvgField"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MaxField", "MaxField"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MinField", "MinField"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SumField", "SumField"}
 	};
 
 	/**

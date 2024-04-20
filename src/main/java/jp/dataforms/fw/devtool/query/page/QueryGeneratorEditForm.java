@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.controller.EditForm;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.JoinConditionInterface1;
 import jp.dataforms.fw.dao.Query;
@@ -1131,8 +1132,8 @@ public class QueryGeneratorEditForm extends EditForm {
 				, (Map<String, Object> m) -> {
 					String fcls =  (String) m.get(SelectFieldHtmlTable.ID_FIELD_CLASS_NAME);
 					String sel = (String) m.get(SelectFieldHtmlTable.ID_SEL);
-					if ("dataforms.field.sqlfunc.CountField".equals(sel)) {
-						fcls = "dataforms.field.sqltype.BigintField";
+					if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(sel)) {
+						fcls = WebComponent.BASE_PACKAGE + ".field.sqltype.BigintField";
 					}
 					logger.debug("fcls=" + fcls);
 					return fcls;
