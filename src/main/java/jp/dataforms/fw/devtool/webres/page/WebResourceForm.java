@@ -152,6 +152,11 @@ public class WebResourceForm extends Form {
 				sb.append(gen.generateFormHtml(outputFormHtml));
 			}
 		}
+		if (page instanceof Page) {
+			Page p = (Page) page;
+			src = src.replaceAll("\\$\\{pageName\\}", p.getPageName());
+			src = src.replaceAll("\\$\\{description\\}", p.getPageDescription());
+		}
 		src = src.replaceAll("\\$\\{forms\\}", sb.toString());
 		return src;
 	}

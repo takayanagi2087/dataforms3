@@ -64,8 +64,10 @@ public class DbPageGenerator extends JavaSrcGenerator {
 		String path = (String) data.get(DaoAndPageGeneratorEditForm.ID_JAVA_SOURCE_PATH);
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PACKAGE_NAME);
 		String pageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_NAME);
+		String description = (String) data.get(DaoAndPageGeneratorEditForm.ID_DESCRIPTION);
 		tmp.replace("packageName", packageName);
 		tmp.replace("pageName", pageName);
+		tmp.replace(DaoAndPageGeneratorEditForm.ID_DESCRIPTION, description);
 		String formclass = packageName + "." + pageClassName;
 		String srcPath = path + "/" + formclass.replaceAll("\\.", "/") + ".java";
 		FileUtil.writeTextFileWithBackup(srcPath, tmp.getSource(), DataFormsServlet.getEncoding());

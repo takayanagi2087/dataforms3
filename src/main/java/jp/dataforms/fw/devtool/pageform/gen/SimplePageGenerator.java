@@ -40,9 +40,11 @@ public class SimplePageGenerator extends JavaSrcGenerator {
 		String pageClassName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_CLASS_NAME);
 		String functionPath = (String) data.get(DaoAndPageGeneratorEditForm.ID_FUNCTION_SELECT);
 		String formClassName = (String) data.get(DaoAndPageGeneratorEditForm.ID_FORM_CLASS_NAME);
+		String description = (String) data.get(DaoAndPageGeneratorEditForm.ID_DESCRIPTION);
 		tmp.replace(DaoAndPageGeneratorEditForm.ID_PACKAGE_NAME, packageName);
 		tmp.replace(DaoAndPageGeneratorEditForm.ID_PAGE_NAME, pageName);
 		tmp.replace(DaoAndPageGeneratorEditForm.ID_PAGE_CLASS_NAME, pageClassName);
+		tmp.replace(DaoAndPageGeneratorEditForm.ID_DESCRIPTION, description);
 		tmp.replace("functionPath", functionPath);
 		tmp.replace("formList", "\t\tthis.addForm(new " + formClassName + "());");
 		logger.debug("page=" + tmp.getSource());

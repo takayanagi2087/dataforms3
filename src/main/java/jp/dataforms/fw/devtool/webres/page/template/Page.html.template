@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title></title>
+		<title>${pageName}</title>
+		<meta name="description" content="${description}">
 	</head>
 	<body>
 		<div id="mainDiv">

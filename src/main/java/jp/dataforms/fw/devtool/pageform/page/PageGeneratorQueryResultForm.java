@@ -99,7 +99,10 @@ public class PageGeneratorQueryResultForm extends QueryResultForm {
 			Class<?> cls = Class.forName(className);
 			Page p = (Page) cls.getDeclaredConstructor().newInstance();
 			PageClassInfo pi = new PageClassInfo(p);
-			r.put("daoClassName", ((Class<?>) pi.getDaoClass()).getName());
+			Class<?> daoclass = (Class<?>) pi.getDaoClass();
+			if (daoclass != null) {
+				r.put("daoClassName", daoclass.getName());
+			}
 		}
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("queryResult", queryResult);

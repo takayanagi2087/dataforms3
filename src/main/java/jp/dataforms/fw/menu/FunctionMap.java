@@ -240,7 +240,7 @@ public class FunctionMap {
 		/**
 		 * 言語ごとのページ名のマップを取得します。
 		 */
-		public void readPageTitleMap() {
+		public void readPageTitleMap() throws Exception {
 			if (this.langNameMap == null) {
 				this.langNameMap = new LangNameMap();
 			}
@@ -256,10 +256,24 @@ public class FunctionMap {
 				if (html != null) {
 					String title = HtmlUtil.getTitle(html);
 					logger.debug("title=" + title);
-					this.langNameMap.put(LangNameMap.LANG_DEFAULT, title);
+					if (title != null) {
+						this.langNameMap.put(LangNameMap.LANG_DEFAULT, title);
+					} else {
+						Class<?> cls = Class.forName(classname);
+						this.langNameMap.put(LangNameMap.LANG_DEFAULT, cls.getSimpleName());
+					}
 					String desc = HtmlUtil.getDescription(html);
-					logger.debug("desc=" + desc);
-					this.langDescMap.put(LangNameMap.LANG_DEFAULT, desc);
+					if (desc != null) {
+						logger.debug("desc=" + desc);
+						this.langDescMap.put(LangNameMap.LANG_DEFAULT, desc);
+					} else {
+						this.langDescMap.put(LangNameMap.LANG_DEFAULT, "");
+					}
+				} else {
+					Class<?> cls = Class.forName(classname);
+					this.langNameMap.put(LangNameMap.LANG_DEFAULT, cls.getSimpleName());
+					this.langDescMap.put(LangNameMap.LANG_DEFAULT, "");
+					
 				}
 			}
 			List<String> langList = DataFormsServlet.getSupportLanguageList();
@@ -402,8 +416,9 @@ public class FunctionMap {
 
 	/**
 	 * 初期化を行います。
+	 * @throws Exception 例外。
 	 */
-	public void init() {
+	public void init() throws Exception {
 		if (!this.initialized) {
 			for (PageInfo p: this.pageList) {
 				p.readPageTitleMap();
@@ -607,6 +622,31 @@ public class FunctionMap {
 		return null;
 	}
 
+	/**
+	 * アプリケーションのパッケージ中のページリストを取得します。
+	 */
+	public void readAppPageList() {
+		try {
+			ClassFinder finder = new ClassFinder();
+			for (Menu m: this.getMenuList()) {
+				String path = m.getPath();
+				if (path.indexOf("/dataforms") == 0) {
+					continue;
+				}
+				String pkg = this.getPackage(m);
+				logger.debug("pkg=" + pkg);
+				List<Class<?>> list =  finder.findClasses(pkg, Page.class);
+				for (Class<?> cls: list) {
+					@SuppressWarnings("unchecked")
+					Class<? extends WebComponent> pcls = (Class<? extends WebComponent>) cls;
+					this.addPage(new PageInfo(pcls));
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
 	
 	/**
 	 * アプリケーションの機能マップを取得します。

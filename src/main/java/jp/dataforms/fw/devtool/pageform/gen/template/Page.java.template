@@ -24,6 +24,26 @@ ${formList}
 	public String getFunctionPath() {
 		return "${functionPath}";
 	}
+	
+	/**
+	 * Pageのタイトルを返します。
+	 *
+	 * @return Pageのタイトル。
+	 */
+    @Override
+	public String getPageName() {
+		return "${pageName}";
+	}
+
+	/**
+	 * Pageの説明を返します。
+	 *
+	 * @return Pageの説明。
+	 */
+    @Override
+	public String getPageDescription() {
+		return "${description}";
+	}
 
 	/**
 	 * テーブルを操作するためのDaoクラスを取得します。

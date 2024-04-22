@@ -1380,4 +1380,20 @@ public class Page extends DataForms implements WebEntryPoint {
 		return pp;
 	}
 
+	/**
+	 * ページの名称を取得します。
+	 * @return ページの名称。
+	 */
+	public String getPageName() {
+		return "";
+	}
+	
+	/**
+	 * ページの説明を取得します。
+	 * @return ページの説明。
+	 */
+	public String getPageDescription() {
+		return "";
+	}
+	
 }

@@ -54,12 +54,9 @@ import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
-import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
-import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
-import jp.dataforms.fw.util.SequentialProperties;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
 
@@ -92,6 +89,10 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 	 * ページ名フィールドID。
 	 */
 	public static final String ID_PAGE_NAME = "pageName";
+	/**
+	 * 説明フィールドID。
+	 */
+	public static final String ID_DESCRIPTION = "description";
 	/**
 	 * ページパッケージ名フィールドID。
 	 */
@@ -230,6 +231,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		// 生成するクラス
 		this.addField(funcField);
 		this.addField(new PageNameField()).addValidator(new RequiredValidator());
+		this.addField(new TextField(ID_DESCRIPTION));
 		this.addField(new PackageNameField()).addValidator(new RequiredValidator()).setComment("ページパッケージ名");
 		this.addField(new PageClassNameField())	.addValidator(new RequiredValidator()).setCalcEventField(true).setAutocomplete(false);
 		this.addField(new OverwriteModeField(ID_PAGE_CLASS_OVERWRITE_MODE));
@@ -302,7 +304,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 	 * @return Function.propertiesのパス。
 	 * @throws Exception 例外。
 	 */
-	private String getFunctionPropertiesPath(final String functionPath) throws Exception {
+/*	private String getFunctionPropertiesPath(final String functionPath) throws Exception {
 		String webResourcePath = DeveloperPage.getWebSourcePath();
 		String funcprop = this.getPage().getAppropriatePath(functionPath + "/Function.properties", this.getPage().getRequest());
 		if (funcprop == null) {
@@ -311,7 +313,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		funcprop = webResourcePath + funcprop;
 		return funcprop;
 	}
-
+*/
 	// TODO:後で共通化
 	/**
 	 * Function.propertiesを読み込みます。
@@ -319,7 +321,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 	 * @return 読み込んだ内容。
 	 * @throws Exception 例外。
 	 */
-	private SequentialProperties readFunctionProperties(final String funcprop) throws Exception {
+/*	private SequentialProperties readFunctionProperties(final String funcprop) throws Exception {
 		String text = "";
 		File propfile = new File(funcprop);
 		if (propfile.exists()) {
@@ -329,7 +331,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		prop.loadText(text);
 		return prop;
 	}
-
+*/
 
 	@Override
 	protected Map<String, Object> queryData(final Map<String, Object> data) throws Exception {
@@ -369,10 +371,11 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		ret.put(ID_PAGE_CLASS_OVERWRITE_MODE, OverwriteModeField.ERROR);
 		ret.put(ID_FUNCTION_SELECT, functionPath);
 
-		String funcprop = this.getFunctionPropertiesPath(functionPath);
-		SequentialProperties prop = this.readFunctionProperties(funcprop);
-		String name = (String) prop.get(pkg + "." + cls);
-		ret.put(ID_PAGE_NAME, name);
+//		String funcprop = this.getFunctionPropertiesPath(functionPath);
+//		SequentialProperties prop = this.readFunctionProperties(funcprop);
+//		String name = (String) prop.get(pkg + "." + cls);
+		ret.put(ID_PAGE_NAME, p.getPageName());
+		ret.put(ID_DESCRIPTION, p.getPageDescription());
 		ret.put(ID_PACKAGE_NAME, pkg);
 
 		this.getFormInfo(p, ret);
@@ -692,7 +695,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 	 * @param pageName ページ名。
 	 * @throws Exception 例外。
 	 */
-	private void updatePageName(final String functionPath, final String packageName, final String pageClassName, final String pageName) throws Exception {
+/*	private void updatePageName(final String functionPath, final String packageName, final String pageClassName, final String pageName) throws Exception {
 		String funcprop = this.getFunctionPropertiesPath(functionPath);
 		SequentialProperties prop = this.readFunctionProperties(funcprop);
 		prop.put(packageName + "." + pageClassName, pageName);
@@ -700,7 +703,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		logger.debug("str=" + str);
 		FileUtil.writeTextFileWithBackup(funcprop, str, DataFormsServlet.getEncoding());
 
-	}
+	}*/
 
 
 
@@ -735,11 +738,11 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 			pgen.generage(this, data);
 		}
 		// Function.propertiesの更新
-		String functionPath = (String) data.get(ID_FUNCTION_SELECT);
+/*		String functionPath = (String) data.get(ID_FUNCTION_SELECT);
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PACKAGE_NAME);
 		String pageName = (String) data.get(ID_PAGE_NAME);
 		String pageClassName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_CLASS_NAME);
-		this.updatePageName(functionPath, packageName, pageClassName, pageName);
+//		this.updatePageName(functionPath, packageName, pageClassName, pageName);*/
 	}
 
 	@Override
