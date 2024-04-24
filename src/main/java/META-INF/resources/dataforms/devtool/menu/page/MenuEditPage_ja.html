@@ -10,10 +10,14 @@
 			<form id="editForm">
 				<div class="formHeader"><span id="editFormTitle"></span></div>
 				<input type="hidden" id="saveMode" />
-				<div class="gridLayout">
+				<div class="gridLayout" style="grid-template-columns: 1fr 1fr;">
 					<div class="fieldDiv">
 						<div class="label"><label for="appBasePackage">基本パッケージ</label></div>
 						<div class="field"><input type="text" id="appBasePackage" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="addPageMethod">ページリストの構築方法</label></div>
+						<div class="field"><select id="addPageMethod"></select></div>
 					</div>
 				</div>
 				<h2>メニュー一覧</h2>

@@ -33,6 +33,16 @@ ${appMenu}
 	}
 	
 	/**
+	 * ページの追加方法を取得します。
+	 * @return ページの追加方法。
+	 */
+	@Override
+	public String getAddPageMethod() {
+		return "${addPageMethod}";	
+	}
+	
+	
+	/**
 	 * アプリケーションのページを追加します。
 	 */
 	public void addAppPage() {

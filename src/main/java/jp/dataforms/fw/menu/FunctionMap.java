@@ -432,7 +432,7 @@ public class FunctionMap {
 	 * @param menu メニュー。
 	 * @return パッケージ名。
 	 */
-	private String getPackage(final Menu menu) {
+	public String getPackage(final Menu menu) {
 		String ret = null;
 		List<PathPackage> pplist = this.getPathPackageList();
 		for (PathPackage pp: pplist) {
@@ -445,12 +445,21 @@ public class FunctionMap {
 	
 	
 	/**
+	 * ページの追加方法を取得します。
+	 * @return ページの追加方法。
+	 */
+	public String getAddPageMethod() {
+		return "AUTO";	
+	}
+	
+	/**
 	 * Menuの編集情報を取得します。
 	 * @return Menuの編集情報。
 	 */
 	public Map<String, Object> getMenuMap() {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		ret.put(MenuEditForm.ID_APP_BASE_PACKAGE, this.getAppBasePackage());
+		ret.put(MenuEditForm.ID_ADD_PAGE_METHOD, this.getAddPageMethod());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Menu> mlist = this.getMenuList();
 		String[] langList = DataFormsServlet.getSupportLanguage().split(",");
