@@ -202,6 +202,7 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 			templ.replace("appPage", "\t\tthis.readAppPageList();");
 		} else {
 			String code = this.getAddPageCode(mapclass, list);
+			code += "\t\tthis.readAppPageList();";
 			templ.replace("appPage", code);
 		}
 		String src = templ.getSource();

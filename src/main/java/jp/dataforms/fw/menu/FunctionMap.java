@@ -622,7 +622,23 @@ public class FunctionMap {
 		}
 		return ret;
 	}
-	
+
+	/**
+	 * ページの名称を取得します。
+	 * @param classname ページクラス名。
+	 * @return ページの名称。
+	 */
+	public PageInfo findPageInfo(final String classname) {
+		PageInfo ret = null;
+		for (PageInfo p: this.pageList) {
+			if (p.getPageClass().equals(classname)) {
+				ret = p;
+				break;
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * アプリケーションのベースパッケージを返します。
 	 * @return アプリケーションのベースパッケージ。
@@ -648,7 +664,11 @@ public class FunctionMap {
 				for (Class<?> cls: list) {
 					@SuppressWarnings("unchecked")
 					Class<? extends WebComponent> pcls = (Class<? extends WebComponent>) cls;
-					this.addPage(new PageInfo(pcls));
+					String classname = pcls.getName();
+					PageInfo p = this.findPageInfo(classname);
+					if (p == null) {
+						this.addPage(new PageInfo(pcls));
+					}
 				}
 
 			}
