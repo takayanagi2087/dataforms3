@@ -445,11 +445,11 @@ public class FunctionMap {
 	
 	
 	/**
-	 * ページの追加方法を取得します。
-	 * @return ページの追加方法。
+	 * ページの追加コード生成フラグを取得します。
+	 * @return ページの追加コード生成フラグ。
 	 */
-	public String getAddPageMethod() {
-		return "AUTO";	
+	public Boolean genAddPageCode() {
+		return false;	
 	}
 	
 	/**
@@ -459,7 +459,7 @@ public class FunctionMap {
 	public Map<String, Object> getMenuMap() {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		ret.put(MenuEditForm.ID_APP_BASE_PACKAGE, this.getAppBasePackage());
-		ret.put(MenuEditForm.ID_ADD_PAGE_METHOD, this.getAddPageMethod());
+		ret.put(MenuEditForm.ID_GEN_ADD_PAGE_CODE,  this.genAddPageCode() ? "1": "0");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Menu> mlist = this.getMenuList();
 		String[] langList = DataFormsServlet.getSupportLanguage().split(",");

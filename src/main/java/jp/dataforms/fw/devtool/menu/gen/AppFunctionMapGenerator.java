@@ -184,7 +184,7 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 	@Override
 	public void generage(Form form, Map<String, Object> data) throws Exception {
 		String basePackage = (String) data.get(MenuEditForm.ID_APP_BASE_PACKAGE);
-		String addPageMethod = (String) data.get(MenuEditForm.ID_ADD_PAGE_METHOD);
+		String genAddPageCode = (String) data.get(MenuEditForm.ID_GEN_ADD_PAGE_CODE);
 		logger.debug("basePackage=" + basePackage);
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(MenuTable.ID_MENU_LIST);
@@ -197,13 +197,16 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 		templ.replace("basePackage", basePackage);
 		templ.replace("appPathPackage", pathPackage);
 		templ.replace("appMenu", menu);
-		templ.replace("addPageMethod", addPageMethod);
-		if ("AUTO".equals(addPageMethod)) {
-			templ.replace("appPage", "\t\tthis.readAppPageList();");
+		if ("1".equals(genAddPageCode)) {
+			templ.replace("genAddPageCode", "true");
 		} else {
+			templ.replace("genAddPageCode", "false");
+		}
+		if ("1".equals(genAddPageCode)) {
 			String code = this.getAddPageCode(mapclass, list);
-			code += "\t\tthis.readAppPageList();";
 			templ.replace("appPage", code);
+		} else {
+			templ.replace("appPage", "");
 		}
 		String src = templ.getSource();
 		logger.debug("src=" + src);
@@ -211,7 +214,5 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 		String path = DeveloperPage.getJavaSourcePath();
 		String srcPath = path + "/" + mapclass.replaceAll("\\.", "/") + ".java";
 		FileUtil.writeTextFileWithBackup(srcPath, templ.getSource(), DataFormsServlet.getEncoding());
-
-		
 	}
 }

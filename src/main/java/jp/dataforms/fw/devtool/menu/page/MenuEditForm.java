@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.EditForm;
 import jp.dataforms.fw.controller.WebComponent;
-import jp.dataforms.fw.devtool.field.AddPageMethodField;
 import jp.dataforms.fw.devtool.menu.gen.AppFunctionMapGenerator;
 import jp.dataforms.fw.field.base.TextField;
+import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
@@ -31,15 +31,20 @@ public class MenuEditForm extends EditForm {
 	public static final String ID_APP_BASE_PACKAGE = "appBasePackage";
 
 	/**
+	 * ページ追加コードの生成フラグフィールド。
+	 */
+	public static final String ID_GEN_ADD_PAGE_CODE = "genAddPageCode";
+
+	/**
 	 * ページリストの構築方法のフィールドID。
 	 */
-	public static final String ID_ADD_PAGE_METHOD = "addPageMethod";
+//	public static final String ID_ADD_PAGE_METHOD = "addPageMethod";
 	/**
 	 * コンストラクタ。
 	 */
 	public MenuEditForm() {
 		this.addField(new TextField(ID_APP_BASE_PACKAGE)).addValidator(new RequiredValidator());
-		this.addField(new AddPageMethodField(ID_ADD_PAGE_METHOD)).setComment("ページリストの構築方法");
+		this.addField(new FlagField(ID_GEN_ADD_PAGE_CODE));
 		this.addHtmlTable(new MenuTable());
 	}
 	

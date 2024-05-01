@@ -33,12 +33,12 @@ ${appMenu}
 	}
 	
 	/**
-	 * ページの追加方法を取得します。
-	 * @return ページの追加方法。
+	 * ページ追加コード生成フラグを取得します。
+	 * @return ページ追加コード生成フラグ。
 	 */
 	@Override
-	public String getAddPageMethod() {
-		return "${addPageMethod}";	
+	public Boolean genAddPageCode() {
+		return ${genAddPageCode};	
 	}
 	
 	
@@ -47,5 +47,6 @@ ${appMenu}
 	 */
 	public void addAppPage() {
 ${appPage}
+		this.readAppPageList(); // 
 	}
 }
