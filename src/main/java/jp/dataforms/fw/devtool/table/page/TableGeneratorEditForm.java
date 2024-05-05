@@ -424,7 +424,7 @@ public class TableGeneratorEditForm extends EditForm {
 				constList += "\t */\n";
 				constList += "\tprivate static final int LENGTH = " + fieldLength + ";\n";
 				validators = "\t\tthis.addValidator(new MaxLengthValidator(this.getLength()));\n";
-				importList = "import dataforms.validator.MaxLengthValidator;\n";
+				importList = "import jp.dataforms.fw.validator.MaxLengthValidator;\n";
 				fieldLength = ", LENGTH";
 			} else {
 				fieldLength = ", " + fieldLength.replaceAll(",", ", ");

@@ -3,13 +3,14 @@ package jp.dataforms.fw.util;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,7 +28,7 @@ public class HttpRangeInfo {
 	/**
 	 * ブロックサイズリスト。
 	 */
-	private static List<LinkedHashMap<String, Object>> blockSizeList = null;
+	private static List<LinkedTreeMap<String, Object>> blockSizeList = null;
 
 	/**
 	 * 範囲の終了が指定されなかった場合、転送するサイズ。
@@ -73,7 +74,7 @@ public class HttpRangeInfo {
 	 * ブロックサイズリストを取得します。
 	 * @return ブロックサイズリスト。
 	 */
-	public static List<LinkedHashMap<String, Object>> getBlockSizeList() {
+	public static List<LinkedTreeMap<String, Object>> getBlockSizeList() {
 		return blockSizeList;
 	}
 
@@ -81,7 +82,7 @@ public class HttpRangeInfo {
 	 * ブロックサイズリストを設定します。
 	 * @param blockSizeList ブロックサイズリスト。
 	 */
-	public static void setBlockSizeList(final List<LinkedHashMap<String, Object>> blockSizeList) {
+	public static void setBlockSizeList(final List<LinkedTreeMap<String, Object>> blockSizeList) {
 		HttpRangeInfo.blockSizeList = blockSizeList;
 	}
 

@@ -11,7 +11,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,8 @@ import org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload;
 import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -95,7 +96,21 @@ import jp.dataforms.fw.util.StringUtil;
 @MultipartConfig
 @WebServlet(name = "DataFormsServlet", displayName = "DataFormsServlet", urlPatterns = {"*.df" })
 public class DataFormsServlet extends HttpServlet {
+	/**
+	 * Content-Type : FORM_URLENCODED。
+	 */
+	public static final String CONTENT_TYPE_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+	
+	/**
+	 * Content-Type : multipart/form-data。
+	 */
+	public static final String CONTENT_TYPE_MULTIPART_FORM_DATA = "multipart/form-data";
 
+	/**
+	 * Content-Type : application/json。
+	 */
+	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+	
 	/**
 	 * IE許可のシンボル。
 	 */
@@ -426,7 +441,7 @@ public class DataFormsServlet extends HttpServlet {
 		logger.debug(() -> "streamingBlockSize=" + streamingBlockSize);
 		if (!StringUtil.isBlank(streamingBlockSize)) {
 			@SuppressWarnings("unchecked")
-			List<LinkedHashMap<String, Object>> bslist = (List<LinkedHashMap<String, Object>>) JsonUtil.decode(streamingBlockSize, ArrayList.class);
+			List<LinkedTreeMap<String, Object>> bslist = (List<LinkedTreeMap<String, Object>>) JsonUtil.decode(streamingBlockSize, ArrayList.class);
 			HttpRangeInfo.setBlockSizeList(bslist);
 		}
 
@@ -434,7 +449,7 @@ public class DataFormsServlet extends HttpServlet {
 		logger.debug(() -> "contentTypeList=" + contentTypeList);
 		if (!StringUtil.isBlank(contentTypeList)) {
 			@SuppressWarnings("unchecked")
-			List<LinkedHashMap<String, String>> ctlist = (List<LinkedHashMap<String, String>>) JsonUtil.decode(contentTypeList, ArrayList.class);
+			List<LinkedTreeMap<String, String>> ctlist = (List<LinkedTreeMap<String, String>>) JsonUtil.decode(contentTypeList, ArrayList.class);
 			FileObject.setContentTypeList(ctlist);
 		}
 		String backupFileName = this.getServletContext().getInitParameter("backup-file-name");
