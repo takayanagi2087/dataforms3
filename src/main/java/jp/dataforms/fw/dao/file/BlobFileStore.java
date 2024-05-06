@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.JDBCConnectableObject;
 import jp.dataforms.fw.dao.Table;
@@ -120,12 +120,13 @@ public class BlobFileStore extends FileStore {
 	 * </pre>
 	 */
 	@Override
-	protected File makeTempFromFileItem(final DiskFileItem fileItem) throws Exception {
+	protected File makeTempFromFileItem(final Part part) throws Exception {
 //		log.error("makeTempFromFileItem", new Exception());
-		String fileName = FileUtil.getFileName(fileItem.getName());
-		long length = fileItem.getSize();
+		String fileName = FileUtil.getFileName(part.getSubmittedFileName());
+		logger.debug("makeTempFromFileItem fileName=" + fileName);
+		long length = part.getSize();
 		File file = null;
-		InputStream is = fileItem.getInputStream();
+		InputStream is = part.getInputStream();
 		try {
 			file = this.makeBlobTempFile(fileName, length, is);
 		} finally {

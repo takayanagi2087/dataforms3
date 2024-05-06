@@ -10,10 +10,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.controller.WebEntryPoint;
 import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -154,18 +154,18 @@ public class TableFolderFileStore extends FileStore {
 	 * </pre>
 	 */
 	@Override
-	public File makeTempFromFileItem(final DiskFileItem fileItem) throws Exception {
-		this.fileName = FileUtil.getFileName(fileItem.getName());
+	public File makeTempFromFileItem(final Part part) throws Exception {
+		this.fileName = FileUtil.getFileName(part.getName());
 
 		File file = this.makeUniqFile();
 		FileOutputStream os = new FileOutputStream(file);
 		try {
-			InputStream is = fileItem.getInputStream();
+			InputStream is = part.getInputStream();
 			try {
 				FileUtil.copyStream(is, os);
 			} finally {
 				is.close();
-				fileItem.delete();
+				part.delete();
 			}
 		} finally {
 			os.close();

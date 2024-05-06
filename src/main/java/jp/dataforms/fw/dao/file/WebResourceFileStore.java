@@ -3,8 +3,7 @@ package jp.dataforms.fw.dao.file;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
-
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.field.common.FileField;
 
 /**
@@ -35,7 +34,7 @@ public class WebResourceFileStore extends FileStore {
 	 * </pre>
 	 */
 	@Override
-	protected File makeTempFromFileItem(final DiskFileItem fileItem) throws Exception {
+	protected File makeTempFromFileItem(final Part part) throws Exception {
 		return null;
 	}
 

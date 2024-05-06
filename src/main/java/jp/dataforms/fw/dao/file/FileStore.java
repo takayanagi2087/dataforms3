@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
@@ -37,11 +37,11 @@ public abstract class FileStore {
 
 	/**
 	 * アップロード直後にファイルを一時ファイルに保存します。
-	 * @param fileItem アップロードファイル情報。
+	 * @param part アップロードファイル情報。
 	 * @return 作成された一時ファイル。
 	 * @throws Exception 例外。
 	 */
-	protected abstract File makeTempFromFileItem(final DiskFileItem fileItem) throws Exception;
+	protected abstract File makeTempFromFileItem(final Part part) throws Exception;
 
 	/**
 	 * テーブル保存用一時ファイルを作成します。
@@ -62,15 +62,15 @@ public abstract class FileStore {
 
 	/**
 	 * アップロードファイル情報をFileObjectに変換します。
-	 * @param fileItem アップロードファイル情報。
+	 * @param part アップロードファイル情報。
 	 * @return FileObject。
 	 * @throws Exception 例外。
 	 */
-	public FileObject convertToFileObject(final DiskFileItem fileItem) throws Exception {
+	public FileObject convertToFileObject(final Part part) throws Exception {
 		FileObject ret = new FileObject();
-		File tempFile = this.makeTempFromFileItem(fileItem);
-		ret.setFileName(FileUtil.getFileName(fileItem.getName()));
-		ret.setLength(fileItem.getSize());
+		File tempFile = this.makeTempFromFileItem(part);
+		ret.setFileName(FileUtil.getFileName(part.getSubmittedFileName()));
+		ret.setLength(part.getSize());
 		ret.setTempFile(tempFile);
 		return ret;
 	}

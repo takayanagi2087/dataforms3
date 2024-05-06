@@ -4,12 +4,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
-import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.dao.file.BlobFileStore;
 import jp.dataforms.fw.dao.file.FileObject;
@@ -195,8 +194,8 @@ public abstract class FileField<TYPE extends FileObject> extends Field<TYPE> {
 	public void setClientValue(final Object v) {
 		try {
 			FileObject value = this.newFileObject();
-			if (v instanceof FileItem) {
-				value.copy(this.newFileStore().convertToFileObject((DiskFileItem) v));
+			if (v instanceof Part) {
+				value.copy(this.newFileStore().convertToFileObject((Part) v));
 			}
 			this.setValueObject(value);
 		} catch (Exception e) {

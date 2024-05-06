@@ -7,9 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +19,6 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.sql.DataSource;
 
-import org.apache.commons.fileupload2.core.DiskFileItem;
-import org.apache.commons.fileupload2.core.DiskFileItemFactory;
-import org.apache.commons.fileupload2.core.FileItem;
-import org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload;
-import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +30,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.app.backuprestore.page.BackupForm;
 import jp.dataforms.fw.app.errorpage.ConfigErrorPage;
@@ -72,6 +68,7 @@ import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.CryptUtil;
+import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.HttpRangeInfo;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
@@ -1338,6 +1335,23 @@ public class DataFormsServlet extends HttpServlet {
 		r.send(resp);
 	}
 
+	/**
+	 * MULTIPART_FORM_DATAかどうかをチェックします。
+	 * @param req チェックする要求情報。
+	 * @return MULTIPART_FORM_DATAの場合true。
+	 */
+	protected boolean isMultipartContent(final HttpServletRequest req) {
+		boolean ret = false;
+		String contentType = req.getHeader("Content-Type");
+		if (contentType != null) {
+			contentType = contentType.toLowerCase();
+			if (contentType.indexOf(CONTENT_TYPE_MULTIPART_FORM_DATA) >= 0) {
+				ret = true;
+			}
+		}
+		return ret;
+	}
+	
 
 	/**
 	 * パラメータを取得します。
@@ -1349,7 +1363,7 @@ public class DataFormsServlet extends HttpServlet {
 	protected Map<String, Object> getParameterMap(final HttpServletRequest req) throws Exception {
 		String contentType = req.getHeader("Content-Type");
 		logger.debug("post data content-type=" + contentType);
-		if (JakartaServletFileUpload.isMultipartContent(req)) {
+		if (this.isMultipartContent(req)) {
 			return this.getParameterMapForMultipart(req);
 		} else {
 			if (contentType != null && contentType.indexOf("application/json") >= 0) {
@@ -1421,9 +1435,22 @@ public class DataFormsServlet extends HttpServlet {
 		}
 	}
 
-
 	/**
-	 * TODO:commons-fileuploadをやめて@MultipartConfigに書き換える。
+	 * 文字列を読み込みます。
+	 * @param p Part。
+	 * @return 文字列。
+	 * @throws Exception 例外。
+	 */
+	private String readString(final Part p) throws Exception {
+		String ret = null;
+		try (InputStream is = p.getInputStream()) {
+			byte [] buf = FileUtil.readInputStream(is);
+			ret = new String(buf, DataFormsServlet.getEncoding());
+		}
+		return ret;
+	}
+	
+	/**
 	 * File Uploadがある場合のパラメータ解析を行います。
 	 * @param req HTTPリクエスト。
 	 * @return パラメータ解析結果。
@@ -1431,31 +1458,26 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	private Map<String, Object> getParameterMapForMultipart(final HttpServletRequest req) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		DiskFileItemFactory factory = new DiskFileItemFactory.Builder().get();
-//		factory.setRepository(new File(tempDir)); //一時的に保存する際のディレクトリ
-		JakartaServletDiskFileUpload upload = new JakartaServletDiskFileUpload(factory);
-//		upload.setHeaderEncoding(encoding);
-//		@SuppressWarnings("unchecked")
-		List<DiskFileItem> list = upload.parseRequest(req);
-		for (FileItem<?> item : list) {
-			String key = item.getFieldName();
-			if (key != null) {
-				if (item.isFormField()) {
-					String value = item.getString(Charset.forName(DataFormsServlet.getEncoding()));
-					this.addParamMap(map, key, value);
-				} else {
-					String filename = item.getName();
-					if (StringUtil.isBlank(filename)) {
-						map.put(key, null);
-					} else {
-						map.put(key, item);
-					}
-				}
-			}
-		}
+    	Collection<Part> list = req.getParts();
+    	for (Part p: list) {
+			String filename = p.getSubmittedFileName();
+    		logger.debug("---------- " + p.getClass().getName());
+    		logger.debug("content-type:" + p.getContentType());
+    		logger.debug("file name   :" + filename);
+    		logger.debug("param name  :" + p.getName());
+    		if (filename != null) {
+				String name = p.getName();
+				map.put(name, p);
+    		} else {
+				String value = this.readString(p);
+	    		logger.debug("value  :" + value);
+				String name = p.getName();
+				this.addParamMap(map, name, value);
+    		}
+    		
+    	}
 		return map;
 	}
-
 
 	/**
 	 * エラーページにリダイレクトします。
