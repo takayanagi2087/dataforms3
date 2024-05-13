@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { Dialog } from './Dialog.js';
+
+
 /**
  * @class ConfirmDialog
  *
  * @extends Dialog
  */
-class ConfirmDialog extends Dialog {
+export class ConfirmDialog extends Dialog {
 	/**
 	 * コンストラクタ。
 	 */
@@ -24,8 +27,8 @@ class ConfirmDialog extends Dialog {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("confirmOkButton").click(() => {
 			this.close();
 			if (this.okFunc != null) {

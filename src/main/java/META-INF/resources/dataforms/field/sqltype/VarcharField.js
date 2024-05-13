@@ -5,6 +5,8 @@
 
 'use strict';
 
+import { TextField } from '../base/TextField.js';
+
 /**
  * @class VarcharField
  * Varchar型フィールドクラス。
@@ -12,6 +14,6 @@
  * </pre>
  * @extends TextField
  */
-class VarcharField extends TextField {
+export class VarcharField extends TextField {
 
 }

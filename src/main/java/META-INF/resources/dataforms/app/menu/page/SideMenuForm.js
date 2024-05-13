@@ -4,15 +4,17 @@
 
 'use strict';
 
-class SideMenuForm extends MenuForm {
+import { MenuForm } from './MenuForm.js';
+
+export class SideMenuForm extends MenuForm {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	attach() {
+	async attach() {
 		super.attach();
-		this.menu = this.newInstance(this.sideMenu);
-		this.menu.init();
-		this.menu.attach();
+		this.menu = await this.newInstance(this.sideMenu);
+		await this.menu.init();
+		await this.menu.attach();
 	}
 }
 

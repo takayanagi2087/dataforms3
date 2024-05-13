@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { DateTimeValidator } from './DateTimeValidator.js';
+
+
 /**
  * @class TimestampValidator
  * タイムスタンプバリデータ。
  * @extends DateTimeValidator
  */
-class TimestampValidator extends DateTimeValidator {
+export class TimestampValidator extends DateTimeValidator {
 	/**
 	 * コンストラクタ。
 	 */

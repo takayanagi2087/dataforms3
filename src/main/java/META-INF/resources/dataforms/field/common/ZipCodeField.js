@@ -4,17 +4,20 @@
 
 'use strict';
 
+import { CharField } from '../sqltype/CharField.js';
+
+
 /**
  * @class ZipCodeField
  * フラグフィールドクラス。
  * @extends CharField
  */
-class ZipCodeField extends CharField {
+export class ZipCodeField extends CharField {
 	/**
 	 * HTMLの要素との対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get().change((ev) => {
 			let comp = $(ev.currentTarget);
 			this.addHyphen(comp);

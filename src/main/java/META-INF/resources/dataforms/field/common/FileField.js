@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { Field } from '../base/Field.js';
+
  /**
  * @class FileReceiver
  * ファイルDrag&Drop受付領域。
  * @extends Field
  */
- class FileReceiver {
+ export class FileReceiver {
 
 	/**
 	 * コンストラクタ。
@@ -77,17 +79,17 @@
  * </pre>
  * @extends Field
  */
-class FileField extends Field {
+export class FileField extends Field {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	attach() {
+	async attach() {
 		let comp = this.get();
 		this.addElements(comp);
-		super.attach();
+		await super.attach();
 		let selid = this.id + "_sel"; // 選択ボタンID.
 		let delid = this.id + "_del"; // ファイル削除のチェックボックス.
 		this.parent.get(selid).click((ev) => {

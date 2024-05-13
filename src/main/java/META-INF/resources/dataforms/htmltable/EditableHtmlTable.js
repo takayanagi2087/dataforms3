@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { HtmlTable } from '/dataforms3app/dataforms/htmltable/HtmlTable.js';
+
 /**
  * @class EditableHtmlTable
  * 編集可能なHTMLテーブルクラス。
@@ -12,12 +14,12 @@
  * </pre>
  * @extends HtmlTable
  */
-class EditableHtmlTable extends HtmlTable {
+export class EditableHtmlTable extends HtmlTable {
 	/**
 	 * 各エレメントとの対応付け.
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		if (!this.readonly) {
 			this.find("tfoot").find(this.convertSelector("[id$='\\.addButton']")).click(() => {
 				this.addRow(null);

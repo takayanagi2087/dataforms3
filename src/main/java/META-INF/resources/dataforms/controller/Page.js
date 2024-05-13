@@ -4,10 +4,17 @@
 
 'use strict';
 
+import { DataForms } from './DataForms.js';
+import { Form } from './Form.js';
+import { Dialog } from './Dialog.js';
+import { WebMethod } from '../util/WebMethod.js';
+import { MessagesUtil } from '../util/MessagesUtil.js';
+
+
 /**
  * 現在のページインスタンスです。
  */
-var currentPage = null;
+//var currentPage = null;
 
 /**
  * consoleのコピーです。
@@ -16,7 +23,7 @@ var currentPage = null;
  * loggerを使用すると、web.xmlのclient-log-levelの設定で、ログレベルの変更が可能です。
  * </pre>
  */
-var logger = null;
+//var logger = null;
 
 
 /**
@@ -40,7 +47,7 @@ var logger = null;
  *  }
  * </pre>
  */
-class Page extends DataForms {
+export class Page extends DataForms {
 
 	/**
 	 * Microsoft EDGE。
@@ -232,13 +239,13 @@ class Page extends DataForms {
 	 * ダイアログを初期化します。
 	 * @param {Array} dialogList ダイアログリスト.
 	 */
-	initDialog(dialogList) {
+	async initDialog(dialogList) {
 		// ダイアログの初期化.
 		for (let key in dialogList) {
 			let dlgclass = dialogList[key];
-			let dlg = this.newInstance(dlgclass);
+			let dlg = await this.newInstance(dlgclass);
 			dlg.htmlPath = dlgclass.path + ".html";
-			dlg.init();
+			await dlg.init();
 		}
 	}
 
@@ -351,7 +358,7 @@ class Page extends DataForms {
 	 */
 	async init() {
 		try {
-			super.init();
+			await super.init();
 			this.configureLogger();
 			logger.debug("queryString=" + window.location.search);
 			logger.info("language=" + this.getLanguage());
@@ -370,7 +377,7 @@ class Page extends DataForms {
 				this.layout();
 			}
 			// 各フォームの初期化
-			this.initForm(this.formMap);
+			await this.initForm(this.formMap);
 			// ダイアログの初期化
 			this.initDialog(this.dialogMap);
 			// バージョン情報などを表示。
@@ -386,9 +393,11 @@ class Page extends DataForms {
 				this.setCookie("cookiecheck", "");
 			}
 			//
-			this.attach();
+			await this.attach();
 			$(this.convertSelector("#mainDiv")).addClass("mainDiv");
 		} catch (e) {
+			console.log("currentPage=", currentPage);
+			console.log("e=", e);
 			currentPage.reportError(e);
 		}
 	}
@@ -396,9 +405,9 @@ class Page extends DataForms {
 	/**
 	 * エレメントとの対応付けを行います。
 	 */
-	attach() {
+	async attach() {
 		let thisPage = this;
-		super.attach();
+		await super.attach();
 		$(this.convertSelector("#showMenuButton")).click(() => {
 			let menu = $(thisPage.convertSelector("#menuDiv"));
 			if (menu.length == 0) {

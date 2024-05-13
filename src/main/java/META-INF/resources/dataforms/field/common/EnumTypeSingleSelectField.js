@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { SingleSelectField } from './SingleSelectField.js';
+
 /**
  * @class EnumTypeSingleSelectField
  *
@@ -13,6 +15,6 @@
  * </pre>
  * @extends SingleSelectField
  */
-class EnumTypeSingleSelectField extends SingleSelectField {
+export class EnumTypeSingleSelectField extends SingleSelectField {
 
 }

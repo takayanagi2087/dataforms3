@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Field } from './Field.js';
+
 /**
  * @class NumberField
  * 数値フィールドクラス。
@@ -12,15 +14,15 @@
  * </pre>
  * @extends Field
  */
-class NumberField extends Field {
+export class NumberField extends Field {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * focus, blurイベント処理を登録し、カンマの付け外しを行います。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let el = this.get();
 		// 右寄せに設定.
 		el.css("text-align", "right");
@@ -69,8 +71,8 @@ class NumberField extends Field {
 	 * 数値フィールドの初期化を行います。
 	 *
 	 */
-	init() {
-		super.init(this);
+	async init() {
+		await super.init(this);
 	}
 
 

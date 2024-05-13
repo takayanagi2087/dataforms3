@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Form } from './Form.js';
+
 /**
  * @class QueryResultForm
  *
@@ -13,7 +15,7 @@
  * </pre>
  * @extends Form
  */
-class QueryResultForm extends Form {
+export class QueryResultForm extends Form {
 	/**
 	 * HTMLエレメントへの対応付けを行います。
 	 * <pre>
@@ -26,8 +28,8 @@ class QueryResultForm extends Form {
 	 * #nextPageButton ... 次ページボタン。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.queryResult = null;
 		this.get("linesPerPage").change(() => {
 			this.get("pageNo").val(0);

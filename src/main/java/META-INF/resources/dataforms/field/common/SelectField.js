@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Field } from '../base/Field.js';
+
 /**
  * @class SelectField
  * 選択肢フィールドクラス。
@@ -14,7 +16,7 @@
  * @prop {Array} optionList 選択肢リスト。
  *
  */
-class SelectField extends Field {
+export class SelectField extends Field {
 	/**
 	 * コンストラクタ。
 	 */
@@ -28,8 +30,8 @@ class SelectField extends Field {
 	 * setOptionListを呼び出し、選択肢を設定します。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.setOptionList();
 		if (this.calcEventField) {
 			let comp = this.get();

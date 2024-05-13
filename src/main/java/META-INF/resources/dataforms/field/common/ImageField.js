@@ -4,20 +4,22 @@
 
 'use strict';
 
+import { FileField } from './FileField.js';
+
 /**
  * @class ImageField
  * 画像ファイルアップロードフィールドクラス。
  * @extends FileField
  */
-class ImageField extends FileField {
+export class ImageField extends FileField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let thisField = this;
 		let linkid = this.id + "_link";
 		let link = this.parent.get(linkid);

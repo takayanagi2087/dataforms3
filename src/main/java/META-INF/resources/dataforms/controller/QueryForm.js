@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Form } from './Form.js';
+
 /**
  * @class QueryForm
  *
@@ -13,7 +15,7 @@
  * </pre>
  * @extends Form
  */
-class QueryForm extends Form {
+export class QueryForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
@@ -22,8 +24,8 @@ class QueryForm extends Form {
 	 * #resetButton ... 「リセット」ボタンの処理.
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("queryButton").click(() => {
 			this.query();
 			return false;

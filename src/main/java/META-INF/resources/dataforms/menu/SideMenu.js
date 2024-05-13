@@ -4,6 +4,9 @@
 
 'use strict';
 
+
+import { Menu } from '/dataforms3app/dataforms/menu/Menu.js';
+
 /**
  * @class SideMenu
  *
@@ -12,12 +15,12 @@
  * </pre>
  * @extends Menu
  */
-class SideMenu extends Menu {
+export class SideMenu extends Menu {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let menu = this.get();
 		menu.find(".sideMenuGroup").click((ev) => {
 			if (!this.multiOpenMenu) {

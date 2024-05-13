@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { FieldValidator } from './FieldValidator.js';
+
 /**
  * @class FileSizeValidator
  * 最大長バリデータクラス。
  * @extends FieldValidator
  */
-class FileSizeValidator extends FieldValidator {
+export class FileSizeValidator extends FieldValidator {
 	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。

@@ -11,7 +11,7 @@
  * 文字列操作ユーティリティクラス。
  * </pre>
  */
-class StringUtil {
+export class StringUtil {
 	/**
 	 * 空白文字列判定を行います。
 	 * @param {String} s 判定する文字列。

@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { BasePage } from '../base/page/BasePage.js';
+
 /**
  * @class ErrorPage
  *
@@ -13,7 +15,7 @@
  * </pre>
  * @extends BasePage
  */
-class ErrorPage extends BasePage {
+export class ErrorPage extends BasePage {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

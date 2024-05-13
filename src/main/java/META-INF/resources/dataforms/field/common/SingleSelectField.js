@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { SelectField } from './SelectField.js';
+
 /**
  * @class SingleSelectField
  * 単一選択リストクラス。
@@ -11,7 +13,7 @@
  * </pre>
  * @extends SelectField
  */
-class SingleSelectField extends SelectField {
+export class SingleSelectField extends SelectField {
 	/**
 	 * コンストラクタ。
 	 */

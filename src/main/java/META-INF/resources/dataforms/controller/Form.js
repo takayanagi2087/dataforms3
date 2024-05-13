@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { WebComponent } from './WebComponent.js';
+
 /**
  * @class Form
  *
@@ -17,7 +19,7 @@
  * @prop {Array} fields サーバから送信された情報を元に作成されたフィールドjsクラスのインスタンスを記録した配列。
  * @prop {Array} htmlTables サーバから送信された情報を元に作成されたHTMLテーブルjsクラスのインスタンスを記録した配列。
  */
-class Form extends WebComponent {
+export class Form extends WebComponent {
 	/**
 	 * コンストラクタ。
 	 */
@@ -32,11 +34,11 @@ class Form extends WebComponent {
 	 * 各フィールドの初期化を行います。
 	 * @param {Array} fieldList フィールドリスト。
 	 */
-	initField(fieldList) {
+	async initField(fieldList) {
 		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
-			let field = this.newInstance(f);
-			field.init();
+			let field = await this.newInstance(f);
+			await field.init();
 			this.fields[i] = field;
 		}
 	}
@@ -45,9 +47,9 @@ class Form extends WebComponent {
 	 * HTMLテーブルの初期化を行います。
 	 * @param {Array} htmlTableList HTMLテーブルリスト.
 	 */
-	initHtmlTable(htmlTableList) {
+	async initHtmlTable(htmlTableList) {
 		for (let i = 0; i < htmlTableList.length; i++) {
-			let t = htmlTableList[i];
+			let t = await htmlTableList[i];
 			let tbl = this.newInstance(t);
 			tbl.init(this.formData);
 			this.htmlTables[i] = tbl;
@@ -150,10 +152,14 @@ class Form extends WebComponent {
 	/**
 	 * フォームを初期化します。
 	 */
-	init() {
-		super.init();
-		this.initField(this.fieldList);
-		this.initHtmlTable(this.htmlTableList);
+	async init() {
+		await super.init();
+		await this.initField(this.fieldList);
+		await this.initHtmlTable(this.htmlTableList);
+	}
+
+	isForm() {
+		return true;
 	}
 
 	/**
@@ -176,7 +182,7 @@ class Form extends WebComponent {
 	 * #newButton ... 「新規登録」ボタンの処理.
 	 * </pre>
 	 */
-	attach() {
+	async attach() {
 		if (this.htmlPath != null) {
 			let fhtml = $("<div>" + this.additionalHtmlText + "</div>").find("form").html();
 			let obj = this.get();
@@ -192,7 +198,7 @@ class Form extends WebComponent {
 			this.parentDivId = obj.parents("div[" + this.getIdAttribute() +"]:first").attr(this.getIdAttribute());
 		}
 		this.remodelHtml();
-		super.attach();
+		await super.attach();
 		this.get().addClass(this.id);
 		this.get("newButton").prop("disabled" , false);
 		this.get("newButton").click(() => {

@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { Form } from '../../../controller/Form.js';
+import { JsonResponse } from '../../../response/JsonResponse.js';
+
 /**
  * @class LoginInfoForm
  *
@@ -13,7 +16,7 @@
  * </pre>
  * @extends Form
  */
-class LoginInfoForm extends Form {
+export class LoginInfoForm extends Form {
 	/**
 	 * ログイン状態の更新.
 	 */
@@ -45,8 +48,8 @@ class LoginInfoForm extends Form {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		if (this.userRegistPage != null) {
 			this.get('regUserButton').click(() => {
 				window.location.href = currentPage.contextPath + this.userRegistPage + "." + currentPage.pageExt;

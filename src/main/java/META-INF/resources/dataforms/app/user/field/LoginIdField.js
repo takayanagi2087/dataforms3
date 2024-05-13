@@ -4,13 +4,16 @@
 
 'use strict';
 
+import { VarcharField } from '../../../field/sqltype/VarcharField.js';
+
+
 /**
  * @class LoginIdField
  * ユーザIDフィールドクラス。
  * <pre>
  * </pre>
- * @extends TextField
+ * @extends VarcharField
  */
-class LoginIdField extends VarcharField {
+export class LoginIdField extends VarcharField {
 
 }

@@ -4,20 +4,23 @@
 
 'use strict';
 
+import { StreamingField } from './StreamingField.js';
+
+
 /**
  * @class AudioField
  * 音声ファイルアップロードフィールドクラス。
  * @extends StreamingField
  */
-class AudioField extends StreamingField {
+export class AudioField extends StreamingField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 }
 

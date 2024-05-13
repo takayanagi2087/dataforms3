@@ -9,12 +9,12 @@
  *
  * @extends Dialog
  */
-class ImageDialog extends Dialog {
+export class ImageDialog extends Dialog {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 
 	/**

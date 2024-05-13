@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { WebComponent } from '/dataforms3app/dataforms/controller/WebComponent.js';
 
 /**
  * @class Menu
@@ -38,12 +39,12 @@
  * </pre>
  * @extends WebComponent
  */
-class Menu extends WebComponent {
+export class Menu extends WebComponent {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.getMenuLayout();
 		this.update();
 	}

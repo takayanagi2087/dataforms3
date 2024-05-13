@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { DateTimeField } from '../base/DateTimeField.js';
+
+
 /**
  * @class DateField
  * Date型フィールドクラス。
@@ -11,7 +14,7 @@
  * </pre>
  * @extends DateTimeField
  */
-class DateField extends DateTimeField {
+export class DateField extends DateTimeField {
 	/**
 	 * コンストラクタ。
 	 */
@@ -27,8 +30,8 @@ class DateField extends DateTimeField {
 	 * 各種フォーマットの設定と、Datapickerの設定を行います。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let comp = this.get();
 		if (!comp.prop("readonly")) {
 			if (this.datepickerEnabled) {

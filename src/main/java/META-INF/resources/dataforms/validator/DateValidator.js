@@ -4,6 +4,9 @@
 
 'use strict';
 
+
+import { DateTimeValidator } from './DateTimeValidator.js';
+
 /**
  * @class DateValidator
  * 日付バリデータクラス。
@@ -11,7 +14,7 @@
  * </pre>
  * @extends DateTimeValidator
  */
-class DateValidator extends DateTimeValidator {
+export class DateValidator extends DateTimeValidator {
 	/**
 	 * コンストラクタ。
 	 */

@@ -4,17 +4,20 @@
 
 'use strict';
 
+import { SingleSelectField } from './SingleSelectField.js';
+
+
 /**
  * @class SmallintSingleSelectField
  *
  * @extends SingleSelectField
  */
-class SmallintSingleSelectField extends SingleSelectField {
+export class SmallintSingleSelectField extends SingleSelectField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 }
 

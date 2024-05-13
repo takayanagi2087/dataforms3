@@ -9,7 +9,7 @@
  *
  * @extends Form
  */
-class OnetimePasswordForm extends Form {
+export class OnetimePasswordForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */
@@ -20,8 +20,8 @@ class OnetimePasswordForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("loginButton").click(() => {
 			this.login();
 			return false;

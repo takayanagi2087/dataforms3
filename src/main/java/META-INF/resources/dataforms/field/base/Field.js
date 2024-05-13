@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { WebComponent } from '../../controller/WebComponent.js';
+
 /**
  * @class Field
  * フィールドクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends WebComponent
  */
-class Field extends WebComponent {
+export class Field extends WebComponent {
 	/**
 	 * コンストラクタ。
 	 */
@@ -28,9 +30,9 @@ class Field extends WebComponent {
 	 * 計算イベント発生フィールドの場合、changeイベントで計算処理を呼び出すように設定します。
 	 * </pre>
 	 */
-	attach() {
+	async attach() {
 		let thisField = this;
-		super.attach();
+		await super.attach();
 		if (this.label == null) {
 			this.label = this.getLabel();
 		}
@@ -91,12 +93,12 @@ class Field extends WebComponent {
 	 * バリデータの初期化を行います。
 	 * @param {Array} vlist バリデータリスト.
 	 */
-	initValidator(vlist) {
+	async initValidator(vlist) {
 		this.validators = [];
 		for (let i = 0; i < vlist.length; i++) {
 			let v = vlist[i];
-			let validator = this.newInstance(v);
-			validator.init();
+			let validator = await this.newInstance(v);
+			await validator.init();
 			this.validators[i] = validator;
 		}
 	}
@@ -500,7 +502,7 @@ class Field extends WebComponent {
 	 * </pre>
 	 * @param {jQuery} [el] フィールドに対応するjQueryオブジェクト。HTMLテーブル中のフィールドの場合指定します。
 	 */
-	isRequired(el) {
+	async isRequired(el) {
 		if (el == null) {
 			el = this.get();
 		}
@@ -508,7 +510,7 @@ class Field extends WebComponent {
 		let type = el.prop("type");
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			for (let i = 0; i < this.validatorList.length; i++) {
-				let v = this.newInstance(this.validatorList[i]);
+				let v = await this.newInstance(this.validatorList[i]);
 				if (v.constructor.name == "RequiredValidator") {
 					return true;
 				}

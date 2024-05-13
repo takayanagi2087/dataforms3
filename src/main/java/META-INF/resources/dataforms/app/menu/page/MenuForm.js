@@ -1,15 +1,17 @@
 
 'use strict';
 
+import { Form } from '../../../controller/Form.js';
+
 /**
  * メニューフォーム.
  */
-class MenuForm extends Form {
+export class MenuForm extends Form {
 	/**
 	 *
 	 */
-	attach() {
-		super.attach(this);
+	async attach() {
+		await super.attach(this);
 	}
 
 	/**

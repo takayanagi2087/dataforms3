@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { FieldValidator } from './FieldValidator.js';
+
+
 /**
  * @class RegexpValidator
  * 正規表現パターンバリデータ。
@@ -11,7 +14,7 @@
  * </pre>
  * @extends FieldValidator
  */
-class RegexpValidator extends FieldValidator {
+export class RegexpValidator extends FieldValidator {
 	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。

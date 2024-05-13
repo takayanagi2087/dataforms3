@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { CharField } from '../sqltype/CharField.js';
+
 /**
  * @class FlagField
  * フラグフィールドクラス。
@@ -12,12 +14,12 @@
  * </pre>
  * @extends CharField
  */
-class FlagField extends CharField {
+export class FlagField extends CharField {
 	/**
 	 * HTMLの要素との対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		if (currentPage.useUniqueId) {
 			let lbl = this.getParentForm().find("label[for='" + this.id + "']");
 			if (lbl.length > 0) {

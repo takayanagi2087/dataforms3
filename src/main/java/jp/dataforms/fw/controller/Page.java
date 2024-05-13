@@ -229,10 +229,8 @@ public class Page extends DataForms implements WebEntryPoint {
 	}
 
 
-
 	/**
 	 * 基本javascriptリスト。
-	 * TODO:mapに変更した方がよい。
 	 */
 	private static List<String> basicJsCache = null;
 
@@ -244,7 +242,7 @@ public class Page extends DataForms implements WebEntryPoint {
 	private synchronized List<String> getBasicJsCache() throws Exception {
 		if (basicJsCache == null) {
 			basicJsCache = Collections.synchronizedList(new ArrayList<String>());
-			basicJsCache.add("/dataforms/util/createSubclass.js");
+//			basicJsCache.add(this.getPageFramePath() + "/Frame.js");
 			basicJsCache.add("/dataforms/util/MessagesUtil.js");
 			basicJsCache.add("/dataforms/util/QueryStringUtil.js");
 			basicJsCache.add("/dataforms/util/StringUtil.js");
@@ -367,9 +365,8 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @throws Exception 例外。
 	 */
 	protected void getDataformsAppScripts(final List<String> list, final DataForms df) throws Exception {
-		this.getScriptTree(list, this.getClass());
 		Map<String, WebComponent> map = this.getFormMap();
-		for (String key: this.getFormMap().keySet()) {
+/*		for (String key: this.getFormMap().keySet()) {
 			WebComponent f = (WebComponent) map.get(key);
 			if (f instanceof Form) {
 				this.getFormAppScripts(list, (Form) f);
@@ -381,6 +378,7 @@ public class Page extends DataForms implements WebEntryPoint {
 				this.getDialogAppScripts(list, (Dialog) d);
 			}
 		}
+*/		this.getScriptTree(list, this.getClass());
 	}
 
 	/**
@@ -390,12 +388,40 @@ public class Page extends DataForms implements WebEntryPoint {
 	 */
 	protected List<String> getAppScript() throws Exception {
 		List<String> list = new ArrayList<String>();
-		this.getDataformsAppScripts(list, this);
-		for (String key: this.getDialogMap().keySet()) {
+/*		for (String key: this.getDialogMap().keySet()) {
 			Dialog dlg = this.getDialogMap().get(key);
 			this.getDataformsAppScripts(list, dlg);
 		}
+*/		this.getDataformsAppScripts(list, this);
 		return list;
+	}
+
+	private String getJsClass(final String p) {
+		Pattern pat = Pattern.compile(".*/(.+?).js$");
+		Matcher m = pat.matcher(p);
+		if (m.find()) {
+			return m.group(1);
+		}
+		return null;
+	}
+	
+	/**
+	 * ImportScriptタグを追加します。
+	 * @param context コンテキスト。
+	 * @param js javascriptのパス。
+	 * @param sb 追加する文字列バッファ。
+	 * @throws Exception 例外。
+	 */
+	private void addImportScriptTag(final String context, final String js, final StringBuilder sb) throws Exception {
+		String jspath = this.getAppropriatePath(js, this.getRequest());
+		if (jspath != null) {
+//			String t = this.getLastUpdate(jspath);
+			String p = context + jspath;
+			String cls = this.getJsClass(p);
+			if (cls != null) {
+				sb.append("\t\timport { " + cls + " } from '" + p + "';\n");
+			}
+		}
 	}
 
 	/**
@@ -446,15 +472,26 @@ public class Page extends DataForms implements WebEntryPoint {
 				sb.append("\t\t<link type=\"text/css\" href=\"" + context + csspath + "?t=" + t + "\" rel=\"stylesheet\" />\n");
 			}
 		}
+
 		List<String> basicScripts = this.getBasicJsCache();
+/*		sb.append("\t\t<script type=\"module\">\n");
+		for (String js : basicScripts) {
+			this.addScriptTag(context, js, sb);
+//			this.addImportScriptTag(context, js, sb);
+		}
+		sb.append("\t\t</script>\n");
+*/
+/*		List<String> basicScripts = this.getBasicJsCache();
 		for (String js : basicScripts) {
 			this.addScriptTag(context, js, sb);
 		}
-		List<String> appScripts = this.getAppScript();
-		appScripts.add(this.getPageFramePath() + "/Frame.js");
+*/
+		this.addScriptTag(context, this.getPageFramePath() + "/Frame.js", sb);
+/*		List<String> appScripts = this.getAppScript();
 		for (String js: appScripts) {
 			this.addScriptTag(context, js, sb);
-		}
+			this.addImportScriptTag(context, js, sb);
+		}*/
 		return sb.toString();
 	}
 
@@ -505,9 +542,11 @@ public class Page extends DataForms implements WebEntryPoint {
      * フォーム初期化メソッド0。
      */
     private static final  String INIT_SCRIPT0 =
-    	"\t\t<script>\n" +
-		"\t\t<!--\n" +
-		"\t\t$(() => {\n";
+       	"\t\t<script>\n" + 
+    	"\t\tcurrentPage = null;\n" + 
+    	"\t\tlogger = null;\n" + 
+       	"\t\t</script>\n" + 
+    	"\t\t<script type=\"module\">\n"; 
 
     /**
      * フォーム初期化メソッド1。
@@ -516,7 +555,6 @@ public class Page extends DataForms implements WebEntryPoint {
 		"\t\t\tcurrentPage = page;\n" +
 		"\t\t\tpage.init();\n" +
 		"\t\t});\n" +
-		"\t\t-->\n" +
 		"\t\t</script>\n";
 
 	/**
@@ -564,6 +602,19 @@ public class Page extends DataForms implements WebEntryPoint {
 	 */
 	protected void buildInitScript(final StringBuilder sb, final String pageclass, final String csrfToken) throws Exception {
 		sb.append(INIT_SCRIPT0);
+		
+/*		String context = this.getRequest().getContextPath();
+		List<String> basicScripts = this.getBasicJsCache();
+		for (String js : basicScripts) {
+			this.addImportScriptTag(context, js, sb);
+		}
+*/		
+		String context = this.getRequest().getContextPath();
+		List<String> appScripts = this.getAppScript();
+		for (String js: appScripts) {
+			this.addImportScriptTag(context, js, sb);
+		}
+		sb.append("\t\t$(() => {\n");
 		sb.append("\t\t\tlet page = new " + pageclass + "();\n");
 		if (csrfToken != null) {
 			sb.append("\t\t\tpage.csrfToken=\"" + java.net.URLEncoder.encode(csrfToken, DataFormsServlet.getEncoding()) + "\";\n");

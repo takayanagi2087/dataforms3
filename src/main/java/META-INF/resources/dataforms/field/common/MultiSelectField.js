@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { SelectField } from './SelectField.js';
+
+
 /**
  * @class MultiSelectField
  * 複数選択リストフィールドクラス。
@@ -11,7 +14,7 @@
  * </pre>
  * @extends SelectField
  */
-class MultiSelectField extends SelectField {
+export class MultiSelectField extends SelectField {
 	/**
 	 * 対応するコンポーネントに値を設定します。
 	 * <pre>

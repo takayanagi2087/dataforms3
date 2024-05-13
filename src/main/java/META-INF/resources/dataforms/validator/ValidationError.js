@@ -8,7 +8,7 @@
  * @class ValidationError.
  * バリデーションエラー情報クラス.
  */
-class ValidationError {
+export class ValidationError {
 	/**
 	 * コンストラクタ。
 	 * @param {String} fid フィールドID.

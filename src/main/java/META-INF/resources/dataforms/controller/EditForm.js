@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Form } from './Form.js';
+
 /**
  * @class EditForm
  *
@@ -19,7 +21,7 @@
  *
  *
  */
-class EditForm extends Form {
+export class EditForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */
@@ -41,8 +43,8 @@ class EditForm extends Form {
 	 * #backButton ... 「戻る」ボタンの処理.
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("confirmButton").click(() => {
 			this.confirm();
 			return false;

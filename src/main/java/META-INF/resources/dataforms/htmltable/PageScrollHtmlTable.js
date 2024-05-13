@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { HtmlTable } from '/dataforms3app/dataforms/htmltable/HtmlTable.js';
+
 /**
  * @class PageScrollHtmlTable
  * ページスクロールHTMLテーブルクラス。
@@ -12,13 +14,13 @@
  * </pre>
  * @extends HtmlTable
  */
-class PageScrollHtmlTable extends HtmlTable {
+export class PageScrollHtmlTable extends HtmlTable {
 	/**
 	 * エレメントとの対応付け.
 	 */
-	attach() {
+	async attach() {
 		this.sortOrder = "";
-		super.attach();
+		await super.attach();
 		this.get().before(this.additionalHtmlText);
 		this.parent.find("div.pageController :input").each((_, el) => {
 			let id = $(el).attr(this.getIdAttribute());

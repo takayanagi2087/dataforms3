@@ -5,6 +5,8 @@
 
 'use strict';
 
+import { DateTimeField } from '../base/DateTimeField.js';
+
 /**
  * @class TimestampField
  * Timestamp型フィールドクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends DateTimeField
  */
-class TimestampField extends DateTimeField {
+export class TimestampField extends DateTimeField {
 	/**
 	 * コンストラクタ。
 	 */
@@ -24,8 +26,8 @@ class TimestampField extends DateTimeField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let comp = this.get();
 		if (!comp.prop("readonly")) {
 			this.setFormat(this.displayFormat, this.editFormat);

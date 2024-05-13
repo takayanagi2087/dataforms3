@@ -4,18 +4,20 @@
 
 'use strict';
 
+import { RequiredValidator } from './RequiredValidator.js';
+
 
 /**
  * @class DisplayedRequiredValidator
  *
  * @extends RequiredValidator
  */
-class DisplayedRequiredValidator extends RequiredValidator {
+export class DisplayedRequiredValidator extends RequiredValidator {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach(this);
+	async attach() {
+		await super.attach(this);
 	}
 
 	/**

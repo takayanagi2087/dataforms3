@@ -4,11 +4,13 @@
 
 'use strict';
 
+import { ImageField } from './ImageField.js';
+
 /**
  * @class FolderStoreImageField
  * ファイルアップロードフィールドクラス。
  * @extends ImageField
  */
-class FolderStoreImageField extends ImageField {
+export class FolderStoreImageField extends ImageField {
 
 }

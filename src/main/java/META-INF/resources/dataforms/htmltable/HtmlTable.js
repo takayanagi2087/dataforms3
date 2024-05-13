@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { WebComponent } from '/dataforms3app/dataforms/controller/WebComponent.js';
+
 /**
  * @class HtmlTable
  * HTMLテーブルクラス。
@@ -44,7 +46,7 @@
  * @prop fields {Array} fieldListのクラス情報を元に作成した、Fieldクラスのインスタンスです。
  *
  */
-class HtmlTable extends WebComponent {
+export class HtmlTable extends WebComponent {
 	/**
 	 * コンストラクタ。
 	 */
@@ -53,21 +55,25 @@ class HtmlTable extends WebComponent {
 		this.fields = [];
 	}
 
+	isHtmlTable() {
+		return true;
+	}
+
 	/**
 	 * HTMLテーブルを初期化します。
 	 *
 	 */
-	init() {
-		super.init();
-		this.initField(this.fieldList);
+	async init() {
+		await super.init();
+		await this.initField(this.fieldList);
 	}
 
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
+	async attach() {
 		// table配下のフィールドは行の追加時にattachを呼び出すので、ここではsuper.attach()は呼び出さない。
-		super.setRealId();
+		await super.setRealId();
 		logger.log("fixedColumns=" + this.fixedColumns);
 		logger.log("fixedWidth=" + this.fixedWidth);
 		if (this.fixedColumns >= 0 || this.fixedWidth != null) {
@@ -211,10 +217,10 @@ class HtmlTable extends WebComponent {
 	 * @param {Array} fieldList フィールドリスト。
 	 *
 	 */
-	initField(fieldList) {
+	async initField(fieldList) {
 		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
-			let field = this.newInstance(f);
+			let field = await this.newInstance(f);
 			this.fields[i] = field;
 		}
 	}

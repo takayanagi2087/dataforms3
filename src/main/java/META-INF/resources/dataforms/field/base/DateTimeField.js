@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Field } from './Field.js';
+
 /**
  * @class DateTimeField
  *
@@ -13,7 +15,7 @@
  * </pre>
  * @extends Field
  */
-class DateTimeField extends Field {
+export class DateTimeField extends Field {
 	/**
 	 * コンストラクタ。
 	 */

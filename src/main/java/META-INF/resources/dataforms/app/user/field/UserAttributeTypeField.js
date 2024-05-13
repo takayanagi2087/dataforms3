@@ -11,15 +11,15 @@
  * </pre>
  * @extends EnumTypeSingleSelectField
  */
-class UserAttributeTypeField extends EnumTypeSingleSelectField {
+export class UserAttributeTypeField extends EnumTypeSingleSelectField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * ユーザ属性を変更されたタイミングで、ユーザ属性値の選択肢を変更します。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get().change((ev) => {
 			logger.dir(ev);
 			this.setUserAttributeValueOption($(ev.currentTarget).attr(this.getIdAttribute()), $(ev.currentTarget).val());

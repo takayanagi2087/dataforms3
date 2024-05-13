@@ -9,7 +9,7 @@
  * <pre>
  * </pre>
  */
-class NumberUtil {
+export class NumberUtil {
 
 	/**
 	 * 3桁ごとに','を付けます。

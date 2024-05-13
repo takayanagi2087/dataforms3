@@ -4,20 +4,22 @@
 
 'use strict';
 
+import { FileField } from './FileField.js';
+
 /**
  * @class StreamingField
  * ストリーミングファイルアップロードフィールドクラス。
  * @extends FileField
  */
-class StreamingField extends FileField {
+export class StreamingField extends FileField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		let player = this.getPlayer();
 		player.on("abort", () => {
 			logger.log("abort");

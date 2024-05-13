@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { WebComponent } from '../controller/WebComponent.js';
+
 /**
  * @class FieldValidator
  * フィールドバリデータ基本クラス。
@@ -11,12 +13,12 @@
  * </pre>
  * @extends WebComponent
  */
-class FieldValidator extends WebComponent {
+export class FieldValidator extends WebComponent {
 	/**
 	 * 初期化を行います。
 	 */
-	init() {
-		super.init();
+	async init() {
+		await super.init();
 	}
 
 	/**

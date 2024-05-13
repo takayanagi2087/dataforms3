@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { WebMethod } from '../util/WebMethod.js';
+
+
 /**
  * @class WebComponent
  *
@@ -30,7 +33,7 @@
  * @prop parent {WebComponent} 親となるコンポーネントです。
  *
  */
-class WebComponent {
+export class WebComponent {
 	/**
 	 * コンストラクタ。
 	 */
@@ -41,6 +44,21 @@ class WebComponent {
 		this.idPrepared = false;
 	}
 
+	isDataForms() {
+		return false;
+	}
+
+	isForm() {
+		return false;
+	}
+
+	isHtmlTable() {
+		return false;
+	}
+
+	isDialog() {
+		return false;
+	}
 
 	/**
 	 * 親フォームを取得します。
@@ -48,7 +66,7 @@ class WebComponent {
 	 */
 	getParentForm() {
 		let f = this;
-		while (!(f instanceof Form)) {
+		while (!(f.isForm())) {
 			f = f.parent;
 		}
 		return f;
@@ -61,7 +79,7 @@ class WebComponent {
 	 */
 	getParentDataForms() {
 		let f = this;
-		while (!(f instanceof DataForms)) {
+		while (!(f.isDataForms())) {
 			f = f.parent;
 		}
 		return f;
@@ -190,12 +208,17 @@ class WebComponent {
 	 * @param {Object} clszz クラス情報。
 	 * @returns {WebComponent} 作成されたインスタンス。
 	 */
-	newInstance(clazz) {
+	async newInstance(clazz) {
+		logger.log("contextPath=", currentPage.contextPath);
+		logger.log("clazz=", clazz);
+		logger.log("jspath=" + clazz.jsPath);
 		let classname = clazz.jsClass;
-		let obj = eval("new " + classname + "()");
+		let module = await import(currentPage.contextPath + clazz.jsPath);
+		let obj = eval("new module." + classname + "()");
 		Object.assign(obj, clazz);
 		obj.parent = this;
 		this.componentMap[obj.id] = obj;
+		logger.log("newInstance()", obj);
 		return obj;
 	}
 
@@ -299,7 +322,7 @@ class WebComponent {
 	 * <pre>
 	 * </pre>
 	 */
-	init() {
+	async init() {
 	}
 
 	/**
@@ -329,10 +352,10 @@ class WebComponent {
 	 * 各オブジェクトとHTMLの各エレメントへの対応付けを行い、イベント登録等の設定を行います。
 	 * </pre>
 	 */
-	attach() {
+	async attach() {
 		this.setRealId();
 		for (let id in this.componentMap) {
-			this.componentMap[id].attach();
+			await this.componentMap[id].attach();
 		}
 	}
 
@@ -382,9 +405,9 @@ class WebComponent {
 	getUniqSelector() {
 		let t = this;
 		let sel = "";
-		while (!(t instanceof DataForms)) {
+		while (!(t.isDataForms())) {
 			sel = "#" + this.selectorEscape(t.id) + " " + sel;
-			if (t instanceof Form) {
+			if (t.isForm()) {
 				if (t.parentDivId != null) {
 					sel = "#" + this.selectorEscape(t.parentDivId) + " " + sel;
 					return sel;
@@ -409,8 +432,8 @@ class WebComponent {
 	getUniqId() {
 		let t = this;
 		let sel = "";
-		if (t instanceof HtmlTable) {
-			while (!(t instanceof DataForms)) {
+		if (t.isHtmlTable()) {
+			while (!(t.isDataForms())) {
 				if (sel.length > 0) {
 					sel = "." + sel;
 				}
@@ -418,8 +441,8 @@ class WebComponent {
 				t = t.parent;
 			}
 		} else {
-			while (!(t instanceof DataForms)) {
-				if (!(t instanceof HtmlTable)) {
+			while (!(t.isDataForms())) {
+				if (!(t.isHtmlTable())) {
 					if (sel.length > 0) {
 						sel = "." + sel;
 					}
@@ -428,7 +451,7 @@ class WebComponent {
 				t = t.parent;
 			}
 		}
-		if (t instanceof Dialog) {
+		if (t.isDialog()) {
 			if (sel.length > 0) {
 				sel = "." + sel;
 			}

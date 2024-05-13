@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { JsonResponse } from '../response/JsonResponse.js';
+
+
 /**
  * @class WebMethod
  *
@@ -26,7 +29,7 @@
  * </pre>
  * @prop {String} contentType 応答のcontent-type。
  */
-class WebMethod {
+export class WebMethod {
 
 	/**
 	 * パラメータタイプurlencoded。

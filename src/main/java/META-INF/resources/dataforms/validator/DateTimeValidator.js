@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { FieldValidator } from './FieldValidator.js';
+
+
 /**
  * @class DateTimeValidator
  * 日付時刻バリデータの基本クラス。
@@ -11,7 +14,7 @@
  * </pre>
  * @extends FieldValidator
  */
-class DateTimeValidator extends FieldValidator {
+export class DateTimeValidator extends FieldValidator {
 	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。

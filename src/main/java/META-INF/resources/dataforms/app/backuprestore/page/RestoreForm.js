@@ -9,12 +9,12 @@
  *
  * @extends Form
  */
-class RestoreForm extends Form {
+export class RestoreForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("restoreButton").click(() => { this.restore(); return false;	});
 	}
 

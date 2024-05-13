@@ -9,7 +9,7 @@
  * @class JsonResponse
  * JsonResponseの定数を定義するクラスです。
  */
-class JsonResponse {
+export class JsonResponse {
 	/**
 	 * 成功を示します。
 	 * @constant JsonResponse.SUCCESS

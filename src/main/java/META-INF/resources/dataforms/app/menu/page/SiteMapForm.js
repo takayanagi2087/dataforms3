@@ -4,18 +4,21 @@
 
 'use strict';
 
+import { MenuForm } from './MenuForm.js';
+
+
 /**
  * メニューフォーム.
  */
-class SiteMapForm extends MenuForm {
+export class SiteMapForm extends MenuForm {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	attach() {
+	async attach() {
 		super.attach();
-		this.menu = this.newInstance(this.menu);
-		this.menu.init();
-		this.menu.attach();
+		this.menu = await this.newInstance(this.menu);
+		await this.menu.init();
+		await this.menu.attach();
 	}
 }
 

@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { SingleSelectField } from './SingleSelectField.js';
+
 /**
  * @class PropertiesSingleSelectField
  *
  * @extends SingleSelectField
  */
-class PropertiesSingleSelectField extends SingleSelectField {
+export class PropertiesSingleSelectField extends SingleSelectField {
 	/**
 	 * コンストラクタ。
 	 */
@@ -20,8 +22,8 @@ class PropertiesSingleSelectField extends SingleSelectField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 }
 

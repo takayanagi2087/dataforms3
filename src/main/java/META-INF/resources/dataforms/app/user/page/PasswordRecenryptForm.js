@@ -9,7 +9,7 @@
  *
  * @extends Form
  */
-class PasswordRecenryptForm extends Form {
+export class PasswordRecenryptForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */
@@ -20,8 +20,8 @@ class PasswordRecenryptForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("reencryptButton").click(() => {
 			this.reencrypt();
 		});

@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { WebComponent } from './WebComponent.js';
+
+
 /**
  * @class DataForms
  * フォームコンテナクラス。
@@ -17,7 +20,7 @@
  * </pre>
  * @extends WebComponent
  */
-class DataForms extends WebComponent {
+export class DataForms extends WebComponent {
 	/**
 	 * コンストラクタ。
 	 */
@@ -25,15 +28,19 @@ class DataForms extends WebComponent {
 		super();
 	}
 
+	isDataForms() {
+		return true;
+	}
+
 	/**
 	 * フォーム情報の初期化を行います。
 	 * @param {Object} formMap フォームマップ.
 	 */
-	initForm(formMap) {
+	async initForm(formMap) {
 		for (let key in formMap) {
 			let f = formMap[key];
-			let form = this.newInstance(f);
-			form.init();
+			let form = await this.newInstance(f);
+			await form.init();
 		}
 	}
 
@@ -41,8 +48,8 @@ class DataForms extends WebComponent {
 	 * 初期化処理を行います。
 	 *
 	 */
-	init() {
-		super.init();
+	async init() {
+		await super.init();
 	}
 
 	/**
@@ -51,7 +58,7 @@ class DataForms extends WebComponent {
 	 * QueryForm,QueryResultForm,EditFormの存在をチェックし、適切適切な状態を設定します。
 	 * </pre>
 	 */
-	attach() {
+	async attach() {
 		let editMode = true;
 		let qf = this.get("queryForm");
 		if (qf.length > 0) {
@@ -71,7 +78,7 @@ class DataForms extends WebComponent {
 			this.replaceState("queryMode", "queryMode", location.href);
 			ef.hide();
 		}
-		super.attach();
+		await super.attach();
 		if (qf.length == 0 && rf.length > 0) {
 			// QueryFormが無くQueryResultFormが存在する場合、先頭ページを表示する。
 			let f = this.getComponent("queryResultForm");

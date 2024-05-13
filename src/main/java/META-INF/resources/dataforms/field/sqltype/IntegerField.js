@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { NumberField } from '../base/NumberField.js';
+
 /**
  * @class IntegerField
  * Integer型フィールドクラス。
@@ -11,6 +13,6 @@
  * </pre>
  * @extends NumberField
  */
-class IntegerField extends NumberField {
+export class IntegerField extends NumberField {
 
 }

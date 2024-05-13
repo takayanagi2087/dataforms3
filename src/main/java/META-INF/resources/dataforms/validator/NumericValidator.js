@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { FieldValidator } from './FieldValidator.js';
+
+
 /**
  * @class NumericValidator
  * Numeric型数値バリデータクラス。
@@ -11,7 +14,7 @@
  * DBのNumeric型用のチェックで、精度と小数点以下桁数もチェックします。
  * @extends FieldValidator
  */
-class NumericValidator extends FieldValidator {
+export class NumericValidator extends FieldValidator {
 	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。

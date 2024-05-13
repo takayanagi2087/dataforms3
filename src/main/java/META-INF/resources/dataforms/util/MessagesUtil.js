@@ -14,7 +14,7 @@
  * <span style="text-decoration: line-through;">Messages.propertiesのメッセージは、要求された時にサーバから取得します。</span>
  * </pre>
  */
-class MessagesUtil {
+export class MessagesUtil {
 	/**
 	 * メッセージマップのgetterです。
 	 * @returns メッセージマップ。

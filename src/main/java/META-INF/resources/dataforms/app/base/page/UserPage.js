@@ -12,7 +12,7 @@
  * </pre>
  * @extends BasePage
  */
-class UserPage extends BasePage {
+export class UserPage extends BasePage {
 
 }
 

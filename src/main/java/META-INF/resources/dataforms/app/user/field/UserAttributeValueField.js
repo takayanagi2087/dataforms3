@@ -12,7 +12,7 @@
  * </pre>
  * @extends EnumOptionSingleSelectField
  */
-class UserAttributeValueField extends EnumOptionSingleSelectField {
+export class UserAttributeValueField extends EnumOptionSingleSelectField {
 	/**
 	 * 値の設定を行ないます。
 	 * <pre>

@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { BasePage } from './BasePage.js';
+
 /**
  * @class AdminPage
  * 監理者向けページクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends BasePage
  */
-class AdminPage extends BasePage {
+export class AdminPage extends BasePage {
 
 }
 

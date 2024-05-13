@@ -4,11 +4,13 @@
 
 'use strict';
 
+import { FileField } from './FileField.js';
+
 /**
  * @class FileObjectField
  * ファイルアップロードフィールドクラス。
  * @extends FileField
  */
-class FileObjectField extends FileField {
+export class FileObjectField extends FileField {
 
 }

@@ -4,6 +4,11 @@
 
 'use strict';
 
+import { Form } from '../../../controller/Form.js';
+import { Dialog } from '../../../controller/Dialog.js';
+import { JsonResponse } from '../../../response/JsonResponse.js';
+
+
 /**
  * @class LoginForm
  * ログインフォームクラス。
@@ -12,7 +17,7 @@
  * </pre>
  * @extends Form
  */
-class LoginForm extends Form {
+export class LoginForm extends Form {
 	/**
 	 * ログイン処理を行います。
 	 *
@@ -47,8 +52,8 @@ class LoginForm extends Form {
 	 * #loginButton ... ログイン処理。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("loginButton").click(() => {
 			this.login();
 			return false;

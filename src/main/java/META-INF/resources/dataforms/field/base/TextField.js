@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Field } from './Field.js';
+
 /**
  * @class TextField
  * テキストフィールドクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends Field
  */
-class TextField extends Field {
+export class TextField extends Field {
 	/**
 	 * 値を設定します。
 	 * @param {String} value 設定値。

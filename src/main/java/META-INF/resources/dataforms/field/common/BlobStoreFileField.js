@@ -4,11 +4,13 @@
 
 'use strict';
 
+import { FileObjectField } from './FileObjectField.js';
+
 /**
  * @class BlobStoreFileField
  * ファイルアップロードフィールドクラス。
  * @extends FileObjectField
  */
-class BlobStoreFileField extends FileObjectField {
+export class BlobStoreFileField extends FileObjectField {
 
 }

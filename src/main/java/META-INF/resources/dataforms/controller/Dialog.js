@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { DataForms } from './DataForms.js';
+
+
 /**
  * @class Dialog
  *
@@ -14,7 +17,7 @@
  * </pre>
  * @extends DataForms
  */
-class Dialog extends DataForms {
+export class Dialog extends DataForms {
 	/**
 	 * コンストラクタ。
 	 */
@@ -26,20 +29,24 @@ class Dialog extends DataForms {
 
 	}
 
+	isDialog() {
+		return true;
+	}
+
 	/**
 	 * 初期化処理を行います。
 	 * <pre>
 	 * </pre>
 	 */
-	init() {
-		super.init();
+	async init() {
+		await super.init();
 		let dlgdiv = $('body').find(this.convertSelector('#' + this.selectorEscape(this.id)));
 		if (dlgdiv.length == 0) {
 			let htmlstr = this.additionalHtmlText;
 			dlgdiv = $('body').append("<div " + this.getIdAttribute() + "='" + this.id + "' class='" + this.id + "' style='display:none;'>" + htmlstr + "</div>");
 		}
 		// ダイアログ中のFormの初期化.
-		this.initForm(this.formMap);
+		await this.initForm(this.formMap);
 	}
 
 	/**
@@ -48,8 +55,8 @@ class Dialog extends DataForms {
 	 * #closeButtonのイベント処理を登録します。
 	 * </pre>
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		this.get("closeButton").click(() => {
 			this.close();
 			return false;

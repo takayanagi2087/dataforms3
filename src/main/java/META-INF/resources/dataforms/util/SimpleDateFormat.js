@@ -20,7 +20,7 @@
  *
  * @param {String} f フォーマット。
  */
-class SimpleDateFormat {
+export class SimpleDateFormat {
 	/**
 	 * コンストラクタ。
 	 * @param {String} f フォーマット文字列。

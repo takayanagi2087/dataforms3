@@ -9,7 +9,7 @@
  *
  * @extends EditForm
  */
-class UserEditForm extends EditForm {
+export class UserEditForm extends EditForm {
 	/**
 	 * コンストラクタ。
 	 */
@@ -20,8 +20,8 @@ class UserEditForm extends EditForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 
 	toEditMode() {

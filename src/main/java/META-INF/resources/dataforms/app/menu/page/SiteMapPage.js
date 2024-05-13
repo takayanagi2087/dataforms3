@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { BasePage } from '../../base/page/BasePage.js';
+
 /**
  * @class SiteMapPage
  *
  * @extends BasePage
  */
-class SiteMapPage extends BasePage {
+export class SiteMapPage extends BasePage {
 	/**
 	 * コンストラクタ。
 	 */
@@ -20,8 +22,8 @@ class SiteMapPage extends BasePage {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 	}
 }
 

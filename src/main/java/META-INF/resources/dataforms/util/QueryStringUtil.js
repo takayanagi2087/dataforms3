@@ -11,7 +11,7 @@
  * 問合せ文字列操作ユーティリティクラス。
  * </pre>
  */
-class QueryStringUtil {
+export class QueryStringUtil {
 
 	/**
 	 * 問合せ文字列を解析し、Objectに変換します。

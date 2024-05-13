@@ -4,11 +4,14 @@
 
 'use strict';
 
+import { ImageField } from './ImageField.js';
+
+
 /**
  * @class BlobStoreImageField
  * BLOB保存画像ファイルアップロードフィールドクラス。
  * @extends FileObjectField
  */
-class BlobStoreImageField extends ImageField {
+export class BlobStoreImageField extends ImageField {
 
 }

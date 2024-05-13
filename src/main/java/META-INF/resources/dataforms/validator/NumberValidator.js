@@ -5,6 +5,8 @@
 
 'use strict';
 
+import { FieldValidator } from './FieldValidator.js';
+
 /**
  * @class NumbereValidator
  * 数値バリデータクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends FieldValidator
  */
-class NumberValidator extends FieldValidator {
+export class NumberValidator extends FieldValidator {
 	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。

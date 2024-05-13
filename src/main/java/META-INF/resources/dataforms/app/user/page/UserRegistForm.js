@@ -8,12 +8,12 @@
  * 外部ユーザ登録フォーム。
  * @extends EditForm
  */
-class UserRegistForm extends EditForm {
+export class UserRegistForm extends EditForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	attach() {
-		super.attach();
+	async attach() {
+		await super.attach();
 		logger.log("config=" + JSON.stringify(this.config));
 		if (this.config.loginIdIsMail) {
 			this.get("loginId").parents("tr:first").hide();
