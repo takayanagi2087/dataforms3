@@ -36,12 +36,27 @@ export class Form extends WebComponent {
 	 * @param {Array} fieldList フィールドリスト。
 	 */
 	async initField(fieldList) {
-		for (let i = 0; i < fieldList.length; i++) {
+/*		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
 			let field = await this.newInstance(f);
 			await field.init();
 			this.fields[i] = field;
 		}
+*/	
+	
+		let plist = [];
+		for (let i = 0; i < fieldList.length; i++) {
+			let f = fieldList[i];
+			plist.push(this.newInstance(f));
+		}
+		let flist = await Promise.all(plist);
+		logger.log("flist=", flist);
+		plist = [];
+		for (let i = 0; i < flist.length; i++) {
+			plist.push(flist[i].init());
+			this.fields[i] = flist[i];
+		}
+		await Promise.all(plist);
 	}
 
 	/**
@@ -55,6 +70,20 @@ export class Form extends WebComponent {
 			tbl.init(this.formData);
 			this.htmlTables[i] = tbl;
 		}
+
+/*		let plist = [];
+		for (let i = 0; i < htmlTableList.length; i++) {
+			let t = htmlTableList[i];
+			plist.push(this.newInstance(t));
+		}
+		let tlist = await Promise.all(plist);
+		logger.log("tlist=", tlist);
+		plist = [];
+		for (let i = 0; i < tlist.lenth; i++) {
+			this.htmlTables[i] = tlist[i];
+			plist.push(tlist[i].init(this.formData));
+		}
+		await Promise.all(plist);*/
 	}
 
 

@@ -240,13 +240,18 @@ export class Page extends DataForms {
 	 * @param {Array} dialogList ダイアログリスト.
 	 */
 	async initDialog(dialogList) {
-		// ダイアログの初期化.
+		let plist = [];
 		for (let key in dialogList) {
 			let dlgclass = dialogList[key];
-			let dlg = await this.newInstance(dlgclass);
-			dlg.htmlPath = dlgclass.path + ".html";
-			await dlg.init();
+			plist.push(this.newInstance(dlgclass));
 		}
+		let dlist = await Promise.all(plist);
+		plist = [];
+		for (let i = 0; i < dlist.length; i++) {
+			dlist[i].htmlPath = dlist[i].path + ".html";
+			plist.push(dlist[i].init());
+		}
+		await Promise.all(plist);
 	}
 
 
@@ -363,12 +368,14 @@ export class Page extends DataForms {
 			logger.debug("queryString=" + window.location.search);
 			logger.info("language=" + this.getLanguage());
 			$.datepicker.setDefaults($.datepicker.regional[this.getLanguage()]);
-			// ページの初期化.
+			// ページの構造情報を取得.
 			let method = new WebMethod("getPageInfo");
 			let result = await method.execute("");
 			for (let key in result.result) {
 				this[key] = result.result[key];
 			}
+			await this.dynamicImport(result.result);
+			
 			this.configureLogLevel();
 			this.configureBrowserBackButton();
 			//メッセージユーティリティの初期化.
@@ -379,7 +386,7 @@ export class Page extends DataForms {
 			// 各フォームの初期化
 			await this.initForm(this.formMap);
 			// ダイアログの初期化
-			this.initDialog(this.dialogMap);
+			await this.initDialog(this.dialogMap);
 			// バージョン情報などを表示。
 			$(this.convertSelector("#dataformsVersion")).html(this.dataformsVersion);
 			// クッキーチェック

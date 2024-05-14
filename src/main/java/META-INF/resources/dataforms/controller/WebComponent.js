@@ -203,18 +203,103 @@ export class WebComponent {
 		return ret;
 	}
 
+
+	/**
+	 * ダイナミックインポートが必要な子モジュールのリストを取得する。
+	 * @param {Object} obj ページ情報。
+	 * @returns {Array} jsファイル名のリスト。
+	 */
+	#getChildImportJs(map) {
+		let list = [];
+		for (let key in map) {
+			let obj = map[key];
+			list = list.concat(this.#getImportJs(obj));
+			list.push(obj.jsPath);
+		}
+		return list;
+	}
+
+	/**
+	 * ダイナミックインポートが必要なモジュールのリストを取得する。
+	 * @param {Object} obj ページ情報。
+	 * @returns {Array} jsファイル名のリスト。
+	 */
+	#getImportJs(obj) {
+		let list = [];
+		if (obj.formMap != null) {
+			list = list.concat(this.#getChildImportJs(obj.formMap));
+		}
+		if (obj.dialogMap != null) {
+			list = list.concat(this.#getChildImportJs(obj.dialogMap));
+		}
+		if (obj.fieldList != null) {
+			list = list.concat(this.#getChildImportJs(obj.fieldList));
+		}
+		if (obj.htmlTableList != null) {
+			list = list.concat(this.#getChildImportJs(obj.htmlTableList));
+		}
+		if (obj.validatorList != null) {
+			list = list.concat(this.#getChildImportJs(obj.validatorList));
+		}
+		return list;
+	}
+
+	/**
+	 * 配列内の重複する情報を削除した配列を作成します。
+	 * @param {Array} list 入力配列。
+	 * @return {Array} 出力配列。
+	 */
+	uniq(list) {
+		let ret = [];
+		for (let i = 0; i < list.length; i++) {
+			if (ret.indexOf(list[i]) < 0) {
+				ret.push(list[i]);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * ダイナミックインポートしたモジュールマップ。
+	 */
+	static #moduleMap = {};
+
+	/**
+	 * ページ情報に含まれるJavascriptクラスの内インポートされていないものをダイナミックインポートする。
+	 * @param {Object} pageInfo ページ情報。
+	 */
+	async dynamicImport(pageInfo) {
+		logger.log("pageInfo=", pageInfo);
+		let list = this.#getImportJs(pageInfo);
+		list = this.uniq(list);
+		let regexp = /.*\/(.+?)\.js$/;
+		for (let i = 0; i < list.length; i++) {
+			let g = regexp.exec(list[i]);
+			let cname = g[1];
+			let module = await import(currentPage.contextPath + list[i]);
+			WebComponent.#moduleMap[cname] = module;
+		}
+		{
+			let module = await import(currentPage.contextPath + "/dataforms/menu/Menu.js");
+			WebComponent.#moduleMap['Menu'] = module;
+		}
+		{
+			let module = await import(currentPage.contextPath + "/dataforms/menu/SideMenu.js");
+			WebComponent.#moduleMap['SideMenu'] = module;
+		}
+		logger.log("#moduleMap=", WebComponent.#moduleMap);
+	}
+
+
 	/**
 	 * サーバから送信されたクラス情報から、そのクラスのインスタンスを作成します。
 	 * @param {Object} clszz クラス情報。
 	 * @returns {WebComponent} 作成されたインスタンス。
 	 */
 	async newInstance(clazz) {
-		//logger.log("contextPath=", currentPage.contextPath);
-		//logger.log("clazz=", clazz);
-		//logger.log("jspath=" + clazz.jsPath);
 		let classname = clazz.jsClass;
-		let module = await import(currentPage.contextPath + clazz.jsPath);
-		// logger.log("import=", module);
+		let module = WebComponent.#moduleMap[classname];
+		logger.log("import=" + classname, module);
 		let obj = eval("new module." + classname + "()");
 		Object.assign(obj, clazz);
 		obj.parent = this;

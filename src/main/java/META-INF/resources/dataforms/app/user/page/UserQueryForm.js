@@ -2,6 +2,7 @@
  * @fileOverview {@link UserQueryForm}クラスを記述したファイルです。
  */
 
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
 import { QueryForm } from '../../../controller/QueryForm.js';
 
 /**
