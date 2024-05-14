@@ -35,55 +35,26 @@ export class Form extends WebComponent {
 	 * 各フィールドの初期化を行います。
 	 * @param {Array} fieldList フィールドリスト。
 	 */
-	async initField(fieldList) {
-/*		for (let i = 0; i < fieldList.length; i++) {
-			let f = fieldList[i];
-			let field = await this.newInstance(f);
-			await field.init();
-			this.fields[i] = field;
-		}
-*/	
-	
-		let plist = [];
+	initField(fieldList) {
 		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
-			plist.push(this.newInstance(f));
+			let field = this.newInstance(f);
+			field.init();
+			this.fields[i] = field;
 		}
-		let flist = await Promise.all(plist);
-		logger.log("flist=", flist);
-		plist = [];
-		for (let i = 0; i < flist.length; i++) {
-			plist.push(flist[i].init());
-			this.fields[i] = flist[i];
-		}
-		await Promise.all(plist);
 	}
 
 	/**
 	 * HTMLテーブルの初期化を行います。
 	 * @param {Array} htmlTableList HTMLテーブルリスト.
 	 */
-	async initHtmlTable(htmlTableList) {
+	initHtmlTable(htmlTableList) {
 		for (let i = 0; i < htmlTableList.length; i++) {
 			let t = htmlTableList[i];
-			let tbl = await this.newInstance(t);
+			let tbl = this.newInstance(t);
 			tbl.init(this.formData);
 			this.htmlTables[i] = tbl;
 		}
-
-/*		let plist = [];
-		for (let i = 0; i < htmlTableList.length; i++) {
-			let t = htmlTableList[i];
-			plist.push(this.newInstance(t));
-		}
-		let tlist = await Promise.all(plist);
-		logger.log("tlist=", tlist);
-		plist = [];
-		for (let i = 0; i < tlist.lenth; i++) {
-			this.htmlTables[i] = tlist[i];
-			plist.push(tlist[i].init(this.formData));
-		}
-		await Promise.all(plist);*/
 	}
 
 
@@ -182,10 +153,10 @@ export class Form extends WebComponent {
 	/**
 	 * フォームを初期化します。
 	 */
-	async init() {
-		await super.init();
-		await this.initField(this.fieldList);
-		await this.initHtmlTable(this.htmlTableList);
+	init() {
+		super.init();
+		this.initField(this.fieldList);
+		this.initHtmlTable(this.htmlTableList);
 	}
 
 	isForm() {

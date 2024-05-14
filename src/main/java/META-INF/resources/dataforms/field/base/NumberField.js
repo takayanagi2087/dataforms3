@@ -71,8 +71,8 @@ export class NumberField extends Field {
 	 * 数値フィールドの初期化を行います。
 	 *
 	 */
-	async init() {
-		await super.init(this);
+	init() {
+		super.init(this);
 	}
 
 

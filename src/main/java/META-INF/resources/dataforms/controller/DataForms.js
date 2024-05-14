@@ -36,26 +36,20 @@ export class DataForms extends WebComponent {
 	 * フォーム情報の初期化を行います。
 	 * @param {Object} formMap フォームマップ.
 	 */
-	async initForm(formMap) {
-		let plist = [];
+	initForm(formMap) {
 		for (let key in formMap) {
 			let f = formMap[key];
-			plist.push(this.newInstance(f));
+			let form = this.newInstance(f);
+			form.init();
 		}
-		let flist = await Promise.all(plist);
-		plist = [];
-		for (let i = 0; i < flist.length; i++) {
-			plist.push(flist[i].init());
-		}
-		await Promise.all(plist);
 	}
 
 	/**
 	 * 初期化処理を行います。
 	 *
 	 */
-	async init() {
-		await super.init();
+	init() {
+		super.init();
 	}
 
 	/**

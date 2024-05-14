@@ -239,19 +239,14 @@ export class Page extends DataForms {
 	 * ダイアログを初期化します。
 	 * @param {Array} dialogList ダイアログリスト.
 	 */
-	async initDialog(dialogList) {
-		let plist = [];
+	initDialog(dialogList) {
+		// ダイアログの初期化.
 		for (let key in dialogList) {
 			let dlgclass = dialogList[key];
-			plist.push(this.newInstance(dlgclass));
+			let dlg = this.newInstance(dlgclass);
+			dlg.htmlPath = dlgclass.path + ".html";
+			dlg.init();
 		}
-		let dlist = await Promise.all(plist);
-		plist = [];
-		for (let i = 0; i < dlist.length; i++) {
-			dlist[i].htmlPath = dlist[i].path + ".html";
-			plist.push(dlist[i].init());
-		}
-		await Promise.all(plist);
 	}
 
 
@@ -363,7 +358,7 @@ export class Page extends DataForms {
 	 */
 	async init() {
 		try {
-			await super.init();
+			super.init();
 			this.configureLogger();
 			logger.debug("queryString=" + window.location.search);
 			logger.info("language=" + this.getLanguage());
@@ -384,9 +379,9 @@ export class Page extends DataForms {
 				this.layout();
 			}
 			// 各フォームの初期化
-			await this.initForm(this.formMap);
+			this.initForm(this.formMap);
 			// ダイアログの初期化
-			await this.initDialog(this.dialogMap);
+			this.initDialog(this.dialogMap);
 			// バージョン情報などを表示。
 			$(this.convertSelector("#dataformsVersion")).html(this.dataformsVersion);
 			// クッキーチェック

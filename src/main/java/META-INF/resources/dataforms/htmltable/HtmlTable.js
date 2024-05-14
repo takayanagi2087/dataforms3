@@ -65,15 +65,15 @@ export class HtmlTable extends WebComponent {
 	 * HTMLテーブルを初期化します。
 	 *
 	 */
-	async init() {
-		await super.init();
-		await this.initField(this.fieldList);
+	init() {
+		super.init();
+		this.initField(this.fieldList);
 	}
 
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
+	attach() {
 		// table配下のフィールドは行の追加時にattachを呼び出すので、ここではsuper.attach()は呼び出さない。
 		super.setRealId();
 		logger.log("fixedColumns=" + this.fixedColumns);
@@ -222,7 +222,7 @@ export class HtmlTable extends WebComponent {
 	async initField(fieldList) {
 		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
-			let field = await this.newInstance(f);
+			let field = this.newInstance(f);
 			this.fields[i] = field;
 		}
 	}

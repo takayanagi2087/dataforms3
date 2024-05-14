@@ -10,11 +10,11 @@ export class SideMenuForm extends MenuForm {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	async attach() {
-		await super.attach();
-		this.menu = await this.newInstance(this.sideMenu);
-		await this.menu.init();
-		await this.menu.attach();
+	attach() {
+		super.attach();
+		this.menu = this.newInstance(this.sideMenu);
+		this.menu.init();
+		this.menu.attach();
 	}
 }
 

@@ -93,12 +93,12 @@ export class Field extends WebComponent {
 	 * バリデータの初期化を行います。
 	 * @param {Array} vlist バリデータリスト.
 	 */
-	async initValidator(vlist) {
+	initValidator(vlist) {
 		this.validators = [];
 		for (let i = 0; i < vlist.length; i++) {
 			let v = vlist[i];
-			let validator = await this.newInstance(v);
-			await validator.init();
+			let validator = this.newInstance(v);
+			validator.init();
 			this.validators[i] = validator;
 		}
 	}
@@ -510,7 +510,7 @@ export class Field extends WebComponent {
 		let type = el.prop("type");
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			for (let i = 0; i < this.validatorList.length; i++) {
-				let v = await this.newInstance(this.validatorList[i]);
+				let v = this.newInstance(this.validatorList[i]);
 				if (v.constructor.name == "RequiredValidator") {
 					return true;
 				}

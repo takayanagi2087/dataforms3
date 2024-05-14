@@ -10,8 +10,8 @@ export class MenuForm extends Form {
 	/**
 	 *
 	 */
-	async attach() {
-		await super.attach(this);
+	attach() {
+		super.attach(this);
 	}
 
 	/**

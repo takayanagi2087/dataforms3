@@ -296,10 +296,9 @@ export class WebComponent {
 	 * @param {Object} clszz クラス情報。
 	 * @returns {WebComponent} 作成されたインスタンス。
 	 */
-	async newInstance(clazz) {
+	newInstance(clazz) {
 		let classname = clazz.jsClass;
 		let module = WebComponent.#moduleMap[classname];
-		logger.log("import=" + classname, module);
 		let obj = eval("new module." + classname + "()");
 		Object.assign(obj, clazz);
 		obj.parent = this;
@@ -408,7 +407,7 @@ export class WebComponent {
 	 * <pre>
 	 * </pre>
 	 */
-	async init() {
+	init() {
 	}
 
 	/**

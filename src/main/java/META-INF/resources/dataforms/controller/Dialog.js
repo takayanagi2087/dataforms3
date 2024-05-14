@@ -38,15 +38,15 @@ export class Dialog extends DataForms {
 	 * <pre>
 	 * </pre>
 	 */
-	async init() {
-		await super.init();
+	init() {
+		super.init();
 		let dlgdiv = $('body').find(this.convertSelector('#' + this.selectorEscape(this.id)));
 		if (dlgdiv.length == 0) {
 			let htmlstr = this.additionalHtmlText;
 			dlgdiv = $('body').append("<div " + this.getIdAttribute() + "='" + this.id + "' class='" + this.id + "' style='display:none;'>" + htmlstr + "</div>");
 		}
 		// ダイアログ中のFormの初期化.
-		await this.initForm(this.formMap);
+		this.initForm(this.formMap);
 	}
 
 	/**

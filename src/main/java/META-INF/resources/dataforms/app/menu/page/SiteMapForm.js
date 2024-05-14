@@ -14,11 +14,11 @@ export class SiteMapForm extends MenuForm {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	async attach() {
-		await super.attach();
-		this.menu = await this.newInstance(this.menu);
-		await this.menu.init();
-		await this.menu.attach();
+	 attach() {
+		super.attach();
+		this.menu = this.newInstance(this.menu);
+		this.menu.init();
+		this.menu.attach();
 	}
 }
 
