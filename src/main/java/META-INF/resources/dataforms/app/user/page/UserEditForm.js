@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { EditForm } from '../../../controller/EditForm.js';
+
 /**
  * @class UserEditForm
  *
@@ -42,6 +44,7 @@ export class UserEditForm extends EditForm {
 	 * @param {Object} data 表示データ。
 	 */
 	setFormData(data) {
+		logger.log("data=", data);
 		super.setFormData(data);
 	}
 }

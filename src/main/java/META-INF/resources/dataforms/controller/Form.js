@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { ValidationError } from '../validator/ValidationError.js';
 import { WebComponent } from './WebComponent.js';
 
 /**
@@ -49,8 +50,8 @@ export class Form extends WebComponent {
 	 */
 	async initHtmlTable(htmlTableList) {
 		for (let i = 0; i < htmlTableList.length; i++) {
-			let t = await htmlTableList[i];
-			let tbl = this.newInstance(t);
+			let t = htmlTableList[i];
+			let tbl = await this.newInstance(t);
 			tbl.init(this.formData);
 			this.htmlTables[i] = tbl;
 		}
@@ -84,12 +85,12 @@ export class Form extends WebComponent {
 	 * フォームデータを設定します。
 	 * @param {Object} formData フォームデータ。
 	 */
-	setFormData(formData) {
+	async setFormData(formData) {
 		this.formData = formData;
 		for (let i = 0; i < this.htmlTables.length; i++) {
 			let tbl = this.htmlTables[i];
 			tbl.clear();
-			tbl.setFormData(formData);
+			await tbl.setFormData(formData);
 		}
 		for (let i = 0; i <this.fields.length; i++) {
 			let field = this.fields[i];

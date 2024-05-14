@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { JsonResponse } from '../response/JsonResponse.js';
 import { Form } from './Form.js';
 
 /**

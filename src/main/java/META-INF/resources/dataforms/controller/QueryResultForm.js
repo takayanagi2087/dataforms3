@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { JsonResponse } from '../response/JsonResponse.js';
 import { Form } from './Form.js';
 
 /**
@@ -339,10 +340,10 @@ export class QueryResultForm extends Form {
 	setQueryResult(queryResult) {
 		// データの設定に時間がかかる場合があるのでlockする。
 		currentPage.lock();
-		setTimeout(() => {
+		setTimeout(async () => {
 			this.queryResult = queryResult;
 			this.setPagerInfo(queryResult);
-			this.setFormData(queryResult);
+			await this.setFormData(queryResult);
 			// 各リンクのイベント処理を登録.
 			this.controlPager();
 			// テーブルのイベント処理を追加する。

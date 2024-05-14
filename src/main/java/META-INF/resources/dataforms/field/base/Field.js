@@ -177,8 +177,8 @@ export class Field extends WebComponent {
 	/**
 	 * 初期化処理を行います。
 	 */
-	init() {
-		super.init();
+	async init() {
+		await super.init();
 		this.initValidator(this.validatorList);
 	}
 

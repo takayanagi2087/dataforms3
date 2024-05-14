@@ -331,11 +331,11 @@ export class EditableHtmlTable extends HtmlTable {
 	 * テーブルに対するテータ設定を行います。
 	 * @param {Array} list テーブルデータ。
 	 */
-	setTableData(list) {
+	async setTableData(list) {
 		let ckid = this.id + ".sortable";
 		let ck = this.parent.get(ckid);
 		ck.prop("checked", false);
-		super.setTableData(list);
+		await super.setTableData(list);
 		let lastAddButton = this.find("tfoot").find(this.convertSelector("[id$='\\.addButton']"));
 		lastAddButton.prop("disabled", false);
 		this.resetRowNo();

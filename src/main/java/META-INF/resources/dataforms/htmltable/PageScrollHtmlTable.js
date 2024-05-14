@@ -4,7 +4,7 @@
 
 'use strict';
 
-import { HtmlTable } from '/dataforms3app/dataforms/htmltable/HtmlTable.js';
+import { HtmlTable } from './HtmlTable.js';
 
 /**
  * @class PageScrollHtmlTable

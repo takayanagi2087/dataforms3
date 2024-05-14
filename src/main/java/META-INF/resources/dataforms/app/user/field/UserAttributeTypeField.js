@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { EnumTypeSingleSelectField } from '../../../field/common/EnumTypeSingleSelectField.js';
+
 /**
  * @class UserAttributeTypeField
  * ユーザ属性フィールドクラス。
@@ -46,6 +48,7 @@ export class UserAttributeTypeField extends EnumTypeSingleSelectField {
 	 *
 	 */
 	setValue(v) {
+		logger.log("UserAttributeTypeField setValue=" + v);
 		super.setValue(v);
 	}
 }

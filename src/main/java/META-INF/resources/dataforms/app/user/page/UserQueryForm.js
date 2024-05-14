@@ -2,6 +2,8 @@
  * @fileOverview {@link UserQueryForm}クラスを記述したファイルです。
  */
 
+import { QueryForm } from '../../../controller/QueryForm.js';
+
 /**
  * @class UserQueryForm
  *

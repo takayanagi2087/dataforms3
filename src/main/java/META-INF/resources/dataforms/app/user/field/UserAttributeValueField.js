@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { EnumOptionSingleSelectField } from '../../../field/common/EnumOptionSingleSelectField.js';
+
 /**
  * @class UserAttributeValueField
  * ユーザ属性値フィールドクラス。
@@ -22,6 +25,7 @@ export class UserAttributeValueField extends EnumOptionSingleSelectField {
 	 *
 	 */
 	setValue(v) {
+		logger.log("UserAttributeValueField setValue=" + v);
 		// この設定処理は選択肢がそろっていないので空振りします。
 		super.setValue(v);
 		// 一旦値を保持し、選択肢を取得してから設定します。

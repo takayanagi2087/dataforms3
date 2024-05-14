@@ -209,16 +209,17 @@ export class WebComponent {
 	 * @returns {WebComponent} 作成されたインスタンス。
 	 */
 	async newInstance(clazz) {
-		logger.log("contextPath=", currentPage.contextPath);
-		logger.log("clazz=", clazz);
-		logger.log("jspath=" + clazz.jsPath);
+		//logger.log("contextPath=", currentPage.contextPath);
+		//logger.log("clazz=", clazz);
+		//logger.log("jspath=" + clazz.jsPath);
 		let classname = clazz.jsClass;
 		let module = await import(currentPage.contextPath + clazz.jsPath);
+		// logger.log("import=", module);
 		let obj = eval("new module." + classname + "()");
 		Object.assign(obj, clazz);
 		obj.parent = this;
 		this.componentMap[obj.id] = obj;
-		logger.log("newInstance()", obj);
+		//logger.log("newInstance()", obj);
 		return obj;
 	}
 

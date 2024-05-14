@@ -4,7 +4,9 @@
 
 'use strict';
 
-import { WebComponent } from '/dataforms3app/dataforms/controller/WebComponent.js';
+import { WebComponent } from '../controller/WebComponent.js';
+import { Field } from '../field/base/Field.js';
+import { MessagesUtil } from '../util/MessagesUtil.js';
 
 /**
  * @class HtmlTable
@@ -73,7 +75,7 @@ export class HtmlTable extends WebComponent {
 	 */
 	async attach() {
 		// table配下のフィールドは行の追加時にattachを呼び出すので、ここではsuper.attach()は呼び出さない。
-		await super.setRealId();
+		super.setRealId();
 		logger.log("fixedColumns=" + this.fixedColumns);
 		logger.log("fixedWidth=" + this.fixedWidth);
 		if (this.fixedColumns >= 0 || this.fixedWidth != null) {
@@ -624,10 +626,10 @@ export class HtmlTable extends WebComponent {
 	 * @param co {jQuery} ラベルのエレメント。
 	 * @return {Array} ソート結果リスト。
 	 */
-	sortTable(col) {
+	async sortTable(col) {
 		this.changeSortMark(col);
 		let slist = this.getSortedList();
-		this.setTableData(slist);
+		await this.setTableData(slist);
 		return slist;
 	}
 
@@ -703,7 +705,7 @@ export class HtmlTable extends WebComponent {
 	 * 行を追加します。
 	 *
 	 */
-	addTr(l) {
+	async addTr(l) {
 		let tb = this.find("tbody");
 		let lidx = this.find("tbody>tr").length;
 		let line = this.trLine.replace(/\[0\]/g, "[" + lidx + "]");
@@ -714,7 +716,7 @@ export class HtmlTable extends WebComponent {
 		}
 		for (let i = 0; i < this.fields.length; i++) {
 			let f = this.getRowField(lidx, this.fields[i]);
-			f.attach();
+			await f.attach();
 		}
 		return lidx;
 	}
@@ -762,10 +764,10 @@ export class HtmlTable extends WebComponent {
 	 * テーブルに対するテータ設定を行います。
 	 * @param {Object} formData フォームのデータ。
 	 */
-	setFormData(formData) {
+	async setFormData(formData) {
 		let list = formData[this.id];
 		this.setSortMark();
-		this.setTableData(list);
+		await this.setTableData(list);
 		this.tableData = list;
 	}
 
@@ -804,13 +806,13 @@ export class HtmlTable extends WebComponent {
 	 * テーブルに対するテータ設定を行います。
 	 * @param {Array} list テーブルデータ。
 	 */
-	setTableData(list) {
+	async setTableData(list) {
 		this.tableData = list;
 		if (list != null) {
 			this.find("tbody").empty();
 			// 表の行を追加.
 			for (let i = 0; i < list.length; i++) {
-				this.addTr();
+				await this.addTr();
 			}
 			// 表のデータを追加.
 			for (let i = 0; i < list.length; i++) {
