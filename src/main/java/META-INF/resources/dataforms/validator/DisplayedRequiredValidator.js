@@ -16,8 +16,8 @@ export class DisplayedRequiredValidator extends RequiredValidator {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach(this);
+	attach() {
+		super.attach(this);
 	}
 
 	/**

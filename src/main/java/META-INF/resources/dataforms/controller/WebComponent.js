@@ -187,6 +187,8 @@ export class WebComponent {
 				if (id != null) {
 					sel += " " + this.convertSelector("#" + id);
 				}
+				logger.log("sel=" + sel);
+				
 				ret = $(sel);
 //				logger.log("B:" + this.id + ":get(" + id + ") sel=" + sel + ",sel.length=" + ret.length);
 			} else {
@@ -437,10 +439,10 @@ export class WebComponent {
 	 * 各オブジェクトとHTMLの各エレメントへの対応付けを行い、イベント登録等の設定を行います。
 	 * </pre>
 	 */
-	async attach() {
+	attach() {
 		this.setRealId();
 		for (let id in this.componentMap) {
-			await this.componentMap[id].attach();
+			this.componentMap[id].attach();
 		}
 	}
 

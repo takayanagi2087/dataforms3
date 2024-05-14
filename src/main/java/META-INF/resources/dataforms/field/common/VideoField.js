@@ -19,8 +19,8 @@ export class VideoField extends StreamingField {
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let player = this.getPlayer();
 		player.attr("width", this.playerWidth);
 		player.attr("height", this.playerlHeight);

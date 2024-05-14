@@ -395,7 +395,7 @@ export class Page extends DataForms {
 				this.setCookie("cookiecheck", "");
 			}
 			//
-			await this.attach();
+			this.attach();
 			$(this.convertSelector("#mainDiv")).addClass("mainDiv");
 		} catch (e) {
 			console.log("currentPage=", currentPage);

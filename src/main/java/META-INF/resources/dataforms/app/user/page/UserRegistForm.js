@@ -12,8 +12,8 @@ export class UserRegistForm extends EditForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		logger.log("config=" + JSON.stringify(this.config));
 		if (this.config.loginIdIsMail) {
 			this.get("loginId").parents("tr:first").hide();

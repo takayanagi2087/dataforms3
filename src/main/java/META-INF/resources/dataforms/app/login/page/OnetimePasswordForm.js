@@ -20,8 +20,8 @@ export class OnetimePasswordForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("loginButton").click(() => {
 			this.login();
 			return false;

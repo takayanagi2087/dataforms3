@@ -15,8 +15,8 @@ export class MasterMultiSelectField extends MultiSelectField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 	}
 }
 

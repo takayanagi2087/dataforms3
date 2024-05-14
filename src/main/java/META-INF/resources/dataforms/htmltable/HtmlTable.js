@@ -705,7 +705,7 @@ export class HtmlTable extends WebComponent {
 	 * 行を追加します。
 	 *
 	 */
-	async addTr(l) {
+	addTr(l) {
 		let tb = this.find("tbody");
 		let lidx = this.find("tbody>tr").length;
 		let line = this.trLine.replace(/\[0\]/g, "[" + lidx + "]");
@@ -716,7 +716,7 @@ export class HtmlTable extends WebComponent {
 		}
 		for (let i = 0; i < this.fields.length; i++) {
 			let f = this.getRowField(lidx, this.fields[i]);
-			await f.attach();
+			f.attach();
 		}
 		return lidx;
 	}

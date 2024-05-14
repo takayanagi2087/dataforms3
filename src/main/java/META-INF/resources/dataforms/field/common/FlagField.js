@@ -18,8 +18,8 @@ export class FlagField extends CharField {
 	/**
 	 * HTMLの要素との対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		if (currentPage.useUniqueId) {
 			let lbl = this.getParentForm().find("label[for='" + this.id + "']");
 			if (lbl.length > 0) {

@@ -4,7 +4,7 @@
 
 'use strict';
 
-import { HtmlTable } from '/dataforms3app/dataforms/htmltable/HtmlTable.js';
+import { HtmlTable } from './HtmlTable.js';
 
 /**
  * @class EditableHtmlTable
@@ -18,8 +18,8 @@ export class EditableHtmlTable extends HtmlTable {
 	/**
 	 * 各エレメントとの対応付け.
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		if (!this.readonly) {
 			this.find("tfoot").find(this.convertSelector("[id$='\\.addButton']")).click(() => {
 				this.addRow(null);
@@ -286,6 +286,7 @@ export class EditableHtmlTable extends HtmlTable {
 			rowIndex = null;
 		}
 		let lidx = thisTable.addTr(rowIndex);
+		logger.log("lidx=" + lidx);
 		this.onAddTr(thisTable.id + "[" + lidx + "]");
 		this.resetIdIndex();
 	}

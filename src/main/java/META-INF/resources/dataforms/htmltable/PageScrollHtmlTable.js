@@ -18,9 +18,9 @@ export class PageScrollHtmlTable extends HtmlTable {
 	/**
 	 * エレメントとの対応付け.
 	 */
-	async attach() {
+	attach() {
 		this.sortOrder = "";
-		await super.attach();
+		super.attach();
 		this.get().before(this.additionalHtmlText);
 		this.parent.find("div.pageController :input").each((_, el) => {
 			let id = $(el).attr(this.getIdAttribute());

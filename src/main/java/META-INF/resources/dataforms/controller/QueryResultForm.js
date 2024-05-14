@@ -29,8 +29,8 @@ export class QueryResultForm extends Form {
 	 * #nextPageButton ... 次ページボタン。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.queryResult = null;
 		this.get("linesPerPage").change(() => {
 			this.get("pageNo").val(0);

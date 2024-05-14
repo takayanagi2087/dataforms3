@@ -18,8 +18,8 @@ export class StreamingField extends FileField {
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let player = this.getPlayer();
 		player.on("abort", () => {
 			logger.log("abort");

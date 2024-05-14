@@ -86,10 +86,10 @@ export class FileField extends Field {
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
+	attach() {
 		let comp = this.get();
 		this.addElements(comp);
-		await super.attach();
+		super.attach();
 		let selid = this.id + "_sel"; // 選択ボタンID.
 		let delid = this.id + "_del"; // ファイル削除のチェックボックス.
 		this.parent.get(selid).click((ev) => {

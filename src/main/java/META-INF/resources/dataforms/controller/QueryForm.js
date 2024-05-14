@@ -25,8 +25,8 @@ export class QueryForm extends Form {
 	 * #resetButton ... 「リセット」ボタンの処理.
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("queryButton").click(() => {
 			this.query();
 			return false;

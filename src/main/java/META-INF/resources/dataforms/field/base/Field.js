@@ -30,9 +30,9 @@ export class Field extends WebComponent {
 	 * 計算イベント発生フィールドの場合、changeイベントで計算処理を呼び出すように設定します。
 	 * </pre>
 	 */
-	async attach() {
+	attach() {
 		let thisField = this;
-		await super.attach();
+		super.attach();
 		if (this.label == null) {
 			this.label = this.getLabel();
 		}

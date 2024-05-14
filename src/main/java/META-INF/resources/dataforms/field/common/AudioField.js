@@ -19,8 +19,8 @@ export class AudioField extends StreamingField {
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 	}
 }
 

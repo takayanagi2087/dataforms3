@@ -45,8 +45,8 @@ export class EditForm extends Form {
 	 * #backButton ... 「戻る」ボタンの処理.
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("confirmButton").click(() => {
 			this.confirm();
 			return false;

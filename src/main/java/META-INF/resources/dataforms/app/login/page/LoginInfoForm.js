@@ -48,8 +48,8 @@ export class LoginInfoForm extends Form {
 	/**
 	 * ページの各エレメントとの対応付け.
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		if (this.userRegistPage != null) {
 			this.get('regUserButton').click(() => {
 				window.location.href = currentPage.contextPath + this.userRegistPage + "." + currentPage.pageExt;

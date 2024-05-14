@@ -27,8 +27,8 @@ export class TimeField extends DateTimeField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let comp = this.get();
 		if (!comp.prop("readonly")) {
 			this.setFormat(this.displayFormat, this.editFormat);

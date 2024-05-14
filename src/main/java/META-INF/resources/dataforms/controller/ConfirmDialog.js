@@ -27,8 +27,8 @@ export class ConfirmDialog extends Dialog {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("confirmOkButton").click(() => {
 			this.close();
 			if (this.okFunc != null) {

@@ -183,7 +183,7 @@ export class Form extends WebComponent {
 	 * #newButton ... 「新規登録」ボタンの処理.
 	 * </pre>
 	 */
-	async attach() {
+	attach() {
 		if (this.htmlPath != null) {
 			let fhtml = $("<div>" + this.additionalHtmlText + "</div>").find("form").html();
 			let obj = this.get();
@@ -199,7 +199,7 @@ export class Form extends WebComponent {
 			this.parentDivId = obj.parents("div[" + this.getIdAttribute() +"]:first").attr(this.getIdAttribute());
 		}
 		this.remodelHtml();
-		await super.attach();
+		super.attach();
 		this.get().addClass(this.id);
 		this.get("newButton").prop("disabled" , false);
 		this.get("newButton").click(() => {

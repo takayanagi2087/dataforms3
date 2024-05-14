@@ -30,8 +30,8 @@ export class DateField extends DateTimeField {
 	 * 各種フォーマットの設定と、Datapickerの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let comp = this.get();
 		if (!comp.prop("readonly")) {
 			if (this.datepickerEnabled) {

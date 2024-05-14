@@ -20,8 +20,8 @@ export class UserAttributeTypeField extends EnumTypeSingleSelectField {
 	 * ユーザ属性を変更されたタイミングで、ユーザ属性値の選択肢を変更します。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get().change((ev) => {
 			logger.dir(ev);
 			this.setUserAttributeValueOption($(ev.currentTarget).attr(this.getIdAttribute()), $(ev.currentTarget).val());

@@ -52,8 +52,8 @@ export class LoginForm extends Form {
 	 * #loginButton ... ログイン処理。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("loginButton").click(() => {
 			this.login();
 			return false;

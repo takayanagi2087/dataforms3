@@ -58,7 +58,7 @@ export class DataForms extends WebComponent {
 	 * QueryForm,QueryResultForm,EditFormの存在をチェックし、適切適切な状態を設定します。
 	 * </pre>
 	 */
-	async attach() {
+	attach() {
 		let editMode = true;
 		let qf = this.get("queryForm");
 		if (qf.length > 0) {
@@ -78,7 +78,7 @@ export class DataForms extends WebComponent {
 			this.replaceState("queryMode", "queryMode", location.href);
 			ef.hide();
 		}
-		await super.attach();
+		super.attach();
 		if (qf.length == 0 && rf.length > 0) {
 			// QueryFormが無くQueryResultFormが存在する場合、先頭ページを表示する。
 			let f = this.getComponent("queryResultForm");

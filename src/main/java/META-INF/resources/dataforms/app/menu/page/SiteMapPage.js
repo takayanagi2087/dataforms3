@@ -22,8 +22,8 @@ export class SiteMapPage extends BasePage {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 	}
 }
 

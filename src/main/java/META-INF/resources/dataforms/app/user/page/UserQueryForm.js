@@ -14,8 +14,8 @@ export class UserQueryForm extends QueryForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		if (currentPage.userInfo.userLevel == "developer") {
 			this.get("exportInitDataButton").click(() => {
 				this.exportInitData();

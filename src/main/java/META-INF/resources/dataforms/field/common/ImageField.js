@@ -18,8 +18,8 @@ export class ImageField extends FileField {
 	 * 削除チェックボックス、ダウンロードリンクなどの設定を行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let thisField = this;
 		let linkid = this.id + "_link";
 		let link = this.parent.get(linkid);

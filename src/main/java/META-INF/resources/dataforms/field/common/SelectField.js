@@ -30,8 +30,8 @@ export class SelectField extends Field {
 	 * setOptionListを呼び出し、選択肢を設定します。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.setOptionList();
 		if (this.calcEventField) {
 			let comp = this.get();

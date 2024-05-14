@@ -13,8 +13,8 @@ export class BackupForm extends Form {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		this.get("backupButton").click(() => { this.backup(); return false;});
 	}
 

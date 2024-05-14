@@ -55,8 +55,8 @@ export class Dialog extends DataForms {
 	 * #closeButtonのイベント処理を登録します。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	 attach() {
+		super.attach();
 		this.get("closeButton").click(() => {
 			this.close();
 			return false;
