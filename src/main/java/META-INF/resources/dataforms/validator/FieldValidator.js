@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { MessagesUtil } from '../util/MessagesUtil.js';
 import { WebComponent } from '../controller/WebComponent.js';
 
 /**
@@ -17,8 +18,8 @@ export class FieldValidator extends WebComponent {
 	/**
 	 * 初期化を行います。
 	 */
-	async init() {
-		await super.init();
+	init() {
+		super.init();
 	}
 
 	/**

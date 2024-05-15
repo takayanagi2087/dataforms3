@@ -363,10 +363,12 @@ public class WebComponent implements JDBCConnectableObject {
 		if (this.id != null) {
 			obj.put("id", this.id);
 		}
+//		String context = this.getPage().getRequest().getContextPath();
 		obj.put("className", this.getClass().getSimpleName());
 		obj.put("path", this.getViewPath());
 		String jspath = this.getScriptPath();
-		obj.put("jsPath", jspath);
+		String t = this.getLastUpdate(jspath);
+		obj.put("jsPath", jspath + "?t=" + t);
 		obj.put("jsClass", this.getJsClass());
 		String additionalHtmlText = this.getAdditionalHtmlText();
 		if (additionalHtmlText != null) {
@@ -625,8 +627,13 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @param path パス。
 	 * @return 更新日付(yyyyMMddHHmmss形式)。
 	 */
-	protected String getLastUpdate(final String path) {
-		return webResourceTimestampCache.get(path);
+	protected String getLastUpdate(final String path) throws Exception {
+		String ret = webResourceTimestampCache.get(path);
+		if (ret == null) {
+			this.readWebResource(path);
+			ret = webResourceTimestampCache.get(path);
+		}
+		return ret;
 	}
 
 	/**

@@ -2,6 +2,8 @@
  * @fileOverview {@link UserRegistForm}クラスを記述したファイルです。
  */
 
+import { EditForm } from '../../../controller/EditForm.js';
+
 /**
  * @class UserRegistForm
  *

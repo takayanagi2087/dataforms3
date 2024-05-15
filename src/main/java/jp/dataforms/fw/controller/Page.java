@@ -365,8 +365,8 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @throws Exception 例外。
 	 */
 	protected void getDataformsAppScripts(final List<String> list, final DataForms df) throws Exception {
-		Map<String, WebComponent> map = this.getFormMap();
-/*		for (String key: this.getFormMap().keySet()) {
+/*		Map<String, WebComponent> map = this.getFormMap();
+		for (String key: this.getFormMap().keySet()) {
 			WebComponent f = (WebComponent) map.get(key);
 			if (f instanceof Form) {
 				this.getFormAppScripts(list, (Form) f);

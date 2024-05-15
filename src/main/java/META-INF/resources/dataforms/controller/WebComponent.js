@@ -216,7 +216,7 @@ export class WebComponent {
 		for (let key in map) {
 			let obj = map[key];
 			list = list.concat(this.#getImportJs(obj));
-			list.push(obj.jsPath);
+			list.push(obj);
 		}
 		return list;
 	}
@@ -274,12 +274,9 @@ export class WebComponent {
 		logger.log("pageInfo=", pageInfo);
 		let list = this.#getImportJs(pageInfo);
 		list = this.uniq(list);
-		let regexp = /.*\/(.+?)\.js$/;
 		for (let i = 0; i < list.length; i++) {
-			let g = regexp.exec(list[i]);
-			let cname = g[1];
-			let module = await import(currentPage.contextPath + list[i]);
-			WebComponent.#moduleMap[cname] = module;
+			let module = await import(currentPage.contextPath + list[i].jsPath);
+			WebComponent.#moduleMap[list[i].jsClass] = module;
 		}
 		{
 			let module = await import(currentPage.contextPath + "/dataforms/menu/Menu.js");

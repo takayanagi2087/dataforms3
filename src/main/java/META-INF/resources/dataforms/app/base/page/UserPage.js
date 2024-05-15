@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { BasePage } from './BasePage.js';
+
 /**
  * @class UserPage
  * ユーザ向けページクラス。
