@@ -83,7 +83,7 @@ public class DataFormsFilter {
 				ret = new String(buf, DataFormsServlet.getEncoding());
 
 				long d = conn.getLastModified();
-				DataFormsFilter.webResourceTimestampCache.put(path, d);
+				DataFormsFilter.webResourceTimestampCache.put(path.replaceAll("\\?skip=true$",""), d);
 			}
 		} finally {
 			conn.disconnect();
@@ -97,7 +97,8 @@ public class DataFormsFilter {
 	 * @return タイムスタンプ。
 	 */
 	protected Long getLastUpdate(final String path) {
-		return webResourceTimestampCache.get(path);
+		Long ret = webResourceTimestampCache.get(path);
+		return ret;
 	}
 
 }

@@ -155,6 +155,7 @@ public class CssFilter extends DataFormsFilter implements Filter {
 				logger.error(() -> e.getMessage(), e);
 			}
 		}
+		chain.doFilter(req, resp);
 	}
 
 }

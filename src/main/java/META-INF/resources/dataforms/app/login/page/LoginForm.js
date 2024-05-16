@@ -8,7 +8,6 @@ import { Form } from '../../../controller/Form.js';
 import { Dialog } from '../../../controller/Dialog.js';
 import { JsonResponse } from '../../../response/JsonResponse.js';
 
-
 /**
  * @class LoginForm
  * ログインフォームクラス。

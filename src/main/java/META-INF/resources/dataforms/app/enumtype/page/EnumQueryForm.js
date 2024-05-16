@@ -4,6 +4,9 @@
 
 'use strict';
 
+import { QueryForm } from '../../../controller/QueryForm.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+
 /**
  * @class EnumQueryForm
  *

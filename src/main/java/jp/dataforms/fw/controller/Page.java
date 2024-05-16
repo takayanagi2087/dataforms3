@@ -473,25 +473,8 @@ public class Page extends DataForms implements WebEntryPoint {
 			}
 		}
 
-		List<String> basicScripts = this.getBasicJsCache();
-/*		sb.append("\t\t<script type=\"module\">\n");
-		for (String js : basicScripts) {
-			this.addScriptTag(context, js, sb);
-//			this.addImportScriptTag(context, js, sb);
-		}
-		sb.append("\t\t</script>\n");
-*/
-/*		List<String> basicScripts = this.getBasicJsCache();
-		for (String js : basicScripts) {
-			this.addScriptTag(context, js, sb);
-		}
-*/
+		this.getBasicJsCache();
 		this.addScriptTag(context, this.getPageFramePath() + "/Frame.js", sb);
-/*		List<String> appScripts = this.getAppScript();
-		for (String js: appScripts) {
-			this.addScriptTag(context, js, sb);
-			this.addImportScriptTag(context, js, sb);
-		}*/
 		return sb.toString();
 	}
 

@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { EditForm } from "../../../controller/EditForm.js";
+
 /**
  * @class EnumEditForm
  *

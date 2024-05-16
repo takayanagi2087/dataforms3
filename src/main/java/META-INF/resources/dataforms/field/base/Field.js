@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { ValidationError } from '../../validator/ValidationError.js';
+import { MaxLengthValidator } from '../../validator/MaxLengthValidator.js';
 import { WebComponent } from '../../controller/WebComponent.js';
 
 /**
