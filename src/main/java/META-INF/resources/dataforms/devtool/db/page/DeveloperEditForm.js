@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { EditForm } from '../../../controller/EditForm.js';
+
 /**
  * @class DeveloperEditForm
  *
  * @extends EditForm
  */
-class DeveloperEditForm extends EditForm {
+export class DeveloperEditForm extends EditForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
