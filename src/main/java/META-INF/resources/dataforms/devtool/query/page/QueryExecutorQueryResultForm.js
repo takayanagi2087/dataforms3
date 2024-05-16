@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class QueryExecutorQueryResultForm
  *
  * @extends QueryResultForm
  */
-class QueryExecutorQueryResultForm extends QueryResultForm {
+export class QueryExecutorQueryResultForm extends QueryResultForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

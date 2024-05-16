@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { BasePage } from '../../../app/base/page/BasePage.js';
+
 /**
  * @class DocFramePage
  *
  * @extends BasePage
  */
-class DocFramePage extends BasePage {
+export class DocFramePage extends BasePage {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

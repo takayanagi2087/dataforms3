@@ -4,12 +4,17 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { ValidationError } from '../../../validator/ValidationError.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class ExportWebResourceQueryResultForm
  *
  * @extends QueryResultForm
  */
-class ExportWebResourceQueryResultForm extends QueryResultForm {
+export class ExportWebResourceQueryResultForm extends QueryResultForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

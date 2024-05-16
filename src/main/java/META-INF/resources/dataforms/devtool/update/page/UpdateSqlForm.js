@@ -4,12 +4,17 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { StringUtil } from '../../../util/StringUtil.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { Form } from '../../../controller/Form.js';
+
 /**
  * @class UpdateSqlForm
  *
  * @extends Form
  */
-class UpdateSqlForm extends Form {
+export class UpdateSqlForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */

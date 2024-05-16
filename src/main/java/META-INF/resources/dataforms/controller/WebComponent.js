@@ -5,6 +5,7 @@
 'use strict';
 
 import { WebMethod } from '../util/WebMethod.js';
+import { QueryStringUtil } from '../util/QueryStringUtil.js';
 
 
 /**

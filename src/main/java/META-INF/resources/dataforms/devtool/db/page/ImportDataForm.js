@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Form } from '../../../controller/Form.js';
+
 /**
  * @class ImportDataForm
  * テーブル情報フォームクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends Form
  */
-class ImportDataForm extends Form {
+export class ImportDataForm extends Form {
 	/**
 	 * HTMLエレメントフォームとの対応付けを行います。
 	 *

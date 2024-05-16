@@ -5,6 +5,10 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js'; 
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class TableManagementQueryResultForm
  * テーブル問い合わせ結果フォーム。
@@ -13,7 +17,7 @@
  * </pre>
  * @extends QueryResultForm
  */
-class TableManagementQueryResultForm extends QueryResultForm {
+export class TableManagementQueryResultForm extends QueryResultForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

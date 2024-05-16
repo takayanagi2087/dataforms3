@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { HtmlTable } from '../../../htmltable/HtmlTable.js';
+
 /**
  * @class DbTableListHtmlTable
  *
  * @extends HtmlTable
  */
-class DbTableListHtmlTable extends HtmlTable {
+export class DbTableListHtmlTable extends HtmlTable {
 	/**
 	 * コンストラクタ。
 	 */

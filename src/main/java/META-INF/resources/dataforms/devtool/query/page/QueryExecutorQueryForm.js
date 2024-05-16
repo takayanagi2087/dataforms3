@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { QueryForm } from '../../../controller/QueryForm.js';
+
 /**
  * @class QueryExecutorQueryForm
  *
  * @extends QueryForm
  */
-class QueryExecutorQueryForm extends QueryForm {
+export class QueryExecutorQueryForm extends QueryForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */
