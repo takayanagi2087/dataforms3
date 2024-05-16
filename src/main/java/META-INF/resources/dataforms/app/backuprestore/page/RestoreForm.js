@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Form } from "../../../controller/Form.js";
+import { MessagesUtil } from "../../../util/MessagesUtil.js";
 /**
  * @class RestoreForm
  *

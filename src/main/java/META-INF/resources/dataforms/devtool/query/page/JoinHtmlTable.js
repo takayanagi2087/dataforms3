@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { EditableHtmlTable } from "../../../htmltable/EditableHtmlTable.js"; 
+
 /**
  * @class JoinHtmlTable
  *
  * @extends EditableHtmlTable
  */
-class JoinHtmlTable extends EditableHtmlTable {
+export class JoinHtmlTable extends EditableHtmlTable {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

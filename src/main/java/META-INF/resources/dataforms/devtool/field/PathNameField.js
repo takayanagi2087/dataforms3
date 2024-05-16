@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { VarcharField } from '../../field/sqltype/VarcharField.js';
+
 /**
  * @class PathNameField
  *
  * @extends VarcharField
  */
-class PathNameField extends VarcharField {
+export class PathNameField extends VarcharField {
 	/**
 	 * コンストラクタ。
 	 */

@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { QueryClassNameField } from './QueryClassNameField.js';
+
 /**
  * @class QueryOrTableClassNameField
  *
  * @extends QueryClassNameField
  */
-class QueryOrTableClassNameField extends QueryClassNameField {
+export class QueryOrTableClassNameField extends QueryClassNameField {
 	/**
 	 * コンストラクタ。
 	 */

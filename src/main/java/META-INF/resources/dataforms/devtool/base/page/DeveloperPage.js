@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { BasePage } from '../../../app/base/page/BasePage.js';
+
 /**
  * @class DeveloperPage
  * 開発者ページクラス。
@@ -12,7 +14,7 @@
  * </pre>
  * @extends BasePage
  */
-class DeveloperPage extends BasePage {
+export class DeveloperPage extends BasePage {
 
 }
 

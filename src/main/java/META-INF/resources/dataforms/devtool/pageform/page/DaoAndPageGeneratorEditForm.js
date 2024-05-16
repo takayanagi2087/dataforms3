@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { EditForm } from '../../../controller/EditForm.js';
+
 /**
  * @class DaoAndPageGeneratorEditForm
  *
  * @extends EditForm
  */
-class DaoAndPageGeneratorEditForm extends EditForm {
+export class DaoAndPageGeneratorEditForm extends EditForm {
 	/**
 	 * コンストラクタ。
 	 */

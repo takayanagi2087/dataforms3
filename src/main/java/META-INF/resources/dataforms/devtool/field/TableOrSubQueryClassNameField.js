@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { SimpleClassNameField } from "./SimpleClassNameField.js";
+
+
 /**
  * @class TableOrSubQueryClassNameField
  *
  * @extends SimpleClassNameField
  */
-class TableOrSubQueryClassNameField extends SimpleClassNameField {
+export class TableOrSubQueryClassNameField extends SimpleClassNameField {
 	/**
 	 * コンストラクタ。
 	 */

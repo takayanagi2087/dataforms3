@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { SimpleClassNameField } from '../../devtool/field/SimpleClassNameField.js';
+
 /**
  * @class TableClassNameField
  *
  * @extends SimpleClassNameField
  */
-class TableClassNameField extends SimpleClassNameField {
+export class TableClassNameField extends SimpleClassNameField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

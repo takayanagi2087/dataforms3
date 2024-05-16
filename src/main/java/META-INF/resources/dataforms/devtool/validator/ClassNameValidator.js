@@ -4,13 +4,16 @@
 
 'use strict';
 
+import { MessagesUtil } from '../../util/MessagesUtil.js';
+import { RegexpValidator } from '../../validator/RegexpValidator.js';
+
 /**
  * @class ClassNameValidator
  *
  * @extends RegexpValidator
  */
 
-class ClassNameValidator extends RegexpValidator {
+export class ClassNameValidator extends RegexpValidator {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

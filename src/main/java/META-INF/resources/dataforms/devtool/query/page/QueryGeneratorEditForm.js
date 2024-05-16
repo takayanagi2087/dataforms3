@@ -4,12 +4,16 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { EditForm } from '../../../controller/EditForm.js';
+
 /**
  * @class QueryGeneratorEditForm
  *
  * @extends EditForm
  */
-class QueryGeneratorEditForm extends EditForm {
+export class QueryGeneratorEditForm extends EditForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

@@ -85,12 +85,12 @@ export class Form extends WebComponent {
 	 * フォームデータを設定します。
 	 * @param {Object} formData フォームデータ。
 	 */
-	async setFormData(formData) {
+	 setFormData(formData) {
 		this.formData = formData;
 		for (let i = 0; i < this.htmlTables.length; i++) {
 			let tbl = this.htmlTables[i];
 			tbl.clear();
-			await tbl.setFormData(formData);
+			tbl.setFormData(formData);
 		}
 		for (let i = 0; i <this.fields.length; i++) {
 			let field = this.fields[i];

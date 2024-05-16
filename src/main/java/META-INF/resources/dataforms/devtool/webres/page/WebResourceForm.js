@@ -4,12 +4,16 @@
 
 'use strict';
 
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { Form } from '../../../controller/Form.js';
+
 /**
  * @class WebResourceForm
  * Webリソース作成フォームクラス。
  * @extends QueryForm
  */
-class WebResourceForm extends Form {
+export class WebResourceForm extends Form {
 	/**
 	 * HTMLエレメントフォームとの対応付けを行います。
 	 *

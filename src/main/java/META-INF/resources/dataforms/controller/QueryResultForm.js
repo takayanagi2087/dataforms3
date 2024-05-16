@@ -340,10 +340,10 @@ export class QueryResultForm extends Form {
 	setQueryResult(queryResult) {
 		// データの設定に時間がかかる場合があるのでlockする。
 		currentPage.lock();
-		setTimeout(async () => {
+		setTimeout(() => {
 			this.queryResult = queryResult;
 			this.setPagerInfo(queryResult);
-			await this.setFormData(queryResult);
+			this.setFormData(queryResult);
 			// 各リンクのイベント処理を登録.
 			this.controlPager();
 			// テーブルのイベント処理を追加する。

@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { Form } from '../../../controller/Form.js';
+
 /**
  * @class FieldListForm
  *
  * @extends Form
  */
-class FieldListForm extends Form {
+export class FieldListForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */

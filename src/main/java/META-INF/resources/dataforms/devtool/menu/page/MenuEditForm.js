@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { EditForm } from "../../../controller/EditForm.js";
+
 /**
  * @class MenuEditForm
  *
  * @extends EditForm
  */
-class MenuEditForm extends EditForm {
+export class MenuEditForm extends EditForm {
 	/**
 	 * コンストラクタ。
 	 */

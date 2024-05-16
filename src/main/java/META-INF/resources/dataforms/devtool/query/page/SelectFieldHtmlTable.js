@@ -4,12 +4,14 @@
 
 'use strict';
 
+import {EditableHtmlTable} from '../../../htmltable/EditableHtmlTable.js'; 
+
 /**
  * @class SelectFieldHtmlTable
  *
  * @extends HtmlTable
  */
-class SelectFieldHtmlTable extends EditableHtmlTable {
+export class SelectFieldHtmlTable extends EditableHtmlTable {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

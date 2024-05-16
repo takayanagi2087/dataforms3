@@ -126,7 +126,7 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 					this.readWebResource(req, abspath);
 					t = this.getLastUpdate(abspath);
 				}
-				String imp = "import { " + m.group(1).trim() + "} from '" + m.group(2) + "?t=" + t + "'";
+				String imp = "import { " + m.group(1).trim() + " } from '" + m.group(2) + "?t=" + t + "'";
 				logger.debug("Abs path:" + abspath + ", t=" + t);
 				sb.append(imp);
 			}

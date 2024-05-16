@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class WebResourceQueryResultForm
  * Webリソース検索フォームクラス。
@@ -12,7 +14,10 @@
  * </pre>
  * @extends QueryResultForm
  */
-class WebResourceQueryResultForm extends QueryResultForm {
+export class WebResourceQueryResultForm extends QueryResultForm {
+	
+	
+	
 	/**
 	 * HTMLエレメントフォームとの対応付けを行います。
 	 *

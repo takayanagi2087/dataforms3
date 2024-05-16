@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { SingleSelectField } from '../../field/common/SingleSelectField.js';
+
 /**
  * @class FunctionSelectField
  * 機能フィールドクラス。
@@ -11,7 +13,7 @@
  * </pre>
  * @extends SingleSelectField
  */
-class FunctionSelectField extends SingleSelectField {
+export class FunctionSelectField extends SingleSelectField {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>

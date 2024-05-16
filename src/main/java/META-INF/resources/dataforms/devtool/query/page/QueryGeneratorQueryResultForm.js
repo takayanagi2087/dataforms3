@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class QueryGeneratorQueryResultForm
  *
  * @extends QueryResultForm
  */
-class QueryGeneratorQueryResultForm extends QueryResultForm {
+export class QueryGeneratorQueryResultForm extends QueryResultForm {
 	/**
 	 * コンストラクタ。
 	 */

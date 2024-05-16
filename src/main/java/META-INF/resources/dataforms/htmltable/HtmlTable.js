@@ -6,6 +6,7 @@
 
 import { WebComponent } from '../controller/WebComponent.js';
 import { Field } from '../field/base/Field.js';
+import { Page } from '../controller/Page.js';
 import { MessagesUtil } from '../util/MessagesUtil.js';
 
 /**
@@ -764,10 +765,10 @@ export class HtmlTable extends WebComponent {
 	 * テーブルに対するテータ設定を行います。
 	 * @param {Object} formData フォームのデータ。
 	 */
-	async setFormData(formData) {
+	setFormData(formData) {
 		let list = formData[this.id];
 		this.setSortMark();
-		await this.setTableData(list);
+		this.setTableData(list);
 		this.tableData = list;
 	}
 
@@ -806,13 +807,13 @@ export class HtmlTable extends WebComponent {
 	 * テーブルに対するテータ設定を行います。
 	 * @param {Array} list テーブルデータ。
 	 */
-	async setTableData(list) {
+	setTableData(list) {
 		this.tableData = list;
 		if (list != null) {
 			this.find("tbody").empty();
 			// 表の行を追加.
 			for (let i = 0; i < list.length; i++) {
-				await this.addTr();
+				this.addTr();
 			}
 			// 表のデータを追加.
 			for (let i = 0; i < list.length; i++) {

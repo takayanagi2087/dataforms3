@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { QueryResultForm } from '../../../controller/QueryResultForm.js';
+
 /**
  * @class TableGeneratorQueryResultForm
  *
  * @extends QueryResultForm
  */
-class TableGeneratorQueryResultForm extends QueryResultForm {
+export class TableGeneratorQueryResultForm extends QueryResultForm {
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 */

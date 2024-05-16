@@ -4,12 +4,14 @@
 
 'use strict';
 
+import { Dialog } from "../../../controller/Dialog.js";
+
 /**
  * @class FieldListDialog
  *
  * @extends Dialog
  */
-class FieldListDialog extends Dialog {
+export class FieldListDialog extends Dialog {
 	/**
 	 * コンストラクタ。
 	 */

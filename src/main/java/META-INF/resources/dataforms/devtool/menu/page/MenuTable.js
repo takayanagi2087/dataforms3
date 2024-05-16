@@ -4,12 +4,15 @@
 
 'use strict';
 
+import { EditableHtmlTable } from '../../../htmltable/EditableHtmlTable.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
+
 /**
  * @class MenuTable
  *
  * @extends EditableHtmlTable
  */
-class MenuTable extends EditableHtmlTable {
+export class MenuTable extends EditableHtmlTable {
 	/**
 	 * コンストラクタ。
 	 */
