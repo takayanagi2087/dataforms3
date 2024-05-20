@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
+
 /**
  * @class OnetimePasswordForm
  *

@@ -1,6 +1,7 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
 import { Form } from '../../../controller/Form.js';
 
 /**

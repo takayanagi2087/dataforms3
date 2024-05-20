@@ -3,7 +3,6 @@
  */
 
 'use strict';
-
 import { Form } from '../../../controller/Form.js';
 import { JsonResponse } from '../../../response/JsonResponse.js';
 /**

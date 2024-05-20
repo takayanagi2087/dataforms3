@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { JsonResponse } from '../../../response/JsonResponse.js';
 import { EditForm } from '../../../controller/EditForm.js';
 
 /**

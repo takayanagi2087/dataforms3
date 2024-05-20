@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { JsonResponse } from "../../../response/JsonResponse.js";
 import { MessagesUtil } from "../../../util/MessagesUtil.js";
 
 /**
