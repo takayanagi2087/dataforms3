@@ -506,12 +506,11 @@ export class Field extends WebComponent {
 	 * </pre>
 	 * @param {jQuery} [el] フィールドに対応するjQueryオブジェクト。HTMLテーブル中のフィールドの場合指定します。
 	 */
-	async isRequired(el) {
+	isRequired(el) {
 		if (el == null) {
 			el = this.get();
 		}
 		let tag = el.prop("tagName");
-		let type = el.prop("type");
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			for (let i = 0; i < this.validatorList.length; i++) {
 				let v = this.newInstance(this.validatorList[i]);

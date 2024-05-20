@@ -269,7 +269,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @param cls 指定クラス。
 	 * @return 自分自身のスクリプトパス。
 	 */
-	protected String getClassScriptPath(final Class<?> cls) {
+	protected String getClassScriptPath(final Class<?> cls) throws Exception {
 		logger.debug("getClassScriptPath:cls=" + cls.getName());
 /*		if (MenuForm.class.isAssignableFrom(cls) || LoginInfoForm.class.isAssignableFrom(cls)) {
 			// MenuForm等はframeのパスにある。
@@ -283,7 +283,7 @@ public class WebComponent implements JDBCConnectableObject {
 			return "/" + cmp.getWebResourcePath(cls) + ".js";
 		} else {
 */			String clsname = cls.getName();
-			FunctionMap conv = new FunctionMap();
+			FunctionMap conv = FunctionMap.getAppFunctionMap();
 			String ret = conv.getWebPath(clsname) + ".js";
 			logger.debug("getClassScriptPath() = " + ret);
 			return ret;

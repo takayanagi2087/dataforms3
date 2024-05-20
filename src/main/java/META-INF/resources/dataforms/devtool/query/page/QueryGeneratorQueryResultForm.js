@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
 import { JsonResponse } from '../../../response/JsonResponse.js';
 import { QueryResultForm } from '../../../controller/QueryResultForm.js';
 

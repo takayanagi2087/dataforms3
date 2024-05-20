@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { MessagesUtil } from '../../util/MessagesUtil.js';
 import { Field } from '../base/Field.js';
 
  /**

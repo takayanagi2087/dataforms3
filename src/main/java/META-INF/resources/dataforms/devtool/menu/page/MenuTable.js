@@ -4,8 +4,8 @@
 
 'use strict';
 
-import { EditableHtmlTable } from '../../../htmltable/EditableHtmlTable.js';
 import { MessagesUtil } from '../../../util/MessagesUtil.js';
+import { EditableHtmlTable } from '../../../htmltable/EditableHtmlTable.js';
 
 /**
  * @class MenuTable

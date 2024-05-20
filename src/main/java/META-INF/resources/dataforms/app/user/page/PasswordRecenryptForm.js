@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { MessagesUtil } from "../../../util/MessagesUtil.js";
+
 /**
  * @class PasswordRecenryptForm
  *

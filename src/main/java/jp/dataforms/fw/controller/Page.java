@@ -36,6 +36,7 @@ import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.FieldValidator;
@@ -365,35 +366,19 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @throws Exception 例外。
 	 */
 	protected void getDataformsAppScripts(final List<String> list, final DataForms df) throws Exception {
-/*		Map<String, WebComponent> map = this.getFormMap();
-		for (String key: this.getFormMap().keySet()) {
-			WebComponent f = (WebComponent) map.get(key);
-			if (f instanceof Form) {
-				this.getFormAppScripts(list, (Form) f);
-			}
-		}
-		for (String key: this.getDialogMap().keySet()) {
-			WebComponent d = (WebComponent) map.get(key);
-			if (d instanceof Dialog) {
-				this.getDialogAppScripts(list, (Dialog) d);
-			}
-		}
-*/		this.getScriptTree(list, this.getClass());
+		this.getScriptTree(list, this.getClass());
 	}
 
 	/**
-	 * アプリケーションスクリプトリストを取得します。
+	 * ページスクリプトを取得します。
 	 * @return アプリケーションスクリプトリスト。
 	 * @throws Exception 例外。
 	 */
-	protected List<String> getAppScript() throws Exception {
+	protected String getPageScript() throws Exception {
 		List<String> list = new ArrayList<String>();
-/*		for (String key: this.getDialogMap().keySet()) {
-			Dialog dlg = this.getDialogMap().get(key);
-			this.getDataformsAppScripts(list, dlg);
-		}
-*/		this.getDataformsAppScripts(list, this);
-		return list;
+		this.getDataformsAppScripts(list, this);
+		logger.debug("getAppScript=" + JsonUtil.encode(list));
+		return list.get(list.size() - 1);
 	}
 
 	private String getJsClass(final String p) {
@@ -586,17 +571,9 @@ public class Page extends DataForms implements WebEntryPoint {
 	protected void buildInitScript(final StringBuilder sb, final String pageclass, final String csrfToken) throws Exception {
 		sb.append(INIT_SCRIPT0);
 		
-/*		String context = this.getRequest().getContextPath();
-		List<String> basicScripts = this.getBasicJsCache();
-		for (String js : basicScripts) {
-			this.addImportScriptTag(context, js, sb);
-		}
-*/		
 		String context = this.getRequest().getContextPath();
-		List<String> appScripts = this.getAppScript();
-		for (String js: appScripts) {
-			this.addImportScriptTag(context, js, sb);
-		}
+		String pageScript = this.getPageScript();
+		this.addImportScriptTag(context, pageScript, sb);
 		sb.append("\t\t$(() => {\n");
 		sb.append("\t\t\tlet page = new " + pageclass + "();\n");
 		if (csrfToken != null) {
