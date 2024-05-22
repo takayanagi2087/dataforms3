@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * CSSのフィルター。
  * <pre>
  *
- * Hoge.cssxをアクセスすると、Hoge.cssを読み込み変換して出力するフィルターです。
+ * Hoge.cssをアクセスすると、Hoge.cssを読み込み変換して出力するフィルターです。
  *
  * 今のところVariables.cssに定義した変数を展開したcssを作成する機能しかありません。
  * この機能は標準cssではできない以下の記述に対応する為に作りました。
@@ -36,7 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * </pre>
  */
-@WebFilter(filterName="css-filter", urlPatterns = "*.cssx")
+@WebFilter(filterName="css-filter", urlPatterns = "*.css")
 public class CssFilter extends DataFormsFilter implements Filter {
 	/**
 	 * Logger.
@@ -62,7 +62,7 @@ public class CssFilter extends DataFormsFilter implements Filter {
 		if (css != null) {
 			return css;
 		}
-		String ret = this.readWebResource(req, path);
+		String ret = this.readWebResource(req, path + "?skip=true");
 		CssFilter.cssMap.put(path, ret);
 		return ret;
 	}
@@ -136,20 +136,23 @@ public class CssFilter extends DataFormsFilter implements Filter {
 			HttpServletRequest sreq = (HttpServletRequest) req;
 			HttpServletResponse sresp = (HttpServletResponse) resp;
 			try {
-				String fname = sreq.getRequestURI().replaceAll("\\.cssx$", ".css");
+				String fname = sreq.getRequestURI();
 				logger.debug(() -> "filename=" + fname);
-				String contents = this.readCss(sreq, fname);
-				if (contents != null) {
-					this.parseVar(fname, contents);
-					contents = this.replaceVar(fname, contents);
-					sresp.setContentType("text/css; charset=utf-8");
-					Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
-					sresp.setDateHeader("Last-Modified", ts);
-					try (PrintWriter out = resp.getWriter()) {
-						out.print(contents);
+				String skip = sreq.getParameter("skip");
+				if (!"true".equals(skip)) {
+					String contents = this.readCss(sreq, fname);
+					if (contents != null) {
+						this.parseVar(fname, contents);
+						contents = this.replaceVar(fname, contents);
+						sresp.setContentType("text/css; charset=utf-8");
+						Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
+						sresp.setDateHeader("Last-Modified", ts);
+						try (PrintWriter out = resp.getWriter()) {
+							out.print(contents);
+						}
+					} else {
+						sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 					}
-				} else {
-					sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 				}
 			} catch (Exception e) {
 				logger.error(() -> e.getMessage(), e);

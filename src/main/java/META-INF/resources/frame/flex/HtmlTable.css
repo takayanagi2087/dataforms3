@@ -156,7 +156,7 @@ table.columnFixedTable .fixedColumn {
 	width: 64px;
 }
 
-/* PC,タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* PC,タブレット  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--tb-screen-min)) {
 	.queryResultForm .topPageButton,
 	.queryResultForm .prevPageButton,
@@ -175,7 +175,7 @@ table.columnFixedTable .fixedColumn {
 	}
 }
 
-/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* スマートフォン  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (max-width: var(--sp-screen-max)) {
 	table.columnFixedTable tr {
 		height: 40px;

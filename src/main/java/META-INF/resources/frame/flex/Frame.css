@@ -107,7 +107,7 @@ div.bodyDiv {
 	height: var(--footer-height);
 }
 
-/* PC  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* PC  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--pc-screen-min)) {
 	/* 基本フォントサイズ */
 	html body {
@@ -165,7 +165,7 @@ div.bodyDiv {
 }
 
 
-/* タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* タブレット  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--tb-screen-min)) and (max-width: var(--tb-screen-max)) {
 	/* 基本フォントサイズ */
 	html body {
@@ -229,7 +229,7 @@ div.bodyDiv {
 
 }
 
-/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* スマートフォン  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (max-width: var(--sp-screen-max)) {
 	/* 基本フォントサイズ */
 	html body {

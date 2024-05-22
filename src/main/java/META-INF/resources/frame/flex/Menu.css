@@ -71,7 +71,7 @@ td.menuDescription {
 	width: 70%;
 }
 
- /* PC  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+ /* PC  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--pc-screen-min)) {
 	.bodyTable .leftbarTd {
 		width: var(--menu-width);
@@ -89,7 +89,7 @@ td.menuDescription {
 	}
 }
 
-/* タブレット  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* タブレット  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--tb-screen-min)) and (max-width: var(--tb-screen-max)) {
 	.bodyTable .leftbarTd {
 		width: 0px;
@@ -109,7 +109,7 @@ td.menuDescription {
 	}
 }
 
-/* スマートフォン  (以下の記述は*.cssxでアクセスしCssFilerを通したときのみ有効) */
+/* スマートフォン  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (max-width: var(--sp-screen-max)) {
 	ul.accordion p {
 		font-size: 120%;

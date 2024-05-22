@@ -4,8 +4,8 @@
  * 変数宣言用css。
  *
  * このファイルは変数宣言専用のcssです。
- * 拡張子Frame.cssxのように拡張子cssxでアクセスすると、CssFilterが動作し
- * Frame.cssファイル中の"var(--pc-screen-min)"を"1025px"に置き換えて送付します。
+ * CssFilterを使用すると
+ * 各.cssファイル中の"var(--pc-screen-min)"を"1025px"に置き換えて送付します。
  * この機能は以下の様に標準的なcssでサポートされない以下の記述を有効にします。
  *
  * @media screen and (min-width: var(--pc-screen-min))

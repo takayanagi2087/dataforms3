@@ -17,6 +17,6 @@ public class DocFramePage extends BasePage {
 	@Override
 	protected void buildCssList() {
 		super.buildCssList();
-		this.addPreloadCss("/doc/css/docFrame.cssx");
+		this.addPreloadCss("/doc/css/docFrame.css");
 	}
 }

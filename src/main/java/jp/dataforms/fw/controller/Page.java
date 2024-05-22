@@ -428,17 +428,17 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * ページに必要なスタイルシートの一覧を作成します。
 	 */
 	protected void buildCssList() {
-		this.addPreloadCss(this.getPageFramePath() + "/Variables.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/Frame.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/Menu.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/Form.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/Field.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/HtmlTable.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/AppFrame.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/AppMenu.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/AppForm.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/AppField.cssx");
-		this.addPreloadCss(this.getPageFramePath() + "/AppHtmlTable.cssx");
+		this.addPreloadCss(this.getPageFramePath() + "/Variables.css");
+		this.addPreloadCss(this.getPageFramePath() + "/Frame.css");
+		this.addPreloadCss(this.getPageFramePath() + "/Menu.css");
+		this.addPreloadCss(this.getPageFramePath() + "/Form.css");
+		this.addPreloadCss(this.getPageFramePath() + "/Field.css");
+		this.addPreloadCss(this.getPageFramePath() + "/HtmlTable.css");
+		this.addPreloadCss(this.getPageFramePath() + "/AppFrame.css");
+		this.addPreloadCss(this.getPageFramePath() + "/AppMenu.css");
+		this.addPreloadCss(this.getPageFramePath() + "/AppForm.css");
+		this.addPreloadCss(this.getPageFramePath() + "/AppField.css");
+		this.addPreloadCss(this.getPageFramePath() + "/AppHtmlTable.css");
 	}
 
 	/**
