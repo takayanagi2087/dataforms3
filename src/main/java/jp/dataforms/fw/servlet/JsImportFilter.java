@@ -20,6 +20,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jp.dataforms.fw.util.PathUtil;
 
 
 /**
@@ -45,61 +46,6 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 	 */
 	private static Map<String, String> jsMap = Collections.synchronizedMap(new HashMap<String, String>());
 
-	/**
-	 * "../"のパターンが幾つあったかを数えます。
-	 * @param sp pathを分解した配列。
-	 * @return "../"の数。
-	 */
-	private int countParent(final String[] sp) {
-		int cnt = 0;
-		for (String s: sp) {
-			if ("..".equals(s)) {
-				cnt++;
-			}
-		}
-		return cnt;
-	}
-
-	/**
-	 * 指定された相対パスを絶対パスに変換します。
-	 * @param bpath 元のURIの絶対パス。
-	 * @param path 相対パス。
-	 * @return 絶対パス。
-	 */
-	private String getAbsolutePath(final String bpath, final String path) {
-		if (path.indexOf("./") == 0) {
-			// 同じパス
-			String[] bsp = bpath.split("/");
-			StringBuilder sb = new StringBuilder();
-			for (int i = 1; i < bsp.length - 1; i++) {
-				sb.append('/');
-				sb.append(bsp[i]);
-			}
-			sb.append(path.substring(1));
-			return sb.toString();
-		} else if (path.indexOf("../") == 0) {
-			logger.debug("getAbsolutePath:" + bpath + "," + path);
-			String[] sp = path.split("/");
-			int pcnt = this.countParent(sp);
-			
-			String[] bsp = bpath.split("/");
-			StringBuilder sb = new StringBuilder();
-			for (int i = 1; i < bsp.length - pcnt - 1; i++) {
-				sb.append("/");
-				sb.append(bsp[i]);
-			}
-			for (int i = pcnt; i < sp.length; i++) {
-				sb.append("/");
-				sb.append(sp[i]);
-			}
-			String abspath = sb.toString();
-			logger.debug("getAbsolutePath:" + abspath);
-			return abspath;
-		} else {
-			// 絶対パス設定のはず。
-			return path;
-		}
-	}
 	
 	/**
 	 * import文のキャッシュ対策を行う。
@@ -113,21 +59,21 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 		if (js != null) {
 			Pattern p = Pattern.compile("import.*\\{(.+?)}.*from.*['\\\"](.+?)['\\\"]");
 			Matcher m = p.matcher(js);
-			logger.debug("JsPath:" + path);
+//			logger.debug("JsPath:" + path);
 			StringBuilder sb = new StringBuilder();
 			int idx0 = 0;
 			while (m.find()) {
 				sb.append(js.substring(idx0, m.start()));
 				idx0 = m.end();
 				logger.debug("JsImport:" + m.group(1).trim() + ":" + m.group(2));
-				String abspath = this.getAbsolutePath(path, m.group(2));
+				String abspath = PathUtil.getAbsolutePath(path, m.group(2));
 				Long t = this.getLastUpdate(abspath);
 				if (t == null) {
 					this.readWebResource(req, abspath);
 					t = this.getLastUpdate(abspath);
 				}
 				String imp = "import { " + m.group(1).trim() + " } from '" + m.group(2) + "?t=" + t + "'";
-				logger.debug("Abs path:" + abspath + ", t=" + t);
+//				logger.debug("Abs path:" + abspath + ", t=" + t);
 				sb.append(imp);
 			}
 			sb.append(js.substring(idx0));
@@ -174,7 +120,7 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 					String contents = this.readJs(sreq, fname);
 					if (contents != null) {
 						contents = this.rewriteImport(sreq, fname, contents);
-						logger.debug("contents=" + contents);
+						// logger.debug("contents=" + contents);
 						sresp.setContentType("text/javascript; charset=utf-8");
 						Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
 						logger.debug("ts=" + ts);
