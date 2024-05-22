@@ -6,6 +6,10 @@
 	<artifactId>dataforms3</artifactId>
 	<version>3.0.1-SNAPSHOT</version>
 	<name>dataforms version 3</name>
+	<!--
+		以下の環境変数を設定してください。
+		env.JSDOC : jsdocコマンド (ex: C:\Users\takay\AppData\Roaming\npm\jsdoc.cmd)
+	-->
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
@@ -120,6 +124,77 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<!-- Jsdoc作成 -->
+					<execution>
+						<id>generate jsdoc</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>${env.JSDOC}</executable>
+							<arguments>
+								<argument>-d</argument>
+								<argument>src/main/java/META-INF/resources/doc/jsdoc</argument>
+								<argument>-r</argument>
+								<argument>src/main/java/META-INF/resources/dataforms</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- javadocの作成 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<author>true</author>
+					<source>11</source>
+					<show>protected</show>
+					<encoding>UTF-8</encoding>
+					<charset>UTF-8</charset>
+					<docencoding>UTF-8</docencoding>
+					<additionalJOption>-J-Dfile.encoding=UTF-8</additionalJOption>
+					<reportOutputDirectory>src/main/java/META-INF/resources/doc</reportOutputDirectory>
+					<destDir>javadoc</destDir>
+					<additionalDependencies>
+						<additionalDependency>
+							<groupId>org.apache.tomcat</groupId>
+							<artifactId>tomcat-servlet-api</artifactId>
+							<version>9.0.10</version>
+						</additionalDependency>
+						<additionalDependency>
+							<groupId>javax.activation</groupId>
+							<artifactId>activation</artifactId>
+							<version>1.1.1</version>
+						</additionalDependency>
+						<additionalDependency>
+							<groupId>javax.mail</groupId>
+							<artifactId>mail</artifactId>
+							<version>1.4</version>
+						</additionalDependency>
+						<additionalDependency>
+							<groupId>org.apache.derby</groupId>
+							<artifactId>derbyshared</artifactId>
+							<version>10.15.2.0</version>
+						</additionalDependency>
+					</additionalDependencies>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- コンパイル -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
