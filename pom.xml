@@ -9,7 +9,16 @@
 	<!--
 		以下の環境変数を設定してください。
 		env.JSDOC : jsdocコマンド (ex: C:\Users\takay\AppData\Roaming\npm\jsdoc.cmd)
+		env.MAKEVER : バージョン情報作成コマンド。 (ex: makever.bat)
 	-->
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Java VMのパス　-->
+		<buildDate>${maven.build.timestamp}</buildDate>
+		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
+	</properties>
+	
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
@@ -129,6 +138,21 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>3.1.0</version>
 				<executions>
+					<!-- バージョン情報ファイルの作成 -->
+					<execution>
+						<id>generate-dataforms-mf</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>${env.MAKEVER}</executable>
+							<arguments>
+								<argument>${project.basedir}</argument>
+								<argument>${project.version}-${maven.build.timestamp}</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
 					<!-- Jsdoc作成 -->
 					<execution>
 						<id>generate jsdoc</id>
