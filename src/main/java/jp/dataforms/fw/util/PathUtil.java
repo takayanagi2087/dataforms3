@@ -75,4 +75,36 @@ public final class PathUtil {
 		}
 	}
 
+	
+	/**
+	 * 指定された元になるパスに対する絶対パスの相対パスを作成します。
+	 * @param bpath 元になるパス
+	 * @param path 絶対パス。
+	 * @return pathを相対パスに変換したもの。
+	 */
+	public static String getRelativePath(final String bpath, final String path) {
+		String[] ssp = path.split("/");
+		String[] sp = bpath.split("/");
+		int sidx = 0;
+		StringBuilder psb = new StringBuilder();
+		for (int i = 0; i < ssp.length && i < sp.length; i++) {
+			if (!ssp[i].equals(sp[i])) {
+				sidx = i;
+				break;
+			}
+		}
+		for (int i = sidx; i < sp.length - 1; i++) {
+			psb.append("../");
+		}
+		if (psb.length() == 0) {
+			psb.append("./");
+		}
+		for (int i = sidx; i < ssp.length; i++) {
+			if (i > sidx) {
+				psb.append("/");
+			}
+			psb.append(ssp[i]);
+		}
+		return psb.toString();
+	}
 }

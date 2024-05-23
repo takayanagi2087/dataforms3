@@ -26,11 +26,13 @@ import jp.dataforms.fw.devtool.field.WebSourcePathField;
 import jp.dataforms.fw.devtool.webres.gen.FormHtmlGenerator;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.PresenceField;
+import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.MessagesUtil;
+import jp.dataforms.fw.util.PathUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.ValidationError;
 
@@ -334,6 +336,27 @@ public class WebResourceForm extends Form {
 		return template;
 	}
 
+	
+	/**
+	 * Javascriptのモジュールインポートの構文を作成します。
+	 * @param cls クラス。
+	 * @return Javascriptのモジュールインポートの構文。
+	 */
+	private String getImportModule(final Class<?> cls) {
+		String superClassName = cls.getSuperclass().getName();
+		String className = cls.getName();
+
+		FunctionMap conv = WebComponent.getFunctionMap();
+		String sscript = conv.getWebPath(superClassName) + ".js";
+		String script = conv.getWebPath(className) + ".js";
+		logger.debug("sscript=" + sscript);
+		logger.debug("script=" + script);
+		
+		String jspath = PathUtil.getRelativePath(script, sscript);
+		String ret = "import { " + cls.getSuperclass().getSimpleName() + " } from '" + jspath + "';";
+		return ret;
+	}
+	
 	/**
 	 * javascriptファイルを作成します。
 	 * @param data データ。
@@ -342,7 +365,6 @@ public class WebResourceForm extends Form {
 	 *
 	 */
 	private String generateJavascriptFile(final Map<String, Object> data) throws Exception {
-
 		String setFormData = this.getTemplate("template/setFormData.js.template");
 		String validateForm = this.getTemplate("template/validateForm.js.template");
 		String buttonHandler = this.getTemplate("template/buttonHandler.js.template");
@@ -359,6 +381,8 @@ public class WebResourceForm extends Form {
 		String className = ClassNameUtil.getSimpleClassName(fullClassName);
 		String src = this.getTemplate(cls);
 		String gensrc = src.replaceAll("\\$\\{className\\}", className);
+		String moduleName = this.getImportModule(cls);
+		gensrc = gensrc.replaceAll("\\$\\{importModule\\}", moduleName);
 		gensrc = gensrc.replaceAll("\\$\\{superClassName\\}", superClassName);
 		gensrc = gensrc.replaceAll("\\$\\{setFormData\\}", setFormData);
 		gensrc = gensrc.replaceAll("\\$\\{validateForm\\}", validateForm);

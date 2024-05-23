@@ -4,12 +4,14 @@
 
 'use strict';
 
+${importModule}
+
 /**
  * @class ${className}
  *
  * @extends ${superClassName}
  */
-class ${className} extends ${superClassName} {
+export class ${className} extends ${superClassName} {
 	/**
 	 * コンストラクタ。
 	 */
