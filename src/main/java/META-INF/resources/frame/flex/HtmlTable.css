@@ -78,6 +78,10 @@ table.columnFixedTable {
 	border-collapse: collapse;
 }
 
+table.columnFixedTable thead th {
+	overflow: hidden;
+}
+
 table.columnFixedTable thead,
 table.columnFixedTable tbody,
 table.columnFixedTable tfoot {

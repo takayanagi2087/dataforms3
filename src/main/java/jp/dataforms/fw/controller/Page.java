@@ -273,12 +273,10 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @throws Exception 例外。
 	 */
 	protected List<String> getScriptTree(final List<String> list, final Class<?> cls) throws Exception {
-		logger.debug("getScriptTree cls=" + cls.getName());
 		Class<?> c = cls;
 		List<String> l = new ArrayList<String>();
 		while (true) {
 			String js = this.getClassScriptPath(c);
-			logger.debug("*** js = " + js);
 			if (basicJsCache.contains(js)) {
 				break;
 			}

@@ -109,26 +109,6 @@ public class DataFormsServlet extends HttpServlet {
 	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	
 	/**
-	 * IE許可のシンボル。
-	 */
-	public static final String ALLOW_IE = "allowIE";
-
-	/**
-	 * BABELコマンドのシンボル。
-	 */
-	public static final String BABEL_COMMAND = "babelCommand";
-
-	/**
-	 * BABEL standalineのシンボル。
-	 */
-	public static final String BABEL_STANDALONE = "standalone";
-
-	/**
-	 * BABELの作業領域。
-	 */
-	public static final String BABEL_WORK = "babelWork";
-
-	/**
 	 * 実行のメソッド名。
 	 */
 	private static final String EXEC_METHOD = "exec";

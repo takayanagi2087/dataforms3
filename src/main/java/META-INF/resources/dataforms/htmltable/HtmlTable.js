@@ -58,6 +58,10 @@ export class HtmlTable extends WebComponent {
 		this.fields = [];
 	}
 
+	/**
+	 * テーブルクラスかどうかを判定します。
+	 * @returns テーブルクラスの場合true。
+	 */
 	isHtmlTable() {
 		return true;
 	}
@@ -90,28 +94,6 @@ export class HtmlTable extends WebComponent {
 				});
 			}
 			this.setFixedColumnStyle();
-			let bt = currentPage.getBrowserType();
-			logger.log("browserType=" + bt);
-			let isEdge = (bt == Page.BROWSER_EDGE);
-			let isIe = (bt == Page.BROWSER_IE);
-			if (isIe || isEdge) {
-				// Edgeはtheadのstickyの動作がおかしいので、theadの固定をスクリプトで行う。
-				this.get().find("thead").css("position", "relative");
-				this.timeoutId = null;
-				this.get().scroll(() => {
-					if (this.timeoutId != null) {
-						clearTimeout(this.timeoutId);
-						this.timeoutId = null;
-					}
-					this.timeoutId = setTimeout(() => {
-						let top = this.get().scrollTop();
-						this.get().find("thead").css("top", top);
-						if (isIe) {
-							this.moveColumnForIe();
-						}
-					}, 100 ) ;
-				});
-			}
 		}
 		this.setSortMark();
 		this.setColumnSortEvent();
@@ -430,6 +412,9 @@ export class HtmlTable extends WebComponent {
 		let warray = [];
 		let warrayAll = [];
 		this.find("tbody tr:first").find("td").each((_, el) => {
+			if ($(el).css("width") == "0px") {
+				$(el).css("width", "100px");
+			}
 			warray.push($(el).width());
 			let fw = this.getColumnWidth($(el));
 			warrayAll.push(fw);
@@ -452,37 +437,6 @@ export class HtmlTable extends WebComponent {
 		this.columnWidthList = warrayAll;
 
 	}
-
-
-	/**
-	 * IE用のカラム位置設定。
-	 */
-	setColumnLeftForIe(tr) {
-		let sx = this.get().scrollLeft();
-		tr.children(".fixedColumn").each((_, el) => {
-			$(el).css("left", sx + "px");
-		});
-	}
-
-
-	/**
-	 * IE用のカラム移動。
-	 */
-	moveColumnForIe() {
-		this.get().find("th.fixedColumn").css("position", "relative");
-		this.get().find("td.fixedColumn").css("position", "relative");
-		this.find("thead tr").each((_, el) => {
-			this.setColumnLeftForIe($(el));
-		});
-		this.find("tbody tr").each((_, el) => {
-			this.setColumnLeftForIe($(el));
-		});
-		this.find("tfoot tr").each((_, el) => {
-			this.setColumnLeftForIe($(el));
-		});
-
-	}
-
 
 	/**
 	 * カラムにソートマークを設定する。
