@@ -51,6 +51,7 @@ export class Page extends DataForms {
 
 	/**
 	 * Microsoft EDGE。
+	 * dataforms3ではカラム固定テープはサポートされません。
 	 */
 	static get BROWSER_EDGE() {
 		 return "edge";
@@ -65,6 +66,7 @@ export class Page extends DataForms {
 
 	/**
 	 *  Microsoft Internet Explorer。
+	 * dataforms3ではサポートされません。
 	 */
 	static get BROWSER_IE() {
 		return "ie";
@@ -114,6 +116,16 @@ export class Page extends DataForms {
 		super();
 		this.id = "mainDiv";
 	}
+
+	/**
+	 * Pagegから派生したクラスかどうかを判定します。
+	 * @return Pageから派生したクラスの場合true。
+	 */
+	isPage() {
+		return true;
+	}
+
+
 
 	/**
 	 * loggerの設定をおこないます。

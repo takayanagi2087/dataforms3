@@ -29,6 +29,10 @@ export class Dialog extends DataForms {
 
 	}
 
+	/**
+	 * Dialogから派生したクラスかどうかを判定します。
+	 * @return Dialogから派生したクラスの場合true。
+	 */
 	isDialog() {
 		return true;
 	}

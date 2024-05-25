@@ -59,8 +59,8 @@ export class HtmlTable extends WebComponent {
 	}
 
 	/**
-	 * テーブルクラスかどうかを判定します。
-	 * @returns テーブルクラスの場合true。
+	 * HtmlTableから派生したクラスかどうかを判定します。
+	 * @return HtmlTableから派生したクラスの場合true。
 	 */
 	isHtmlTable() {
 		return true;

@@ -160,6 +160,10 @@ export class Form extends WebComponent {
 		this.initHtmlTable(this.htmlTableList);
 	}
 
+	/**
+	 * Formから派生したクラスかどうかを判定します。
+	 * @return Formから派生したクラスの場合true。
+	 */
 	isForm() {
 		return true;
 	}

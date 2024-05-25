@@ -45,19 +45,43 @@ export class WebComponent {
 		this.idPrepared = false;
 	}
 
+	/**
+	 * DataFormsから派生したクラスかどうかを判定します。
+	 * @return DataFormsから派生したクラスの場合true。
+	 */
 	isDataForms() {
 		return false;
 	}
 
+	/**
+	 * Formから派生したクラスかどうかを判定します。
+	 * @return Formから派生したクラスの場合true。
+	 */
 	isForm() {
 		return false;
 	}
 
+	/**
+	 * HtmlTableから派生したクラスかどうかを判定します。
+	 * @return HtmlTableから派生したクラスの場合true。
+	 */
 	isHtmlTable() {
 		return false;
 	}
 
+	/**
+	 * Dialogから派生したクラスかどうかを判定します。
+	 * @return Dialogから派生したクラスの場合true。
+	 */
 	isDialog() {
+		return false;
+	}
+
+	/**
+	 * Pagegから派生したクラスかどうかを判定します。
+	 * @return Pageから派生したクラスの場合true。
+	 */
+	isPage() {
 		return false;
 	}
 

@@ -28,6 +28,10 @@ export class DataForms extends WebComponent {
 		super();
 	}
 
+	/**
+	 * DataFormsから派生したクラスかどうかを判定します。
+	 * @return DataFormsから派生したクラスの場合true。
+	 */
 	isDataForms() {
 		return true;
 	}
