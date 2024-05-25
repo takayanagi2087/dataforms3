@@ -21,7 +21,6 @@ import jp.dataforms.fw.dao.ForeignKey;
 import jp.dataforms.fw.dao.Index;
 import jp.dataforms.fw.dao.JDBCConnectableObject;
 import jp.dataforms.fw.dao.JoinConditionInterface;
-import jp.dataforms.fw.dao.JoinConditionInterface1;
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.Query.JoinInfo;
 import jp.dataforms.fw.dao.QueryPager;
@@ -69,7 +68,6 @@ import jp.dataforms.fw.util.StringUtil;
  * </pre>
  *
  */
-@SuppressWarnings("deprecation")
 public abstract class SqlGenerator implements JDBCConnectableObject {
     /**
      * Logger。
@@ -1003,16 +1001,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @return 結合条件。
 	 */
 	private String getJoinCondition(final Table table, final JoinInfo joinInfo) {
-		JoinConditionInterface1 jci1 = joinInfo.getJoinCondition1();
+		JoinConditionInterface jci1 = joinInfo.getJoinCondition();
 		if (jci1 != null) {
 			return jci1.getJoinCondition(joinInfo.getJoinTable());
 		} else {
-			JoinConditionInterface jci = joinInfo.getJoinCondition();
-			if (jci != null) {
-				return jci.getJoinCondition(table, joinInfo.getJoinTable());
-			} else {
-				return table.getJoinCondition(joinInfo.getJoinTable(), joinInfo.getJoinTable().getAlias());
-			}
+			return table.getJoinCondition(joinInfo.getJoinTable(), joinInfo.getJoinTable().getAlias());
 		}
 	}
 
@@ -1049,7 +1042,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				logger.debug("getJoinConditionOtherThamMainTable");
 //				TableList tlist = new TableList();
 				List<JoinInfo> tlist = new ArrayList<JoinInfo>();
-				tlist.add(new JoinInfo(null, query.getMainTable(), (JoinConditionInterface1) null));
+				tlist.add(new JoinInfo(null, query.getMainTable(), (JoinConditionInterface) null));
 				if (list != null) {
 					for (JoinInfo ji: list) {
 						tlist.add(ji);

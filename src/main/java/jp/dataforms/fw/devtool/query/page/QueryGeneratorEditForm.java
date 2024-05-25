@@ -15,7 +15,7 @@ import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.controller.EditForm;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Dao;
-import jp.dataforms.fw.dao.JoinConditionInterface1;
+import jp.dataforms.fw.dao.JoinConditionInterface;
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.Query.JoinInfo;
 import jp.dataforms.fw.dao.Table;
@@ -584,7 +584,7 @@ public class QueryGeneratorEditForm extends EditForm {
 			if (StringUtil.isBlank(joinCondition)) {
 				Dao dao = new Dao(this);
 				SqlGenerator gen = dao.getSqlGenerator();
-				joinCondition = gen.getJoinConditionOtherThamMainTable(tlist, new Query.JoinInfo(Query.JoinInfo.INNER_JOIN, t, (JoinConditionInterface1) null));
+				joinCondition = gen.getJoinConditionOtherThamMainTable(tlist, new Query.JoinInfo(Query.JoinInfo.INNER_JOIN, t, (JoinConditionInterface) null));
 				if (StringUtil.isBlank(joinCondition)) {
 					joinCondition = this.getJoinCondition(query, t);
 					if (joinCondition == null) {
@@ -652,7 +652,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		list.addAll(this.getJoinTableList(join, "j"));
 		List<Query.JoinInfo> ret = new ArrayList<Query.JoinInfo>();
 		for (Table t: list) {
-			ret.add(new Query.JoinInfo(Query.JoinInfo.INNER_JOIN, t, (JoinConditionInterface1) null));
+			ret.add(new Query.JoinInfo(Query.JoinInfo.INNER_JOIN, t, (JoinConditionInterface) null));
 		}
 		return ret;
 	}

@@ -206,35 +206,6 @@ public class BlobFileStore extends FileStore {
 		return fobj;
 	}
 
-	/**
-	 * ファイルストアからファイルの情報と内容を取得します。
-	 * @param colValue DBのカラム値。
-	 * @return FileObjectのインスタンス。
-	 * @throws Exception 例外。
-	 * @deprecated readForDownloadを使用してください。
-	 */
-	@Deprecated
-	public FileObject readFileInfoAndBody(final Object colValue) throws Exception {
-		FileObject fobj = null;
-		InputStream is = (InputStream) colValue;
-		if (is != null) {
-			try {
-				BlobFileHeader header = this.readBlobFileHeader(is);
-				fobj = header.newFileObject();
-				File tempFile = this.makeTempFile();
-				fobj.setTempFile(tempFile);
-				FileOutputStream os = new FileOutputStream(tempFile);
-				try {
-					FileUtil.copyStream(is, os);
-				} finally {
-					os.close();
-				}
-			} finally {
-				is.close();
-			}
-		}
-		return fobj;
-	}
 
 	/**
 	 * ファイルストアからファイルの情報と内容を取得します(ダウンロード用)。

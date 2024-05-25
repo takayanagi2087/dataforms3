@@ -239,39 +239,6 @@ public class Dao implements JDBCConnectableObject {
 		this.blobReadMode = blobReadMode;
 	}
 
-
-	/**
-	 * BLOBダウンロードフラグを取得します。
-	 *
-	 * @return BLOBダウンロードフラグ。
-	 * @deprecated getBlobReadMode()を使用してください。
-	 */
-	@Deprecated
-	public boolean isBlobDownload() {
-		return this.blobReadMode == BlobReadMode.FOR_DOWNLOAD;
-	}
-
-	/**
-	 * BLOBダウンロードフラグを設定します。
-	 * <pre>
-	 * 通常はfalseに設定されており、BLOB項目はファイル名とサイズのみ取得します。
-	 * BLOBの本体をダウンロードする場合、trueを設定すると、BLOBの内容を一時ファイルに
-	 * 展開し、ダウンロード可能な状態にします。
-	 * </pre>
-	 * @param blobDownload BLOBダウンロードフラグ.
-	 * @deprecated setBlobDownload(final boolean blobDownload)を使用してください。
-	 */
-	@Deprecated
-	public void setBlobDownload(final boolean blobDownload) {
-//		this.blobDownload = blobDownload;
-		if (blobDownload) {
-			this.blobReadMode = BlobReadMode.FOR_DOWNLOAD;
-		} else {
-			this.blobReadMode = BlobReadMode.FOR_DISPLAY_FILE_INFO;
-		}
-	}
-
-
 	/**
 	 * SQLジェネレータを取得するします。
 	 * @return SQLジェネレータ。
