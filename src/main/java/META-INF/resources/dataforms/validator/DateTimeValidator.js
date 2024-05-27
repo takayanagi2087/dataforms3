@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { SimpleDateFormat } from '../util/SimpleDateFormat.js';
 import { MessagesUtil } from '../util/MessagesUtil.js';
 import { FieldValidator } from './FieldValidator.js';
 

@@ -54,7 +54,7 @@ public class LangCodeField extends VarcharSingleSelectField {
 	public void init() throws Exception {
 		super.init();
 		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
-		String[] langlist = DataFormsServlet.getSupportLanguage().split(",");
+		List<String> langlist = DataFormsServlet.getSupportLanguage();
 		Map<String, Object> dm = new HashMap<String, Object>();
 		dm.put("name", "default");
 		dm.put("value", "default");

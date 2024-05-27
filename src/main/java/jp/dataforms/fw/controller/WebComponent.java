@@ -852,10 +852,10 @@ public class WebComponent implements JDBCConnectableObject {
 	 * ユニークidア使用フラグを設定します。
 	 * @param useUniqueId ユニークidア使用フラグ使用フラグ。
 	 */
-	public static void setUseUniqueId(final Boolean useUniqueId) {
+/*	public static void setUseUniqueId(final Boolean useUniqueId) {
 		WebComponent.useUniqueId = useUniqueId;
 	}
-
+*/
 
 	/**
 	 * htmlのidアトリビュートをdata-idに変更する。

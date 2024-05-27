@@ -120,12 +120,6 @@ public class Page extends DataForms implements WebEntryPoint {
     private static String topPage = "/dataforms/app/top/page/TopPage.df";
 
 
-    /**
-     * キャッシュ・マニフェストファイルのパス。
-     */
-    private static String appcacheFile = null;
-
-
 	/**
 	 * JDBC接続。
 	 */
@@ -155,18 +149,18 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * キャッシュ・マニフェストファイルのパスを取得します。
 	 * @return キャッシュ・マニフェストファイルのパス。
 	 */
-	public static String getAppcacheFile() {
+/*	public static String getAppcacheFile() {
 		return appcacheFile;
 	}
-
+*/
 	/**
 	 * キャッシュ・マニフェストファイルのパスを設定します。
 	 * @param appcacheFile キャッシュ・マニフェストファイルのパス。
 	 */
-	public static void setAppcacheFile(final String appcacheFile) {
+/*	public static void setAppcacheFile(final String appcacheFile) {
 		Page.appcacheFile = appcacheFile;
 	}
-
+*/
 	/**
 	 * クラスを継承関係を元にソートします。
 	 * @param list クラスリスト。
@@ -597,30 +591,6 @@ public class Page extends DataForms implements WebEntryPoint {
 	}
 
 	/**
-	 * &lt;html&gt;タグにキャッシュマニフェストファイルの設定を追加します。
-	 * @param html HTML文字列。
-	 * @param context contextパス。
-	 * @return キャッシュマニフェストファイルの設定を追加したHTML。
-	 */
-	protected String addAppcacheFile(final String html, final String context) {
-		String ret = html;
-		if (Page.getAppcacheFile() != null) {
-//			ret = html.replace("<html", "<html manifest=\"" + context + Page.getAppcacheFile() + "\"");
-			Pattern pt = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
-			Matcher m = pt.matcher(html);
-			if (m.find()) {
-				StringBuilder sb = new StringBuilder();
-				int start = m.start();
-				sb.append(html.substring(0, start));
-				sb.append("<html manifest=\"" + context + Page.getAppcacheFile() + "\"");
-				sb.append(html.substring(m.end()));
-				ret = sb.toString();
-			}
-		}
-		return ret;
-	}
-
-	/**
 	 * htmlに対応するPageクラスを返します。
 	 * <pre>
 	 * 基本的に自分自身のクラス(this.getClass()の値)を返します。
@@ -691,7 +661,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		htmlpath = this.getAppropriatePath(htmlpath, req);
 		logger.info("sendHtml={}", htmlpath);
 		String htmltext = this.getWebResource(htmlpath);
-		htmltext = this.addAppcacheFile(htmltext, context);
+//		htmltext = this.addAppcacheFile(htmltext, context);
 		// langアトリビュートの属性
 		Pattern p = Pattern.compile("\\<html.*?lang\\=.*?\\>");
 		Matcher m = p.matcher(htmltext);
@@ -881,10 +851,6 @@ public class Page extends DataForms implements WebEntryPoint {
      */
 	protected Map<String, String> getMessageMap() {
 		Map<String, String> map = MessagesUtil.getClientMessageMap(this);
-//		String clsname = this.getClass().getName();
-//		String pageprop = "/" + clsname.replaceAll("\\.", "/");
-//		Map<String, String> pageMap = MessagesUtil.getMessageMap(this.getPage(), pageprop);
-//		map.putAll(pageMap);
 		return map;
 	}
 

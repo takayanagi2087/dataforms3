@@ -1,5 +1,7 @@
 package jp.dataforms.fw.devtool.menu.page;
 
+import java.util.List;
+
 import jp.dataforms.fw.devtool.field.PathNameField;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
@@ -56,8 +58,7 @@ public class MenuTable extends EditableHtmlTable {
 			.addValidator(new PathValidator());
 		flist.addField(new TextField(ID_PACKAGE_NAME)).addValidator(new RequiredValidator());
 		flist.addField(new TextField(ID_DEFAULT_NAME)).addValidator(new RequiredValidator());
-		String langConf = DataFormsServlet.getSupportLanguage();
-		String[] langList = langConf.split(",");
+		List<String> langList = DataFormsServlet.getSupportLanguage();
 		for (String lang: langList) {
 			flist.addField(new TextField(lang.trim() + "Name"));
 		}

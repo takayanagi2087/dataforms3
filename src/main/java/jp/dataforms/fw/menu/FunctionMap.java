@@ -462,7 +462,7 @@ public class FunctionMap {
 		ret.put(MenuEditForm.ID_GEN_ADD_PAGE_CODE,  this.genAddPageCode() ? "1": "0");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Menu> mlist = this.getMenuList();
-		String[] langList = DataFormsServlet.getSupportLanguage().split(",");
+		List<String> langList = DataFormsServlet.getSupportLanguage();
 		for (Menu m: mlist) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put(MenuTable.ID_PATH, m.getPath());

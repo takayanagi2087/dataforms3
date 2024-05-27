@@ -124,7 +124,7 @@ public interface WebEntryPoint {
 	 * @return エラーページ。
 	 */
 	default String getErrorPage() {
-		return DataFormsServlet.getErrorPage();
+		return DataFormsServlet.getErrorPage() + "." + Page.getServlet().getPageExt();
 	}
 
 

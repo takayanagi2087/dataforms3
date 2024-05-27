@@ -22,8 +22,6 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.internal.LinkedTreeMap;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -67,6 +65,8 @@ import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
+import jp.dataforms.fw.util.ConfUtil;
+import jp.dataforms.fw.util.ConfUtil.Conf;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.HttpRangeInfo;
@@ -121,86 +121,12 @@ public class DataFormsServlet extends HttpServlet {
 	/**
 	 * Logger.
 	 */
-//	private static Logger logger = Logger.getLogger(DataFormsServlet.class.getName());
 	private static Logger logger = LogManager.getLogger(DataFormsServlet.class.getName());
-
-	/**
-	 * jndi-prefix.
-	 */
-	private static String jndiPrefix = null;
-
-	/**
-	 * データソース名称.
-	 */
-	private static String dataSourceName = null;
-
-	/**
-	 * WEBリソースアクセス用URL。
-	 */
-	private static String webResourceUrl = null;
-
-	/**
-	 * 文字コード.
-	 */
-	private static String encoding = null;
-
-	/**
-	 * JSONの出力モード指定.
-	 */
-	private static boolean jsonDebug = false;
-
-	/**
-	 * 一時ファイル領域.
-	 */
-	private static String tempDir = null;
-
-	/**
-	 * データエクスポート、インポートディレクトリ.
-	 */
-	private static String exportImportDir = null;
-
-	/**
-	 * CSSとSCRIPT.
-	 */
-	private static String cssAndScript = null;
-
-	/**
-	 * エラーページ.
-	 */
-	private static String errorPage = null;
-
-	/**
-	 * javascriptでのバリデーションを有効にする.
-	 */
-	private static boolean clientValidation = true;
-
-
-	/**
-	 * javascriptのログレベルを設定.
-	 */
-	private static String clientLogLevel = "info";
-
-	/**
-	 * アップロードデータフォルダ.
-	 */
-	private static String uploadDataFolder = null;
-
 
 	/**
 	 * データソースのオブジェクト.
 	 */
 	private DataSource dataSource = null;
-
-
-	/**
-	 * サポート言語.
-	 */
-	private static String supportLanguage = null;
-
-	/**
-	 * 固定言語.
-	 */
-	private static String fixedLanguage = null;
 
 	/**
 	 * 開発ツールの無効化フラグ。
@@ -242,7 +168,7 @@ public class DataFormsServlet extends HttpServlet {
 	/**
 	 * Apache-FOPの設定ファイルのバス。
 	 */
-	private static String apacheFopConfig = "/WEB-INF/apachefop/fop.xconf";
+//	private static String apacheFopConfig = "/WEB-INF/apachefop/fop.xconf";
 
 	/**
 	 * Pageの拡張子を取得します。
@@ -299,84 +225,48 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return WEBリソースアクセス用のURL。
 	 */
 	public static String getWebResourceUrl() {
-		return webResourceUrl;
+		return DataFormsServlet.confUtil.getConf().getApplication().getWebResourceUrl();
 	}
 
+	/**
+	 * 設定情報ユーティリティ。
+	 */
+	private static ConfUtil confUtil = null;
+	
+	/**
+	 * 設定情報を取得します。
+	 * @return 設定情報。
+	 */
+	public static Conf getConf() {
+		return DataFormsServlet.confUtil.getConf();
+	}
+	
 	/**
 	 * 初期化パラメータを取得します。
 	 * @throws ServletException 例外。
 	 */
 	@Override
 	public void init() throws ServletException {
+		
+		DataFormsServlet.confUtil = new ConfUtil();
+		DataFormsServlet.confUtil.readDefaultConf(this);
+		
 		this.initPageOverrideMap();
-		DataFormsServlet.jndiPrefix = this.getServletContext().getInitParameter("jndi-prefix");
-		if (DataFormsServlet.jndiPrefix == null) {
-			DataFormsServlet.jndiPrefix = "java:/comp/env/";
-		}
-		DataFormsServlet.dataSourceName = this.getServletContext().getInitParameter("data-source");
-		logger.info(() -> "init:dataSourceName=" + DataFormsServlet.dataSourceName);
-		String webresurl= this.getServletContext().getInitParameter("web-resource-url");
-		if (!StringUtil.isBlank(webresurl)) {
-			DataFormsServlet.webResourceUrl = webresurl;
-		}
-		logger.info(() -> "init:webResourceUrl=" + DataFormsServlet.webResourceUrl);
-		DataFormsServlet.encoding = this.getServletContext().getInitParameter("encoding");
-		if (DataFormsServlet.encoding == null) {
-			DataFormsServlet.encoding = "utf-8";
-		}
-		logger.info(() -> "init:encoding=" + DataFormsServlet.encoding);
-		DataFormsServlet.jsonDebug = Boolean
-				.parseBoolean(this.getServletContext().getInitParameter("json-debug") == null ? "false"
-						: this.getServletContext().getInitParameter("json-debug"));
-		logger.info(() -> "init:jsonDebug=" + DataFormsServlet.jsonDebug);
-		DataFormsServlet.tempDir = this.getServletContext().getInitParameter("temp-dir");
-		if (DataFormsServlet.tempDir == null) {
-			DataFormsServlet.tempDir = "/tmp";
-		}
+
 		// 一時フォルダがない場合作成する。
-		File tmp = new File(DataFormsServlet.tempDir);
+		File tmp = new File(DataFormsServlet.getTempDir());
 		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
-		logger.info(() -> "init:tempDir=" + DataFormsServlet.tempDir);
-		DataFormsServlet.exportImportDir = this.getServletContext().getInitParameter("export-import-dir");
-		if (DataFormsServlet.exportImportDir == null) {
-			DataFormsServlet.exportImportDir = "/tmp/data";
-		}
-		logger.info(() -> "init:exportImportDir=" + DataFormsServlet.exportImportDir);
-		DataFormsServlet.cssAndScript = this.getServletContext().getInitParameter("css-and-scripts");
-		if (DataFormsServlet.cssAndScript == null) {
-			DataFormsServlet.cssAndScript = "/frame/jslib.html";
-		}
-		logger.info(() -> "init:cssAndScript=" + DataFormsServlet.cssAndScript);
-		DataFormsServlet.errorPage = this.getServletContext().getInitParameter("error-page");
-		if (DataFormsServlet.errorPage == null) {
-			DataFormsServlet.errorPage = "/dataforms/app/errorpage/ErrorPage." + this.getPageExt();
-		} else {
-			DataFormsServlet.errorPage += ("." + this.getPageExt());
-		}
-		logger.info(() -> "init:errorPage=" + DataFormsServlet.errorPage);
-		DataFormsServlet.clientValidation = Boolean
-				.parseBoolean(this.getServletContext().getInitParameter("client-validation") == null ? "true"
-						: this.getServletContext().getInitParameter("client-validation"));
-		logger.info(() -> "init:clientValidation=" + DataFormsServlet.clientValidation);
-		DataFormsServlet.clientLogLevel = this.getServletContext().getInitParameter("client-log-level");
-		if (DataFormsServlet.clientLogLevel == null) {
-			DataFormsServlet.clientLogLevel = "info";
-		}
-		logger.info(() -> "init:clientLogLevel=" + DataFormsServlet.clientLogLevel);
-		DataFormsServlet.uploadDataFolder = this.getServletContext().getInitParameter("upload-data-folder");
-		if (DataFormsServlet.uploadDataFolder == null) {
-			DataFormsServlet.uploadDataFolder = "/uploadData";
-		}
-		logger.info(() -> "init:uploadDataFolder=" + DataFormsServlet.uploadDataFolder);
-		DataFormsServlet.supportLanguage = this.getServletContext().getInitParameter("support-language");
-		if (DataFormsServlet.supportLanguage == null) {
-			DataFormsServlet.supportLanguage = "ja";
-		}
-		logger.info(() -> "init:supportLanguage=" + DataFormsServlet.supportLanguage);
-		DataFormsServlet.fixedLanguage = this.getServletContext().getInitParameter("fixed-language");
-		logger.info(() -> "init:fixedLanguage=" + DataFormsServlet.fixedLanguage);
+		logger.info(() -> "init:tempDir=" + DataFormsServlet.getTempDir());
+		logger.info(() -> "init:exportImportDir=" + DataFormsServlet.getExportImportDir());
+		logger.info(() -> "init:cssAndScript=" + DataFormsServlet.getCssAndScript());
+		logger.info(() -> "init:errorPage=" + DataFormsServlet.getErrorPage());
+		logger.info(() -> "init:clientValidation=" + DataFormsServlet.isClientValidation());
+		logger.info(() -> "init:clientLogLevel=" + DataFormsServlet.getClientLogLevel());
+		logger.info(() -> "init:uploadDataFolder=" + DataFormsServlet.getUploadDataFolder());
+		logger.info(() -> "init:supportLanguage=" + DataFormsServlet.getSupportLanguage());
+		logger.info(() -> "init:fixedLanguage=" + DataFormsServlet.getFixedLanguage());
 		DataFormsServlet.disableDeveloperTools = Boolean
 				.parseBoolean(this.getServletContext().getInitParameter("disable-developer-tools") == null ? "true"
 						: this.getServletContext().getInitParameter("disable-developer-tools"));
@@ -384,81 +274,30 @@ public class DataFormsServlet extends HttpServlet {
 
 		this.initPassword();
 		this.initOnetimePassword();
-
-		DataFormsServlet.cookieCheck = Boolean.parseBoolean(
-				this.getServletContext().getInitParameter("cookie-check") == null ? "false"
-				: this.getServletContext().getInitParameter("cookie-check")
-		);
-		Page.setFramePath(this.getServletContext().getInitParameter("frame-path") == null ? "/frame/default"
-				: this.getServletContext().getInitParameter("frame-path"));
+		Page.setFramePath(DataFormsServlet.getConf().getApplication().getFramePath());
 		logger.info(() -> "init:framePath=" + Page.getFramePath());
-		Page.setAppcacheFile(this.getServletContext().getInitParameter("appcache-file"));
 		this.getMessageProperties();
-		String topPage = this.getServletContext().getInitParameter("top-page");
+		String topPage = DataFormsServlet.getConf().getApplication().getTopPage();
 		if (!StringUtil.isBlank(topPage)) {
 			topPage = topPage.replaceAll("\\.df$", "");
 			Page.setTopPage(topPage);
 		}
-		String backButton = this.getServletContext().getInitParameter("browser-back-button");
-		if (!StringUtil.isBlank(backButton)) {
-			Page.setBrowserBackButton(backButton);
-		}
-		String autoLogin = this.getServletContext().getInitParameter("auto-login");
+		String autoLogin = DataFormsServlet.getConf().getApplication().getAutoLogin();
 		if (!StringUtil.isBlank(autoLogin)) {
 			AutoLoginCookie.setAutoLogin("enabled".equals(autoLogin));
 		}
-		String secureAutoLoginCookie = this.getServletContext().getInitParameter("secure-auto-login-cookie");
+		Boolean secureAutoLoginCookie = DataFormsServlet.getConf().getApplication().getSecureAutoLoginCookie();
 		if (!StringUtil.isBlank(secureAutoLoginCookie)) {
-			AutoLoginCookie.setSecure("true".equals(secureAutoLoginCookie));
-			OnetimePasswordUtil.setSecure("true".equals(secureAutoLoginCookie));
+			AutoLoginCookie.setSecure(secureAutoLoginCookie);
+			OnetimePasswordUtil.setSecure(secureAutoLoginCookie);
 		}
-		DeveloperPage.setJavaSourcePath(this.getServletContext().getInitParameter("java-source-path"));
-		DeveloperPage.setWebSourcePath(this.getServletContext().getInitParameter("web-source-path"));
-		String streamingBlockSize = this.getServletContext().getInitParameter("streaming-block-size");
-		logger.debug(() -> "streamingBlockSize=" + streamingBlockSize);
-		if (!StringUtil.isBlank(streamingBlockSize)) {
-			@SuppressWarnings("unchecked")
-			List<LinkedTreeMap<String, Object>> bslist = (List<LinkedTreeMap<String, Object>>) JsonUtil.decode(streamingBlockSize, ArrayList.class);
-			HttpRangeInfo.setBlockSizeList(bslist);
-		}
-
-		String contentTypeList = this.getServletContext().getInitParameter("content-type-list");
-		logger.debug(() -> "contentTypeList=" + contentTypeList);
-		if (!StringUtil.isBlank(contentTypeList)) {
-			@SuppressWarnings("unchecked")
-			List<LinkedTreeMap<String, String>> ctlist = (List<LinkedTreeMap<String, String>>) JsonUtil.decode(contentTypeList, ArrayList.class);
-			FileObject.setContentTypeList(ctlist);
-		}
-		String backupFileName = this.getServletContext().getInitParameter("backup-file-name");
-		if (backupFileName == null) {
-			backupFileName = "backup";
-		}
-		BackupForm.setBackupFileName(backupFileName);
-		String apacheFopConfig = this.getServletContext().getInitParameter("apache-fop-config");
-		logger.debug(() -> "apacheFopConfig=" + contentTypeList);
-		if (apacheFopConfig != null) {
-			DataFormsServlet.setApacheFopConfig(apacheFopConfig);
-		}
-
-		Boolean multiOpenMenu = Boolean.parseBoolean(
-				this.getServletContext().getInitParameter("multi-open-menu") == null
-				? "true"
-				: this.getServletContext().getInitParameter("multi-open-menu")
-		);
-		SideMenu.setMultiOpenMenu(multiOpenMenu);
-
-		Boolean useUniqueId = Boolean.parseBoolean(
-				this.getServletContext().getInitParameter("use-unique-id") == null
-				? "true"
-				: this.getServletContext().getInitParameter("use-unique-id")
-		);
-		WebComponent.setUseUniqueId(useUniqueId);
-
-		Boolean checkUserImport = Boolean.parseBoolean(this.getServletContext().getInitParameter("check-user-import") == null ? "true"
-						: this.getServletContext().getInitParameter("check-user-import"));
-		logger.info(() -> "init:checkUserImport=" + checkUserImport);
-		DeveloperEditForm.setCheckUserImport(checkUserImport);
-
+		DeveloperPage.setJavaSourcePath(DataFormsServlet.getConf().getDevelopmentTool().getJavaSourcePath());
+		DeveloperPage.setWebSourcePath(DataFormsServlet.getConf().getDevelopmentTool().getWebSourcePath());
+		HttpRangeInfo.setBlockSizeList(DataFormsServlet.getConf().getApplication().getStreamingBlockSize());
+		FileObject.setContentTypeList(DataFormsServlet.getConf().getApplication().getContentTypeList());
+		BackupForm.setBackupFileName(DataFormsServlet.getConf().getApplication().getBackupFileName());
+		SideMenu.setMultiOpenMenu(DataFormsServlet.getConf().getApplication().getMultiOpenMenu());
+		DeveloperEditForm.setCheckUserImport(DataFormsServlet.getConf().getAppInitialize().getCheckUserImport());
 		this.getUserEditFormConf();
 		this.getUserRegistConf();
 		super.init();
@@ -546,13 +385,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return サポートする言語リスト。
 	 */
 	public static List<String> getSupportLanguageList() {
-		String langs = DataFormsServlet.getSupportLanguage();
-		String[] langArray = langs.split(",");
-		List<String> ret = new ArrayList<String>();
-		for (String lang: langArray) {
-			ret.add(lang.trim());
-		}
-		return ret;
+		return DataFormsServlet.getSupportLanguage();
 	}
 
 
@@ -601,22 +434,10 @@ public class DataFormsServlet extends HttpServlet {
 	 * メッセージプロパティの設定情報を取得します。
 	 */
 	private void getMessageProperties() {
-		String clientMessages = this.getServletContext().getInitParameter("client-messages");
-		if (clientMessages == null) {
-			clientMessages = "/frame/messages/ClientMessages";
-		}
-		String appClientMessages = this.getServletContext().getInitParameter("app-client-messages");
-		if (appClientMessages == null) {
-			appClientMessages = "/frame/messages/AppClientMessages";
-		}
-		String messages = this.getServletContext().getInitParameter("messages");
-		if (messages == null) {
-			messages = "/frame/messages/Messages";
-		}
-		String appMessages = this.getServletContext().getInitParameter("app-messages");
-		if (appMessages == null) {
-			appMessages = "/frame/messages/AppMessages";
-		}
+		String clientMessages = DataFormsServlet.getConf().getApplication().getMessageResource().getClientMessages();
+		String appClientMessages = DataFormsServlet.getConf().getApplication().getMessageResource().getAppClientMessages();
+		String messages = DataFormsServlet.getConf().getApplication().getMessageResource().getMessages();
+		String appMessages = DataFormsServlet.getConf().getApplication().getMessageResource().getAppMessages();
 		logger.info("init:clientMessages={}", clientMessages);
 		logger.info("init:appClientMessages={}", appClientMessages);
 		logger.info("init:messages={}", messages);
@@ -625,12 +446,7 @@ public class DataFormsServlet extends HttpServlet {
 		MessagesUtil.setAppClientMessagesName(appClientMessages);
 		MessagesUtil.setMessagesName(messages);
 		MessagesUtil.setAppMessagesName(appMessages);
-
-		String clientMessagesTransfer = this.getServletContext().getInitParameter("client-message-transfer");
-		if (clientMessagesTransfer == null) {
-			clientMessagesTransfer = "CLIENT_ONLY";
-		}
-		MessagesUtil.setClientMessageTransfer(ClientMessageTransfer.valueOf(clientMessagesTransfer));
+		MessagesUtil.setClientMessageTransfer(ClientMessageTransfer.valueOf("CLIENT_ONLY"));
 	}
 
 	/**
@@ -682,24 +498,26 @@ public class DataFormsServlet extends HttpServlet {
 	 * DBの接続チェックを行ないます。
 	 */
 	private void checkDbConnection() {
-		if (DataFormsServlet.dataSourceName == null) {
+		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
+		String jndiPrefix = DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix();
+		if (dataSourceName == null) {
 			// web.xmlにデータソースの指定が無い場合。
 			DataFormsServlet.configStatus = "error.notfounddatasourcesetting";
 		} else {
 			try {
-				if (DataFormsServlet.dataSourceName != null) {
+				if (dataSourceName != null) {
 					Context initContext = new InitialContext();
-					String dspath = DataFormsServlet.jndiPrefix + DataFormsServlet.dataSourceName;
+					String dspath = jndiPrefix + dataSourceName;
 					logger.info(() -> "lookup data source=" + dspath);
 					this.dataSource = (DataSource) initContext.lookup(dspath);
 
 					try {
-						DataFormsServlet.duplicateErrorMessage = (String) initContext.lookup(DataFormsServlet.jndiPrefix + "duplicateErrorMessage");
+						DataFormsServlet.duplicateErrorMessage = (String) initContext.lookup(jndiPrefix + "duplicateErrorMessage");
 					} catch (Exception ex) {
 						logger.debug(() -> ex.getMessage());
 					}
 					try {
-						DataFormsServlet.foreignKeyErrorMessage = (String) initContext.lookup(DataFormsServlet.jndiPrefix + "foreignKeyErrorMessage");
+						DataFormsServlet.foreignKeyErrorMessage = (String) initContext.lookup(jndiPrefix + "foreignKeyErrorMessage");
 					} catch (Exception ex) {
 						logger.debug(() -> ex.getMessage());
 					}
@@ -842,7 +660,8 @@ public class DataFormsServlet extends HttpServlet {
 	 * @throws Exception 例外。
 	 */
 	public final Connection getConnection() throws Exception {
-		if (DataFormsServlet.dataSourceName != null) {
+		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
+		if (dataSourceName != null) {
 			Connection conn = this.dataSource.getConnection();
 			conn.setAutoCommit(false);
 			return conn;
@@ -857,7 +676,8 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return エラーページ。
 	 */
 	public static String getErrorPage() {
-		return errorPage;
+//		return errorPage;
+		return DataFormsServlet.getConf().getApplication().getErrorPage();
 	}
 
 	/**
@@ -865,7 +685,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return 一時ファイル領域。
 	 */
 	public static String getTempDir() {
-		return tempDir;
+		return DataFormsServlet.getConf().getApplication().getTempDir();
 	}
 
 	/**
@@ -873,7 +693,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return Export/Inputで使用するデフォルトフォルダ。
 	 */
 	public static String getExportImportDir() {
-		return exportImportDir;
+		return DataFormsServlet.getConf().getDevelopmentTool().getExportImportDir();
 	}
 
 	/**
@@ -881,7 +701,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return クライアントバリデーション有りの場合true。
 	 */
 	public static boolean isClientValidation() {
-		return clientValidation;
+		return DataFormsServlet.getConf().getApplication().getClientValidation();
 	}
 
 
@@ -890,7 +710,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return 文字コード。
 	 */
 	public static String getEncoding() {
-		return encoding;
+		return DataFormsServlet.getConf().getApplication().getEncoding();
 	}
 
 
@@ -899,17 +719,17 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return アップロードデータフォルダ。
 	 */
 	public static String getUploadDataFolder() {
-		return uploadDataFolder;
+		return DataFormsServlet.getConf().getApplication().getUploadDataFolder();
 	}
 
 	/**
 	 * アップロードデータフォルダを指定します.
 	 * @param uploadDataFolder アップロードデータフォルダ.
 	 */
-	public static void setUploadDataFolder(final String uploadDataFolder) {
+/*	public static void setUploadDataFolder(final String uploadDataFolder) {
 		DataFormsServlet.uploadDataFolder = uploadDataFolder;
 	}
-
+*/
 
 	/**
 	 * Jsonのデバックを行うかどうかを取得します。
@@ -919,18 +739,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return Jsonデバックを行う場合true。
 	 */
 	public static boolean isJsonDebug() {
-		return jsonDebug;
-	}
-
-	/**
-	 * Jsonのデバックを行うかどうかを設定します。
-	 * <pre>
-	 * trueの場合jsonを読みやすい形式に整形します。
-	 * </pre>
-	 * @param jsonDebug Jsonデバックを行う場合true。
-	 */
-	public static void setJsonDebug(final boolean jsonDebug) {
-		DataFormsServlet.jsonDebug = jsonDebug;
+		return DataFormsServlet.getConf().getApplication().getJsonDebug();
 	}
 
 	/**
@@ -938,15 +747,15 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return CSSとSCRIPTの読み込み設定ファイル。
 	 */
 	public static String getCssAndScript() {
-		return cssAndScript;
+		return DataFormsServlet.getConf().getApplication().getCssAndScripts();
 	}
 
 	/**
 	 * サポート言語を取得します。
 	 * @return サポート言語。
 	 */
-	public static String getSupportLanguage() {
-		return supportLanguage;
+	public static List<String> getSupportLanguage() {
+		return DataFormsServlet.getConf().getApplication().getLanguageList();
 	}
 
 	/**
@@ -954,7 +763,8 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return 固定された言語。
 	 */
 	public static String getFixedLanguage() {
-		return fixedLanguage;
+		return DataFormsServlet.getConf().getApplication().getFixedLanguage();
+				
 	}
 
 	/**
@@ -1185,7 +995,7 @@ public class DataFormsServlet extends HttpServlet {
 	protected void doProcess(final HttpServletRequest req, final HttpServletResponse resp)
 			throws ServletException, IOException {
 //		boolean isJsonResponse = false;
-		req.setCharacterEncoding(encoding);
+		req.setCharacterEncoding(DataFormsServlet.getEncoding());
 		String contextPath = req.getContextPath();
 		String uri = req.getRequestURI();
 
@@ -1469,7 +1279,7 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	private void redirectErrorPage(final WebEntryPoint page, final HttpServletRequest req, final HttpServletResponse resp, final String message) throws Exception {
 		String context = req.getContextPath();
-		String errorPage = DataFormsServlet.errorPage;
+		String errorPage = DataFormsServlet.getErrorPage() + "." + this.getPageExt();
 		if (page != null) {
 			errorPage = page.getErrorPage();
 		}
@@ -1489,7 +1299,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return クライアントログレベル。
 	 */
 	public static String getClientLogLevel() {
-		return clientLogLevel;
+		return DataFormsServlet.getConf().getApplication().getClientLogLevel();
 	}
 
 	@Override
@@ -1506,44 +1316,22 @@ public class DataFormsServlet extends HttpServlet {
 		BlobFileStore.cleanup();
 	}
 
-	/**
-	 * ブラウザのクッキー受け入れチェックフラグ。
-	 *
-	 */
-	private static boolean cookieCheck = false;
 
 	/**
 	 * ブラウザのクッキー受け入れチェックフラグを取得します。
 	 * @return ブラウザのクッキー受け入れチェックフラグ。
 	 */
 	public static boolean isCookieCheck() {
-		return cookieCheck;
+		return DataFormsServlet.getConf().getApplication().getCookieCheck();
 	}
 
-
-	/**
-	 * ブラウザのクッキー受け入れチェックフラグを指定します。
-	 * @param cookieCheck ブラウザのクッキー受け入れチェックフラグ。
-	 */
-	public static void setCookieCheck(final boolean cookieCheck) {
-		DataFormsServlet.cookieCheck = cookieCheck;
-	}
 
 	/**
 	 * Apache-FOPの設定ファイルバスを取得します。
 	 * @return Apache-FOPの設定ファイルバス。
 	 */
 	public static String getApacheFopConfig() {
-		return apacheFopConfig;
-	}
-
-
-	/**
-	 * Apache-FOPの設定ファイルのパスを取得します。
-	 * @param apacheFopConfig Apache-FOPの設定ファイルバス。
-	 */
-	public static void setApacheFopConfig(final String apacheFopConfig) {
-		DataFormsServlet.apacheFopConfig = apacheFopConfig;
+		return DataFormsServlet.getConf().getApplication().getApacheFopConfig();
 	}
 
 }
