@@ -12,11 +12,9 @@ import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.SubQuery;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.TableList;
-import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
 import jp.dataforms.fw.util.JsonUtil;
-import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 
 /**
@@ -71,30 +69,6 @@ public class UserQuery extends Query {
 	}
 
 	/**
-	 * ユーザの追加情報テーブルの情報をフィールドリスト、テーブルリストに追加します。
-	 * @param fl フィールドリスト。
-	 * @param tl テーブルリスト。
-	 */
-	private void addAdditionalInfoTable(final FieldList fl, final TableList tl) {
-		try {
-			Class<? extends Table> clazz = UserAdditionalInfoTableUtil.getUserAdditionalInfoTable();
-			if (clazz != null) {
-				Table atable = clazz.getDeclaredConstructor().newInstance();
-				atable.setAlias("ai");
-				tl.add(atable);
-				for (Field<?> f: atable.getFieldList()) {
-					if (UserAdditionalInfoTableUtil.isExcludedField(f)) {
-						continue;
-					}
-					fl.addField(f);
-				}
-			}
-		} catch (Exception e) {
-			logger.error(() -> e.getMessage(), e);
-		}
-	}
-
-	/**
 	 * コンストラクタ。
 	 * @param flist 問い合わせフォームのフィールドリスト。
 	 * @param data 問い合わせフォームの入力データ。
@@ -111,8 +85,6 @@ public class UserQuery extends Query {
 		SubQuery ua = new SubQuery(new UserAttributeQuery(data));
 		ua.setAlias("ua");
 		TableList tl = new TableList();
-		// 追加情報テーブルが存在する場合、問合せに組み込む
-		this.addAdditionalInfoTable(fl, tl);
 		// ユーザレベルの名称を取得するサブクエリ
 		int idx = 0;
 		for (String at: atlist) {

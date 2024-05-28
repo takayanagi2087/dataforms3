@@ -18,13 +18,12 @@ import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.controller.EditForm;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.base.Field;
-import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.mail.MailSender;
 import jp.dataforms.fw.mail.MailTemplate;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.UserRegistPageConfig;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
-import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 import jp.dataforms.fw.validator.MailAddressValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
@@ -49,7 +48,7 @@ public class UserRegistForm extends EditForm {
 	/**
 	 * ユーザ登録時のメール送信確認フラグ。
 	 */
-	private static Map<String, Object> config = null;
+	private static UserRegistPageConfig config = null;
 
 	/**
 	 * コンストラクタ。
@@ -58,7 +57,8 @@ public class UserRegistForm extends EditForm {
 		UserInfoTable table = UserInfoTableUtil.newUserInfoTable(); //new UserInfoTable();
 		Field<?> loginIdField = this.addField(table.getLoginIdField())
 			.setRelationDataAcquisition(false).setAutocomplete(false);
-		Boolean loginIdIsMail = (Boolean) config.get("loginIdIsMail");
+//		Boolean loginIdIsMail = (Boolean) config.get("loginIdIsMail");
+		Boolean loginIdIsMail = config.getLoginIdIsMail();
 		if (loginIdIsMail) {
 			loginIdField.addValidator(new MailAddressValidator());
 		} else {
@@ -66,7 +66,8 @@ public class UserRegistForm extends EditForm {
 		}
 		this.addField(table.getUserNameField()).addValidator(new RequiredValidator()).setAutocomplete(false);
 		this.addField(table.getMailAddressField()).addValidator(new RequiredValidator());
-		Boolean mailCheck = (Boolean) config.get("mailCheck");
+//		Boolean mailCheck = (Boolean) config.get("mailCheck");
+		Boolean mailCheck = config.getMailCheck();
 		if (mailCheck) {
 			this.addField(new MailAddressField("mailAddressCheck")).addValidator(new RequiredValidator());
 		} /*else {
@@ -78,11 +79,6 @@ public class UserRegistForm extends EditForm {
 		UserInfoTable btable = new UserInfoTable();
 		for (int i = btable.getFieldList().size(); i < table.getFieldList().size(); i++) {
 			this.addField(table.getFieldList().get(i));
-		}
-		// ユーザ追加情報テーブルのフィールドを追加します。
-		FieldList flist = UserAdditionalInfoTableUtil.getFieldList();
-		if (flist != null) {
-			this.addFieldList(flist);
 		}
 
 	}
@@ -108,7 +104,7 @@ public class UserRegistForm extends EditForm {
 	 * 設定情報を取得します。
 	 * @return 設定情報。
 	 */
-	public static Map<String, Object> getConfig() {
+	public static UserRegistPageConfig getConfig() {
 		return config;
 	}
 
@@ -116,7 +112,7 @@ public class UserRegistForm extends EditForm {
 	 * 設定情報を設定します。
 	 * @param config 設定情報。
 	 */
-	public static void setConfig(final Map<String, Object> config) {
+	public static void setConfig(final UserRegistPageConfig config) {
 		UserRegistForm.config = config;
 	}
 
@@ -142,7 +138,8 @@ public class UserRegistForm extends EditForm {
 	protected List<ValidationError> validateForm(final Map<String, Object> data) throws Exception {
 		List<ValidationError> list = super.validateForm(data);
 		if (list.size() == 0) {
-			Boolean mailCheck = (Boolean) config.get("mailCheck");
+//			Boolean mailCheck = (Boolean) config.get("mailCheck");
+			Boolean mailCheck = (Boolean) config.getMailCheck();
 			if (mailCheck) {
 				String mailAddress = (String) data.get("mailAddress");
 				String mailAddressCheck = (String) data.get("mailAddressCheck");
@@ -213,7 +210,8 @@ public class UserRegistForm extends EditForm {
 		this.setUserInfo(data);
 		data.put(UserInfoTable.Entity.ID_EXTERNAL_USER_FLAG, "1");
 		data.put(UserInfoTable.Entity.ID_DELETE_FLAG, "0");
-		Boolean sendUserEnableMail = (Boolean) config.get("sendUserEnableMail");
+//		Boolean sendUserEnableMail = (Boolean) config.get("sendUserEnableMail");
+		Boolean sendUserEnableMail = (Boolean) config.getSendUserEnableMail();
 		if (sendUserEnableMail) {
 			data.put(UserInfoTable.Entity.ID_ENABLED_FLAG, "0");
 		} else {

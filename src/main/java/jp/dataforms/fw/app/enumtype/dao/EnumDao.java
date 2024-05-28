@@ -160,7 +160,7 @@ public class EnumDao extends Dao {
 	private void saveEnumName(final Map<String, Object> data) throws Exception {
 		EnumTable.Entity e = new EnumTable.Entity(data);
 		Long enumId = e.getEnumId();
-		List<String> langList = DataFormsServlet.getSupportLanguageList();
+		List<String> langList = DataFormsServlet.getSupportLanguage();
 		EnumNameTable table = new EnumNameTable();
 		{
 			EnumNameTable.Entity ne = new EnumNameTable.Entity();

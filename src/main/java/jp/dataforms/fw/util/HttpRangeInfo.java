@@ -1,18 +1,15 @@
 package jp.dataforms.fw.util;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.internal.LinkedTreeMap;
-
 import jakarta.servlet.http.HttpServletRequest;
+import jp.dataforms.fw.util.ConfUtil.StreamingBlockSize;
 
 /**
  * HTTPのGET時にRangeリクエストヘッダが付いた場合の計算ロジックをまとメタクラスです。
@@ -28,7 +25,7 @@ public class HttpRangeInfo {
 	/**
 	 * ブロックサイズリスト。
 	 */
-	private static List<LinkedTreeMap<String, Object>> blockSizeList = null;
+	private static List<StreamingBlockSize> blockSizeList = null;
 
 	/**
 	 * 範囲の終了が指定されなかった場合、転送するサイズ。
@@ -74,7 +71,7 @@ public class HttpRangeInfo {
 	 * ブロックサイズリストを取得します。
 	 * @return ブロックサイズリスト。
 	 */
-	public static List<LinkedTreeMap<String, Object>> getBlockSizeList() {
+	public static List<StreamingBlockSize> getBlockSizeList() {
 		return blockSizeList;
 	}
 
@@ -82,7 +79,7 @@ public class HttpRangeInfo {
 	 * ブロックサイズリストを設定します。
 	 * @param blockSizeList ブロックサイズリスト。
 	 */
-	public static void setBlockSizeList(final List<LinkedTreeMap<String, Object>> blockSizeList) {
+	public static void setBlockSizeList(final List<StreamingBlockSize> blockSizeList) {
 		HttpRangeInfo.blockSizeList = blockSizeList;
 	}
 
@@ -184,9 +181,11 @@ public class HttpRangeInfo {
 			return ret;
 		} else {
 			long ret = HttpRangeInfo.DEFAULT_BLOCK_SIZE;
-			for (Map<String, Object> m: HttpRangeInfo.blockSizeList) {
-				String uaPattern = (String) m.get("uaPattern");
-				BigDecimal size = (BigDecimal) m.get("blockSize");
+			for (StreamingBlockSize m: HttpRangeInfo.blockSizeList) {
+//				String uaPattern = (String) m.get("uaPattern");
+//				BigDecimal size = (BigDecimal) m.get("blockSize");
+				String uaPattern = m.getUaPattern();
+				Integer size = m.getBlockSize();
 				if (Pattern.matches(uaPattern, this.userAgent)) {
 					ret = size.longValue();
 					break;

@@ -67,6 +67,8 @@ import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.ConfUtil;
 import jp.dataforms.fw.util.ConfUtil.Conf;
+import jp.dataforms.fw.util.ConfUtil.CryptConfig;
+import jp.dataforms.fw.util.ConfUtil.OnetimePasswordConfig;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.HttpRangeInfo;
@@ -135,11 +137,6 @@ public class DataFormsServlet extends HttpServlet {
 
 
 	/**
-	 * QueryStringを暗号化する際に使用するパスワード。
-	 */
-	private static String queryStringCryptPassword = null;
-
-	/**
 	 * 設定の状態.
 	 */
 	private static String configStatus = null;
@@ -153,22 +150,6 @@ public class DataFormsServlet extends HttpServlet {
 	 * サーブレットインスタンス設定Bean.
 	 */
 	private static ServletInstanceBean servletInstanceBean = null;
-
-
-	/**
-	 * CSRF対策用暗号化キー。
-	 *
-	 * <pre>
-	 * CSRF対策のため送信する照合情報は、セッションIDを以下のパスワードで暗号化して送信します。
-	 * </pre>
-	 */
-	private static String csrfSessionidCrypPassword = null;
-
-
-	/**
-	 * Apache-FOPの設定ファイルのバス。
-	 */
-//	private static String apacheFopConfig = "/WEB-INF/apachefop/fop.xconf";
 
 	/**
 	 * Pageの拡張子を取得します。
@@ -189,7 +170,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return CSRF対策用暗号化キー。
 	 */
 	public static String getCsrfSessionidCrypPassword() {
-		return csrfSessionidCrypPassword;
+		return DataFormsServlet.getConf().getApplication().getCryptConfig().getCsrfSessionidCryptPassword();
 	}
 
 	/**
@@ -210,12 +191,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * ページオーバーライドマップを初期化します。
 	 */
 	private void initPageOverrideMap() {
-		String json = this.getServletContext().getInitParameter("page-override");
-		@SuppressWarnings("unchecked")
-		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) JsonUtil.decode(json, ArrayList.class);
-		for (int i = 0; i < list.size(); i++) {
-			DataFormsServlet.pageOverrideMap.put(list.get(i).get(0), list.get(i).get(1));
-		}
+		DataFormsServlet.pageOverrideMap.putAll(DataFormsServlet.getConf().getApplication().getPageOverride());
 	}
 
 
@@ -297,7 +273,7 @@ public class DataFormsServlet extends HttpServlet {
 		FileObject.setContentTypeList(DataFormsServlet.getConf().getApplication().getContentTypeList());
 		BackupForm.setBackupFileName(DataFormsServlet.getConf().getApplication().getBackupFileName());
 		SideMenu.setMultiOpenMenu(DataFormsServlet.getConf().getApplication().getMultiOpenMenu());
-		DeveloperEditForm.setCheckUserImport(DataFormsServlet.getConf().getAppInitialize().getCheckUserImport());
+		DeveloperEditForm.setCheckUserImport(DataFormsServlet.getConf().getInitialize().getCheckUserImport());
 		this.getUserEditFormConf();
 		this.getUserRegistConf();
 		super.init();
@@ -337,33 +313,14 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	private void initPassword() {
 		CryptUtil.initPasswordType(this.getServletContext());
-		String conf = this.getServletContext().getInitParameter("crypt-config");
-		if (conf == null) {
-			conf = DEFAULT_CRYPT_CONFIG;
-		}
-		@SuppressWarnings("unchecked")
-		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
-		String algorithm = (String) m.get(CryptUtil.ALGORITHM);
-		CryptUtil.setAlgorithm(algorithm);
-		String initialVector = (String) m.get(CryptUtil.AES_INITIAL_VECTOR);
-		CryptUtil.setAesInitialVector(initialVector);
-		String defaultPassword = (String) m.get(CryptUtil.DEFAULT_PASSWORD);
+		CryptConfig conf = DataFormsServlet.getConf().getApplication().getCryptConfig();
+		CryptUtil.setAlgorithm(conf.getAlgorithm());
+		CryptUtil.setAesInitialVector(conf.getAesInitialVector());
+		String defaultPassword = conf.getDefaultPassword();
 		if (defaultPassword != null) {
 			CryptUtil.setCryptPassword(defaultPassword);
 		} else {
 			CryptUtil.setCryptPassword(CryptUtil.DES_PASSWORD_OR_AES_KEY);
-		}
-		String queryStringCryptPassword = (String) m.get(CryptUtil.QUERY_STRING_CRYPT_PASSWORD);
-		if (queryStringCryptPassword != null) {
-			DataFormsServlet.setQueryStringCryptPassword(queryStringCryptPassword);
-		} else {
-			CryptUtil.setCryptPassword(CryptUtil.DES_PASSWORD_OR_AES_KEY);
-		}
-		String csrfSessionidCryptPassword = (String) m.get(CryptUtil.CSRF_SESSIONID_CRYPT_PASSWORD);
-		if (csrfSessionidCryptPassword != null) {
-			DataFormsServlet.csrfSessionidCrypPassword = csrfSessionidCryptPassword;
-		} else {
-			DataFormsServlet.csrfSessionidCrypPassword = null;
 		}
 	}
 
@@ -372,34 +329,15 @@ public class DataFormsServlet extends HttpServlet {
 	 * ワンタイムパスワード関連情報を取得します。
 	 */
 	private void initOnetimePassword() {
-		String conf = this.getServletContext().getInitParameter(OnetimePasswordUtil.CONFIG_KEY);
-		if (conf != null) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
-			OnetimePasswordUtil.setConfig(m);
-		}
+		OnetimePasswordConfig conf = DataFormsServlet.getConf().getApplication().getOnetimePasswordConfig();
+		OnetimePasswordUtil.setConfig(conf);
 	}
-
-	/**
-	 * サポートする言語リストを取得します。
-	 * @return サポートする言語リスト。
-	 */
-	public static List<String> getSupportLanguageList() {
-		return DataFormsServlet.getSupportLanguage();
-	}
-
 
 	/**
 	 * ユーザ情報編集フォームの設定情報を取得します。
 	 */
 	public void getUserEditFormConf() {
-		String conf = this.getServletContext().getInitParameter("user-edit-form-config");
-		if (conf == null) {
-			conf = "{\"requiredMailAddress\": true}";
-		}
-		@SuppressWarnings("unchecked")
-		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
-		UserEditForm.setConfig(m);
+		UserEditForm.setConfig(DataFormsServlet.getConf().getApplication().getUserEditFormConfig());
 	}
 
 	/**
@@ -407,26 +345,17 @@ public class DataFormsServlet extends HttpServlet {
 	 */
 	public void getUserRegistConf() {
 		// ユーザ登録ページ関連設定
-		LoginInfoForm.setUserRegistPage(this.getServletContext().getInitParameter("user-regist-page"));
-		UserRegistForm.setUserEnablePage(this.getServletContext().getInitParameter("user-enable-page"));
-		LoginForm.setPasswordResetMailPage(this.getServletContext().getInitParameter("password-reset-mail-page"));
-		PasswordResetMailForm.setPasswordResetPage(this.getServletContext().getInitParameter("password-reset-page"));
-		String conf = this.getServletContext().getInitParameter("user-regist-page-config");
-		if (conf == null) {
-			conf = "{\"loginIdIsMail\": true, \"mailCheck\": true, \"sendUserEnableMail\": true}";
-			logger.debug("user-regist-page-config is missing. use default. " + conf);
-		}
-		@SuppressWarnings("unchecked")
-		Map<String, Object> m = (Map<String, Object>) JsonUtil.decode(conf, HashMap.class);
-		logger.debug(() -> "m.class=" + m.getClass().getName());
-		logger.debug(() -> "conf=" + m.toString());
-		UserRegistForm.setConfig(m);
+		LoginInfoForm.setUserRegistPage(DataFormsServlet.getConf().getApplication().getUserRegistPage());
+		UserRegistForm.setUserEnablePage(DataFormsServlet.getConf().getApplication().getUserEnablePage());
+		LoginForm.setPasswordResetMailPage(DataFormsServlet.getConf().getApplication().getPasswordResetMailPage());
+		PasswordResetMailForm.setPasswordResetPage(DataFormsServlet.getConf().getApplication().getPasswordResetPage());
+		UserRegistForm.setConfig(DataFormsServlet.getConf().getApplication().getUserRegistPageConfig());
 		// メール関連設定。
-		String mailSession = this.getServletContext().getInitParameter("mail-session");
+		String mailSession = DataFormsServlet.getConf().getApplication().getMail().getMailSession();
 		if (mailSession != null) {
-			MailSender.setJndiPrefix(this.getServletContext().getInitParameter("jndi-prefix"));
+			MailSender.setJndiPrefix(DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix());
 			MailSender.setMailSessionName(mailSession);
-			MailSender.setMailFrom(this.getServletContext().getInitParameter("mail-from"));
+			MailSender.setMailFrom(DataFormsServlet.getConf().getApplication().getMail().getMailFrom());
 		}
 	}
 
@@ -453,8 +382,8 @@ public class DataFormsServlet extends HttpServlet {
 	 * ServletInstanceBeanの設定を行います。
 	 */
 	private void setupServletInstanceBean() {
-		String beanClass = this.getServletContext().getInitParameter("servlet-instance-bean");
-		logger.info(() -> "beanClass = " + beanClass);
+		String beanClass = DataFormsServlet.getConf().getApplication().getServletInstanceBean();
+		logger.info(() -> "ServletInstanceBean = " + beanClass);
 		if (beanClass != null) {
 			try {
 				@SuppressWarnings("unchecked")
@@ -584,13 +513,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return 初期化するパッケージリスト。
 	 */
 	public List<String> getInitializePackageList() {
-		List<String> ret = new ArrayList<String>();
-		String plist = Page.getServlet().getServletContext().getInitParameter("initialize-package-list");
-		String[] a = plist.split(",");
-		for (String pkg: a) {
-			ret.add(pkg.trim());
-		}
-		return ret;
+		return DataFormsServlet.getConf().getInitialize().getDatabasePackageList();
 	}
 
 
@@ -722,14 +645,6 @@ public class DataFormsServlet extends HttpServlet {
 		return DataFormsServlet.getConf().getApplication().getUploadDataFolder();
 	}
 
-	/**
-	 * アップロードデータフォルダを指定します.
-	 * @param uploadDataFolder アップロードデータフォルダ.
-	 */
-/*	public static void setUploadDataFolder(final String uploadDataFolder) {
-		DataFormsServlet.uploadDataFolder = uploadDataFolder;
-	}
-*/
 
 	/**
 	 * Jsonのデバックを行うかどうかを取得します。
@@ -788,15 +703,7 @@ public class DataFormsServlet extends HttpServlet {
 	 * @return QueryStringを暗号化する際のパスワード。
 	 */
 	public static String getQueryStringCryptPassword() {
-		return queryStringCryptPassword;
-	}
-
-	/**
-	 * QueryStringを暗号化する際のパスワードを設定します。
-	 * @param queryStringCryptPassword QueryStringを暗号化する際のパスワード。
-	 */
-	public static void setQueryStringCryptPassword(final String queryStringCryptPassword) {
-		DataFormsServlet.queryStringCryptPassword = queryStringCryptPassword;
+		return DataFormsServlet.getConf().getApplication().getCryptConfig().getQueryStringCryptPassword();
 	}
 
 	/**

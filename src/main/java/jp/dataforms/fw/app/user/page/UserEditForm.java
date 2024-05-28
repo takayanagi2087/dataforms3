@@ -9,11 +9,10 @@ import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.controller.EditForm;
-import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
+import jp.dataforms.fw.util.ConfUtil.UserEditFormConfig;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.CryptUtil.UserPasswordType;
-import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 import jp.dataforms.fw.validator.DisplayedRequiredValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
@@ -40,13 +39,13 @@ public class UserEditForm extends EditForm {
     /**
      * 設定情報。
      */
-    private static Map<String, Object> config = null;
+    private static UserEditFormConfig config = null;
 
     /**
      * 設定情報を設定します。
      * @param conf 設定情報。
      */
-    public static void setConfig(final Map<String, Object> conf) {
+    public static void setConfig(final UserEditFormConfig conf) {
     	UserEditForm.config = conf;
     }
 
@@ -54,7 +53,7 @@ public class UserEditForm extends EditForm {
      * 設定情報を取得します。
      * @return 設定情報。
      */
-    public static Map<String, Object> getConfig() {
+    public static UserEditFormConfig getConfig() {
     	return UserEditForm.config;
     }
 	/**
@@ -71,7 +70,7 @@ public class UserEditForm extends EditForm {
 		table.getPasswordField().addValidator(new DisplayedRequiredValidator());
 		table.getUserNameField().addValidator(new RequiredValidator());
 
-		Boolean reqEmail = (Boolean) getConfig().get("requiredMailAddress");
+		Boolean reqEmail = getConfig().getRequiredMailAddress();
 		if (reqEmail) {
 			table.getMailAddressField().addValidator(new RequiredValidator());
 		}
@@ -79,11 +78,6 @@ public class UserEditForm extends EditForm {
 		PasswordField pwck = new PasswordField("passwordCheck");
 		pwck.addValidator(new DisplayedRequiredValidator());
 		this.insertFieldAfter(pwck, "password");
-		// ユーザ追加情報テーブルのフィールドを追加します。
-		FieldList flist = UserAdditionalInfoTableUtil.getFieldList();
-		if (flist != null) {
-			this.addFieldList(flist);
-		}
 		// ユーザ属性テーブルの追加。
 		UserAttributeTable atbl = new UserAttributeTable();
 		atbl.getUserAttributeTypeField().addValidator(new RequiredValidator());

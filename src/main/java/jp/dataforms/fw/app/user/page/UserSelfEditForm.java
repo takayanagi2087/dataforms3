@@ -7,7 +7,6 @@ import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.EditForm;
 import jp.dataforms.fw.field.base.FieldList;
-import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 import jp.dataforms.fw.validator.ValidationError;
 
@@ -34,11 +33,6 @@ public class UserSelfEditForm extends EditForm {
 		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable();
 		FieldList list = UserDao.getSelfUpdateFieldList(tbl);
 		this.addFieldList(list);
-		// ユーザ追加情報テーブルのフィールドを追加します。
-		FieldList flist = UserAdditionalInfoTableUtil.getFieldList();
-		if (flist != null) {
-			this.addFieldList(flist);
-		}
 	}
 
 

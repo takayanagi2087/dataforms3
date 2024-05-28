@@ -7,12 +7,10 @@ import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.QueryResultForm;
-import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.Field.SortOrder;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
-import jp.dataforms.fw.util.UserAdditionalInfoTableUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
 
 /**
@@ -41,12 +39,6 @@ public class UserQueryResultForm extends QueryResultForm {
 		flist.addField(tbl.getUserIdField());
 		flist.addField(tbl.getLoginIdField()).setSortable(true, SortOrder.DESC);
 		flist.addField(tbl.getUserNameField()).setSortable(true);
-		FieldList aflist = 	UserAdditionalInfoTableUtil.getFieldList();
-		if (aflist != null) {
-			for (Field<?> f: aflist) {
-				flist.addField(f).setSortable(true);
-			}
-		}
 		for (int i = 0; i < 10; i++) {
 			flist.addField(new EnumNameField("attribute" + i)).setSortable(true);
 		}

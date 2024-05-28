@@ -56,9 +56,9 @@ public class WebResourceForm extends Form {
 	 * フィールドレイアウトの設定値を取得します。
 	 */
 	static {
-		String layout = Page.getServlet().getServletContext().getInitParameter("field-layout");
+		String layout = DataFormsServlet.getConf().getDevelopmentTool().getFieldLayout();
 		WebResourceForm.fieldLayout = layout;
-		logger.debug("field-layout:" + layout);
+		logger.debug("fieldLayout:" + layout);
 		if (WebResourceForm.fieldLayout == null) {
 			WebResourceForm.fieldLayout = "GRID";
 		}

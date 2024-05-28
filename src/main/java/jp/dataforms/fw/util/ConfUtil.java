@@ -1,11 +1,10 @@
 package jp.dataforms.fw.util;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.gson.internal.LinkedTreeMap;
 
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import lombok.Data;
@@ -54,14 +53,17 @@ public class ConfUtil {
 		 * DB関連ツール無効設定。
 		 */
 		private Boolean disableDatabaseTool = false;
-		
+		/**
+		 * フィールドレイアウト。
+		 */
+		private String fieldLayout = null;
 	}
 	
 	/**
 	 * アプリケーション初期化設定。
 	 */
 	@Data
-	public static class AppInitialize {
+	public static class Initialize {
 		/**
 		 * 初期化時に作成する特権ユーザのレベル。
 		 */
@@ -70,11 +72,26 @@ public class ConfUtil {
 		 *  データベースを定義するパッケージリスト。
 		 */
 		private List<String> databasePackageList = null;
-
 		/**
 		 * trueかつユーザの初期化データが存在した場合、ユーザのインポートを優先します。
 		 */
 		private Boolean checkUserImport = null;
+		/**
+		 * このリストに記載されたテーブルはデータベースに実体が作成されません。
+		 * 複数のテーブルクラスの基底クラスとして定義し、
+		 * テーブルの実体を作成する必要がないテーブルクラスを指定します。
+		 * dataforms2.jarに含まれたUserInfoTableに項目を追加する場合、
+		 * このコメントを有効にしてUserInfoTableから派生したテーブルクラスに項目を追加します。
+		 */
+		private List<String> abstractTableList = null;
+		/**
+		 * UserInfoTableに項目を追加したExtendedUserInfoTableを作成した場合、
+		 * 以下の設定を有効にするとExtendedUserInfoTableクラスがユーザテーブルとなります。
+		 * このクラスを指定するとUserEditForm.java,UserSelfEditForm.java,UserRegistForm.javaに指定されたテーブルのフィールドが配置されます。
+		 * UserEditForm.html,UserSelfEditPage.html,UserRegistPage.htmlをjarファイルからプロジェクトにエクスポートし、
+		 * フィールドを追加することにより追加情報を入力することが可能になります。
+		 */
+		private String userInfoTableClass = null;
 	}
 	
 	/**
@@ -115,9 +132,9 @@ public class ConfUtil {
 	@Data
 	public static class UserEditFormConfig {
 		/**
-		 * メールアドレスの設定。
+		 * メールアドレスの必須チェック設定。
 		 */
-		private Boolean userEditFormConfig = null;
+		private Boolean requiredMailAddress = null;
 	}
 	
 	/**
@@ -214,7 +231,7 @@ public class ConfUtil {
 	 * その確認を行います。
 	 */
 	@Data
-	private static class OnetimePasswordConfig {
+	public static class OnetimePasswordConfig {
 		/**
 		 * ワンタイムパスワードを使用するかどうか。
 		 */
@@ -235,32 +252,47 @@ public class ConfUtil {
 	/**
 	 * ストリーミングブロックサイズ。
 	 */
-//	@Data
-//	public static class StreamingBlockSize {
-//		/**
-//		 * UserAgentパターン。
-//		 */
-//		private String uaPattern = null;
-//		/**
-//		 * ブロックサイズ。
-//		 */
-//		private Integer blockSize = null;
-//	}
+	@Data
+	public static class StreamingBlockSize {
+		/**
+		 * UserAgentパターン。
+		 */
+		private String uaPattern = null;
+		/**
+		 * ブロックサイズ。
+		 */
+		private Integer blockSize = null;
+	}
 	
 	/**
 	 * ContentType情報。
 	 */
-//	@Data
-//	public static class ContentType {
-//		/**
-//		 * ファイル名パターン。
-//		 */
-//		private String fnPattern = null;
-//		/**
-//		 * Content-type。
-//		 */
-//		private String contentType = null;
-//	}
+	@Data
+	public static class ContentType {
+		/**
+		 * ファイル名パターン。
+		 */
+		private String fnPattern = null;
+		/**
+		 * Content-type。
+		 */
+		private String contentType = null;
+	}
+	
+	/**
+	 * ページオーバーライド情報。
+	 */
+	@Data
+	public static class PageOverride {
+		/**
+		 * 変更元のページ。
+		 */
+		private String from = null;
+		/**
+		 * 変更先のページ。
+		 */
+		private String to = null;
+	}
 	
 	/**
 	 * アプリケーション設定。
@@ -307,7 +339,7 @@ public class ConfUtil {
 		/**
 		 * ページオーバーライド。
 		 */
-		private List<List<String>> pageOverride = null;
+		private Map<String, String> pageOverride = null;
 		/**
 		 * トップページを指定します。
 		 */
@@ -330,10 +362,15 @@ public class ConfUtil {
 		 */
 		private String userEnablePage  = null;
 		/**
-		 * パスワードリセットページのパスを指定します。
+		 * パスワードリセットメールページのパスを指定します。
 		 * パスワードリセットメールで、このページのURLを通知します。
 		 */
 		private String passwordResetMailPage = null;
+		/**
+		 * パスワードリセットページのパスを指定します。
+		 * パスワードリセットメールで、このページのURLを通知します。
+		 */
+		private String passwordResetPage = null;
 		/**
 		 * 一時ファイルを置くパスを指定します。
 		 */
@@ -383,26 +420,22 @@ public class ConfUtil {
 		 * メッセージリソース設定。
 		 */
 		private MessageResource messageResource = null;
-
 		/**
 		 *  DataFormsServlet#init,destoryで何らかの処理が必要な場合、ServletInstanceBeanから派生したクラスを作成し
 		 *  そのクラスを設定してください。
 		 */
 		private String servletInstanceBean = null;
-		
-		// TODO:MapをStreamingBlockSizeクラスに変更することを検討
 		/**
 		 * ストリーミングのブラウザ毎の送信パターンを指定します。
 		 * html5のvideo,audioタグからの部分リクエストは大抵 "Range:bytes=0-"のように転送開始位置のみが指定されてきます。
 		 * この場合適切なサイズに区切って転送しないと、シーク機能が利用できません。
 		 * しかしFirefoxの場合、先頭のブロックのみを再生したところで止まってしまうので、指定された位置から最後まで転送するようにしないとうまく動作しないようです。
 		 */
-		private List<LinkedTreeMap<String, Object>> streamingBlockSize = null;
-		
+		private List<StreamingBlockSize> streamingBlockSize = null;
 		/**
 		 * FileFieldの中に保存されたファイルをダウンロードする際に出力するcontent-typeを設定します。
 		 */
-		private List<LinkedTreeMap<String, String>> contentTypeList = null;
+		private List<ContentType> contentTypeList = null;
 		/**
 		 * データベースのバックアップファイル名を指定します。
 		 */
@@ -416,23 +449,6 @@ public class ConfUtil {
 		 *  falseを設定すると、開いたメニュー以外は自動的に閉じるようになります。
 		 */
 		private Boolean multiOpenMenu = null;
-		/**
-		 * このリストに記載されたテーブルはデータベースに実体が作成されません。
-		 * 複数のテーブルクラスの基底クラスとして定義し、
-		 * テーブルの実体を作成する必要がないテーブルクラスを指定します。
-		 * dataforms2.jarに含まれたUserInfoTableに項目を追加する場合、
-		 * このコメントを有効にしてUserInfoTableから派生したテーブルクラスに項目を追加します。
-		 */
-		private List<String> abstractTableList = null;
-
-		/**
-		 * UserInfoTableに項目を追加したExtendedUserInfoTableを作成した場合、
-		 * 以下の設定を有効にするとExtendedUserInfoTableクラスがユーザテーブルとなります。
-		 * このクラスを指定するとUserEditForm.java,UserSelfEditForm.java,UserRegistForm.javaに指定されたテーブルのフィールドが配置されます。
-		 * UserEditForm.html,UserSelfEditPage.html,UserRegistPage.htmlをjarファイルからプロジェクトにエクスポートし、
-		 * フィールドを追加することにより追加情報を入力することが可能になります。
-		 */
-		private String userInfoTableClass = null;
 		/**
 		 * debugログに出力するjsonを整形するかどうかを指定します。
 		 * trueの場合成形されたjsonをログ出力に出力します。
@@ -458,7 +474,7 @@ public class ConfUtil {
 		/**
 		 * アプリケーション初期化設定。
 		 */
-		private AppInitialize appInitialize = null;
+		private Initialize initialize = null;
 		
 		/**
 		 * アプリケーション動作設定。

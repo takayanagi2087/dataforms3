@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.ServletContext;
+import jp.dataforms.fw.servlet.DataFormsServlet;
 
 /**
  * 暗号化ユーティリティクラス。
@@ -395,11 +396,11 @@ public final class CryptUtil {
 	 * @param context ServletContext。
 	 */
 	public static void initPasswordType(final ServletContext context) {
-		String passwordType = context.getInitParameter("password-type");
+		String passwordType = DataFormsServlet.getConf().getApplication().getPasswordType();
 		if (passwordType != null) {
 			CryptUtil.userPasswordType = UserPasswordType.valueOf(passwordType);
 		}
-		String hash = context.getInitParameter("hash-algorithm");
+		String hash = DataFormsServlet.getConf().getApplication().getHashAlgorithm();
 		if (hash != null) {
 			CryptUtil.hashAlgorithm = hash;
 		}

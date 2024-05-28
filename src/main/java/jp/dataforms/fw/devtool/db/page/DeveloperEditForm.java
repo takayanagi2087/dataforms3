@@ -16,6 +16,7 @@ import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.field.common.FlagField;
+import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
@@ -75,7 +76,7 @@ public class DeveloperEditForm extends EditForm {
 	 * @return 初期化時に作成するユーザのレベル。
 	 */
 	private String getInitializeUserLvel() {
-		String userLevel = getServlet().getServletContext().getInitParameter("initialize-user-level");
+		String userLevel = DataFormsServlet.getConf().getInitialize().getUserLevel();
 		if (userLevel == null) {
 			userLevel = "admin";
 		}
@@ -169,13 +170,8 @@ public class DeveloperEditForm extends EditForm {
 	 * @return 初期化するパッケージリスト。
 	 */
 	private List<String> getInitializePackageList() {
-		List<String> ret = new ArrayList<String>();
-		String plist = Page.getServlet().getServletContext().getInitParameter("initialize-package-list");
-		String[] a = plist.split(",");
-		for (String pkg: a) {
-			ret.add(pkg.trim());
-		}
-		return ret;
+		return DataFormsServlet.getConf().getInitialize().getDatabasePackageList();
+
 	}
 
 	/**

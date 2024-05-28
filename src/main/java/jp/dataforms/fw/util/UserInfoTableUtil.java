@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
-import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 
 /**
@@ -43,8 +42,7 @@ public final class UserInfoTableUtil {
 	public static Class<? extends UserInfoTable> getUserInfoTableClass() {
 		Class<? extends UserInfoTable> table = null;
 		try {
-			DataFormsServlet servlet = Page.getServlet();
-			String className = servlet.getServletContext().getInitParameter("user-info-table-class");
+			String className = DataFormsServlet.getConf().getInitialize().getUserInfoTableClass();
 			if (className != null) {
 				className = className.trim();
 				if (className.length() != 0) {

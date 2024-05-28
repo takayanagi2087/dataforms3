@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.OnetimePasswordConfig;
 
 /**
  * ワンタイムパスワードユーティリティ。
@@ -136,12 +137,15 @@ public class OnetimePasswordUtil {
 	 * 設定情報を設定します。
 	 * @param conf 設定情報。
 	 */
-	public static void setConfig(Map<String, Object> conf) {
-		Boolean useOnetime = (Boolean) conf.get("useOnetimePassword");
+	public static void setConfig(final OnetimePasswordConfig conf) {
+//		Boolean useOnetime = (Boolean) conf.get("useOnetimePassword");
+		Boolean useOnetime = conf.getUseOnetimePassword();
 		OnetimePasswordUtil.useOnetimePassword = useOnetime;
-		int length = ((Double) conf.get("length")).intValue();
+//		int length = ((Double) conf.get("length")).intValue();
+		int length = conf.getLength();
 		OnetimePasswordUtil.onetimePasswordLength = length;
-		int expiration = ((Double) conf.get("cookieExpiration")).intValue();
+//		int expiration = ((Double) conf.get("cookieExpiration")).intValue();
+		int expiration = conf.getCookieExpiration();
 		OnetimePasswordUtil.cookieExpiration = expiration;
 		logger.debug("useOnetimePassword=" + OnetimePasswordUtil.useOnetimePassword);
 		logger.debug("onetimePasswordLength=" + OnetimePasswordUtil.onetimePasswordLength);

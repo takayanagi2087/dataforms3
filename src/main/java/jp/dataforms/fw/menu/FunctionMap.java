@@ -276,7 +276,7 @@ public class FunctionMap {
 					
 				}
 			}
-			List<String> langList = DataFormsServlet.getSupportLanguageList();
+			List<String> langList = DataFormsServlet.getSupportLanguage();
 			for (String lang: langList) {
 				String htmlpath = path + "_" + lang + ".html";
 				String html = this.getPageHtml(htmlpath);

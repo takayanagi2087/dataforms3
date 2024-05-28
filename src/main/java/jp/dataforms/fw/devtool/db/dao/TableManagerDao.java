@@ -659,24 +659,11 @@ public class TableManagerDao extends Dao {
 	 * web.xmlのuser-info-table-classに指定されたテーブルのクラスを取得します。
 	 * @return テーブルクラス。
 	 */
-	@SuppressWarnings("unchecked")
 	private static Set<String> getAbstractTableSet() {
 		Set<String> ret = new HashSet<String>();
-		try {
-			DataFormsServlet servlet = Page.getServlet();
-			String json = servlet.getServletContext().getInitParameter("abstract-table-list");
-			if (json != null) {
-				json = json.trim();
-				if (json.length() != 0) {
-					List<String> list = (List<String>) JsonUtil.decode(json, ArrayList.class);
-					for (String v: list) {
-						logger.debug("abstractTableClass=" + v);
-						ret.add(v);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+		List<String> list = DataFormsServlet.getConf().getInitialize().getAbstractTableList();
+		if (list != null) {
+			ret.addAll(list);
 		}
 		return ret;
 	}
@@ -885,13 +872,7 @@ public class TableManagerDao extends Dao {
 	 * @return 初期化するパッケージリスト。
 	 */
 	private List<String> getInitializePackageList() {
-		List<String> ret = new ArrayList<String>();
-		String plist = Page.getServlet().getServletContext().getInitParameter("initialize-package-list");
-		String[] a = plist.split(",");
-		for (String pkg: a) {
-			ret.add(pkg.trim());
-		}
-		return ret;
+		return DataFormsServlet.getConf().getInitialize().getDatabasePackageList();
 	}
 
 	/**

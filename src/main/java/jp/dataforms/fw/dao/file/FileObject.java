@@ -14,9 +14,8 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.internal.LinkedTreeMap;
-
 import jp.dataforms.fw.exception.ApplicationError;
+import jp.dataforms.fw.util.ConfUtil.ContentType;
 import jp.dataforms.fw.util.FileUtil;
 
 /**
@@ -133,14 +132,13 @@ public class FileObject implements Serializable {
 	/**
 	 * content-typeリスト。
 	 */
-	private static List<LinkedTreeMap<String, String>> contentTypeList = null;
-
+	private static List<ContentType> contentTypeList = null;
 
 	/**
 	 * content-typeリストを取得します。
 	 * @return content-typeリスト。
 	 */
-	public static List<LinkedTreeMap<String, String>> getContentTypeList() {
+	public static List<ContentType> getContentTypeList() {
 		return contentTypeList;
 	}
 
@@ -148,7 +146,7 @@ public class FileObject implements Serializable {
 	 * content-typeリストを設定します。
 	 * @param contentTypeList content-typeリスト。
 	 */
-	public static void setContentTypeList(final List<LinkedTreeMap<String, String>> contentTypeList) {
+	public static void setContentTypeList(final List<ContentType> contentTypeList) {
 		FileObject.contentTypeList = contentTypeList;
 	}
 
@@ -257,10 +255,12 @@ public class FileObject implements Serializable {
 	 */
 	public static String getContentType(final String fileName) {
 		String ret = null;
-		for (LinkedTreeMap<String, String> m: FileObject.contentTypeList) {
-			String fnPattern = m.get("fnPattern");
+		for (ContentType m: FileObject.contentTypeList) {
+//			String fnPattern = m.get("fnPattern");
+			String fnPattern = m.getFnPattern();
 			if (Pattern.matches(fnPattern, fileName)) {
-				ret = m.get("contentType");
+//				ret = m.get("contentType");
+				ret = m.getContentType();
 				break;
 			}
 		}

@@ -39,7 +39,7 @@ public class EnumEditForm extends EditForm {
 	 */
 	public EnumEditForm(final String id) {
 		super(id);
-		List<String> langList = DataFormsServlet.getSupportLanguageList();
+		List<String> langList = DataFormsServlet.getSupportLanguage();
 		EnumTable table = new EnumTable();
 		table.getEnumCodeField().addValidator(new RequiredValidator());
 		FieldList flist = new FieldList();
@@ -56,7 +56,7 @@ public class EnumEditForm extends EditForm {
 	@Override
 	public Map<String, Object> getProperties() throws Exception {
 		Map<String, Object> prop = super.getProperties();
-		List<String> langList = DataFormsServlet.getSupportLanguageList();
+		List<String> langList = DataFormsServlet.getSupportLanguage();
 		prop.put("langList", langList);
 		return prop;
 	}
