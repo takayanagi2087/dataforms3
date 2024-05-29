@@ -378,7 +378,7 @@ public class ConfUtil {
 		/**
 		 * jQueryなどの標準ライブラリなどを読み込むhtmlを指定します。
 		 */
-		private String cssAndScripts = null; 		
+		private String cssAndScripts = null;
 		/**
 		 * エラーページのパスを指定します。
 		 */

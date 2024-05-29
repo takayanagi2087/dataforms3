@@ -360,6 +360,7 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.UserManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.UserSelfEditPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.ChangePasswordPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.WebAuthnPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.UserRegistPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.UserEnablePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.app.user.page.PasswordResetMailPage.class));

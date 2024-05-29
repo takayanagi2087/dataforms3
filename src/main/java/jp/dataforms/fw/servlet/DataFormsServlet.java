@@ -293,20 +293,6 @@ public class DataFormsServlet extends HttpServlet {
 		}
 	}
 
-
-	/**
-	 * デフォルト設定。
-	 */
-	private static final String DEFAULT_CRYPT_CONFIG = "			{\r\n" +
-			"				\"algorithm\": \"des\",\r\n" +
-			"				\"aesInitialVector\": \"Initi@lVect0r\",\r\n" +
-			"				\"defaultPassword\": null,\r\n" +
-			"				\"queryStringCryptPassword\": \"QueryStringPassword\",\r\n" +
-			"				\"csrfSessionidCryptPassword\": \"CSRFpassword\"\r\n" +
-			"			}\r\n" +
-			"";
-
-
 	/**
 	 * パスワード関連の初期化。
 	 *
