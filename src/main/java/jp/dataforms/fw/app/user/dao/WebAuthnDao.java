@@ -57,6 +57,27 @@ public class WebAuthnDao extends Dao {
 	}
 	
 	/**
+	 * loginIdからWebAuthnTableを取得します。
+	 * @param loginId loginId。
+	 * @return WebAuthn情報。
+	 * @throws Exception 例外。
+	 */
+	public Map<String, Object> queryWebAuthnInfo(final String loginId) throws Exception {
+		WebAuthnTable table = new WebAuthnTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		query.setCondition("m.user_id = (select user_id from user_info where login_id=:login_id)");
+		UserInfoTable.Entity p = new UserInfoTable.Entity();
+		p.setLoginId(loginId);
+		query.setConditionData(p.getMap());
+		Map<String, Object> ret = null;
+		List<Map<String, Object>> list = this.executeQuery(query);
+		if (list.size() > 0) {
+			ret = list.get(0);
+		}
+		return ret;
+	}
+	
+	/**
 	 * WebAuthの情報を登録します。
 	 * @param data WebAuth情報。
 	 * @throws Exception 例外。

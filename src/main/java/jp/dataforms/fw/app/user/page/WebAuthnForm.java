@@ -11,6 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.webauthn4j.WebAuthnManager;
+import com.webauthn4j.converter.AttestationObjectConverter;
+import com.webauthn4j.converter.CollectedClientDataConverter;
+import com.webauthn4j.converter.util.ObjectConverter;
 import com.webauthn4j.data.RegistrationData;
 import com.webauthn4j.data.RegistrationParameters;
 import com.webauthn4j.data.RegistrationRequest;
@@ -27,11 +30,17 @@ import jp.dataforms.fw.app.user.dao.WebAuthnTable;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
+import jp.dataforms.fw.util.WebAuthnUtil;
 
 /**
  * 生体認証ページ 用フォームクラス。
  */
 public class WebAuthnForm extends Form {
+	/**
+	 * WebAutn登録時のオプションのセッションキー。
+	 */
+	private static final String WEB_AUTHN_CREATE_OPTION = "WebAuthnCreateOption";
+
 	/**
 	 * logger.
 	 */
@@ -59,15 +68,7 @@ public class WebAuthnForm extends Form {
 	 * @return ランダムなchallenge。
 	 */
 	public String generateChallenge() {
-/*		long seed = (new java.util.Date()).getTime();
-		Random r = new Random(seed);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 16; i++) {
-			int v = r.nextInt(10);
-			sb.append(Integer.toString(v));
-		}
-		return sb.toString();*/
-		return "0123456789012345";
+		return WebAuthnUtil.generateChallenge();
 	}
 
 	/**
@@ -85,13 +86,13 @@ public class WebAuthnForm extends Form {
 	}
 	
 	/**
-	 * 生体情報の登録を行う。
+	 * 生体情報の公開キー作成オプションを取得します。
 	 * @param p パラメータ。
 	 * @return 応答情報。
 	 * @throws Exception 例外。
 	 */
 	@WebMethod
-	public Response getCreateOption(final Map<String, Object> p) throws Exception {
+	public Response getOption(final Map<String, Object> p) throws Exception {
 		Map<String, String> opt = new HashMap<String, String>();
 		String challenge = this.generateChallenge();
 		String origin = this.getOrigin();
@@ -105,7 +106,7 @@ public class WebAuthnForm extends Form {
 		opt.put("serverName", serverName);
 		opt.put("rpName", "dataforms3");
 		HttpSession session = this.getPage().getRequest().getSession();
-		session.setAttribute("WebAuthnOption", opt);
+		session.setAttribute(WEB_AUTHN_CREATE_OPTION, opt);
 		Response resp = new JsonResponse(opt);
 		return resp;
 	}
@@ -117,7 +118,7 @@ public class WebAuthnForm extends Form {
 	private ServerProperty getServerProperty() {
 		HttpSession session = this.getPage().getRequest().getSession();
 		@SuppressWarnings("unchecked")
-		Map<String, Object> opt= (Map<String, Object>) session.getAttribute("WebAuthnOption");
+		Map<String, Object> opt= (Map<String, Object>) session.getAttribute(WEB_AUTHN_CREATE_OPTION);
 		Origin origin = new Origin(this.getOrigin());
 		String rpId = this.getPage().getRequest().getServerName();
 		String ch = (String) opt.get("challenge");
@@ -160,19 +161,19 @@ public class WebAuthnForm extends Form {
 		boolean userVerificationRequired = false;
 		boolean userPresenceRequired = true;
 		RegistrationRequest registrationRequest = new RegistrationRequest(ao, cdj);
-		RegistrationParameters registrationParameters 
-			= new RegistrationParameters(serverProperty, null, userVerificationRequired, userPresenceRequired);
-		RegistrationData registrationData = null;
-		registrationData = webAuthnManager.parse(registrationRequest);
+		RegistrationParameters registrationParameters = new RegistrationParameters(serverProperty, null, userVerificationRequired, userPresenceRequired);
+		RegistrationData registrationData = webAuthnManager.parse(registrationRequest);
 		webAuthnManager.validate(registrationData, registrationParameters);
-		String attestationObjectBase64 = Base64.getEncoder().encodeToString(registrationData.getAttestationObjectBytes());
-		String collectedClientDataBase64 = Base64.getEncoder().encodeToString(registrationData.getCollectedClientDataBytes());
-
+		logger.debug("AttestationObject:" + registrationData.getAttestationObject().toString());
+		logger.debug("CollectedClientData:" + registrationData.getCollectedClientData().toString());
+		AttestationObjectConverter attestationObjectConverter = new AttestationObjectConverter(new ObjectConverter());
+		String attestationObjectBase64 = attestationObjectConverter.convertToBase64urlString(registrationData.getAttestationObject());
+		CollectedClientDataConverter collectedClientDataConverter = new CollectedClientDataConverter(new ObjectConverter());
+		String collectedClientDataBase64 = collectedClientDataConverter.convertToBase64UrlString(registrationData.getCollectedClientData());
 	    logger.debug("getAttestationObjectBytes() = " + attestationObjectBase64);
 	    logger.debug("getCollectedClientDataBytes() = " + collectedClientDataBase64);
 	    logger.debug("getClientExtensions() = " + registrationData.getClientExtensions());
 	    logger.debug("getTransports() = " + registrationData.getTransports());
-
 	    Long userId = this.getPage().getUserId();
 	    WebAuthnDao dao = new WebAuthnDao(this);
 	    List<Map<String, Object>> list = dao.query(userId);
@@ -190,6 +191,8 @@ public class WebAuthnForm extends Form {
 	    e.setCreateUserId(userId);
 	    e.setUpdateUserId(userId);
 	    dao.regist(e.getMap());
+	    
+	    
 		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
 		return resp;
 		

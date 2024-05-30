@@ -47,7 +47,7 @@ export class WebAuthnForm extends Form {
 	 * 生体情報登録。
 	 */
 	async regist() {
-		let opt = await this.submit("getCreateOption");
+		let opt = await this.submit("getOption");
 		logger.log("opt=", opt);
 		const optionsFromServer = {
 			"challenge": this.string2Buffer(opt.challenge), // ArrayBufferに変換
