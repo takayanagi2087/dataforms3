@@ -29,7 +29,7 @@ public class WebAuthnDao extends Dao {
 	public List<Map<String, Object>> query(final Long userId) throws Exception {
 		WebAuthnTable table = new WebAuthnTable();
 		SingleTableQuery query = new SingleTableQuery(table);
-		query.setComment("m.user_id = :user_id");
+		query.setCondition("m.user_id = :user_id");
 		WebAuthnTable.Entity e = new WebAuthnTable.Entity();
 		e.setUserId(userId);
 		query.setConditionData(e.getMap());
@@ -84,9 +84,7 @@ public class WebAuthnDao extends Dao {
 	 */
 	public void regist(final Map<String, Object> data) throws Exception {
 		WebAuthnTable.Entity e = new WebAuthnTable.Entity(data);
-		Long userId = e.getUserId();
-		List<Map<String, Object>> list = this.query(userId);
-		if (list.size() > 0) {
+		if (e.getWebAuthnId() != null) {
 			this.update(data);
 		} else {
 			this.insert(data);

@@ -916,4 +916,19 @@ public class WebComponent implements JDBCConnectableObject {
 			}
 		}
 	}
+	
+	/**
+	 * Originを取得する。
+	 * @return Origin。
+	 */
+	public String getOrigin() {
+		String origin = this.getPage().getRequest().getRequestURL().toString();
+		Pattern p = Pattern.compile("^(.+?://.+?)/.*");
+		Matcher m = p.matcher(origin);
+		if (m.find()) {
+			origin = m.group(1);
+		}
+		return origin;
+	}
+
 }
