@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { WebAuthnUtil } from '../../../util/WebAuthnUtil.js';
 import { Form } from '../../../controller/Form.js';
 
 /**
@@ -49,50 +50,8 @@ export class WebAuthnForm extends Form {
 	async regist() {
 		let opt = await this.submit("getOption");
 		logger.log("opt=", opt);
-		const optionsFromServer = {
-			"challenge": this.string2Buffer(opt.challenge), // ArrayBufferに変換
-			"rp": {
-				"id": opt.serverName,
-				"name": opt.rpName
-			},
-			"user": {                      // ユーザー情報
-				"id": this.string2Buffer(opt.name),
-				"name": opt.name,
-				"displayName": opt.displayName
-			},
-			"pubKeyCredParams": [
-				{
-					"type": "public-key",
-					"alg": -7
-				},
-				{
-					"type": "public-key",
-					"alg": -257
-				}
-			],
-			"authenticatorSelection": {
-				authenticatorAttachment: "platform",
-			},
-			"timeout": 60000              // ms単位
-			, attestation: 'direct' // 認証に関するオプション
-		}
-		logger.log("optionsFromServer=", optionsFromServer);
-		const credential = await navigator.credentials.create({
-			publicKey: optionsFromServer
-		});
-		logger.log("resp=\n", credential);
-		logger.log("id=" + credential.id);
-		
-		// サーバ送信用のデータを作成。
-		// バイナリはBase64に変換する。
-		let resp = {};
-		resp.id = credential.id;
-		resp.rawId = this.buffer2Base64(credential.rawId);
-		resp.authenticatorAttachment = credential.authenticatorAttachment;
-		resp.type = credential.type;
-		resp.attestationObject = this.buffer2Base64(credential.response.attestationObject);
-		resp.clientDataJSON = this.buffer2Base64(credential.response.clientDataJSON);
-		logger.log("resp=\n" + JSON.stringify(resp, null, "\t"));
+		let util = new WebAuthnUtil();
+		let resp = await util.create(opt);
 		let m = this.getWebMethod("regist");
 		let r = await m.execute(resp);
 		logger.log("r=", r);

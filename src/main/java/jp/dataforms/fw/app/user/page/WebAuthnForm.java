@@ -129,6 +129,26 @@ public class WebAuthnForm extends Form {
 	}
 	
 	/**
+	 * 通常 (URL非安全) のBASE64に変換.
+	 *
+	 * @param base64url
+	 * @return base64
+	 */
+	private String convertBase64UnSafeUrl(final String base64url) {
+	    if(base64url == null) {
+	        return null;
+	    } else {
+	        String ret = base64url;
+	        ret = ret.replaceAll("-", "+");
+	        ret = ret.replaceAll("_", "/");
+	        ret += "===";
+	        ret = ret.substring(0, ((ret.length() / 4) * 4));
+	        return ret;
+	    }
+	}
+
+	
+	/**
 	 * 生体情報の登録を行う。
 	 * @param p パラメータ。
 	 * @return 応答情報。
@@ -147,9 +167,9 @@ public class WebAuthnForm extends Form {
 		logger.debug("type=" + type);
 		logger.debug("attestationObject=" + attestationObject);
 		logger.debug("clientDataJSON=" + clientDataJSON);
-		byte[] ao = Base64.getDecoder().decode(attestationObject);
+		byte[] ao = Base64.getDecoder().decode(this.convertBase64UnSafeUrl(attestationObject));
 		logger.debug("ao.length=" + ao.length);
-		byte[] cdj = Base64.getDecoder().decode(clientDataJSON);
+		byte[] cdj = Base64.getDecoder().decode(this.convertBase64UnSafeUrl(clientDataJSON));
 		logger.debug("cdj.length=" + cdj.length);
 		
 		HttpSession session = this.getPage().getRequest().getSession();
