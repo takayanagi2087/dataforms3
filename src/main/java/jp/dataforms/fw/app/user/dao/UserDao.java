@@ -399,12 +399,19 @@ public class UserDao extends Dao {
 	 */
 	public void deleteUser(final Map<String, Object> data) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
-		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable(); // new UserInfoTable();
-		String sql = gen.generateDeleteSql(tbl, new FieldList(tbl.getField(UserInfoTable.Entity.ID_USER_ID)));
-		this.executeUpdate(sql, data);
+
 		UserAttributeTable atbl = new UserAttributeTable();
 		String asql = gen.generateDeleteSql(atbl, new FieldList(atbl.getField(UserInfoTable.Entity.ID_USER_ID)));
 		this.executeUpdate(asql, data);
+		
+		WebAuthnTable watbl = new WebAuthnTable();
+		String wasql = gen.generateDeleteSql(watbl, new FieldList(watbl.getField(UserInfoTable.Entity.ID_USER_ID)));
+		this.executeUpdate(wasql, data);
+
+		
+		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable(); // new UserInfoTable();
+		String sql = gen.generateDeleteSql(tbl, new FieldList(tbl.getField(UserInfoTable.Entity.ID_USER_ID)));
+		this.executeUpdate(sql, data);
 	}
 
 	/**
@@ -432,6 +439,29 @@ public class UserDao extends Dao {
 		return rec;
 	}
 
+/*	public Map<String, Object> queryLoginInfo(final String loginId) throws Exception {
+		
+	}
+*/	
+	
+	/**
+	 * LoginIdに対応するpasswordを取得します。
+	 * @param loginId loginId。
+	 * @return パスワード。
+	 * @throws Exception 例外。
+	 */
+	public String queryPassword(final String loginId) throws Exception {
+		UserInfoTable table = new UserInfoTable();
+		SingleTableQuery q = new SingleTableQuery(table);
+		q.setCondition("m.login_id = :login_id");
+		UserInfoTable.Entity p = new UserInfoTable.Entity();
+		p.setLoginId(loginId);
+		q.setConditionData(p.getMap());
+		Map<String, Object> rec = this.executeRecordQuery(q);
+		String password = (String) rec.get(UserInfoTable.Entity.ID_PASSWORD);
+		return password;
+	}
+	
 	/**
 	 * ログインチェックを行ないます。
 	 * @param data データ。

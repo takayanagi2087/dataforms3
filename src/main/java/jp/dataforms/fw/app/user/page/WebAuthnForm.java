@@ -68,10 +68,6 @@ public class WebAuthnForm extends Form {
 		super.init();
 		WebAuthnDao dao = new WebAuthnDao(this);
 		List<Map<String, Object>> authenticatorList = dao.query(this.getPage().getUserId());
-		int no = 1;
-		for (Map<String, Object> m: authenticatorList) {
-			m.put("rowNo", no++);
-		}
 		this.setFormData(ID_AUTHENTICATOR_LIST, authenticatorList);
 	}
 	

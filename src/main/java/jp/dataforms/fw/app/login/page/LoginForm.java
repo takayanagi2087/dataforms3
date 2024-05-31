@@ -1,5 +1,6 @@
 package jp.dataforms.fw.app.login.page;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,6 +158,26 @@ public class LoginForm extends Form {
 		LoginForm.passwordResetMailPage = passwordResetMailPage;
 	}
 
+	/**
+	 * ユーザが登録したパスキーの一覧を取得します。
+	 * @param p POSTされたパラメータ。
+	 * @return ユーザが登録したパスキーの一覧。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response getPassKeyList(final Map<String, Object> p) throws Exception {
+		String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
+		List<String> ret = new ArrayList<String>();
+		WebAuthnDao dao = new WebAuthnDao(this);
+		List<Map<String, Object>> list = dao.query(loginId);
+		for (Map<String, Object> m: list) {
+			WebAuthnTable.Entity e = new WebAuthnTable.Entity(m);
+			ret.add(e.getAuthenticatorName());
+		}
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, ret);
+		return resp;
+	}
+
 	
 	/**
 	 * 認証時のオプションを取得します。
@@ -167,8 +188,10 @@ public class LoginForm extends Form {
 	@WebMethod
 	public Response getOption(final Map<String, Object> p) throws Exception {
 		String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
+		String authenticatorName = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+		logger.debug("authenticatorName=" + authenticatorName);
 		WebAuthnDao dao = new WebAuthnDao(this);
-		Map<String, Object> m = dao.queryWebAuthnInfo(loginId);
+		Map<String, Object> m = dao.queryWebAuthnInfo(loginId, authenticatorName);
 		WebAuthnTable.Entity e = new WebAuthnTable.Entity(m);
 		Map<String, Object> ret = new HashMap<String, Object>();
 		ret.put("id", e.getAuthId());
@@ -233,13 +256,25 @@ public class LoginForm extends Form {
 	 * @throws Exception 例外。
 	 */
 	@WebMethod
-	public Response webAuthn(final Map<String, Object> p) throws Exception {
+	public Response passKeyAuth(final Map<String, Object> p) throws Exception {
 		CredentialRecord credentialRecord = this.getCredentialRecord(); 
 		ServerProperty serverProperty = this.getServerProperty();
 		AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
 		logger.debug("authenticationData=" + authenticationData.toString());
+		
+		UserDao dao = new UserDao(this);
+		String loginId = (String) p.get("loginId");
+		String password = (String) dao.queryPassword(loginId);
+		Map<String, Object> loginInfo = new HashMap<String, Object>();
+		loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
+		loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
+		logger.debug("loginId=" + loginId);
+		Map<String, Object> userInfo = dao.login(loginInfo, false);
+		HttpSession session = this.getPage().getRequest().getSession();
+		session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
 		return resp;
 	}
+	
 }
 

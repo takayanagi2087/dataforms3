@@ -32,7 +32,7 @@ public class WebAuthnTableRelation extends TableRelation {
 		 * 以下の定義を有効にすると外部キーHogeTableに対する外部キーを設定します。
 		 * この設定だけでHogeTableとの結合条件も生成されるようになります。
 		 */
-		// foreignKeyList.add(new ForeignKey("fkWebAuthnTable01", WebAuthnTable.Entity.ID_HOGE_ID, HogeTable.class));
+		foreignKeyList.add(new ForeignKey("fkWebAuthnTable01", WebAuthnTable.Entity.ID_USER_ID, UserInfoTable.class));
 	}
 
 	@Override

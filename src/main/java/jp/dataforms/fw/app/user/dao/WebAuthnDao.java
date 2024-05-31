@@ -33,7 +33,12 @@ public class WebAuthnDao extends Dao {
 		WebAuthnTable.Entity e = new WebAuthnTable.Entity();
 		e.setUserId(userId);
 		query.setConditionData(e.getMap());
-		return this.executeQuery(query);
+		List<Map<String, Object>> list = this.executeQuery(query);
+		int no = 1;
+		for (Map<String, Object> m: list) {
+			m.put("rowNo", no++);
+		}
+		return list;
 	}
 	
 
@@ -74,19 +79,39 @@ public class WebAuthnDao extends Dao {
 		WebAuthnTable table = new WebAuthnTable();
 		this.executeInsert(table, data);
 	}
-	
+
 	/**
-	 * loginIdからWebAuthnTableを取得します。
-	 * @param loginId loginId。
-	 * @return WebAuthn情報。
+	 * LoginIdに対応したPassKeyのリストを取得する。
+	 * @param loginId ログインID。
+	 * @return PassKeyのリスト。
 	 * @throws Exception 例外。
 	 */
-	public Map<String, Object> queryWebAuthnInfo(final String loginId) throws Exception {
+	public List<Map<String, Object>> query(final String loginId) throws Exception {
 		WebAuthnTable table = new WebAuthnTable();
 		SingleTableQuery query = new SingleTableQuery(table);
 		query.setCondition("m.user_id = (select user_id from user_info where login_id=:login_id)");
 		UserInfoTable.Entity p = new UserInfoTable.Entity();
 		p.setLoginId(loginId);
+		query.setConditionData(p.getMap());
+		List<Map<String, Object>> list = this.executeQuery(query);
+		return list;
+	}
+	
+	
+	/**
+	 * loginIdからWebAuthnTableを取得します。
+	 * @param loginId loginId。
+	 * @param authenticatorName 認証器の名称。
+	 * @return WebAuthn情報。
+	 * @throws Exception 例外。
+	 */
+	public Map<String, Object> queryWebAuthnInfo(final String loginId, final String authenticatorName) throws Exception {
+		WebAuthnTable table = new WebAuthnTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		query.setCondition("m.user_id = (select user_id from user_info where login_id=:login_id) and m.authenticator_name = :authenticator_name");
+		UserInfoTable.Entity p = new UserInfoTable.Entity();
+		p.setLoginId(loginId);
+		p.getMap().put(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, authenticatorName);
 		query.setConditionData(p.getMap());
 		Map<String, Object> ret = null;
 		List<Map<String, Object>> list = this.executeQuery(query);

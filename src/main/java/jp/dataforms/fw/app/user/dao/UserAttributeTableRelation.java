@@ -32,6 +32,11 @@ public class UserAttributeTableRelation extends TableRelation {
 	 */
 	static {
 		UserAttributeTableRelation.foreignKeyList = new ArrayList<ForeignKey>();
+		/*
+		 * 以下の定義を有効にすると外部キーHogeTableに対する外部キーを設定します。
+		 * この設定だけでHogeTableとの結合条件も生成されるようになります。
+		 */
+		foreignKeyList.add(new ForeignKey("fkUserAttributeTable01", WebAuthnTable.Entity.ID_USER_ID, UserInfoTable.class));
 	}
 
 	@Override

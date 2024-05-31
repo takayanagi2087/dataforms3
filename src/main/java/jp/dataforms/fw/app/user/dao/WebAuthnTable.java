@@ -102,7 +102,7 @@ public class WebAuthnTable extends Table {
 
 		/**
 		 * 認証機器の名称を設定します。
-		 * @param webAuthName 認証機器の名称。
+		 * @param authenticatorName 認証機器の名称。
 		 */
 		public void setAuthenticatorName(final java.lang.String authenticatorName) {
 			this.getMap().put(Entity.ID_AUTHENTICATOR_NAME, authenticatorName);

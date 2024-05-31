@@ -46,22 +46,66 @@ export class LoginForm extends Form {
 		}
 	}
 
-
-
-	/**
-	 * WebAuthn対応のログイン。
-	 */
-	async webAuthn() {
+	
+	async passKeyAuth() {
 		let r = await this.submit("getOption");
 		logger.log("r=", r);
 		if (r.status == JsonResponse.SUCCESS) {
 			let opt = r.result;
 			let util = new WebAuthnUtil();
 			let resp = await util.get(opt);
-			let m = this.getWebMethod("webAuthn");
+			resp.loginId = this.get("loginId").val();			
+			let m = this.getWebMethod("passKeyAuth");
 			let res = await m.execute(resp);
 			logger.log("r=", res);
-		} 
+			if (res.status == JsonResponse.SUCCESS) {
+				currentPage.toTopPage();
+			}
+		}
+	}
+
+	setPassKeyList(plist) {
+		let html = "";
+		if (plist.length == 1) {
+			html += "<input type='hidden' id='authenticatorName' name='authenticatorName' value='" + plist[0] + "' />";
+			this.get("passKeyList").hide();
+		} else {
+			this.get("passKeyList").show();
+			html += "以下のPassKeyが登録されています。使用するPassKeyを選択してください。<br/>";
+			html += "<input type='hidden' name='authenticatorName' value='' />";
+			for (let i = 0; i < plist.length; i++) {
+				html += "<input type='button' class='authenticatorName' value='" + plist[i] +"' /> &nbsp;&nbsp;"
+			}
+		}
+		logger.log("html=" + html);
+		this.get("passKeyList").html(html);
+	}
+	
+	/**
+	 * WebAuthn対応のログイン。
+	 */
+	async passKey() {
+		try {
+			let passKeyList = await this.submit("getPassKeyList");
+			if (passKeyList.status == JsonResponse.SUCCESS) {
+				let plist = passKeyList.result;
+				this.setPassKeyList(plist);
+				if (plist.length == 0) {
+					currentPage.alert(null, "パスキーが登録されていません。");
+				} else if (plist.length == 1) {
+					await this.passKeyAuth();
+				} else {
+					this.find("input.authenticatorName").click(async (ev) => {
+						let bname = $(ev.currentTarget).val();
+						logger.log("bname=" + bname);
+						this.find("[name='authenticatorName']").val(bname);
+						await this.passKeyAuth();
+					});
+				}
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
 	}
 
 
@@ -74,8 +118,8 @@ export class LoginForm extends Form {
 	 */
 	attach() {
 		super.attach();
-		this.get("webAuthnButton").click(() => {
-			this.webAuthn();
+		this.get("passKeyButton").click(() => {
+			this.passKey();
 			return false;
 		});
 		this.get("loginButton").click(() => {

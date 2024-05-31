@@ -1,8 +1,10 @@
 package jp.dataforms.fw.app.user.dao;
 
 import jp.dataforms.fw.app.user.dao.UserQuery.UserAttributeSubQuery;
+import jp.dataforms.fw.dao.Index;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.TableRelation;
+import jp.dataforms.fw.field.base.FieldList;
 
 /**
  * ユーザテーブルの関係を定義するクラスです。
@@ -39,4 +41,20 @@ public class UserInfoTableRelation extends TableRelation {
 		return null;
 	}
 
+	/**
+	 * LoginIdを一意に設定するインデックス。
+	 */
+	public static class LoginIdIndex extends Index {
+		/**
+		 * コンストラクタ。
+		 */
+		public LoginIdIndex() {
+			this.setUnique(true);
+			UserInfoTable table = new UserInfoTable();
+			FieldList flist = new FieldList();
+			flist.addField(table.getLoginIdField());
+			this.setFieldList(flist);
+			this.setTable(table);
+		}
+	}
 }
