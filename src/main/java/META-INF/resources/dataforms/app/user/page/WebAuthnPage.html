@@ -2,18 +2,52 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>生体情報登録</title>
-		<meta name="description" content="ユーザアカウントに生体情報を登録します。(何らかの生体認証をサポートした機器が必要です)">
+		<title>PassKey管理</title>
+		<meta name="description" content="ユーザアカウントにPassKeyを登録します。(指紋認証や顔認証などに対応した端末が必要になります)">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="webAuthnForm">
 				<div>
-					指紋認証・顔認証等の生体認証をサポートした端末を使用している場合、生体情報を登録することができます。
+					指紋認証・顔認証等の生体認証をサポートした端末を使用している場合、
+					認証器として登録しログイン時に使用することが出来ます。
 				</div>
-				<button type="button" id="registButton" class="largeButton">生体情報登録</button>
+				<div class="gridLayout">
+					<div class="fieldDiv" style="justify-content: left;">
+						<div class="label">認証器名称</div>
+						<div class="field" >
+							<input type="text" id="authenticatorName" value="" />
+						</div>
+					</div>
+					<div>所有する生体認証機器を複数登録することが出来ます。その機器を区別するための名前を指定してください。</div>
+				</div>
+				<button type="button" id="registButton" class="largeButton">認証器登録</button>
+				<span>現在ログインしている端末を認証器として登録します。</span>
+				<h2>認証器一覧</h2>
+				<table id="authenticatorList">
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>認証器</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width: 64px;">
+								<span id="authenticatorList[0].rowNo"></span>
+								<input type="hidden" id="authenticatorList[0].webAuthnId" />
+							</td>
+							<td style="width: 300px;">
+								<span id="authenticatorList[0].authenticatorName"></span>
+							</td>
+							<td>
+								<button type="button" id="authenticatorList[0].deleteButton">削除</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</form>
-
 		</div>
 	</body>
 </html>

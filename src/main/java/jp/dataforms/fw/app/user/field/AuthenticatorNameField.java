@@ -8,7 +8,7 @@ import jp.dataforms.fw.validator.MaxLengthValidator;
  * WebAuthNameFieldフィールドクラス。
  *
  */
-public class WebAuthNameField extends VarcharField {
+public class AuthenticatorNameField extends VarcharField {
 	/**
 	 * フィールド長。
 	 */
@@ -21,14 +21,14 @@ public class WebAuthNameField extends VarcharField {
 	/**
 	 * コンストラクタ。
 	 */
-	public WebAuthNameField() {
+	public AuthenticatorNameField() {
 		this(null);
 	}
 	/**
 	 * コンストラクタ。
 	 * @param id フィールドID。
 	 */
-	public WebAuthNameField(final String id) {
+	public AuthenticatorNameField(final String id) {
 		super(id, LENGTH);
 		this.setComment(COMMENT);
 	}

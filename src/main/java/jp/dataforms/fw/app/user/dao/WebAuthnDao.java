@@ -36,6 +36,25 @@ public class WebAuthnDao extends Dao {
 		return this.executeQuery(query);
 	}
 	
+
+	/**
+	 * WebAuthnTableを検索します。
+	 * @param userId ユーザID。
+	 * @param an 認証器の名称。
+	 * @return WebAuthnTableの検索結果。
+	 * @throws Exception 例外。
+	 */
+	public List<Map<String, Object>> query(final Long userId, final String an) throws Exception {
+		WebAuthnTable table = new WebAuthnTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		query.setCondition("m.user_id = :user_id and m.authenticator_name = :authenticator_name");
+		WebAuthnTable.Entity e = new WebAuthnTable.Entity();
+		e.setUserId(userId);
+		e.setAuthenticatorName(an);
+		query.setConditionData(e.getMap());
+		return this.executeQuery(query);
+	}
+
 	/**
 	 * データを更新します。
 	 * @param data データ。
@@ -89,5 +108,17 @@ public class WebAuthnDao extends Dao {
 		} else {
 			this.insert(data);
 		}
+	}
+	
+	/**
+	 * 認証器の削除を行います。
+	 * @param webAuthenId 認証器のID。
+	 * @throws Exception 例外。
+	 */
+	public void delete(final Long webAuthenId) throws Exception {
+		WebAuthnTable table = new WebAuthnTable();
+		WebAuthnTable.Entity p = new WebAuthnTable.Entity();
+		p.setWebAuthnId(webAuthenId);
+		this.executeDelete(table, p.getMap());
 	}
 }

@@ -1,16 +1,17 @@
 package jp.dataforms.fw.app.user.dao;
 
 import java.util.Map;
-import jp.dataforms.fw.dao.Table;
-import jp.dataforms.fw.app.user.field.WebAuthnIdField;
+
 import jp.dataforms.fw.app.user.field.AttestationObjectField;
-import jp.dataforms.fw.util.NumberUtil;
-import jp.dataforms.fw.app.user.field.UserIdField;
 import jp.dataforms.fw.app.user.field.AuthIdField;
-import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
-import jp.dataforms.fw.app.user.field.WebAuthNameField;
 import jp.dataforms.fw.app.user.field.AuthTypeField;
+import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
+import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
 import jp.dataforms.fw.app.user.field.CollectedClientDataField;
+import jp.dataforms.fw.app.user.field.UserIdField;
+import jp.dataforms.fw.app.user.field.WebAuthnIdField;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.util.NumberUtil;
 
 
 /**
@@ -25,7 +26,7 @@ public class WebAuthnTable extends Table {
 		this.setAutoIncrementId(true);
 		this.setComment("WebAuthenテーブル");
 		this.addPkField(new WebAuthnIdField()).setNotNull(true); //WebAuth情報のID
-		this.addField(new WebAuthNameField()); //認証機器の名称
+		this.addField(new AuthenticatorNameField()); //認証機器の名称
 		this.addField(new UserIdField()); //ユーザを示すID。
 		this.addField(new AuthIdField()); //認証情報ID
 		this.addField(new AuthTypeField()); //認証タイプ
@@ -48,7 +49,7 @@ public class WebAuthnTable extends Table {
 		/** WebAuth情報のIDのフィールドID。 */
 		public static final String ID_WEB_AUTHN_ID = "webAuthnId";
 		/** 認証機器の名称のフィールドID。 */
-		public static final String ID_WEB_AUTH_NAME = "webAuthName";
+		public static final String ID_AUTHENTICATOR_NAME = "authenticatorName";
 		/** ユーザを示すID。のフィールドID。 */
 		public static final String ID_USER_ID = "userId";
 		/** 認証情報IDのフィールドID。 */
@@ -95,16 +96,16 @@ public class WebAuthnTable extends Table {
 		 * 認証機器の名称を取得します。
 		 * @return 認証機器の名称。
 		 */
-		public java.lang.String getWebAuthName() {
-			return (java.lang.String) this.getMap().get(Entity.ID_WEB_AUTH_NAME);
+		public java.lang.String getAuthenticatorName() {
+			return (java.lang.String) this.getMap().get(Entity.ID_AUTHENTICATOR_NAME);
 		}
 
 		/**
 		 * 認証機器の名称を設定します。
 		 * @param webAuthName 認証機器の名称。
 		 */
-		public void setWebAuthName(final java.lang.String webAuthName) {
-			this.getMap().put(Entity.ID_WEB_AUTH_NAME, webAuthName);
+		public void setAuthenticatorName(final java.lang.String authenticatorName) {
+			this.getMap().put(Entity.ID_AUTHENTICATOR_NAME, authenticatorName);
 		}
 
 		/**
@@ -218,8 +219,8 @@ public class WebAuthnTable extends Table {
 	 * 認証機器の名称フィールドを取得します。
 	 * @return 認証機器の名称フィールド。
 	 */
-	public WebAuthNameField getWebAuthNameField() {
-		return (WebAuthNameField) this.getField(Entity.ID_WEB_AUTH_NAME);
+	public AuthenticatorNameField getWebAuthNameField() {
+		return (AuthenticatorNameField) this.getField(Entity.ID_AUTHENTICATOR_NAME);
 	}
 
 	/**

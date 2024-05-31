@@ -4,6 +4,7 @@
 
 'use strict';
 
+import { NumberUtil } from '../../util/NumberUtil.js';
 import { Field } from './Field.js';
 
 /**

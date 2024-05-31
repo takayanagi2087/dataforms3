@@ -17,20 +17,33 @@ import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
+import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
+import jp.dataforms.fw.app.user.field.WebAuthnIdField;
 import jp.dataforms.fw.controller.Form;
+import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.common.RowNoField;
+import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.WebAuthnUtil;
+import jp.dataforms.fw.validator.RequiredValidator;
 
 /**
  * 生体認証ページ 用フォームクラス。
  */
 public class WebAuthnForm extends Form {
+
 	/**
 	 * WebAutn登録時のオプションのセッションキー。
 	 */
 	private static final String WEB_AUTHN_CREATE_OPTION = "WebAuthnCreateOption";
 
+	/**
+	 * 認証器リストのID。
+	 */
+	private static final String ID_AUTHENTICATOR_LIST = "authenticatorList";
+
+	
 	/**
 	 * logger.
 	 */
@@ -41,15 +54,25 @@ public class WebAuthnForm extends Form {
 	 */
 	public WebAuthnForm() {
 		super(null);
-		// TODO:1.フィールドを追加します。
-		// TODO:2.Webリソース作成で、ページのHTMLを作成します。
-		// TODO:3.必要に応じて作成したHTMLにボタンを追加します。
-		// TODO:4.Webリソース作成でFormのjsを作成し、各種イベント処理を追加します。
+		this.addField(new AuthenticatorNameField()).addValidator(new RequiredValidator());
+		FieldList flist = new FieldList();
+		flist.addField(new RowNoField());
+		flist.addField(new WebAuthnIdField());
+		flist.addField(new AuthenticatorNameField());
+		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
+		this.addHtmlTable(authenticatorList);
 	}
 
 	@Override
 	public void init() throws Exception {
 		super.init();
+		WebAuthnDao dao = new WebAuthnDao(this);
+		List<Map<String, Object>> authenticatorList = dao.query(this.getPage().getUserId());
+		int no = 1;
+		for (Map<String, Object> m: authenticatorList) {
+			m.put("rowNo", no++);
+		}
+		this.setFormData(ID_AUTHENTICATOR_LIST, authenticatorList);
 	}
 	
 	
@@ -98,18 +121,19 @@ public class WebAuthnForm extends Form {
 	}
 	
 	/**
-	 * 生体情報の登録を行う。
+	 * 認証器の登録を行う。
 	 * @param p パラメータ。
 	 * @return 応答情報。
 	 * @throws Exception 例外。
 	 */
 	@WebMethod
-	public Response regist(final Map<String, Object> p) throws Exception {
+	public Response registAuthenticator(final Map<String, Object> p) throws Exception {
 	    Long userId = this.getPage().getUserId();
 		ServerProperty serverProperty = this.getServerProperty();
 		Map<String, Object> regData = WebAuthnUtil.getRegistDataMap(p, serverProperty);
 	    WebAuthnDao dao = new WebAuthnDao(this);
-	    List<Map<String, Object>> list = dao.query(userId);
+	    String an = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+	    List<Map<String, Object>> list = dao.query(userId, an);
 	    WebAuthnTable.Entity e = new WebAuthnTable.Entity();
 	    if (list.size() > 0) {
 	    	e.setMap(list.get(0));
@@ -119,12 +143,34 @@ public class WebAuthnForm extends Form {
 		    e.setUpdateUserId(userId);
 	    }
     	e.getMap().putAll(regData);
-	    e.setWebAuthName("default");
-	    e.setUserId(userId);
+    	e.setAuthenticatorName(an);
+    	e.setUserId(userId);
 	    dao.regist(e.getMap());
-		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
+	    list = dao.query(userId);
+	    Response resp = new JsonResponse(JsonResponse.SUCCESS, list);
 		return resp;
-		
 	}
 
+	/**
+	 * 認証器の削除を行います。
+	 * @param p 認証器の名称を含むパラメータ。
+	 * @return 削除結果。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response deleteAuthenticator(final Map<String, Object> p) throws Exception {
+	    Long userId = this.getPage().getUserId();
+	    WebAuthnDao dao = new WebAuthnDao(this);
+	    String an = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+	    List<Map<String, Object>> list = dao.query(userId, an);
+	    if (list.size() > 0) {
+	    	// ヒットしても1件のはず。
+	    	WebAuthnTable.Entity e = new WebAuthnTable.Entity(list.get(0));
+	    	Long webAuthnId = e.getWebAuthnId();
+	    	dao.delete(webAuthnId);
+	    }
+	    list = dao.query(userId);
+	    Response resp = new JsonResponse(JsonResponse.SUCCESS, list);
+	    return resp;
+	}
 }

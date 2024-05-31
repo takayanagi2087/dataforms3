@@ -1,10 +1,13 @@
 package jp.dataforms.fw.app.user.dao;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import jp.dataforms.fw.dao.ForeignKey;
+import jp.dataforms.fw.dao.Index;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.TableRelation;
+import jp.dataforms.fw.field.base.FieldList;
 
 /**
  * WebAuthnTableの関係を定義するクラスです。
@@ -59,5 +62,23 @@ public class WebAuthnTableRelation extends TableRelation {
 		}
 */
 		return super.getJoinCondition(joinTable, alias);
+	}
+	
+	/**
+	 * UserIdと認証機のユニークインデックス。
+	 */
+	public static class UserAuthenticatorNameIndex extends Index {
+		/**
+		 * コンストラクタ。
+		 */
+		public UserAuthenticatorNameIndex() {
+			this.setUnique(true);
+			WebAuthnTable table = new WebAuthnTable();
+			FieldList flist = new FieldList();
+			flist.addField(table.getUserIdField());
+			flist.addField(table.getWebAuthNameField());
+			this.setFieldList(flist);
+			this.setTable(table);
+		}
 	}
 }
