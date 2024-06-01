@@ -38,9 +38,13 @@ export class LoginInfoForm extends Form {
 	 * ログアウト処理.
 	 */
 	async logout() {
-		let method = this.getWebMethod("logout");
-		await method.execute("");
-		currentPage.toTopPage();
+		try {
+			let method = this.getWebMethod("logout");
+			await method.execute("");
+			currentPage.toTopPage();
+		} catch (e) {
+			currentPage.reportError(e);
+		}
 	}
 
 	/**
