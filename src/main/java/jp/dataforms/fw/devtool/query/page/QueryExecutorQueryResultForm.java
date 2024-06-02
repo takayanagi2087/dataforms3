@@ -12,6 +12,7 @@ import jp.dataforms.fw.controller.QueryResultForm;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.sqltype.CharField;
 import jp.dataforms.fw.field.sqltype.DateField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
@@ -44,6 +45,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		this.addField(new DateField("dummyDate"));
 		this.addField(new TimestampField("dummyTimestamp"));
 		this.addField(new IntegerField("dummyNumber"));
+		this.addField(new CharField("dummyChar", 1));
 		
 		this.htmlTable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT);
 		this.addHtmlTable(this.htmlTable);
@@ -132,7 +134,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 				sb.append(" id=\"mainDiv.queryResultForm.queryResult[0].");
 				sb.append(f.getId());
 				sb.append("\" ");
-				sb.append("\"></span>");
+				sb.append("></span>");
 			} else {
 				sb.append("<span id=\"queryResult[0].");
 				sb.append(f.getId());
