@@ -6,7 +6,6 @@
 
 import { WebComponent } from '../controller/WebComponent.js';
 import { Field } from '../field/base/Field.js';
-import { Page } from '../controller/Page.js';
 import { MessagesUtil } from '../util/MessagesUtil.js';
 
 /**
@@ -203,6 +202,7 @@ export class HtmlTable extends WebComponent {
 	 *
 	 */
 	async initField(fieldList) {
+		logger.log("fieldList=", fieldList);
 		for (let i = 0; i < fieldList.length; i++) {
 			let f = fieldList[i];
 			let field = this.newInstance(f);

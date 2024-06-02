@@ -15,6 +15,10 @@
 					<div class="label">パスワード</div>
 					<div class="field"><input type="password" id="password" value=""/></div>
 				</div>
+				<div class="fieldDiv">
+					<div class="label">パスキー</div>
+					<div class="field"><select id="authenticatorName" style="width: calc(100% - 190px);"></select><button type="button" id="passkeyListButton">登録されているパスキーを取得</button></div>
+				</div>
 				<div class="fieldDiv" style="justify-content: space-between;">
 					<div>
 						<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">ログインしたままにする</label>
@@ -24,9 +28,6 @@
 					</div>
 				</div>
 			</div>
-			<div id="passKeyList" style="display: none;">
-			</div>
-			<button type="button" id="passKeyButton" class="largeButton">PassKey認証</button>
 			<button type="submit" id="loginButton" class="largeButton">ログイン</button>
 		</form>
 	</body>

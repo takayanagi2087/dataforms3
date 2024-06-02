@@ -25,9 +25,6 @@ public class UserSelfEditForm extends EditForm {
 
 	/**
 	 * コンストラクタ。
-	 * <pre>
-	 * 監理者モードの場合全ユーザの情報が更新可能です。
-	 * </pre>
 	 */
 	public UserSelfEditForm() {
 		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable();

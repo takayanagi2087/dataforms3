@@ -1,24 +1,22 @@
 package jp.dataforms.fw.app.user.dao;
 
 import java.util.Map;
-
-import jp.dataforms.fw.app.user.field.EnabledFlagField;
-import jp.dataforms.fw.app.user.field.ExternalUserFlagField;
-import jp.dataforms.fw.app.user.field.LoginIdField;
-import jp.dataforms.fw.app.user.field.MailAddressField;
-import jp.dataforms.fw.app.user.field.PasswordField;
-import jp.dataforms.fw.app.user.field.UserIdField;
-import jp.dataforms.fw.app.user.field.UserNameField;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.field.common.DeleteFlagField;
+import jp.dataforms.fw.util.NumberUtil;
+import jp.dataforms.fw.app.user.field.LoginIdField;
+import jp.dataforms.fw.app.user.field.UserIdField;
+import jp.dataforms.fw.app.user.field.UserNameField;
+import jp.dataforms.fw.app.user.field.PasswordRequiredFlagField;
+import jp.dataforms.fw.app.user.field.PasskeyRequiredFlagField;
+import jp.dataforms.fw.app.user.field.PasswordField;
+import jp.dataforms.fw.app.user.field.MailAddressField;
+import jp.dataforms.fw.app.user.field.ExternalUserFlagField;
+import jp.dataforms.fw.app.user.field.EnabledFlagField;
 
 
 /**
  * ユーザ情報テーブルクラス。
- * <pre>
- * 必要最小限のユーザ情報を記録します。
- * 追加項目が必要な場合、別テーブルを作成してください。
- * </pre>
  *
  */
 public class UserInfoTable extends Table {
@@ -28,24 +26,25 @@ public class UserInfoTable extends Table {
 	public UserInfoTable() {
 		this.setAutoIncrementId(true);
 		this.setComment("ユーザ情報テーブル");
-		this.addPkField(new UserIdField()); //ユーザを示すID。
+		this.addPkField(new UserIdField()).setNotNull(true); //ユーザを示すID。
 		this.addField(new LoginIdField()); //ログインID.
 		this.addField(new PasswordField()); //パスワード
 		this.addField(new UserNameField()); //氏名
 		this.addField(new MailAddressField()); //メールアドレス
 		this.addField(new ExternalUserFlagField()); //外部ユーザフラグ
 		this.addField(new EnabledFlagField()); //ユーザ有効フラグ
+		this.addField(new PasswordRequiredFlagField()); //パスワード必須フラグ
+		this.addField(new PasskeyRequiredFlagField()); //PassKey必須フラグ
 		this.addField(new DeleteFlagField()); //削除フラグ
-
 		this.addUpdateInfoFields();
 	}
-	
+
 	@Override
 	public String getJoinCondition(final Table joinTable, final String alias) {
 		UserInfoTableRelation r = new UserInfoTableRelation(this);
 		return r.getJoinCondition(joinTable, alias);
 	}
-	
+
 	/**
 	 * Entity操作クラスです。
 	 */
@@ -64,6 +63,10 @@ public class UserInfoTable extends Table {
 		public static final String ID_EXTERNAL_USER_FLAG = "externalUserFlag";
 		/** ユーザ有効フラグのフィールドID。 */
 		public static final String ID_ENABLED_FLAG = "enabledFlag";
+		/** パスワード必須フラグのフィールドID。 */
+		public static final String ID_PASSWORD_REQUIRED_FLAG = "passwordRequiredFlag";
+		/** PassKey必須フラグのフィールドID。 */
+		public static final String ID_PASSKEY_REQUIRED_FLAG = "passkeyRequiredFlag";
 		/** 削除フラグのフィールドID。 */
 		public static final String ID_DELETE_FLAG = "deleteFlag";
 
@@ -71,7 +74,7 @@ public class UserInfoTable extends Table {
 		 * コンストラクタ。
 		 */
 		public Entity() {
-			
+
 		}
 		/**
 		 * コンストラクタ。
@@ -85,7 +88,7 @@ public class UserInfoTable extends Table {
 		 * @return ユーザを示すID。。
 		 */
 		public java.lang.Long getUserId() {
-			return (java.lang.Long) this.getMap().get(Entity.ID_USER_ID);
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_USER_ID));
 		}
 
 		/**
@@ -193,6 +196,38 @@ public class UserInfoTable extends Table {
 		}
 
 		/**
+		 * パスワード必須フラグを取得します。
+		 * @return パスワード必須フラグ。
+		 */
+		public java.lang.String getPasswordRequiredFlag() {
+			return (java.lang.String) this.getMap().get(Entity.ID_PASSWORD_REQUIRED_FLAG);
+		}
+
+		/**
+		 * パスワード必須フラグを設定します。
+		 * @param passwordRequiredFlag パスワード必須フラグ。
+		 */
+		public void setPasswordRequiredFlag(final java.lang.String passwordRequiredFlag) {
+			this.getMap().put(Entity.ID_PASSWORD_REQUIRED_FLAG, passwordRequiredFlag);
+		}
+
+		/**
+		 * PassKey必須フラグを取得します。
+		 * @return PassKey必須フラグ。
+		 */
+		public java.lang.String getPasskeyRequiredFlag() {
+			return (java.lang.String) this.getMap().get(Entity.ID_PASSKEY_REQUIRED_FLAG);
+		}
+
+		/**
+		 * PassKey必須フラグを設定します。
+		 * @param passkeyRequiredFlag PassKey必須フラグ。
+		 */
+		public void setPasskeyRequiredFlag(final java.lang.String passkeyRequiredFlag) {
+			this.getMap().put(Entity.ID_PASSKEY_REQUIRED_FLAG, passkeyRequiredFlag);
+		}
+
+		/**
 		 * 削除フラグを取得します。
 		 * @return 削除フラグ。
 		 */
@@ -210,6 +245,7 @@ public class UserInfoTable extends Table {
 
 
 	}
+
 	/**
 	 * ユーザを示すID。フィールドを取得します。
 	 * @return ユーザを示すID。フィールド。
@@ -267,12 +303,29 @@ public class UserInfoTable extends Table {
 	}
 
 	/**
+	 * パスワード必須フラグフィールドを取得します。
+	 * @return パスワード必須フラグフィールド。
+	 */
+	public PasswordRequiredFlagField getPasswordRequiredFlagField() {
+		return (PasswordRequiredFlagField) this.getField(Entity.ID_PASSWORD_REQUIRED_FLAG);
+	}
+
+	/**
+	 * PassKey必須フラグフィールドを取得します。
+	 * @return PassKey必須フラグフィールド。
+	 */
+	public PasskeyRequiredFlagField getPasskeyRequiredFlagField() {
+		return (PasskeyRequiredFlagField) this.getField(Entity.ID_PASSKEY_REQUIRED_FLAG);
+	}
+
+	/**
 	 * 削除フラグフィールドを取得します。
 	 * @return 削除フラグフィールド。
 	 */
 	public DeleteFlagField getDeleteFlagField() {
 		return (DeleteFlagField) this.getField(Entity.ID_DELETE_FLAG);
 	}
+
 
 
 }

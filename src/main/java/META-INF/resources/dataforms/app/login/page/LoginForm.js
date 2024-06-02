@@ -20,33 +20,28 @@ import { JsonResponse } from '../../../response/JsonResponse.js';
  */
 export class LoginForm extends Form {
 	/**
-	 * ログイン処理を行います。
-	 *
+	 * パスワード認証を行います。
 	 */
-	async login() {
-		try {
-			if (this.validate()) {
-				let result = await this.submit("login");
-				this.parent.resetErrorStatus();
-				if (result.status == JsonResponse.SUCCESS) {
-					if (this.parent instanceof Dialog) {
-						this.parent.close();
-					}
-					if (result.result == "onetime") {
-						window.location.href = "OnetimePasswordPage.df";
-					} else {
-						currentPage.toTopPage();
-					}
-				} else {
-					this.parent.setErrorInfo(this.getValidationResult(result), this);
-				}
+	async passwordAuth() {
+		let result = await this.submit("login");
+		this.parent.resetErrorStatus();
+		if (result.status == JsonResponse.SUCCESS) {
+			if (this.parent instanceof Dialog) {
+				this.parent.close();
 			}
-		} catch (e) {
-			currentPage.reportError(e);
+			if (result.result == "onetime") {
+				window.location.href = "OnetimePasswordPage.df";
+			} else {
+				currentPage.toTopPage();
+			}
+		} else {
+			this.parent.setErrorInfo(this.getValidationResult(result), this);
 		}
 	}
 
-	
+	/**
+	 * パスキー認証を行います。
+	 */
 	async passKeyAuth() {
 		let r = await this.submit("getOption");
 		logger.log("r=", r);
@@ -64,50 +59,42 @@ export class LoginForm extends Form {
 		}
 	}
 
-	setPassKeyList(plist) {
-		let html = "";
-		if (plist.length == 1) {
-			html += "<input type='hidden' id='authenticatorName' name='authenticatorName' value='" + plist[0] + "' />";
-			this.get("passKeyList").hide();
-		} else {
-			this.get("passKeyList").show();
-			html += "以下のPassKeyが登録されています。使用するPassKeyを選択してください。<br/>";
-			html += "<input type='hidden' name='authenticatorName' value='' />";
-			for (let i = 0; i < plist.length; i++) {
-				html += "<input type='button' class='authenticatorName' value='" + plist[i] +"' /> &nbsp;&nbsp;"
-			}
-		}
-		logger.log("html=" + html);
-		this.get("passKeyList").html(html);
-	}
-	
 	/**
-	 * WebAuthn対応のログイン。
+	 * ログインを行います。
 	 */
-	async passKey() {
+	async login() {
 		try {
-			let passKeyList = await this.submit("getPassKeyList");
-			if (passKeyList.status == JsonResponse.SUCCESS) {
-				let plist = passKeyList.result;
-				this.setPassKeyList(plist);
-				if (plist.length == 0) {
-					currentPage.alert(null, "パスキーが登録されていません。");
-				} else if (plist.length == 1) {
-					await this.passKeyAuth();
+			if (this.validate()) {
+				let passkey = this.get("authenticatorName").val();
+				logger.log("passkey:", passkey);
+				if (passkey != null && passkey.length > 0) {
+					this.passKeyAuth();
 				} else {
-					this.find("input.authenticatorName").click(async (ev) => {
-						let bname = $(ev.currentTarget).val();
-						logger.log("bname=" + bname);
-						this.find("[name='authenticatorName']").val(bname);
-						await this.passKeyAuth();
-					});
+					this.passwordAuth();
 				}
 			}
 		} catch (e) {
 			currentPage.reportError(e);
 		}
+
 	}
 
+
+	/**
+	 * パスキーの一覧を取得します。
+	 */
+	async getPasskeyList() {
+		try {
+			if (this.validate()) {
+				let loginId = this.get("loginId").val();
+				logger.log("loginId=" + loginId);
+				let sel = this.getComponent("authenticatorName");
+				await sel.getPasskeyList(loginId);
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
 
 	/**
 	 * HTMLエレメントとの対応付けを行います。
@@ -118,8 +105,9 @@ export class LoginForm extends Form {
 	 */
 	attach() {
 		super.attach();
-		this.get("passKeyButton").click(() => {
-			this.passKey();
+
+		this.get("passkeyListButton").click(() => {
+			this.getPasskeyList();
 			return false;
 		});
 		this.get("loginButton").click(() => {

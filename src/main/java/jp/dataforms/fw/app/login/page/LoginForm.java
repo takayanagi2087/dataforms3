@@ -23,6 +23,7 @@ import com.webauthn4j.server.ServerProperty;
 
 import jakarta.servlet.http.HttpSession;
 import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.app.login.field.PasskeySingleSelectField;
 import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
@@ -75,7 +76,8 @@ public class LoginForm extends Form {
 		super("loginForm");
 		this.addField(new LoginIdField()).addValidator(new RequiredValidator());
 		PasswordField pw = new PasswordField();
-		this.addField(pw).addValidator(new RequiredValidator());
+		this.addField(pw);
+		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME));
 		this.addField(new FlagField(AutoLoginCookie.ID_KEEP_LOGIN));
 	}
 
