@@ -6,6 +6,7 @@
 
 import { SingleSelectField } from '../../../field/common/SingleSelectField.js';
 import { JsonResponse } from '../../../response/JsonResponse.js';
+import { MessagesUtil } from '../../../util/MessagesUtil.js';
 
 /**
  * @class PasskeySingleSelectField
@@ -29,6 +30,7 @@ export class PasskeySingleSelectField extends SingleSelectField {
 
 	/**
 	 * サーバーからパスキーのリストを取得します。
+	 * @param {String} loginId ログインID。
 	 */
 	async getPasskeyList(loginId) {
 		try {
@@ -36,6 +38,11 @@ export class PasskeySingleSelectField extends SingleSelectField {
 			let r = await method.execute("loginId=" + loginId);
 			if (r.status == JsonResponse.SUCCESS) {
 				this.setOptionList(r.result);
+				if (r.result.length > 0) {
+					this.get().val(r.result[0].value);
+				} else {
+					currentPage.alert(null, MessagesUtil.getMessage("messge.passkeynotexists"));
+				}
 			}
 			logger.dir(r);
 		} catch (e) {
