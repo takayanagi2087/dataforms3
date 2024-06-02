@@ -66,9 +66,15 @@ public class LoginForm extends Form {
 	private static final String WEB_AUTHN_INFO = "webAuthnInfo";
 
 	/**
+	 * 最後最終ログイン情報を保存フラグのID。
+	 */
+	private static final String ID_SAVE_LAST_LOGIN = "saveLastLogin";
+	
+	/**
 	 * ユーザ登録ページのアドレス。
 	 */
 	private static String passwordResetMailPage = null;
+
 
 
 	/**
@@ -81,6 +87,7 @@ public class LoginForm extends Form {
 		this.addField(pw);
 		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME));
 		this.addField(new FlagField(AutoLoginCookie.ID_KEEP_LOGIN));
+		this.addField(new FlagField(ID_SAVE_LAST_LOGIN));
 	}
 
 	@Override
@@ -132,7 +139,7 @@ public class LoginForm extends Form {
 						}
 					}
 				} else {
-					throw new ApplicationException(getWebEntryPoint(), "error.ajax");
+					throw new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
 				}
 			}
 		}

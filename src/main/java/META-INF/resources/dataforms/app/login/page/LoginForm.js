@@ -20,6 +20,13 @@ import { JsonResponse } from '../../../response/JsonResponse.js';
  */
 export class LoginForm extends Form {
 	/**
+	 * 最終ログイン情報のローカルストレージキー。
+	 */
+	static get LAST_LOGIN_INFO() {
+		return "lastLoginInfo";
+	}
+	
+	/**
 	 * パスワード認証を行います。
 	 */
 	async passwordAuth() {
@@ -64,6 +71,7 @@ export class LoginForm extends Form {
 				if (res.status == JsonResponse.SUCCESS) {
 					currentPage.toTopPage();
 				}
+				this.saveLastLoginInfo();
 			} else {
 				logger.log("result", r);
 				this.parent.setErrorInfo(this.getValidationResult(r), this);
@@ -77,15 +85,15 @@ export class LoginForm extends Form {
 	 * ログインを行います。
 	 */
 	async login() {
-			if (this.validate()) {
-				let passkey = this.get("authenticatorName").val();
-				logger.log("passkey:", passkey);
-				if (passkey != null && passkey.length > 0) {
-					this.passKeyAuth();
-				} else {
-					this.passwordAuth();
-				}
+		if (this.validate()) {
+			let passkey = this.get("authenticatorName").val();
+			logger.log("passkey:", passkey);
+			if (passkey != null && passkey.length > 0) {
+				this.passKeyAuth();
+			} else {
+				this.passwordAuth();
 			}
+		}
 	}
 
 
@@ -102,6 +110,46 @@ export class LoginForm extends Form {
 			}
 		} catch (e) {
 			currentPage.reportError(e);
+		}
+	}
+	
+	/**
+	 * 最後のログイン情報を保存します。
+	 */
+	saveLastLoginInfo() {
+		if (this.get("saveLastLogin").prop("checked")) {
+			let loginId = this.get("loginId").val();
+			let passkey = this.get("authenticatorName").val();
+			let lastLoginInfo = {};
+			lastLoginInfo.loginId = loginId;
+			lastLoginInfo.passkey = passkey;
+			let json = JSON.stringify(lastLoginInfo);
+			localStorage.setItem(LoginForm.LAST_LOGIN_INFO, json);
+		} else {
+			localStorage.removeItem(LoginForm.LAST_LOGIN_INFO);
+		}
+	}
+
+	/**
+	 * 最後のログイン情報を取得します。
+	 */
+	loadLastLoginInfo() {
+		let lastLoginInfo = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+		if (lastLoginInfo != null) {
+			let json = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+			let lastLoginInfo = JSON.parse(json);
+			this.get("loginId").val(lastLoginInfo.loginId);
+			
+			let optlist = [
+				{"value": lastLoginInfo.passkey, "name": lastLoginInfo.passkey}
+			];
+			
+			let sel = this.getComponent("authenticatorName");
+			sel.setOptionList(optlist);
+			sel.setValue(lastLoginInfo.passkey);
+			this.get("saveLastLogin").prop("checked", true);
+		} else {
+			this.get("saveLastLogin").prop("checked", false);
 		}
 	}
 
@@ -134,6 +182,7 @@ export class LoginForm extends Form {
 			this.get("keepLogin").hide();
 			this.find("label[for='" + this.get("keepLogin").attr("id") + "']").hide();
 		}
+		this.loadLastLoginInfo();
 	}
 
 }
