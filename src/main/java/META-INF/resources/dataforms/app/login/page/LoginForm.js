@@ -23,19 +23,23 @@ export class LoginForm extends Form {
 	 * パスワード認証を行います。
 	 */
 	async passwordAuth() {
-		let result = await this.submit("login");
-		this.parent.resetErrorStatus();
-		if (result.status == JsonResponse.SUCCESS) {
-			if (this.parent instanceof Dialog) {
-				this.parent.close();
-			}
-			if (result.result == "onetime") {
-				window.location.href = "OnetimePasswordPage.df";
+		try {
+			let result = await this.submit("login");
+			this.parent.resetErrorStatus();
+			if (result.status == JsonResponse.SUCCESS) {
+				if (this.parent instanceof Dialog) {
+					this.parent.close();
+				}
+				if (result.result == "onetime") {
+					window.location.href = "OnetimePasswordPage.df";
+				} else {
+					currentPage.toTopPage();
+				}
 			} else {
-				currentPage.toTopPage();
+				this.parent.setErrorInfo(this.getValidationResult(result), this);
 			}
-		} else {
-			this.parent.setErrorInfo(this.getValidationResult(result), this);
+		} catch (e) {
+			currentPage.reportError(e);
 		}
 	}
 
@@ -43,19 +47,29 @@ export class LoginForm extends Form {
 	 * パスキー認証を行います。
 	 */
 	async passKeyAuth() {
-		let r = await this.submit("getOption");
-		logger.log("r=", r);
-		if (r.status == JsonResponse.SUCCESS) {
-			let opt = r.result;
-			let util = new WebAuthnUtil();
-			let resp = await util.get(opt);
-			resp.loginId = this.get("loginId").val();			
-			let m = this.getWebMethod("passKeyAuth");
-			let res = await m.execute(resp);
-			logger.log("r=", res);
-			if (res.status == JsonResponse.SUCCESS) {
-				currentPage.toTopPage();
+		try {
+			let r = await this.submit("getOption");
+			this.parent.resetErrorStatus();
+			if (r.status == JsonResponse.SUCCESS) {
+				logger.log("r=", r);
+				let opt = r.result;
+				let util = new WebAuthnUtil();
+				let resp = await util.get(opt);
+				resp.loginId = this.get("loginId").val();
+				resp.password = this.get("password").val();	
+				resp.authenticatorName = this.get("authenticatorName").val();	
+				let m = this.getWebMethod("passKeyAuth");
+				let res = await m.execute(resp);
+				logger.log("r=", res);
+				if (res.status == JsonResponse.SUCCESS) {
+					currentPage.toTopPage();
+				}
+			} else {
+				logger.log("result", r);
+				this.parent.setErrorInfo(this.getValidationResult(r), this);
 			}
+		} catch (e) {
+			currentPage.reportError(e);
 		}
 	}
 
@@ -63,7 +77,6 @@ export class LoginForm extends Form {
 	 * ログインを行います。
 	 */
 	async login() {
-		try {
 			if (this.validate()) {
 				let passkey = this.get("authenticatorName").val();
 				logger.log("passkey:", passkey);
@@ -73,10 +86,6 @@ export class LoginForm extends Form {
 					this.passwordAuth();
 				}
 			}
-		} catch (e) {
-			currentPage.reportError(e);
-		}
-
 	}
 
 
@@ -105,7 +114,6 @@ export class LoginForm extends Form {
 	 */
 	attach() {
 		super.attach();
-
 		this.get("passkeyListButton").click(() => {
 			this.getPasskeyList();
 			return false;

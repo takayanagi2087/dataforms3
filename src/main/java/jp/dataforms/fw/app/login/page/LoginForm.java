@@ -32,10 +32,12 @@ import jp.dataforms.fw.app.user.field.LoginIdField;
 import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.WebEntryPoint;
+import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.AutoLoginCookie;
+import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.util.WebAuthnUtil;
@@ -95,8 +97,50 @@ public class LoginForm extends Form {
 		AutoLoginCookie.autoLogin(this.getPage());
 	}
 
+	@Override
+	protected List<ValidationError> validateForm(Map<String, Object> data) throws Exception {
+		List<ValidationError> elist = super.validateForm(data);
+		if (elist.size() == 0) {
+			String loginId = (String) data.get(UserInfoTable.Entity.ID_LOGIN_ID);
+			String password = (String) data.get(UserInfoTable.Entity.ID_PASSWORD);
+			String passkey = (String) data.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+			if (StringUtil.isBlank(password) && StringUtil.isBlank(passkey)) {
+				// Passkey Passwordの両方が入力されなかった場合
+				elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+				elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+			}
+			if (elist.size() == 0) {
+				// ユーザ情報を取得。
+				UserDao udao = new UserDao(this);
+				Map<String, Object> userInfo = udao.queryUserInfo(loginId);
+				if (userInfo != null) {
+					UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+					if ("1".equals(ue.getPasswordRequiredFlag())) {
+						// パスワード必須の場合
+						if (StringUtil.isBlank(password)) {
+							elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+						}
+					}
+					// PassKeyの情報を取得。
+					WebAuthnDao pdao = new WebAuthnDao(this);
+					List<Map<String, Object>> plist = pdao.query(loginId);
+					if ("1".equals(ue.getPasskeyRequiredFlag()) && plist.size() > 0) {
+						// Passkeyが必須でかつPasskeyが登録されている場合
+						if (StringUtil.isBlank(passkey)) {
+							logger.debug("passkey=" + passkey);
+							elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+						}
+					}
+				} else {
+					throw new ApplicationException(getWebEntryPoint(), "error.ajax");
+				}
+			}
+		}
+		return elist;
+	}
+	
 	/**
-	 * ログインの処理を行います。
+	 * パスワードログインの処理を行います。
 	 * @param params パラメータ。
 	 * @return ログイン結果。
 	 * @throws Exception 例外。
@@ -189,22 +233,29 @@ public class LoginForm extends Form {
 	 */
 	@WebMethod
 	public Response getOption(final Map<String, Object> p) throws Exception {
-		String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
-		String authenticatorName = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
-		logger.debug("authenticatorName=" + authenticatorName);
-		WebAuthnDao dao = new WebAuthnDao(this);
-		Map<String, Object> m = dao.queryWebAuthnInfo(loginId, authenticatorName);
-		WebAuthnTable.Entity e = new WebAuthnTable.Entity(m);
-		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("id", e.getAuthId());
-		ret.put("challenge", WebAuthnUtil.generateChallenge());
-		
-		HttpSession session = this.getPage().getRequest().getSession();
-		// 送信したオプションをDBに保存しておく。
-		session.setAttribute(WEB_AUTHN_GET_OPTION, ret);
-		// DBから取得した確認情報レコードをセッションに和損しておく
-		session.setAttribute(WEB_AUTHN_INFO, m);
-		Response resp = new JsonResponse(JsonResponse.SUCCESS, ret);
+		JsonResponse resp = null;
+		List<ValidationError> elist = this.validate(p);
+		if (elist.size() > 0) {
+			resp = new JsonResponse(JsonResponse.INVALID, elist);
+			logger.warn("getOption fail");
+		} else {
+			String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
+			String authenticatorName = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+			logger.debug("authenticatorName=" + authenticatorName);
+			WebAuthnDao dao = new WebAuthnDao(this);
+			Map<String, Object> m = dao.queryWebAuthnInfo(loginId, authenticatorName);
+			WebAuthnTable.Entity e = new WebAuthnTable.Entity(m);
+			Map<String, Object> ret = new HashMap<String, Object>();
+			ret.put("id", e.getAuthId());
+			ret.put("challenge", WebAuthnUtil.generateChallenge());
+			
+			HttpSession session = this.getPage().getRequest().getSession();
+			// 送信したオプションをDBに保存しておく。
+			session.setAttribute(WEB_AUTHN_GET_OPTION, ret);
+			// DBから取得した確認情報レコードをセッションに和損しておく
+			session.setAttribute(WEB_AUTHN_INFO, m);
+			resp = new JsonResponse(JsonResponse.SUCCESS, ret);
+		}
 		return resp;
 	}
 	
@@ -259,22 +310,42 @@ public class LoginForm extends Form {
 	 */
 	@WebMethod
 	public Response passKeyAuth(final Map<String, Object> p) throws Exception {
-		CredentialRecord credentialRecord = this.getCredentialRecord(); 
-		ServerProperty serverProperty = this.getServerProperty();
-		AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
-		logger.debug("authenticationData=" + authenticationData.toString());
-		
-		UserDao dao = new UserDao(this);
-		String loginId = (String) p.get("loginId");
-		String password = (String) dao.queryPassword(loginId);
-		Map<String, Object> loginInfo = new HashMap<String, Object>();
-		loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
-		loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
-		logger.debug("loginId=" + loginId);
-		Map<String, Object> userInfo = dao.login(loginInfo, false);
-		HttpSession session = this.getPage().getRequest().getSession();
-		session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
-		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
+		JsonResponse resp = null;
+		List<ValidationError> elist = this.validate(p);
+		if (elist.size() > 0) {
+			resp = new JsonResponse(JsonResponse.INVALID, elist);
+			logger.warn("passKeyAuth fail");
+		} else {
+			CredentialRecord credentialRecord = this.getCredentialRecord(); 
+			ServerProperty serverProperty = this.getServerProperty();
+			AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
+			logger.debug("authenticationData=" + authenticationData.toString());
+			// ここまで来たらPassKeyの確認OK
+			UserDao dao = new UserDao(this);
+			String loginId = (String) p.get("loginId");
+			Map<String, Object> userInfo = dao.queryUserInfo(loginId);
+			UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+			if ("1".equals(ue.getPasswordRequiredFlag())) {
+				// パスワードチェックが必須の場合、POSTされたパスワードでもチェックする。
+				String password = (String) p.get(UserInfoTable.Entity.ID_PASSWORD);
+				Map<String, Object> loginInfo = new HashMap<String, Object>();
+				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
+				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
+				logger.debug("loginId=" + loginId);
+				userInfo = dao.login(loginInfo, true);
+			} else {
+				// パスワードチェックが不要の場合DB中のパスワードを使用して認証。
+				String password = (String) dao.queryPassword(loginId);
+				Map<String, Object> loginInfo = new HashMap<String, Object>();
+				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
+				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
+				logger.debug("loginId=" + loginId);
+				userInfo = dao.login(loginInfo, false);
+			}
+			HttpSession session = this.getPage().getRequest().getSession();
+			session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+			resp = new JsonResponse(JsonResponse.SUCCESS, "");
+		}
 		return resp;
 	}
 	
