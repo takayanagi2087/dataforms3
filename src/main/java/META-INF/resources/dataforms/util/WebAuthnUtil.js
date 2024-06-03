@@ -45,7 +45,11 @@ export class WebAuthnUtil {
 				{
 					"type": "public-key",
 					"alg": -257
-				}
+				},
+				{
+					"type": "public-key",
+					"alg": -8
+				},
 			],
 			"authenticatorSelection": {
 				authenticatorAttachment: "platform",

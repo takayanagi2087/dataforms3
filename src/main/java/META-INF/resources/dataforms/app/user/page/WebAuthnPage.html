@@ -2,32 +2,38 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>PassKey管理</title>
-		<meta name="description" content="ユーザアカウントにPassKeyを登録します。">
+		<title>パスキー管理</title>
+		<meta name="description" content="ユーザアカウントにパスキーを登録します。">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="webAuthnForm">
-				<div>
-					PassKeyを登録すると指紋認証や顔認証WindowsのPIN等でログインすることができます。
-				</div>
 				<div class="gridLayout">
 					<div class="fieldDiv" style="justify-content: left;">
-						<div class="label">PassKey名称</div>
+						<div class="label">パスキー名称</div>
 						<div class="field" >
 							<input type="text" id="authenticatorName" value="" />
 						</div>
 					</div>
-					<div>PassKeyは複数登録できます。その機器を区別するための名前を指定してください。</div>
+					<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
 				</div>
-				<button type="button" id="registButton" class="largeButton">PassKey登録</button>
-				<span>現在ログインしている端末をPassKeyとして登録します。</span>
-				<h2>PassKey一覧</h2>
+				<button type="button" id="registButton" class="largeButton">パスキー登録</button>
+				<span>現在ログインしている端末をパスキーとして登録します。</span>
+				<hr>
+				<div>
+					パスキーとはご利用の端末をカギとして登録する機能で、そのカギを使用する際端末の持つ認証機能(指紋、顔、PIN等)での確認が行われます。<br/>
+					PCで登録したパスキーはそのPCでのみ利用することができます。QRコードの読取ができる、iPhone, iPad, Android端末で登録したパスキーは、他の半末から使用できます。<br/>
+					<a href="UserSelfEditPage.df" >ユーザ情報変更</a>で「パスキーを必ずチェックする」を設定すると、パスキーとして登録された端末の認証なしにログインすることが出来なくなります。<br/>
+					この設定でアカウントの乗っ取りを防ぐことがてきますが、パスキーとして使用した端末が使えなくなるとログインが出来くなります。<br/>
+					そのため複数の端末でパスキーを登録し、そのパスキーが使えることを検証してから「パスキーを必ずチェックする」を有効にしてください。<br/>
+				</div>
+				<hr>
+				<h2>パスキー一覧</h2>
 				<table id="authenticatorList">
 					<thead>
 						<tr>
 							<th>No.</th>
-							<th>PassKeyの名称</th>
+							<th>パスキーの名称</th>
 							<th>操作</th>
 						</tr>
 					</thead>
