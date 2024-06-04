@@ -26,6 +26,7 @@ export class WebAuthnUtil {
 	 * @return {Object} 資格情報。
 	 */
 	async create(opt) {
+		logger.log("create opt=", opt);
 		const optionsFromServer = {
 			"challenge": this.stringToArrayBuffer(opt.challenge), // ArrayBufferに変換
 			"rp": {
@@ -40,19 +41,21 @@ export class WebAuthnUtil {
 			"pubKeyCredParams": [
 				{
 					"type": "public-key",
+					"alg": -8
+				},
+				{
+					"type": "public-key",
 					"alg": -7
 				},
 				{
 					"type": "public-key",
 					"alg": -257
 				},
-				{
-					"type": "public-key",
-					"alg": -8
-				},
 			],
 			"authenticatorSelection": {
-				authenticatorAttachment: "platform",
+			    authenticatorAttachment: "platform", // platform:端末に組み込まれている認証器（FaceID、生体認証など）のみを指定。cross-platform:USBやNFCなどを含めた外部端末の認証器（Yubikeyなど）のみを指定。 
+			    requireResidentKey: opt.requireResidentKey, // 認証器内にユーザー情報を登録するオプション。Discoverable Credentialにするかどうか。
+//			    userVerification: "required" // 認証器によるローカル認証（生体認証、PINなど）の必要性を指定。 required:ローカル認証を必須。preferred:可能な限りローカル認証。discouraged:ローカル認証を許可しない（所有物認証）
 			},
 			"timeout": 60000              // ms単位
 			, attestation: 'direct' // 認証に関するオプション
@@ -86,9 +89,14 @@ export class WebAuthnUtil {
 		logger.log("id=", id);
 		const credentialRequestOptions = {
 			'challenge': this.stringToArrayBuffer(opt.challenge),
-			'allowCredentials': [{ // これ以外にtransports(usb, bluetooth経由などの指定)も指定できる
+			'allowCredentials': [{
 				'type': "public-key",
-				'id': id
+				'id': id,
+/*				"transports":[
+					"usb",
+					"nfc",
+					"ble"
+				]*/
 			}]
 		}
 		let credential = await navigator.credentials.get({

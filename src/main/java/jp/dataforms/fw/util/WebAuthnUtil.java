@@ -14,12 +14,15 @@ import com.webauthn4j.converter.CollectedClientDataConverter;
 import com.webauthn4j.converter.exception.DataConversionException;
 import com.webauthn4j.converter.util.ObjectConverter;
 import com.webauthn4j.credential.CredentialRecord;
+import com.webauthn4j.credential.CredentialRecordImpl;
 import com.webauthn4j.data.AuthenticationData;
 import com.webauthn4j.data.AuthenticationParameters;
 import com.webauthn4j.data.AuthenticationRequest;
 import com.webauthn4j.data.RegistrationData;
 import com.webauthn4j.data.RegistrationParameters;
 import com.webauthn4j.data.RegistrationRequest;
+import com.webauthn4j.data.attestation.AttestationObject;
+import com.webauthn4j.data.client.CollectedClientData;
 import com.webauthn4j.server.ServerProperty;
 
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
@@ -201,4 +204,53 @@ public final class WebAuthnUtil {
 		return authenticationData;
 
 	}
+	
+	
+	/**
+	 * WebAuthenテーブルの情報から確認情報レコードを取得する。
+	 * @param webAuthnInfo 認証情報。
+	 * @return 確認情報レコード。
+	 */
+	public static CredentialRecord getCredentialRecord(final Map<String, Object> webAuthnInfo) {
+		WebAuthnTable.Entity e = new WebAuthnTable.Entity(webAuthnInfo);
+		//
+		String attestationObjectBase64 = e.getAttestationObject();
+		AttestationObjectConverter attestationObjectConverter = new AttestationObjectConverter(new ObjectConverter());
+		AttestationObject ao = attestationObjectConverter.convert(attestationObjectBase64);
+		logger.debug("ao=" + ao.toString());
+		//
+		String collectedClientDataBase64 = e.getCollectedClientData();
+		CollectedClientDataConverter collectedClientDataConverter = new CollectedClientDataConverter(new ObjectConverter());
+		CollectedClientData cd = collectedClientDataConverter.convert(collectedClientDataBase64);
+		logger.debug("cd=" + cd.toString());
+		CredentialRecord ret = new CredentialRecordImpl(ao, cd, null, null);
+		return ret;
+	}
+
+	
+	/**
+	 * FLAGS中のBS BIT(バックアップ状態)。
+	 */
+	public static final int BS_FLAG = 0x10;
+	
+
+	/**
+	 * FLAGS中のBE BIT(バックアップの可)。
+	 */
+	public static final int BE_FLAG = 0x08;
+
+	/**
+	 * Flagsを取得します。
+	 * @param webAuthnInfo 認証情報。
+	 * @return Flags。
+	 */
+	public static byte getFlags(final Map<String, Object> webAuthnInfo) {
+		WebAuthnTable.Entity e = new WebAuthnTable.Entity(webAuthnInfo);
+		//
+		String attestationObjectBase64 = e.getAttestationObject();
+		AttestationObjectConverter attestationObjectConverter = new AttestationObjectConverter(new ObjectConverter());
+		AttestationObject ao = attestationObjectConverter.convert(attestationObjectBase64);
+		return ao.getAuthenticatorData().getFlags();
+	}
+	
 }

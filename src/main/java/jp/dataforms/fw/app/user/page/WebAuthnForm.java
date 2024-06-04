@@ -21,6 +21,8 @@ import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
 import jp.dataforms.fw.app.user.field.WebAuthnIdField;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.base.TextField;
+import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
@@ -33,6 +35,7 @@ import jp.dataforms.fw.validator.RequiredValidator;
  */
 public class WebAuthnForm extends Form {
 
+
 	/**
 	 * WebAutn登録時のオプションのセッションキー。
 	 */
@@ -43,7 +46,11 @@ public class WebAuthnForm extends Form {
 	 */
 	private static final String ID_AUTHENTICATOR_LIST = "authenticatorList";
 
-	
+	/**
+	 * クラウド共有フラグのID。
+	 */
+	private static final String ID_REQUIRE_RESIDENT_KEY = "requireResidentKey";
+
 	/**
 	 * logger.
 	 */
@@ -55,10 +62,13 @@ public class WebAuthnForm extends Form {
 	public WebAuthnForm() {
 		super(null);
 		this.addField(new AuthenticatorNameField()).addValidator(new RequiredValidator());
+		this.addField(new FlagField(ID_REQUIRE_RESIDENT_KEY));
 		FieldList flist = new FieldList();
 		flist.addField(new RowNoField());
 		flist.addField(new WebAuthnIdField());
 		flist.addField(new AuthenticatorNameField());
+		flist.addField(new TextField("beFlag"));
+		flist.addField(new TextField("bsFlag"));
 		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
 		this.addHtmlTable(authenticatorList);
 	}

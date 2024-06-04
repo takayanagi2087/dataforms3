@@ -8,14 +8,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.webauthn4j.converter.AttestationObjectConverter;
-import com.webauthn4j.converter.CollectedClientDataConverter;
-import com.webauthn4j.converter.util.ObjectConverter;
 import com.webauthn4j.credential.CredentialRecord;
-import com.webauthn4j.credential.CredentialRecordImpl;
 import com.webauthn4j.data.AuthenticationData;
-import com.webauthn4j.data.attestation.AttestationObject;
-import com.webauthn4j.data.client.CollectedClientData;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
@@ -233,7 +227,7 @@ public class LoginForm extends Form {
 
 	
 	/**
-	 * 認証時のオプションを取得します。
+	 * PassKey作成時のオプションを取得します。
 	 * @param p パラメータ。
 	 * @return 認証時のオプション。
 	 * @throws Exception 例外。
@@ -289,24 +283,11 @@ public class LoginForm extends Form {
 	 * @return 確認情報レコード。
 	 */
 	private CredentialRecord getCredentialRecord() {
-		CredentialRecord ret = null;
 		HttpSession session = this.getPage().getRequest().getSession();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> webAuthnInfo = (Map<String, Object>) session.getAttribute(WEB_AUTHN_INFO);
-		WebAuthnTable.Entity e = new WebAuthnTable.Entity(webAuthnInfo);
-		//
-		String attestationObjectBase64 = e.getAttestationObject();
-		AttestationObjectConverter attestationObjectConverter = new AttestationObjectConverter(new ObjectConverter());
-		AttestationObject ao = attestationObjectConverter.convert(attestationObjectBase64);
-		//
-		String collectedClientDataBase64 = e.getCollectedClientData();
-		CollectedClientDataConverter collectedClientDataConverter = new CollectedClientDataConverter(new ObjectConverter());
-		CollectedClientData cd = collectedClientDataConverter.convert(collectedClientDataBase64);
-		ret = new CredentialRecordImpl(ao, cd, null, null);
+		CredentialRecord ret = WebAuthnUtil.getCredentialRecord(webAuthnInfo);
 		return ret;
-		
-		
-
 	}
 
 	/**

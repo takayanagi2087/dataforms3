@@ -70,6 +70,9 @@ export class WebAuthnForm extends Form {
 				if (r.status == JsonResponse.SUCCESS) {
 					logger.log("r=", r);
 					table.setTableData(r.result);
+					this.find("[id$='\.deleteButton']").click((ev) => {
+						this.deleteAuthenticator(ev);
+					});
 				}
 			}
 		} catch (e) {
@@ -102,6 +105,7 @@ export class WebAuthnForm extends Form {
 					let opt = await this.submit("getOption");
 					if (opt.status == JsonResponse.SUCCESS) {
 						logger.log("opt=", opt);
+						opt.result.requireResidentKey = this.get("requireResidentKey").prop("checked");
 						let util = new WebAuthnUtil();
 						let resp = await util.create(opt.result);
 						resp.authenticatorName = this.get("authenticatorName").val();
@@ -112,6 +116,9 @@ export class WebAuthnForm extends Form {
 							logger.log("r=", r);
 							let table = this.getComponent("authenticatorList");
 							table.setTableData(r.result);
+							this.find("[id$='\.deleteButton']").click((ev) => {
+								this.deleteAuthenticator(ev);
+							});
 						}
 					}
 				}

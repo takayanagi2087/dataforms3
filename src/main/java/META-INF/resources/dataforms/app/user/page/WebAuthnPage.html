@@ -12,7 +12,11 @@
 					<div class="fieldDiv" style="justify-content: left;">
 						<div class="label">パスキー名称</div>
 						<div class="field" >
-							<input type="text" id="authenticatorName" value="" />
+							<input type="text" id="authenticatorName" value="" style="width: calc(100% - 230px);"/>
+							<span>
+								<input type="checkbox" id="requireResidentKey" value="1" />
+								<label for="requireResidentKey">パスキーをクラウドで共有する。</label>
+							</span>
 						</div>
 					</div>
 					<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
@@ -34,6 +38,8 @@
 						<tr>
 							<th>No.</th>
 							<th>パスキーの名称</th>
+							<th>BE</th>
+							<th>BS</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -45,6 +51,12 @@
 							</td>
 							<td style="width: 300px;">
 								<span id="authenticatorList[0].authenticatorName"></span>
+							</td>
+							<td>
+								<span id="authenticatorList[0].beFlag"></span>
+							</td>
+							<td>
+								<span id="authenticatorList[0].bsFlag"></span>
 							</td>
 							<td>
 								<button type="button" id="authenticatorList[0].deleteButton">削除</button>
