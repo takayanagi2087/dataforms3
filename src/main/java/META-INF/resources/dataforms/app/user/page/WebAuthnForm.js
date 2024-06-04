@@ -31,6 +31,14 @@ export class WebAuthnForm extends Form {
 			this.regist();
 			return false;
 		});
+		if (currentPage.getPlatform() == "android") {
+			this.find("div.croudShare").show();
+			this.find("div.passkey").css("grid-template-columns", "1fr 1fr");
+		} else {
+			this.find("div.croudShare").hide();
+			this.find("div.passkey").css("grid-template-columns", "");
+		}
+//		this.get("authenticatorName").val(currentPage.getPlatform());
 	}
 
 	/**
@@ -109,6 +117,7 @@ export class WebAuthnForm extends Form {
 						let util = new WebAuthnUtil();
 						let resp = await util.create(opt.result);
 						resp.authenticatorName = this.get("authenticatorName").val();
+						resp.platform = currentPage.getPlatform();
 						let m = this.getWebMethod("registAuthenticator");
 						let r = await m.execute(resp);
 						logger.log("r=", r);

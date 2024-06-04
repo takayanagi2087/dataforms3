@@ -1,17 +1,17 @@
 package jp.dataforms.fw.app.user.dao;
 
 import java.util.Map;
-
-import jp.dataforms.fw.app.user.field.AttestationObjectField;
-import jp.dataforms.fw.app.user.field.AuthIdField;
-import jp.dataforms.fw.app.user.field.AuthTypeField;
-import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
-import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
-import jp.dataforms.fw.app.user.field.CollectedClientDataField;
-import jp.dataforms.fw.app.user.field.UserIdField;
-import jp.dataforms.fw.app.user.field.WebAuthnIdField;
 import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.app.user.field.WebAuthnIdField;
+import jp.dataforms.fw.app.user.field.AttestationObjectField;
 import jp.dataforms.fw.util.NumberUtil;
+import jp.dataforms.fw.app.user.field.UserIdField;
+import jp.dataforms.fw.app.user.field.AuthIdField;
+import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
+import jp.dataforms.fw.app.user.field.PlatformField;
+import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
+import jp.dataforms.fw.app.user.field.AuthTypeField;
+import jp.dataforms.fw.app.user.field.CollectedClientDataField;
 
 
 /**
@@ -28,6 +28,7 @@ public class WebAuthnTable extends Table {
 		this.addPkField(new WebAuthnIdField()).setNotNull(true); //WebAuth情報のID
 		this.addField(new AuthenticatorNameField()); //認証機器の名称
 		this.addField(new UserIdField()); //ユーザを示すID。
+		this.addField(new PlatformField()); //プラットフォーム
 		this.addField(new AuthIdField()); //認証情報ID
 		this.addField(new AuthTypeField()); //認証タイプ
 		this.addField(new AuthenticatorAttachmentField()); //AuthenticatorAttachment
@@ -52,6 +53,8 @@ public class WebAuthnTable extends Table {
 		public static final String ID_AUTHENTICATOR_NAME = "authenticatorName";
 		/** ユーザを示すID。のフィールドID。 */
 		public static final String ID_USER_ID = "userId";
+		/** プラットフォームのフィールドID。 */
+		public static final String ID_PLATFORM = "platform";
 		/** 認証情報IDのフィールドID。 */
 		public static final String ID_AUTH_ID = "authId";
 		/** 認証タイプのフィールドID。 */
@@ -122,6 +125,22 @@ public class WebAuthnTable extends Table {
 		 */
 		public void setUserId(final java.lang.Long userId) {
 			this.getMap().put(Entity.ID_USER_ID, userId);
+		}
+
+		/**
+		 * プラットフォームを取得します。
+		 * @return プラットフォーム。
+		 */
+		public java.lang.String getPlatform() {
+			return (java.lang.String) this.getMap().get(Entity.ID_PLATFORM);
+		}
+
+		/**
+		 * プラットフォームを設定します。
+		 * @param platform プラットフォーム。
+		 */
+		public void setPlatform(final java.lang.String platform) {
+			this.getMap().put(Entity.ID_PLATFORM, platform);
 		}
 
 		/**
@@ -219,7 +238,7 @@ public class WebAuthnTable extends Table {
 	 * 認証機器の名称フィールドを取得します。
 	 * @return 認証機器の名称フィールド。
 	 */
-	public AuthenticatorNameField getWebAuthNameField() {
+	public AuthenticatorNameField getAuthenticatorNameField() {
 		return (AuthenticatorNameField) this.getField(Entity.ID_AUTHENTICATOR_NAME);
 	}
 
@@ -229,6 +248,14 @@ public class WebAuthnTable extends Table {
 	 */
 	public UserIdField getUserIdField() {
 		return (UserIdField) this.getField(Entity.ID_USER_ID);
+	}
+
+	/**
+	 * プラットフォームフィールドを取得します。
+	 * @return プラットフォームフィールド。
+	 */
+	public PlatformField getPlatformField() {
+		return (PlatformField) this.getField(Entity.ID_PLATFORM);
 	}
 
 	/**

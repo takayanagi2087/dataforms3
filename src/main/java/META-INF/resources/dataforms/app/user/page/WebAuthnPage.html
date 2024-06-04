@@ -8,19 +8,20 @@
 	<body>
 		<div id="mainDiv">
 			<form id="webAuthnForm">
-				<div class="gridLayout">
-					<div class="fieldDiv" style="justify-content: left;">
-						<div class="label">パスキー名称</div>
+				<div class="gridLayout passkey" style="grid-template-columns: 1fr 1fr; align-items: center;">
+					<div class="fieldDiv">						<div class="label">パスキー名称</div>
 						<div class="field" >
-							<input type="text" id="authenticatorName" value="" style="width: calc(100% - 230px);"/>
-							<span>
-								<input type="checkbox" id="requireResidentKey" value="1" />
-								<label for="requireResidentKey">パスキーをクラウドで共有する。</label>
-							</span>
+							<input type="text" id="authenticatorName" value=""/>
 						</div>
 					</div>
-					<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
+					<div class="fieldDiv croudShare">
+						<span>
+							<input type="checkbox" id="requireResidentKey" value="1" />
+							<label for="requireResidentKey">パスキーをクラウドで共有する。</label>
+						</span>
+					</div>
 				</div>
+				<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
 				<button type="button" id="registButton" class="largeButton">パスキー登録</button>
 				<span>現在ログインしている端末をパスキーとして登録します。</span>
 				<hr>
@@ -38,8 +39,8 @@
 						<tr>
 							<th>No.</th>
 							<th>パスキーの名称</th>
-							<th>BE</th>
-							<th>BS</th>
+							<th>プラットフォーム</th>
+							<th>Croud共有</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -52,11 +53,11 @@
 							<td style="width: 300px;">
 								<span id="authenticatorList[0].authenticatorName"></span>
 							</td>
-							<td>
-								<span id="authenticatorList[0].beFlag"></span>
+							<td style="width: 128px;">
+								<span id="authenticatorList[0].platform"></span>
 							</td>
 							<td>
-								<span id="authenticatorList[0].bsFlag"></span>
+								<span id="authenticatorList[0].sharedPasskey"></span>
 							</td>
 							<td>
 								<button type="button" id="authenticatorList[0].deleteButton">削除</button>

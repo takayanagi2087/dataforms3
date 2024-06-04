@@ -632,6 +632,24 @@ export class Page extends DataForms {
 			return Page.BROWSER_OTHER;
 		}
 	}
+	
+	/**
+	 * OSを取得します。
+	 * @return {String} osの名称。
+	 */
+	getPlatform() {
+		try {
+			logger.log("navigator.userAgentData=", navigator.userAgentData);
+			return navigator.userAgentData.platform.toLowerCase();
+		} catch (e) {
+			let ua = window.navigator.userAgent.toLowerCase();
+			if (ua.indexOf("ipad") >= 0) {
+				return "ipados";
+			} else if (ua.indexOf("iphone" >= 0)) {
+				return "ios";
+			}
+		}
+	}
 
 	/**
 	 * 例外の情報を出力します。

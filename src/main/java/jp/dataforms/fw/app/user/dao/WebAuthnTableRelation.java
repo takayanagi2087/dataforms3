@@ -76,7 +76,7 @@ public class WebAuthnTableRelation extends TableRelation {
 			WebAuthnTable table = new WebAuthnTable();
 			FieldList flist = new FieldList();
 			flist.addField(table.getUserIdField());
-			flist.addField(table.getWebAuthNameField());
+			flist.addField(table.getAuthenticatorNameField());
 			this.setFieldList(flist);
 			this.setTable(table);
 		}

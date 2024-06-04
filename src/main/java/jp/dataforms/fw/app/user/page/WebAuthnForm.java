@@ -18,10 +18,11 @@ import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
 import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
+import jp.dataforms.fw.app.user.field.PlatformField;
+import jp.dataforms.fw.app.user.field.SharedPasskeyField;
 import jp.dataforms.fw.app.user.field.WebAuthnIdField;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.field.base.FieldList;
-import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.HtmlTable;
@@ -67,8 +68,10 @@ public class WebAuthnForm extends Form {
 		flist.addField(new RowNoField());
 		flist.addField(new WebAuthnIdField());
 		flist.addField(new AuthenticatorNameField());
-		flist.addField(new TextField("beFlag"));
-		flist.addField(new TextField("bsFlag"));
+		flist.addField(new PlatformField());
+		flist.addField(new SharedPasskeyField());
+//		flist.addField(new TextField("beFlag"));
+//		flist.addField(new TextField("bsFlag"));
 		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
 		this.addHtmlTable(authenticatorList);
 	}
@@ -139,6 +142,7 @@ public class WebAuthnForm extends Form {
 		Map<String, Object> regData = WebAuthnUtil.getRegistDataMap(p, serverProperty);
 	    WebAuthnDao dao = new WebAuthnDao(this);
 	    String an = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
+	    String platform = (String) p.get(WebAuthnTable.Entity.ID_PLATFORM);
 	    List<Map<String, Object>> list = dao.query(userId, an);
 	    WebAuthnTable.Entity e = new WebAuthnTable.Entity();
 	    if (list.size() > 0) {
@@ -150,6 +154,7 @@ public class WebAuthnForm extends Form {
 	    }
     	e.getMap().putAll(regData);
     	e.setAuthenticatorName(an);
+    	e.setPlatform(platform);
     	e.setUserId(userId);
 	    dao.regist(e.getMap());
 	    list = dao.query(userId);
