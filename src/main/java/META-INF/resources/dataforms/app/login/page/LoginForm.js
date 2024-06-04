@@ -120,9 +120,11 @@ export class LoginForm extends Form {
 		if (this.get("saveLastLogin").prop("checked")) {
 			let loginId = this.get("loginId").val();
 			let passkey = this.get("authenticatorName").val();
+			let passkeyName = this.get("authenticatorName").find("option:selected").text();
 			let lastLoginInfo = {};
 			lastLoginInfo.loginId = loginId;
 			lastLoginInfo.passkey = passkey;
+			lastLoginInfo.passkeyName = passkeyName;
 			let json = JSON.stringify(lastLoginInfo);
 			localStorage.setItem(LoginForm.LAST_LOGIN_INFO, json);
 		} else {
@@ -134,22 +136,26 @@ export class LoginForm extends Form {
 	 * 最後のログイン情報を取得します。
 	 */
 	loadLastLoginInfo() {
-		let lastLoginInfo = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
-		if (lastLoginInfo != null) {
-			let json = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
-			let lastLoginInfo = JSON.parse(json);
-			this.get("loginId").val(lastLoginInfo.loginId);
-			
-			let optlist = [
-				{"value": lastLoginInfo.passkey, "name": lastLoginInfo.passkey}
-			];
-			
+		try {
+			let lastLoginInfo = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+			if (lastLoginInfo != null) {
+				let json = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+				let lastLoginInfo = JSON.parse(json);
+				this.get("loginId").val(lastLoginInfo.loginId);
+				let optlist = [
+					{"value": lastLoginInfo.passkey, "name": lastLoginInfo.passkeyName}
+				];
+				let sel = this.getComponent("authenticatorName");
+				sel.setOptionList(optlist);
+				sel.setValue(lastLoginInfo.passkey);
+				this.get("saveLastLogin").prop("checked", true);
+			} else {
+				this.get("saveLastLogin").prop("checked", false);
+			}
+		} catch (e) {
+			logger.error("error:", e);
 			let sel = this.getComponent("authenticatorName");
-			sel.setOptionList(optlist);
-			sel.setValue(lastLoginInfo.passkey);
-			this.get("saveLastLogin").prop("checked", true);
-		} else {
-			this.get("saveLastLogin").prop("checked", false);
+			sel.setOptionList([]);
 		}
 	}
 

@@ -15,6 +15,8 @@ import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.SingleSelectField;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
+import jp.dataforms.fw.util.MessagesUtil;
+import jp.dataforms.fw.util.WebAuthnUtil;
 
 /**
  * パスキーの名称選択フィールド。
@@ -48,11 +50,13 @@ public class PasskeySingleSelectField extends SingleSelectField<String> {
 		WebAuthnDao dao = new WebAuthnDao(this);
 		List<Map<String, Object>> list = dao.query(loginId);
 		List<Map<String, Object>> olist = new ArrayList<Map<String, Object>>();
+		String croudShared = MessagesUtil.getMessage(getWebEntryPoint(), "messge.croudshared");
 		for (Map<String, Object> m: list) {
 			WebAuthnTable.Entity e = new WebAuthnTable.Entity(m);
 			SelectField.OptionEntity oe = new SelectField.OptionEntity();
 			oe.setValue(e.getAuthenticatorName());
-			oe.setName(e.getAuthenticatorName());
+			Boolean shared = WebAuthnUtil.shared(m);
+			oe.setName(e.getAuthenticatorName() + " ( platform:" + e.getPlatform() + " " + (shared ? " / " + croudShared: "") + " )");
 			olist.add(oe.getMap());
 		}
 		Response r = new JsonResponse(JsonResponse.SUCCESS, olist);

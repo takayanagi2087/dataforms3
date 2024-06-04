@@ -38,8 +38,7 @@ public class WebAuthnDao extends Dao {
 		int no = 1;
 		for (Map<String, Object> m: list) {
 			m.put("rowNo", no++);
-			byte flags = WebAuthnUtil.getFlags(m);
-			if ((flags & WebAuthnUtil.BE_FLAG) != 0 && (flags & WebAuthnUtil.BS_FLAG) != 0) {
+			if (WebAuthnUtil.shared(m)) {
 				m.put("sharedPasskey", "1");
 			} else {
 				m.put("sharedPasskey", "0");

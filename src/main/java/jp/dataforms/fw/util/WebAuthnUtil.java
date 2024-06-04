@@ -231,13 +231,13 @@ public final class WebAuthnUtil {
 	/**
 	 * FLAGS中のBS BIT(バックアップ状態)。
 	 */
-	public static final int BS_FLAG = 0x10;
+	private static final int BS_FLAG = 0x10;
 	
 
 	/**
 	 * FLAGS中のBE BIT(バックアップの可)。
 	 */
-	public static final int BE_FLAG = 0x08;
+	private static final int BE_FLAG = 0x08;
 
 	/**
 	 * Flagsを取得します。
@@ -253,4 +253,19 @@ public final class WebAuthnUtil {
 		return ao.getAuthenticatorData().getFlags();
 	}
 	
+	
+	/**
+	 * クラウド共有されているパスキーかどうかを判定します。
+	 * @param webAuthnInfo WebAuthnTableのレコード。
+	 * @return クラウド共有されている場合true。
+	 */
+	public static Boolean shared(final Map<String, Object> webAuthnInfo) {
+		byte flags = WebAuthnUtil.getFlags(webAuthnInfo);
+		if ((flags & WebAuthnUtil.BE_FLAG) != 0 && (flags & WebAuthnUtil.BS_FLAG) != 0) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
 }
