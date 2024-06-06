@@ -117,19 +117,22 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 				// queryStringにskip=trueが指定された場合、filterしない。
 				String skip = sreq.getParameter("skip");
 				if (!"true".equals(skip)) {
-					String contents = this.readJs(sreq, fname);
-					if (contents != null) {
-						contents = this.rewriteImport(sreq, fname, contents);
-						// logger.debug("contents=" + contents);
-						sresp.setContentType("text/javascript; charset=utf-8");
-						Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
-						logger.debug("ts=" + ts);
-						sresp.setDateHeader("Last-Modified", ts);
-						try (PrintWriter out = resp.getWriter()) {
-							out.print(contents);
+					logger.debug("fname=" + fname);
+					if (fname.indexOf("/jslib/") < 0) {
+						String contents = this.readJs(sreq, fname);
+						if (contents != null) {
+							contents = this.rewriteImport(sreq, fname, contents);
+							// logger.debug("contents=" + contents);
+							sresp.setContentType("text/javascript; charset=utf-8");
+							Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
+							logger.debug("ts=" + ts);
+							sresp.setDateHeader("Last-Modified", ts);
+							try (PrintWriter out = resp.getWriter()) {
+								out.print(contents);
+							}
+						} else {
+							sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 						}
-					} else {
-						sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 					}
 				}
 			} catch (Exception e) {
