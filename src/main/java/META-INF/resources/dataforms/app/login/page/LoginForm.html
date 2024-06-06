@@ -8,23 +8,28 @@
 		<form id="loginForm" style="height: 120px; ">
 			<div class="gridLayout">
 				<div class="fieldDiv">
-					<div class="label">User ID.</div>
+					<div class="label">Login ID.</div>
 					<div class="field"><input type="text" id="loginId" value=""/></div>
 				</div>
 				<div class="fieldDiv">
 					<div class="label">Password</div>
 					<div class="field"><input type="password" id="password" value=""/></div>
 				</div>
+				<div class="fieldDiv">
+					<div class="label">Passkey</div>
+					<div class="field"><select id="authenticatorName" style="width: calc(100% - 190px);"></select><button type="button" id="passkeyListButton">登録されているパスキーを取得</button></div>
+				</div>
 				<div class="fieldDiv" style="justify-content: space-between;">
 					<div>
-						<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">Keep login.</label>
+						<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">Save the last logged-in user ID and passkey.&nbsp;</label>
+						<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">Keep login</label>
 					</div>
 					<div>
-						<a id="passwordResetLink" href="javascript:void(0);">If you forgot your password, click here.</a>
+						<a id="passwordResetLink" href="javascript:void(0);">If you can't log in, click here</a>
 					</div>
 				</div>
 			</div>
-			<button type="submit" id="loginButton" class="largeButton">login</button>
+			<button type="submit" id="loginButton" class="largeButton">Login</button>
 		</form>
 	</body>
 </html>

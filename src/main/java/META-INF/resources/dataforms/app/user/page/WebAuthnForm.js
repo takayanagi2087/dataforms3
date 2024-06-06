@@ -38,6 +38,10 @@ export class WebAuthnForm extends Form {
 			this.find("div.croudShare").hide();
 			this.find("div.passkey").css("grid-template-columns", "");
 		}
+		
+		this.get("passkeyDescButton").click(() => {
+			this.get("passkeyDesc").toggle();
+		});
 //		this.get("authenticatorName").val(currentPage.getPlatform());
 	}
 
