@@ -1,12 +1,12 @@
 package jp.dataforms.fw.devtool.db.page;
 
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.DbToolPage;
 
 /**
  * DB管理ページクラス。
  *
  */
-public class TableManagementPage extends DeveloperPage {
+public class TableManagementPage extends DbToolPage {
 	/**
 	 * コンストラクタ。
 	 */

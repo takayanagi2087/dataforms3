@@ -2,13 +2,13 @@ package jp.dataforms.fw.devtool.query.page;
 
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.Table;
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.SrcGenPage;
 
 
 /**
  * ページクラス。
  */
-public class QueryGeneratorPage extends DeveloperPage {
+public class QueryGeneratorPage extends SrcGenPage {
 	/**
 	 * コンストラクタ。
 	 */

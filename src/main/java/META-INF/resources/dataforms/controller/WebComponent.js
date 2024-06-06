@@ -299,6 +299,7 @@ export class WebComponent {
 		logger.log("pageInfo=", pageInfo);
 		let list = this.#getImportJs(pageInfo);
 		list = this.uniq(list);
+		logger.log("jsImportList:", list);
 		for (let i = 0; i < list.length; i++) {
 			let module = await import(currentPage.contextPath + list[i].jsPath);
 			WebComponent.#moduleMap[list[i].jsClass] = module;

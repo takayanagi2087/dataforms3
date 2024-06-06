@@ -1,11 +1,11 @@
 package jp.dataforms.fw.devtool.table.page;
 
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.SrcGenPage;
 
 /**
  * ページクラス。
  */
-public class TableGeneratorPage extends DeveloperPage {
+public class TableGeneratorPage extends SrcGenPage {
 	/**
 	 * コンストラクタ。
 	 */

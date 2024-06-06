@@ -14,6 +14,15 @@ import { SingleSelectField } from '../../field/common/SingleSelectField.js';
  * @extends SingleSelectField
  */
 export class FunctionSelectField extends SingleSelectField {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>

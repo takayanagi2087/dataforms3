@@ -1,11 +1,11 @@
 package jp.dataforms.fw.devtool.pageform.page;
 
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.SrcGenPage;
 
 /**
  * DaoとページJavaクラス作成ページ。
  */
-public class DaoAndPageGeneratorPage extends DeveloperPage {
+public class DaoAndPageGeneratorPage extends SrcGenPage {
 	/**
 	 * コンストラクタ。
 	 */

@@ -8,14 +8,14 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.Table;
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.DbToolPage;
 import jp.dataforms.fw.response.Response;
 
 
 /**
  * ページクラス。
  */
-public class QueryExecutorPage extends DeveloperPage {
+public class QueryExecutorPage extends DbToolPage {
 
 	/**
 	 * Logger.

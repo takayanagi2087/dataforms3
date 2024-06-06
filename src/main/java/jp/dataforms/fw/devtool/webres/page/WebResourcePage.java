@@ -1,6 +1,6 @@
 package jp.dataforms.fw.devtool.webres.page;
 
-import jp.dataforms.fw.devtool.base.page.DeveloperPage;
+import jp.dataforms.fw.devtool.base.page.SrcGenPage;
 
 /**
  * Webリソースページクラス。
@@ -9,7 +9,7 @@ import jp.dataforms.fw.devtool.base.page.DeveloperPage;
  * html,jsを作成するためのページです。
  * </pre>
  */
-public class WebResourcePage extends DeveloperPage {
+public class WebResourcePage extends SrcGenPage {
 	/**
 	 * コンストラクタ。
 	 */
