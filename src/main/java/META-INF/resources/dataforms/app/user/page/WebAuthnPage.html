@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>パスキー管理</title>
-		<meta name="description" content="ユーザアカウントにパスキーを登録します。">
+		<title>Passkey Management</title>
+		<meta name="description" content="Register a passkey for your user account.">
 	</head>
 	<body>
 		<div id="mainDiv">
 			<form id="webAuthnForm">
 				<div class="gridLayout passkey" style="grid-template-columns: 1fr 1fr; align-items: center;">
-					<div class="fieldDiv">						<div class="label">パスキー名称</div>
+					<div class="fieldDiv">						<div class="label">Passkey name</div>
 						<div class="field" >
 							<input type="text" id="authenticatorName" value=""/>
 						</div>
@@ -17,35 +17,35 @@
 					<div class="fieldDiv croudShare">
 						<span>
 							<input type="checkbox" id="requireResidentKey" value="1" />
-							<label for="requireResidentKey">パスキーをクラウドで共有する。</label>
+							<label for="requireResidentKey">Share your passkey in the cloud.</label>
 						</span>
 					</div>
 				</div>
-				<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
-				<button type="button" id="registButton" class="largeButton">パスキー登録</button>
-				<span>現在ログインしている端末をパスキーとして登録します。</span>
-				<a href="javascript: void(0);" id="passkeyDescButton">パスキーとは...</a>
+				<div>You can register multiple passkeys. Please specify a name to distinguish each passkey.</div>
+				<button type="button" id="registButton" class="largeButton">Passkey Registration</button>
+				<span>Register the currently logged in device as a passkey.</span>
+				<a href="javascript: void(0);" id="passkeyDescButton">What is a passkey?...</a>
 				<div id="passkeyDesc" style="display: none;">
 					<hr/>
-					パスキーとはご利用の端末を鍵として登録する機能で、その鍵を使用する際、端末の持つ認証機能(指紋、顔、PIN等)での確認が行われます。<br/>
-					パスキーを使用するとパスワード無の認証が可能になります。<br/>
-					パスキーはユーザアカウント対して複数登録することができ、これは合鍵を作ることと同じ意味を持ちます。<br/>
-					PCで登録したパスキーはそのPCでのみ利用することができます。QRコードの読取ができる、iPhone, iPad, Android端末で登録したパスキーは、他の端末(PC等)から使用することができます。<br/>
-					GoogleアカウントやiCroudに紐づいた端末でパスキーを共有することも可能です。<br/>
-					<a href="UserSelfEditPage.df" >ユーザ情報変更</a>で「パスキーを必ずチェックする」を設定すると、パスキーとして登録された端末の認証なしにログインすることが出来なくなります。<br/>
-					この設定でアカウントの乗っ取りを防ぐことがてきますが、パスキーとして使用した端末が使えなくなるとログインが出来くなります。<br/>
-					そのため複数の端末でパスキーを登録し、そのパスキーが使えることを確認してから「パスキーを必ずチェックする」を有効にしてください。<br/>
+					A passkey is a function that registers your device as a key, and when you use that key, you are required to verify it using the device's authentication functions (fingerprint, face, PIN, etc.).<br/>
+					Using a passkey allows for authentication without a password.<br/>
+					Multiple passkeys can be registered to a user account, which is the same as having a duplicate key.<br/>
+					A passkey registered on a PC can only be used on that PC. A passkey registered on an iPhone, iPad, or Android device that can read QR codes can be used from other devices (PCs, etc.).<br/>
+					You can also share your passkey with devices linked to your Google account or iCloud.<br/>
+					If you set "Always check passkey" in <a href="UserSelfEditPage.df" >User information update</a>, you will not be able to log in without authenticating the device registered as the passkey.<br/>
+					This setting will help prevent your account from being hijacked, but if the device you used as your passkey becomes unusable, you will not be able to log in.<br/>
+					Therefore, please register a passkey on multiple devices and make sure that you can use the passkey before enabling "Always check passkey."<br/>
 					<hr/>
 				</div>
-				<h2>パスキー一覧</h2>
+				<h2>Passkey List</h2>
 				<table id="authenticatorList">
 					<thead>
 						<tr>
 							<th>No.</th>
-							<th>パスキー名称</th>
-							<th>プラットフォーム</th>
-							<th>Croud共有</th>
-							<th>操作</th>
+							<th>Passkey name</th>
+							<th>Platform</th>
+							<th>Croud Share</th>
+							<th>Operation</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -64,7 +64,7 @@
 								<span id="authenticatorList[0].sharedPasskey"></span>
 							</td>
 							<td>
-								<button type="button" id="authenticatorList[0].deleteButton">削除</button>
+								<button type="button" id="authenticatorList[0].deleteButton">Delete</button>
 							</td>
 						</tr>
 					</tbody>

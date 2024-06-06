@@ -21,6 +21,15 @@
 						<div class="label">E-Mail</div>
 						<div class="field"><input type="text" id="mailAddress" value=""/></div>
 					</div>
+					<div class="fieldDiv" >
+						<div class="label">Authentication Method</div>
+						<div class="field" style="justify-content: left;">
+							<input type="checkbox" id="passwordRequiredFlag" value="1" />
+							<label for="passwordRequiredFlag">Always check your passwords</label> 
+							<input type="checkbox" id="passkeyRequiredFlag" value="1" />
+							<label for="passkeyRequiredFlag">Always check the passkey (check only after confirming that you can log in with the passkey)</label>
+						</div>
+					</div>
 				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="Confirm"/>
 				<input type="button" id="saveButton" class="largeButton" value="Save"/>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>パスキー管理</title>
+		<meta name="description" content="ユーザアカウントにパスキーを登録します。">
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="webAuthnForm">
+				<div class="gridLayout passkey" style="grid-template-columns: 1fr 1fr; align-items: center;">
+					<div class="fieldDiv">						<div class="label">パスキー名称</div>
+						<div class="field" >
+							<input type="text" id="authenticatorName" value=""/>
+						</div>
+					</div>
+					<div class="fieldDiv croudShare">
+						<span>
+							<input type="checkbox" id="requireResidentKey" value="1" />
+							<label for="requireResidentKey">パスキーをクラウドで共有する。</label>
+						</span>
+					</div>
+				</div>
+				<div>パスキーは複数登録できます。そのパスキーを区別するための名前を指定してください。</div>
+				<button type="button" id="registButton" class="largeButton">パスキー登録</button>
+				<span>現在ログインしている端末をパスキーとして登録します。</span>
+				<a href="javascript: void(0);" id="passkeyDescButton">パスキーとは...</a>
+				<div id="passkeyDesc" style="display: none;">
+					<hr/>
+					パスキーとはご利用の端末を鍵として登録する機能で、その鍵を使用する際、端末の持つ認証機能(指紋、顔、PIN等)での確認が行われます。<br/>
+					パスキーを使用するとパスワード無の認証が可能になります。<br/>
+					パスキーはユーザアカウント対して複数登録することができ、これは合鍵を作ることと同じ意味を持ちます。<br/>
+					PCで登録したパスキーはそのPCでのみ利用することができます。QRコードの読取ができる、iPhone, iPad, Android端末で登録したパスキーは、他の端末(PC等)から使用することができます。<br/>
+					GoogleアカウントやiCroudに紐づいた端末でパスキーを共有することも可能です。<br/>
+					<a href="UserSelfEditPage.df" >ユーザ情報変更</a>で「パスキーを必ずチェックする」を設定すると、パスキーとして登録された端末の認証なしにログインすることが出来なくなります。<br/>
+					この設定でアカウントの乗っ取りを防ぐことがてきますが、パスキーとして使用した端末が使えなくなるとログインが出来くなります。<br/>
+					そのため複数の端末でパスキーを登録し、そのパスキーが使えることを確認してから「パスキーを必ずチェックする」を有効にしてください。<br/>
+					<hr/>
+				</div>
+				<h2>パスキー一覧</h2>
+				<table id="authenticatorList">
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>パスキー名称</th>
+							<th>プラットフォーム</th>
+							<th>Croud共有</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width: 64px; text-align: right;">
+								<span id="authenticatorList[0].rowNo"></span>
+								<input type="hidden" id="authenticatorList[0].webAuthnId" />
+							</td>
+							<td style="width: 300px;">
+								<span id="authenticatorList[0].authenticatorName"></span>
+							</td>
+							<td style="width: 128px;">
+								<span id="authenticatorList[0].platform"></span>
+							</td>
+							<td>
+								<span id="authenticatorList[0].sharedPasskey"></span>
+							</td>
+							<td>
+								<button type="button" id="authenticatorList[0].deleteButton">削除</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</form>
+		</div>
+	</body>
+</html>
