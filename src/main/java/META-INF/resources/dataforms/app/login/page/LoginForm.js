@@ -64,7 +64,9 @@ export class LoginForm extends Form {
 				let resp = await util.get(opt);
 				resp.loginId = this.get("loginId").val();
 				resp.password = this.get("password").val();	
-				resp.authenticatorName = this.get("authenticatorName").val();	
+				resp.authenticatorName = this.get("authenticatorName").val();
+				resp.keepLogin = this.get("keepLogin").prop("checked") ? "1" : "0";
+				logger.log("resp=", resp);
 				let m = this.getWebMethod("passKeyAuth");
 				let res = await m.execute(resp);
 				logger.log("r=", res);

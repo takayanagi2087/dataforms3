@@ -359,10 +359,12 @@ public class LoginForm extends Form {
 			}
 			String passkey = this.getAuthenticatorName();
 			userInfo.put(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, passkey);
+			userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, p.get(AutoLoginCookie.ID_KEEP_LOGIN));
 			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
 			logger.info(ui + logmsg);
 			HttpSession session = this.getPage().getRequest().getSession();
 			session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+			AutoLoginCookie.setAutoLoginCookie(this.getPage(), userInfo);
 			resp = new JsonResponse(JsonResponse.SUCCESS, "");
 		}
 		return resp;
