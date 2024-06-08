@@ -258,10 +258,9 @@ public class DataFormsServlet extends HttpServlet {
 			topPage = topPage.replaceAll("\\.df$", "");
 			Page.setTopPage(topPage);
 		}
-		String autoLogin = DataFormsServlet.getConf().getApplication().getAutoLogin();
-		if (!StringUtil.isBlank(autoLogin)) {
-			AutoLoginCookie.setAutoLogin("enabled".equals(autoLogin));
-		}
+		Boolean autoLogin = DataFormsServlet.getConf().getApplication().getAutoLogin();
+		AutoLoginCookie.setAutoLogin(autoLogin);
+		
 		Boolean secureAutoLoginCookie = DataFormsServlet.getConf().getApplication().getSecureAutoLoginCookie();
 		if (!StringUtil.isBlank(secureAutoLoginCookie)) {
 			AutoLoginCookie.setSecure(secureAutoLoginCookie);

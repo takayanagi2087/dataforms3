@@ -315,7 +315,7 @@ public class ConfUtil {
 		/**
 		 * 自動ログイン設定。
 		 */
-		private String autoLogin = null;
+		private Boolean autoLogin = null;
 		/**
 		 * 自動ログインクッキーにSecureを設定します。
 		 */

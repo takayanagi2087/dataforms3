@@ -34,6 +34,7 @@ import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.UserLogUtil;
 import jp.dataforms.fw.util.WebAuthnUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
@@ -133,8 +134,17 @@ public class LoginForm extends Form {
 						}
 					}
 				} else {
-					throw new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
+					String ui = UserLogUtil.getClientInfo(this.getPage(), data);
+					ApplicationException ex = new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
+					logger.error(ui + ex.getMessage(), ex);
+					throw ex;
 				}
+			}
+		}
+		if (elist.size() > 0) {
+			String ui = UserLogUtil.getClientInfo(this.getPage(), data);
+			for (ValidationError e: elist) {
+				logger.warn(ui + "ValidationError " + e.getFieldId() + " / " + e.getMessage());
 			}
 		}
 		return elist;
@@ -156,7 +166,6 @@ public class LoginForm extends Form {
 		List<ValidationError> elist = this.validate(params);
 		if (elist.size() > 0) {
 			ret = new JsonResponse(JsonResponse.INVALID, elist);
-			logger.warn("login fail");
 		} else {
 			UserDao dao = new UserDao(this);
 			Map<String, Object> userInfo = dao.login(params);
@@ -167,12 +176,16 @@ public class LoginForm extends Form {
 				HttpSession session = this.getPage().getRequest().getSession();
 				session.setAttribute(OnetimePasswordUtil.USERINFO, userInfo);
 				ret = new JsonResponse(JsonResponse.SUCCESS, "onetime");
+				String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+				logger.info(ui + "Authenticated with password.");
 			} else {
 				HttpSession session = this.getPage().getRequest().getSession();
 				session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 				logger.info(() -> "login success=" + userInfo.get("loginId") + "(" + userInfo.get("userId") + ")");
 				AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 				ret = new JsonResponse(JsonResponse.SUCCESS, "");
+				String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+				logger.info(ui + "Authenticated with password.");
 			}
 		}
 		return ret;
@@ -238,7 +251,6 @@ public class LoginForm extends Form {
 		List<ValidationError> elist = this.validate(p);
 		if (elist.size() > 0) {
 			resp = new JsonResponse(JsonResponse.INVALID, elist);
-			logger.warn("getOption fail");
 		} else {
 			String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
 			String authenticatorName = (String) p.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
@@ -291,6 +303,18 @@ public class LoginForm extends Form {
 	}
 
 	/**
+	 * PassKeyの名称を取得します。
+	 * @return PassKeyの名称。
+	 */
+	private String getAuthenticatorName() {
+		HttpSession session = this.getPage().getRequest().getSession();
+		@SuppressWarnings("unchecked")
+		Map<String, Object> webAuthnInfo = (Map<String, Object>) session.getAttribute(WEB_AUTHN_INFO);
+		WebAuthnTable.Entity e = new WebAuthnTable.Entity(webAuthnInfo);
+		return e.getAuthenticatorName();
+	}
+	
+	/**
 	 * WebAuthnによるログインを行います。
 	 * @param p パラメータ。
 	 * @return 認証結果。
@@ -302,7 +326,6 @@ public class LoginForm extends Form {
 		List<ValidationError> elist = this.validate(p);
 		if (elist.size() > 0) {
 			resp = new JsonResponse(JsonResponse.INVALID, elist);
-			logger.warn("passKeyAuth fail");
 		} else {
 			CredentialRecord credentialRecord = this.getCredentialRecord(); 
 			ServerProperty serverProperty = this.getServerProperty();
@@ -310,9 +333,11 @@ public class LoginForm extends Form {
 			logger.debug("authenticationData=" + authenticationData.toString());
 			// ここまで来たらPassKeyの確認OK
 			UserDao dao = new UserDao(this);
-			String loginId = (String) p.get("loginId");
+//			String loginId = (String) p.get("loginId");
+			String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
 			Map<String, Object> userInfo = dao.queryUserInfo(loginId);
 			UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+			String logmsg = null;
 			if ("1".equals(ue.getPasswordRequiredFlag())) {
 				// パスワードチェックが必須の場合、POSTされたパスワードでもチェックする。
 				String password = (String) p.get(UserInfoTable.Entity.ID_PASSWORD);
@@ -321,6 +346,7 @@ public class LoginForm extends Form {
 				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
 				logger.debug("loginId=" + loginId);
 				userInfo = dao.login(loginInfo, true);
+				logmsg = "Authenticated with password and passkey.";
 			} else {
 				// パスワードチェックが不要の場合DB中のパスワードを使用して認証。
 				String password = (String) dao.queryPassword(loginId);
@@ -329,7 +355,12 @@ public class LoginForm extends Form {
 				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
 				logger.debug("loginId=" + loginId);
 				userInfo = dao.login(loginInfo, false);
+				logmsg = "Authenticated with passkey.";
 			}
+			String passkey = this.getAuthenticatorName();
+			userInfo.put(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, passkey);
+			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+			logger.info(ui + logmsg);
 			HttpSession session = this.getPage().getRequest().getSession();
 			session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 			resp = new JsonResponse(JsonResponse.SUCCESS, "");

@@ -201,6 +201,8 @@ public final class WebAuthnUtil {
 			throw e;
 		}
 		authenticationData = webAuthnManager.validate(authenticationData, authenticationParameters);
+		long count = authenticationData.getAuthenticatorData().getSignCount();
+		logger.debug("signCount=" + count);
 		return authenticationData;
 
 	}

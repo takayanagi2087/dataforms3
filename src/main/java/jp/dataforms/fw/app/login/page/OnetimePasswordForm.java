@@ -21,6 +21,7 @@ import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.AutoLoginCookie;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
+import jp.dataforms.fw.util.UserLogUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
 
@@ -64,6 +65,8 @@ public class OnetimePasswordForm extends Form {
 		Session session = MailSender.getMailSession();
 		MailSender sender = new MailSender();
 		sender.send(template, session);
+		String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+		logger.info(ui + "A one-time password has been sent.");
 		return onetime;
 	}
 
@@ -112,9 +115,15 @@ public class OnetimePasswordForm extends Form {
 			session.removeAttribute(OnetimePasswordUtil.USERINFO);
 			OnetimePasswordUtil.setSkipOnetimeCookie(getPage(), userInfo);
 			AutoLoginCookie.setAutoLoginCookie(this.getPage(), userInfo);
+			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+			logger.info(ui + "Authenticated with one-time password.");
 			Response r = new JsonResponse(JsonResponse.SUCCESS, "");
 			return r;
 		} else {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> userInfo = (Map<String, Object>) session.getAttribute(OnetimePasswordUtil.USERINFO);
+			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+			logger.info(ui + "One-time passwords do not match.");
 			List<ValidationError> list = new ArrayList<ValidationError>();
 			list.add(new ValidationError(
 				"onetimePassword"

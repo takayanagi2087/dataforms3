@@ -18,7 +18,9 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
+import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.UserInfoTableUtil;
+import jp.dataforms.fw.util.UserLogUtil;
 
 /**
  *
@@ -434,6 +436,8 @@ public class UserDao extends Dao {
 			List<Map<String, Object>> attTable = this.executeQuery(new GetUserAttributeQuery(data));
 			rec.put("attTable", attTable);
 		} else {
+			String ui = UserLogUtil.getClientInfo(getWebEntryPoint(), data);
+			logger.error(ui + MessagesUtil.getMessage(getWebEntryPoint(), "error.invaliduserid"));
 			throw new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
 		}
 		return rec;
