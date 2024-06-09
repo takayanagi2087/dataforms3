@@ -1,0 +1,333 @@
+/**
+ * Dataforms設定ファイル(デフォルト)
+ */
+ {
+	 // 開発ツール関連の設定
+	"developmentTool" : {
+		// javaのソースパス
+		"javaSourcePath": "/eclipse/workspaceDataforms3/dataforms3app/src/main/java"
+		// HTML,jsのソースパス
+		, "webSourcePath": "/eclipse/workspaceDataforms3/dataforms3app/src/main/webapp"
+		// 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
+		, "exportImportDir": "/tmp/data"
+		// ソースコード生成ツール無効設定
+		, "disableCodeGenerationTool": false
+		// DB関連ツール無効設定
+		, "disableDatabaseTool": false
+		// フィールドレイアウト
+		, "fieldLayout": "GRID"
+		// , "fieldLayout": "FLEX"
+		// , "fieldLayout": "TABLE"
+	}
+	// アプリケーションの初期化時の設定
+	, "initialize": {
+		// 初期化時に作成する特権ユーザのレベル
+		"userLevel": "developer" 
+		//"userLevel": "admin"
+		// データベースを定義するパッケージリスト
+		, "databasePackageList": [
+			"jp.dataforms.fw.app"
+		]
+		// trueかつユーザの初期化データが存在した場合、ユーザのインポートを優先します。
+		, "checkUserImport": false
+		// ----------------------------------
+		// このリストに記載されたテーブルはデータベースに実体が作成されません。
+		// 複数のテーブルクラスの基底クラスとして定義し、
+		// テーブルの実体を作成する必要がないテーブルクラスを指定します。
+		// dataforms3.jarに含まれたUserInfoTableに項目を追加する場合、
+		// このコメントを有効にしてUserInfoTableから派生したテーブルクラスに項目を追加します。
+		// , "abstractTableList": [
+		// 	"jp.dataforms.fw.app.user.dao.UserInfoTable"
+		// ]
+		, "abstractTableList": []
+		// ----------------------------------
+		// UserInfoTableに項目を追加したExtendedUserInfoTableを作成した場合、
+		// 以下の設定を有効にするとExtendedUserInfoTableクラスがユーザテーブルとなります。
+		// このクラスを指定するとUserEditForm.java,UserSelfEditForm.java,UserRegistForm.javaに指定されたテーブルのフィールドが配置されます。
+		// UserEditForm.html,UserSelfEditPage.html,UserRegistPage.htmlをjarファイルからプロジェクトにエクスポートし、
+		// フィールドを追加することにより追加情報を入力することが可能になります。
+		// , "userInfoTableClass": "jp.dataforms.df3app.test.dao.ExtendedUserInfoTable"
+	}
+	// アプリケーション設定
+	, "application": {
+		// ----------------------------------
+		// サポートする言語リスト
+		"languageList": ["ja"]
+		// ----------------------------------
+		// 言語固定設定
+		// ラウザの言語設定を無視し、言語を固定する場合は以下の設定を有効にします。
+		// , "fixedLanguage": "en"
+		// ----------------------------------
+		// サーバー設定ファイル
+		// サーバ毎にアプリの設定を変更する場合、その設定ファイルのパスを指定します。
+		// , "serverConfigFile":"/etc/dataforms/dataformsConf.jsonc"
+		// ----------------------------------
+		// このライブラリはサーバ側の処理でdataforms2.jar中のWEBリソース(html,css,jsファイル)をアクセスしています。
+		// dataforms2.jarのMETA-INF/resources中のファイルはhttp経由で取得しているため、このパラメータで指定したURLを使用してアクセスします。
+		// 以下のURLが指定されていない場合、リクエストされたURLをそのまま使用してアクセスします。
+		// そのためApacheを経由しSSLを使用した場合等は、サーバー側のWEBリソースアクセスもApacheのSSL経由になってしまい効率は良くありません。
+		// SSLを使用する場合はアプリケーションサーバのhttpポートを指定したURLを指定してください。
+		// , "webResourceUrl": "http://localhost:8080"
+		// ----------------------------------
+		// クライアントログレベルを指定します。
+	 	// javascriptでのコンソール出力はconsoleではなくloggerを使用してください。
+	 	// loggerは基本的にconsoleをコピーしたものですが、以下の設定に応じて、
+	 	// log,info,warn,errorメソットが何もしないメソッドになります。
+		, "clientLogLevel": "debug"
+		//, "clientLogLevel": "debug"
+		//, "clientLogLevel": "info"
+		//, "clientLogLevel": "warn"
+		//, "clientLogLevel": "error"
+		//, "clientLogLevel": "none"		
+		// ----------------------------------
+		// JNDI Data Source設定
+		, "jndiDataSource": {
+			// JNDIデータソースの前につける文字列 
+			"jndiPrefix": "java:/comp/env/"
+			// 使用するJNDIデータソースを指定する
+			, "dataSource": "jdbc/dfdb"
+		}
+		// ----------------------------------
+		// Mail関連設定
+		, "mail": {
+			"mailSession": "mail/Session"
+			, "mailFrom": "hoge@hogehoge.jp"
+		}
+		// ----------------------------------
+		// フレームレイアウトのパス
+		, "framePath": "/frame/flex"
+		// ----------------------------------
+		// ページオーバーライド
+		// 既存ページを組み替える場合、新たにページクラスを作成し
+		// 既存ページクラスを置き換える設定を以下に記述します。
+		// またdataforms.app.base.page.HiddenPageに置き換えれば
+		// メニューにも表示されず、アクセスできないページになります。
+		// つまり既存ページを隠すことができます。		
+		, "pageOverride": {
+			"dummy": "dummy"
+			// パスワード変更ページを隠す場合は以下を有効にしてください
+			// , "jp.dataforms.fw.app.user.page.ChangePasswordPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			// ユーザ情報変更ページを隠す場合は以下を有効にしてください。
+			// , "jp.dataforms.fw.app.user.page.UserSelfEditPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			//
+			// 外部ユーザ登録関連(外部ユーザ登録機能を無効にするには以下の2ページを無効にしてください)
+			//
+			// ユーザ登録ページを隠す場合は以下を有効にしてください。
+			// , "jp.dataforms.fw.app.user.page.UserRegistPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			// ユーザ有効化ページを隠す場合は以下を有効にしてください。
+			// , "jp.dataforms.fw.app.user.page.UserEnablePage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			//
+			// パスワードリセット機能(パスワードリセット機能を無効にするには以下の2ページを無効にしてください)
+			//
+			// パスワードリセットメール送信ページを隠す場合は以下を有効にしてください。
+			// , "jp.dataforms.fw.app.user.page.PasswordResetMailPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			// パスワードリセットページを隠す場合は以下を有効にしてください。
+			// , "jp.dataforms.fw.app.user.page.PasswordResetPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+			//
+			// パスワードの暗号化処理を変更する場合、以下の設定をコメントアウトしパスワード再暗号化ページを有効にしてください。
+			//
+			, "jp.dataforms.fw.app.user.page.PasswordReencryptPage" : "jp.dataforms.fw.app.base.page.HiddenPage"
+		}
+		// ----------------------------------
+		// トップページを指定します。
+		// このページはシステムやユーザの状態に応じて、ログイン画面やサイトマップに遷移します。
+		, "topPage": "/dataforms/app/top/page/TopPage"
+		// ----------------------------------
+		// 外部ユーザ登録ページのパスを指定します。
+		// デフォルトのパスはdataforms2.jar中のページ"jp.dataforms.fw.app.user.page.UserRegistPage"のパスになっています。
+		// インターネットからのユーザ登録を許可しない場合は、以下の設定をコメントアウトし、
+		// page-overrideパラメータで、"jp.dataforms.fw.app.user.page.UserRegistPage"を無効にしてください。
+		, "userRegistPage": "/dataforms/app/user/page/UserRegistPage"
+		// ----------------------------------
+		// ユーザ情報編集フォームのメールアドレスを必須にするかどうかを設定します。
+		, "userEditFormConfig": {
+			"requiredMailAddress": true
+		}
+		// ----------------------------------
+		// 外部ユーザ登録ページ設定情報。
+		, "userRegistPageConfig": {
+			"loginIdIsMail": true, // メールアドレスをログインIDとする。
+			"mailCheck": true, // メールアドレスのチェックを行う。
+			"sendUserEnableMail": true // ユーザ有効化ページのURLをメールする。
+		}
+		// ----------------------------------
+		// 外部ユーザ有効化ページのパスを指定します。
+		// 外部ユーザ登録ページ設定でユーザ有効化ページのURLをメールするように設定した場合、このページのURLをメールで送信します。
+		, "userEnablePage": "/dataforms/app/user/page/UserEnablePage"
+		// ----------------------------------
+		//	パスワードリセットメール送信ページのパスを指定します。
+		// この設定をコメントアウトするとパスワードリセットリンクが表示されません。
+		, "passwordResetMailPage": "/dataforms/app/user/page/PasswordResetMailPage"
+		// ----------------------------------
+		// パスワードリセットメールページのパスを指定します。
+		// パスワードリセットメールで、このページのURLを通知します。
+		, "passwordResetPage": "/dataforms/app/user/page/PasswordResetPage"
+		// ----------------------------------
+		// 一時ファイルを置くパスを指定します。
+		, "tempDir": "/tmp"
+		// ----------------------------------
+		// jQueryなどの標準ライブラリなどを読み込むhtmlを指定します。
+		, "cssAndScripts": "/frame/jslib.html"		
+		// ----------------------------------
+		// エラーページのパスを指定します。
+		, "errorPage": "/dataforms/app/errorpage/ErrorPage"
+		// ----------------------------------
+		// クライアントバリデーションの有無を指定します。
+		// これをfalseに設定するとJavascriptでのバリデーションが停止します。
+		, "clientValidation": true
+		// ----------------------------------
+		// アップロードデータを保存するフォルダを指定します。
+		, "uploadDataFolder": "./uploadData"
+		// ----------------------------------
+		//	可逆パスワード:
+		//	cryptConfigで設定したdefaultPasswordを使用してパスワードを暗号化
+		, "passwordType": "REVERSIBLE_PASSWORD"
+		// ----------------------------------
+		//	ハッシュアルゴリズム
+		// SHA-1 or SHA-256 or SHA-384 or SHA-512
+		, "hashAlgorithm": "SHA-512"
+		// ----------------------------------
+		// 暗号化設定
+		, "cryptConfig": {
+			//
+			// 暗号化アルゴリズムを選択します。("des" or "aes")
+			"algorithm": "aes",
+			//
+			// AESの初期化ベクトルを指定します。
+			// AES初期化ベクトルは16Byteである必要があるため、自動的に保管して使用します。
+			"aesInitialVector": "Initi@lVect0r",
+			//
+			// ===================================================================================
+			// 以下項目はDESパスワードまたはAESキーを指定します。
+			// AESキーは16Byteである必要があるため、自動的に保管して使用します。
+			// ===================================================================================
+			// CryptUtilで使用するデフォルトのDESパスワードまたはAESキーを指定します。
+			// UserInfoTableのパスワードの暗号化で使用するので、
+			// 変更する場合は事前にUserInfoTableのパスワードの再構築を行う必要があります。
+			// nullを指定するとライブラリにハードコーディングされたものを使用します。
+			"defaultPassword": null,
+			// QueryStringを暗号化する場合に使用するDESパスワードまたはAESキーを指定します。
+			// BLOBデータ等のダウンロードパラメータの暗号化に使用しています。
+			// 運用時に変更しても問題ありません。
+			// nullを指定するとライブラリにハードコーディングされたものを使用します。
+			"queryStringCryptPassword": "QueryStringPassword",
+			// CSRF対策に使用するDESパスワードまたはAESキーを指定します。
+			// 指定されたDESパスワードまたはAESキーでセッションIDを暗号化し、
+			// CSRFトークンとしてブラウザに送信します。
+			// 運用時に変更しても問題ありません。
+			// nullを指定するとCSRF対策を行いません。
+			"csrfSessionidCryptPassword": "CSRFpassword"
+		}
+		// ----------------------------------
+		// この設定を有効にすると、認証時にユーザのメールアドレスにワンタイムパスワードを送信し
+		// その確認を行います。
+		, "onetimePasswordConfig": {
+				// ワンタイムパスワードを使用するかどうか。
+				"useOnetimePassword": false,
+				// ワンタイムパスワード文字数。
+				"length": 6,
+				// ワンタイムパスワードキャンセルクッキーの有効日数
+				// 0を指定すると毎回ワンタイムパスワードを確認します。
+				// それ以外の場合場クッキーが存在するブラウザの場合、ワンタイムパスワードのチェックは行われません。
+				"cookieExpiration": 20
+			
+		}
+		// ----------------------------------
+		// ブラウザがクッキーを許可していることを確認する場合、trueを指定してください。
+		, "cookieCheck": false
+		// ----------------------------------
+		// メッセージリソース設定
+		, "messageResource": {
+			// ----------------------------------
+			// クライアントに送信して使用するメッセージリソースの名称を指定します。
+			// このファイルはdataforms2.jar内に存在します。
+			"clientMessages": "/frame/messages/ClientMessages"
+			// ----------------------------------
+			// サーバ側で使用するメッセージリソースの名称を指定します。
+			// このファイルはdataforms2.jar内に存在します。
+			, "messages": "/frame/messages/Messages"
+			// ----------------------------------
+			// クライアントに送信して使用するアプリケーション用メッセージリソースの名称を指定します。
+			// このファイルはアプリケーション側で用意します。
+			, "appClientMessages": "/frame/messages/AppClientMessages"
+			// ----------------------------------
+			// サーバ側で使用するアプリケーション用メッセージリソースの名称を指定します。
+			// このファイルはアプリケーション側で用意します。
+			, "appMessages": "/frame/messages/AppMessages"
+		}
+		// ----------------------------------
+		// DataFormsServlet#init,destoryで何らかの処理が必要な場合、ServletInstanceBeanから派生したクラスを作成し
+		// そのクラスを設定してください。
+		//, "servletInstanceBean": "dataforms.servlet.ServletInstanceBean"
+		// ----------------------------------
+		// ストリーミングのブラウザ毎の送信パターンを指定します。
+		// html5のvideo,audioタグからの部分リクエストは大抵 "Range:bytes=0-"のように転送開始位置のみが指定されてきます。
+		// この場合適切なサイズに区切って転送しないと、シーク機能が利用できません。
+		// しかしFirefoxの場合、先頭のブロックのみを再生したところで止まってしまうので、指定された位置から最後まで転送するようにしないとうまく動作しないようです。
+		, "streamingBlockSize": [
+			{"uaPattern": ".*Firefox.*", "blockSize": -1},
+			{"uaPattern": ".+", "blockSize": 16777216}
+		]
+		// ----------------------------------
+		// FileFieldの中に保存されたファイルをダウンロードする際に出力するcontent-typeを設定します。
+		, "contentTypeList": [
+			{"fnPattern": "(?i).*\\.txt$", "contentType": "text/plain"},
+			{"fnPattern": "(?i).*\\.js$", "contentType": "text/javascript"},
+			{"fnPattern": "(?i).*\\.json$", "contentType": "application/json"},
+			{"fnPattern": "(?i).*\\.html$", "contentType": "text/html"},
+			{"fnPattern": "(?i).*\\.htm$", "contentType": "text/html"},
+			{"fnPattern": "(?i).*\\.css$", "contentType": "text/css"},
+			{"fnPattern": "(?i).*\\.xhtml$", "contentType": "text/xhtml+xml"},
+			{"fnPattern": "(?i).*\\.rss$", "contentType": "application/rss+xml"},
+
+			{"fnPattern": "(?i).*\\.zip$", "contentType": "application/zip"},
+			{"fnPattern": "(?i).*\\.pdf$", "contentType": "application/pdf"},
+			{"fnPattern": "(?i).*\\.xlsx$", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+
+			{"fnPattern": "(?i).*\\.png$", "contentType": "image/png"},
+			{"fnPattern": "(?i).*\\.jpg$", "contentType": "image/jpeg"},
+			{"fnPattern": "(?i).*\\.jpeg$", "contentType": "image/jpeg"},
+			{"fnPattern": "(?i).*\\.gif$", "contentType": "image/gif"},
+			{"fnPattern": "(?i).*\\.svg$", "contentType": "image/svg+xml"},
+			{"fnPattern": "(?i).*\\.ico$", "contentType": "image/ico"},
+
+			{"fnPattern": "(?i).*\\.swf$", "contentType": "application/x-shockwave-flash"},
+			{"fnPattern": "(?i).*\\.mpg$", "contentType": "video/mpeg"},
+			{"fnPattern": "(?i).*\\.mpeg$", "contentType": "video/mpeg"},
+			{"fnPattern": "(?i).*\\.mp4$", "contentType": "video/mp4"},
+			{"fnPattern": "(?i).*\\.mov$", "contentType": "video/quicktime"},
+			{"fnPattern": "(?i).*\\.qt$", "contentType": "video/quicktime"},
+			{"fnPattern": "(?i).*\\.mov$", "contentType": "video/x-msvideo"},
+
+			{"fnPattern": "(?i).*\\.mp3$", "contentType": "audio/mpeg"},
+			{"fnPattern": "(?i).*\\.wav$", "contentType": "audio/wav"},
+
+			{"fnPattern": "(?i).*\\.woff2$", "contentType": "font/woff2"},
+
+			{"fnPattern": ".+", "contentType": "application/octet-stream"}
+		]
+		// ----------------------------------
+		// データベースのバックアップファイル名を指定します。
+		, "backupFileName": "backup"
+		// ----------------------------------
+		// apache-fopの設定ファイルのパス
+		, "apacheFopConfig": "/WEB-INF/apachefop/fop.xconf"
+		// ----------------------------------
+		// trueを設定すると複数のメニューを開いた状態にすることができ、
+		// falseを設定すると、開いたメニュー以外は自動的に閉じるようになります。
+		, "multiOpenMenu": true
+		// ----------------------------------
+		// debugログに出力するjsonを整形するかどうかを指定します。
+		// trueの場合成形されたjsonをログ出力に出力します。
+		, "jsonDebug": true
+		// 自動ログイン有効設定
+		// セキュリティを重視する場合この設定はfalseにすることを推奨します。
+		, "autoLogin": false
+		// ----------------------------------
+		// ----------------------------------
+		// trueを設定すると、自動ログインクッキーにSecureを設定します。
+		, "secureAutoLoginCookie": true
+		//	使用する文字コードを指定します。
+		, "encoding": "utf-8"
+	}
+}

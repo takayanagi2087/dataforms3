@@ -1,8 +1,13 @@
 package jp.dataforms.fw.util;
 
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -300,11 +305,6 @@ public class ConfUtil {
 	@Data
 	public static class Application {
 		/**
-		 * WebリソースURL。
-		 */
-		private String webResourceUrl = null;
-		
-		/**
 		 * サポート言語リスト。
 		 */
 		private List<String> languageList = null;
@@ -312,6 +312,16 @@ public class ConfUtil {
 		 * 言語固定設定。
 		 */
 		private String fixedLanguage = null;
+		/**
+		 * サーバー設定ファイル。
+		 */
+		private String serverConfigFile = null;
+		
+		/**
+		 * WebリソースURL。
+		 */
+		private String webResourceUrl = null;
+		
 		/**
 		 * 自動ログイン設定。
 		 */
@@ -494,6 +504,61 @@ public class ConfUtil {
 	public ConfUtil() {
 		
 	}
+
+	/**
+	 * オブジェクトのプロパティを取得します。
+	 * @param obj オブジェクト。
+	 * @param pname プロパティ名。
+	 * @return プロパティの値。
+	 * @throws Exception 例外。
+	 */
+	private Object getProperty(final Object obj, final String pname) throws Exception {
+		String mname = "get" + pname.substring(0, 1).toUpperCase() + pname.substring(1);
+		logger.debug("getProperty() obj=" + obj.getClass().getName() + " -> " + mname);
+		Class<?>[] arg = new Class<?>[0]; 
+		Method m = obj.getClass().getMethod(mname, arg);
+		Object[] p = new Object[0]; 
+		Object ret = m.invoke(obj, p);
+		return ret;
+	}
+	
+	/**
+	 * Confをコピーします。
+	 * @param src コピー元。
+	 * @param dst コピー先。
+	 * @throws Exception 例外。
+	 */
+	@SuppressWarnings("unchecked")
+	public void copyConf(final Map<String, Object> src, final Object dst) throws Exception {
+		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
+		for (String key: src.keySet()) {
+			Object obj = src.get(key);
+			Object odst = this.getProperty(dst, key);
+//			logger.debug("*** key = " + key + ":" + obj.getClass().getName() + " -> " + odst.getClass().getName());
+			if (odst instanceof Map || odst instanceof List || (!(obj instanceof Map))) {
+				String name = key;
+				Object value = src.get(key);
+				logger.debug("copyConf name=" + name + ",value=" + value);
+				BeanUtils.setProperty(dst, key, value);
+			} else {
+				this.copyConf((Map<String, Object>) obj, odst);
+			}
+		}
+	}
+
+	/**
+	 * jarの中のデフォルト設定ファイルを取得する。
+	 * @return jarの中のデフォルト設定ファイル。
+	 * @throws Exception 例外。
+	 */
+	public String getDefaultConfFile() throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/dataforms.conf.jsonc");
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルト設定 = \n" + ret);
+		return ret;
+	}
+	
 	
 	/**
 	 * アプリケーションのデフォルト設定を読み込みます。
@@ -502,17 +567,32 @@ public class ConfUtil {
 	 */
 	public void readDefaultConf(DataFormsServlet servlet) {
 		try {
-			String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataformsConf.jsonc");
-			logger.debug("confPath=" + confPath);
-			String jsonc = FileUtil.readTextFile(confPath, ENCODING);
-//			logger.debug("dataformsConf.jsonc=\n" + jsonc);
-			this.conf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
-/*			logger.debug("java src path=" + conf.developmentTool.getJavaSourcePath());
-			logger.debug("java web path=" + conf.developmentTool.getWebSourcePath());
-			logger.debug("disable code gen=" + conf.developmentTool.getDisableCodeGenerationTool());
-			logger.debug("db package list=" + conf.appInitialize.getDatabasePackageList());
-*/
-			logger.debug("conf json=\n" + JsonUtil.encode(this.conf));
+			// jarのリソース中のデフォルト設定を取得する。
+			String defaultJsonc = this.getDefaultConfFile();
+			this.conf  =  (Conf) JsonUtil.decode(defaultJsonc, Conf.class);
+			{
+				// アプリケーション設定ファイルの読み込み
+				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");
+				logger.debug("confPath=" + confPath);
+				String jsonc = FileUtil.readTextFile(confPath, ENCODING);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
+				this.copyConf(appConf, this.conf);
+			}
+			{
+				// サーバ設定ファイルを読み込む
+				String serverConf = this.conf.getApplication().getServerConfigFile();
+				if (serverConf != null) {
+					File cf = new File(serverConf);
+					if (cf.exists()) {
+						String jsonc = FileUtil.readTextFile(serverConf, "utf-8");
+						@SuppressWarnings("unchecked")
+						Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
+						this.copyConf(appConf, this.conf);
+					}
+				}
+			}
+			logger.debug("conf json=\n" + JsonUtil.encode(this.conf, true));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
