@@ -131,12 +131,6 @@ public class DataFormsServlet extends HttpServlet {
 	private DataSource dataSource = null;
 
 	/**
-	 * 開発ツールの無効化フラグ。
-	 */
-	private static boolean disableDeveloperTools = true;
-
-
-	/**
 	 * 設定の状態.
 	 */
 	private static String configStatus = null;
@@ -243,11 +237,6 @@ public class DataFormsServlet extends HttpServlet {
 		logger.info(() -> "init:uploadDataFolder=" + DataFormsServlet.getUploadDataFolder());
 		logger.info(() -> "init:supportLanguage=" + DataFormsServlet.getSupportLanguage());
 		logger.info(() -> "init:fixedLanguage=" + DataFormsServlet.getFixedLanguage());
-		DataFormsServlet.disableDeveloperTools = Boolean
-				.parseBoolean(this.getServletContext().getInitParameter("disable-developer-tools") == null ? "true"
-						: this.getServletContext().getInitParameter("disable-developer-tools"));
-		logger.info(() -> "init:disableDeveloperTools=" + DataFormsServlet.disableDeveloperTools);
-
 		this.initPassword();
 		this.initOnetimePassword();
 		Page.setFramePath(DataFormsServlet.getConf().getApplication().getFramePath());
@@ -665,22 +654,6 @@ public class DataFormsServlet extends HttpServlet {
 	public static String getFixedLanguage() {
 		return DataFormsServlet.getConf().getApplication().getFixedLanguage();
 				
-	}
-
-	/**
-	 * 開発ツール無効フラグを取得します。
-	 * @return 開発ツール無効フラグ。
-	 */
-	public static boolean isDisableDeveloperTools() {
-		return disableDeveloperTools;
-	}
-
-	/**
-	 * 開発ツール無効フラグを設定します。
-	 * @param disableDeveloperTools 開発ツール無効フラグ。
-	 */
-	public static void setDisableDeveloperTools(final boolean disableDeveloperTools) {
-		DataFormsServlet.disableDeveloperTools = disableDeveloperTools;
 	}
 
 	/**

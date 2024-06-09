@@ -5,7 +5,6 @@ import java.util.Map;
 import jp.dataforms.fw.app.base.page.BasePage;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.exception.ApplicationException;
-import jp.dataforms.fw.servlet.DataFormsServlet;
 
 /**
  * 開発者向けページのベースクラス.
@@ -88,14 +87,6 @@ public abstract class DeveloperPage extends BasePage {
 	 */
 	@Override
 	public boolean isAuthenticated(final Map<String, Object> params) throws Exception {
-		if (DataFormsServlet.isDisableDeveloperTools()) {
-			return false;
-		}
-		/*		log.debug("getRequestURL=" + this.getRequest().getRemoteHost());
-		String requrl = this.getRequest().getRequestURL().toString();
-		if (!Pattern.matches("^(http|https)\\://localhost.*$", requrl)) {
-			return false;
-		}*/
 		return checkUserAttribute("userLevel", "developer");
 	}
 }
