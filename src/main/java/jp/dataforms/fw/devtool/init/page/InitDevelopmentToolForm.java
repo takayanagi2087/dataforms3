@@ -67,6 +67,7 @@ public class InitDevelopmentToolForm extends EditForm {
 		this.addField(new TextField(ID_DERBY_DB_PATH)).addValidator(new RequiredValidator());
 	}
 	
+	
 	/**
 	 * Eclipseを想定したプロジェクトパスを取得します。
 	 * @return プロジェクトパス。
@@ -93,13 +94,17 @@ public class InitDevelopmentToolForm extends EditForm {
 	protected Map<String, Object> queryData(Map<String, Object> data) throws Exception {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		String path = this.getProjectPath();
+		
+		File f = new File(path);
+		String prjname = f.getName();
+		
 		ret.put(ID_PROJECT_PATH, path);
 		ret.put(ID_JAVA_SRC_PATH, path + "/src/main/java");
 		ret.put(ID_WEB_SRC_PATH, path + "/src/main/webapp");
 
 		JndiDataSource ds = DataFormsServlet.getConf().getApplication().getJndiDataSource();
 		ret.put(ID_JNDI_PREFIX, ds.getJndiPrefix());
-		ret.put(ID_DATA_SOURCE, ds.getDataSource());
+		ret.put(ID_DATA_SOURCE, "jdbc/" + prjname);
 		ret.put(ID_DERBY_DB_PATH, path + "/javadb");
 		return ret;
 	}
@@ -143,7 +148,7 @@ public class InitDevelopmentToolForm extends EditForm {
 	
 	/**
 	 * web.xmlをコピーします。
-	 * @param webSrcPath web.xmlを作成します。
+	 * @param webSrcPath webのソースパス。
 	 * @throws Exception 例外。
 	 */
 	private void copyWebXML(final String webSrcPath) throws Exception {
@@ -152,6 +157,17 @@ public class InitDevelopmentToolForm extends EditForm {
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/web.xml", webxml, "utf-8");
 	}
 	
+	/**
+	 * log4j2.xmlをコピーします。
+	 * @param javaSrcPath javaのソースパスを作成します。
+	 * @throws Exception 例外。
+	 */
+	private void copyLog4j2XML(final String javaSrcPath) throws Exception {
+		ConfUtil util = new ConfUtil();
+		String log4j2xml = util.getLog4j2XML();
+		FileUtil.writeTextFile(javaSrcPath + "/log4j2.xml", log4j2xml, "utf-8");
+	}
+
 	private void copyContextXML(final String webSrcPath, final String dataSource, final String derbyDbPath) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String contextxml = util.getContextXML();
@@ -181,8 +197,8 @@ public class InitDevelopmentToolForm extends EditForm {
 		String dataSource = (String) data.get(ID_DATA_SOURCE);
 		String derbyDbPath = (String) data.get(ID_DERBY_DB_PATH);
 		this.copyWebXML(webSrcPath);
+		this.copyLog4j2XML(javaSrcPath);
 		this.copyContextXML(webSrcPath, dataSource, derbyDbPath);
-		
 		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource);
 	}
 	

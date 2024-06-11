@@ -590,6 +590,19 @@ public class ConfUtil {
 	}
 	
 	/**
+	 * デフォルトのweb.xmlを取得します。
+	 * @return web.xmlの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getLog4j2XML() throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/log4j2.xml");
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルトlog4j2.xml = \n" + ret);
+		return ret;
+	}
+	
+	/**
 	 * アプリケーションのデフォルト設定を読み込みます。
 	 * @param servlet DataFormsServlet。
 	 * @throws Exception 例外。
