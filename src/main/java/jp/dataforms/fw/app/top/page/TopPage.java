@@ -7,6 +7,7 @@ import jp.dataforms.fw.app.base.page.BasePage;
 import jp.dataforms.fw.devtool.db.dao.TableManagerDao;
 import jp.dataforms.fw.response.RedirectResponse;
 import jp.dataforms.fw.response.Response;
+import jp.dataforms.fw.servlet.DataFormsServlet;
 
 /**
  * トップページクラス。
@@ -43,6 +44,10 @@ public class TopPage extends BasePage {
 	@Override
 	public Response getHtml(final Map<String, Object> params) throws Exception {
 		String context = this.getRequest().getContextPath();
+		Boolean init = DataFormsServlet.getConf().getDevelopmentTool().getInitialized();
+		if (!init) {
+			return new RedirectResponse(context + "/dataforms/devtool/init/page/InitDevelopmentToolPage." + this.getPageExt());
+		}
 		TableManagerDao dao = new TableManagerDao(this);
 		if (dao.isDatabaseInitialized()) {
 			if (this.getUserInfo() == null) {

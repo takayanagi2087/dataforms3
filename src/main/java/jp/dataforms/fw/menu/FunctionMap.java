@@ -374,6 +374,7 @@ public class FunctionMap {
 	 * 開発ツールのページを追加します。
 	 */
 	private void addDeveloperPage() {
+		this.addPage(new PageInfo(jp.dataforms.fw.devtool.init.page.InitDevelopmentToolPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.InitializeDatabasePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.menu.page.MenuEditPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.table.page.TableGeneratorPage.class));

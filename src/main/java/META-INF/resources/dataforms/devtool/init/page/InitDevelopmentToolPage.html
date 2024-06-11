@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>プロジェクト初期化</title>
+		<meta name="description" content="プロジェクト無いの設定ファイルを作成します。">
+	</head>
+	<body>
+		<div id="mainDiv">
+			<form id="editForm">
+				<div class="formHeader">プロジェクト初期化</div>
+				<div class="gridLayout">
+					<div class="fieldDiv">
+						<div class="label"><label for="projectPath">プロジェクトパス</label></div>
+						<div class="field"><input type="text" id="projectPath"/></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="javaSrcPath">Javaソースパス</label></div>
+						<div class="field"><input type="text" id="javaSrcPath" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="webSrcPath">Webソースパス</label></div>
+						<div class="field"><input type="text" id="webSrcPath" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="jndiPrefix">JNDI 接頭辞</label></div>
+						<div class="field"><input type="text" id="jndiPrefix" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="dataSource">データソース名</label></div>
+						<div class="field"><input type="text" id="dataSource" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="derbyDbPath">Derbyのデータパス</label></div>
+						<div class="field"><input type="text" id="derbyDbPath" /></div>
+					</div>
+				</div>
+				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
+				<input type="button" id="saveButton" class="largeButton" value="登録"/>
+				<input type="button" id="backButton" class="largeButton" value="戻る"/>
+			</form>
+
+		</div>
+	</body>
+</html>

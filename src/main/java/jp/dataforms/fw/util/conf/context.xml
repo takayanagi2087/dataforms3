@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Context><Context addWebinfClassesResources="true">
+	<!-- メールセッション設定 -->
+	<Resource name="mail/Session" auth="Container"
+		type="jakarta.mail.Session" mail.smtp.host="smtpserver" />
+		
+	<!-- DB接続設定 -->
+	<Resource auth="Container"
+		driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+		name="${dataSource}" type="javax.sql.DataSource"
+		url="jdbc:derby:${dataBasePath};create=true"
+		username="" password="" />
+
+	<!--
+		組み込みApache derby用の接続設定
+		Apache derbyのJDBCドライバは制約名称を取得するAPIがあるため
+		duplicateErrorMessageとforeignKeyErrorMessageの設定は不要。
+	 -->
+	 <!--
+	<Resource auth="Container"
+		driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+		name="jdbc/dfdb" type="javax.sql.DataSource"
+		url="jdbc:derby:/javadb/dfdbB;create=true"
+		username="" password="" />
+	  -->
+	<!--
+		Apache derbyネットワークサーバ用の接続設定
+		Apache derbyのJDBCドライバは制約名称を取得するAPIがあるため
+		duplicateErrorMessageとforeignKeyErrorMessageの設定は不要。
+	-->
+	<!--
+	<Resource auth="Container" driverClassName="org.apache.derby.jdbc.ClientDriver"
+		maxActive="8" maxIdle="4" name="jdbc/dfdb" type="javax.sql.DataSource"
+		url="jdbc:derby://localhost:1527/javadb/blank;create=true" username="APP"
+		password="password" />
+	-->
+
+	<!--
+		PostgreSQL用の接続設定
+		制約違反の場合、制約名はエラーメッセージから取得するので、
+		一意制約名取得用の正規表現をduplicateErrorMessage、
+		外部キー制約用名取得用の正規表現をforeignKeyErrorMessageに設定します。
+	 -->
+	<!--
+	<Resource name="jdbc/dfdb" type="javax.sql.DataSource"
+		auth="Container" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://192.168.56.10:5432/dfdb" username="postgres"
+		password="" />
+	<Environment name="duplicateErrorMessage" value="一意性制約&quot;(.+?)&quot;に違反" type="java.lang.String" override="false"/>
+	<Environment name="foreignKeyErrorMessage" value="外部キー制約&quot;(.+?)&quot;に違反" type="java.lang.String" override="false"/>
+	 -->
+	<!--
+		MariaDB用接続設定
+		MariaDB用のjdbcドライバーを使用する場合の設定です。
+		制約違反の場合、制約名はエラーメッセージから取得するので、
+		一意制約名取得用の正規表現をduplicateErrorMessage、
+		外部キー制約用名取得用の正規表現をforeignKeyErrorMessageに設定します。
+	 -->
+	<!--
+	<Resource name="jdbc/dfdb" auth="Container" type="javax.sql.DataSource"
+		username="dfuser" password="" driverClassName="org.mariadb.jdbc.Driver"
+		url="jdbc:mariadb://192.168.56.10/dfdb?user=dfuser" />
+	<Environment name="duplicateErrorMessage" value="for key '(.+?)'$" type="java.lang.String" override="false"/>
+	<Environment name="foreignKeyErrorMessage" value="CONSTRAINT `(.+?)` FOREIGN KEY" type="java.lang.String" override="false"/>
+	 -->
+	<!--
+		MySQL用接続設定
+		MySQL用のjdbcドライバーを使用する場合の設定です。
+		制約違反の場合、制約名はエラーメッセージから取得するので、
+		一意制約名取得用の正規表現をduplicateErrorMessage、
+		外部キー制約用名取得用の正規表現をforeignKeyErrorMessageに設定します。
+	-->
+	<!--
+	<Resource name="jdbc/dfdb" auth="Container" type="javax.sql.DataSource"
+		username="dfuser" password="" driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://192.168.56.10/dfdb?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8" />
+	<Environment name="duplicateErrorMessage" value="for key '(.+?)'$" type="java.lang.String" override="false"/>
+	<Environment name="foreignKeyErrorMessage" value="CONSTRAINT `(.+?)` FOREIGN KEY" type="java.lang.String" override="false"/>
+	 -->
+	<!--
+		ORACLE用の接続設定
+		制約違反の場合、制約名はエラーメッセージから取得するので、
+		一意制約名取得用の正規表現をduplicateErrorMessage、
+		外部キー制約用名取得用の正規表現をforeignKeyErrorMessageに設定します。
+	-->
+	<!--
+	<Resource name="jdbc/dfdb" auth="Container"
+		type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+		url="jdbc:oracle:thin:@192.168.56.10:1521/xepdb1"
+		username="dfuser" password="password"/>
+	<Environment name="duplicateErrorMessage" value="constraint \(.+?\.(.+?)\) violated" type="java.lang.String" override="false"/>
+	<Environment name="foreignKeyErrorMessage" value="constraint \(.+?\.(.+?)\) violated " type="java.lang.String" override="false"/>
+	 -->
+	<!--
+		Microsoft SQL Server 用の接続設定
+		制約違反の場合、制約名はエラーメッセージから取得するので、
+		一意制約名取得用の正規表現をduplicateErrorMessage、
+		外部キー制約用名取得用の正規表現をforeignKeyErrorMessageに設定します。
+	-->
+	<!--
+	<Resource name="jdbc/dfdb" auth="Container"
+		type="javax.sql.DataSource"
+		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		url="jdbc:sqlserver://192.168.56.10:1433;databaseName=dfdb;user=dfuser;password=P@sow0rd;encrypt=false;"
+		maxActive="20" maxIdle="10" maxWait="-1" />
+	<Environment name="duplicateErrorMessage" value="一意インデックス '(.+?)' を含むオブジェクト"  type="java.lang.String" override="false"/>
+	<Environment name="foreignKeyErrorMessage" value="制約 &quot;(.+?)&quot; と競合しています。" type="java.lang.String" override="false"/>
+	 -->
+</Context>

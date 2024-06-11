@@ -37,6 +37,10 @@ public class ConfUtil {
 	@Data
 	public static class DevelopmentTool {
 		/**
+		 * 開発ツール初期化済フラグ。
+		 */
+		private Boolean initialized = null;
+		/**
 		 * Javaのソースパス。
 		 */
 		private String javaSourcePath = null;
@@ -559,6 +563,31 @@ public class ConfUtil {
 		return ret;
 	}
 	
+	/**
+	 * デフォルトのweb.xmlを取得します。
+	 * @return web.xmlの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getWebXML() throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/web.xml");
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルトweb.xml = \n" + ret);
+		return ret;
+	}
+	
+	/**
+	 * デフォルトのweb.xmlを取得します。
+	 * @return web.xmlの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getContextXML() throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/context.xml");
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルトcontext.xml = \n" + ret);
+		return ret;
+	}
 	
 	/**
 	 * アプリケーションのデフォルト設定を読み込みます。
@@ -573,11 +602,14 @@ public class ConfUtil {
 			{
 				// アプリケーション設定ファイルの読み込み
 				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");
-				logger.debug("confPath=" + confPath);
-				String jsonc = FileUtil.readTextFile(confPath, ENCODING);
-				@SuppressWarnings("unchecked")
-				Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
-				this.copyConf(appConf, this.conf);
+				File cf = new File(confPath);
+				if (cf.exists()) {
+					logger.debug("confPath=" + confPath);
+					String jsonc = FileUtil.readTextFile(confPath, ENCODING);
+					@SuppressWarnings("unchecked")
+					Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
+					this.copyConf(appConf, this.conf);
+				}
 			}
 			{
 				// サーバ設定ファイルを読み込む

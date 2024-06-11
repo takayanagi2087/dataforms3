@@ -4,10 +4,13 @@
  {
 	 // 開発ツール関連の設定
 	"developmentTool" : {
+		// 初期化済フラグ
+		// このフラグは開発ツールが初期化されていることを示します。
+		"initialized": false
 		// javaのソースパス
-		"javaSourcePath": "/eclipse/workspaceDataforms3/dataforms3app/src/main/java"
+		, "javaSourcePath": null
 		// HTML,jsのソースパス
-		, "webSourcePath": "/eclipse/workspaceDataforms3/dataforms3app/src/main/webapp"
+		, "webSourcePath": null
 		// 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
 		, "exportImportDir": "/tmp/data"
 		// ソースコード生成ツール無効設定
