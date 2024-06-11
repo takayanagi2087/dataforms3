@@ -168,6 +168,13 @@ public class InitDevelopmentToolForm extends EditForm {
 		FileUtil.writeTextFile(javaSrcPath + "/log4j2.xml", log4j2xml, "utf-8");
 	}
 
+	/**
+	 * context.xmlを作成します。
+	 * @param webSrcPath WEBソースパス。
+	 * @param dataSource データソースの名称。
+	 * @param derbyDbPath derbyのデータベースパス。
+	 * @throws Exception 例外。
+	 */
 	private void copyContextXML(final String webSrcPath, final String dataSource, final String derbyDbPath) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String contextxml = util.getContextXML();
@@ -177,7 +184,14 @@ public class InitDevelopmentToolForm extends EditForm {
 	
 	}
 	
-	
+	/**
+	 * 設定ファイルを作成します。
+	 * @param webSrcPath webソースパス。
+	 * @param javaSrcPath javaソースパス。
+	 * @param jndiPrefix JNDI接頭辞
+	 * @param dataSource データソース。
+	 * @throws Exception 例外。
+	 */
 	private void copyConfFile(final String webSrcPath, final String javaSrcPath, final String jndiPrefix, final String dataSource) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String conf = util.getDefaultConfFile();
