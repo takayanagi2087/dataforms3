@@ -9,6 +9,29 @@
 		<div id="mainDiv">
 			<form id="editForm">
 				<div class="formHeader">プロジェクト初期化</div>
+				<div>
+					eclipseのプロジェクト内に以下のファイルを作成して、プロジェクトを初期化します。<br/>
+					<table>
+						<tbody>
+							<tr>
+								<td>/src/java/log4j2.xml</td>
+								<td>デフォルトのlog4j2.xmlを作成します。</td>
+							</tr>
+							<tr>
+								<td>/src/webapp/WEB-INF/web.xml</td>
+								<td>必要最小限のweb.xmlを作成します。</td>
+							</tr>
+							<tr>
+								<td>/src/webapp/META-INF/context.xml</td>
+								<td>データベースApache Derby用の設定例を作成します。</td>
+							</tr>
+							<tr>
+								<td>/src/webapp/WEB-INF/dataforms.conf.jsonc</td>
+								<td>dataforms3.jarの設定ファイルを作成します。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				<div class="gridLayout">
 					<div class="fieldDiv">
 						<div class="label"><label for="projectPath">プロジェクトパス</label></div>
@@ -16,24 +39,42 @@
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="javaSrcPath">Javaソースパス</label></div>
-						<div class="field"><input type="text" id="javaSrcPath" /></div>
+						<div class="field">
+							<input type="text" id="javaSrcPath" style="width: calc(100% - 300px);" />
+							dataforms.conf.jsoncの設定値
+						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="webSrcPath">Webソースパス</label></div>
-						<div class="field"><input type="text" id="webSrcPath" /></div>
+						<div class="field">
+							<input type="text" id="webSrcPath" style="width: calc(100% - 300px);" />
+							dataforms.conf.jsoncの設定値
+						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="jndiPrefix">JNDI 接頭辞</label></div>
-						<div class="field"><input type="text" id="jndiPrefix" /></div>
+						<div class="field">
+							<input type="text" id="jndiPrefix" style="width: calc(100% - 300px);" />
+							dataforms.conf.jsoncの設定値
+						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="dataSource">データソース名</label></div>
-						<div class="field"><input type="text" id="dataSource" /></div>
+						<div class="field">
+							<input type="text" id="dataSource" style="width: calc(100% - 300px);" />
+							dataforms.conf.jsoncとcontext.xmlの設定値
+						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="derbyDbPath">Derbyのデータパス</label></div>
-						<div class="field"><input type="text" id="derbyDbPath" /></div>
+						<div class="field">
+							<input type="text" id="derbyDbPath" style="width: calc(100% - 300px);" />
+							context.xmlの設定値
+						</div>
 					</div>
+				</div>
+				<div id="nextMessage" style="display: none;">
+					プロジェクトが初期化されました。Eclipseでプロジェクトのクリーンビルドした後、Tomcatを再起動して、<a href="../../../../">DBの初期化</a>に進んでください。
 				</div>
 				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
 				<input type="button" id="saveButton" class="largeButton" value="登録"/>
