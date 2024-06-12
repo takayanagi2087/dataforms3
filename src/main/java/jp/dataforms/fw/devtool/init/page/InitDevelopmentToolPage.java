@@ -1,7 +1,10 @@
 package jp.dataforms.fw.devtool.init.page;
 
+import java.util.Map;
+
 import jp.dataforms.fw.app.base.page.BasePage;
 import jp.dataforms.fw.dao.Dao;
+import jp.dataforms.fw.servlet.DataFormsServlet;
 
 
 /**
@@ -16,6 +19,14 @@ public class InitDevelopmentToolPage extends BasePage {
 		this.setMenuItem(false);
 	}
 
+	@Override
+	public boolean isAuthenticated(Map<String, Object> params) throws Exception {
+		if (DataFormsServlet.getConf().getDevelopmentTool().getInitialized()) {
+			return false;
+		}
+		return super.isAuthenticated(params);
+	}
+	
 	/**
 	 * Pageが配置されるパスを返します。
 	 *

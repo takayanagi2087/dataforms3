@@ -25,7 +25,7 @@ public class InitializeDatabasePage extends DeveloperPage {
 
 	/**
 	 * {@inheritDoc}
-	 * DBが初期化されている場合は、developerの場合のみ表示されます。
+	 * DBが初期化されている場合は表示不可のページ。
 	 */
 	@Override
 	public boolean isAuthenticated(final Map<String, Object> params) throws Exception {
