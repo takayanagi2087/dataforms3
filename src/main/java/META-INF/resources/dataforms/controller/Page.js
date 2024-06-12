@@ -58,7 +58,7 @@ export class Page extends DataForms {
 	}
 
 	/**
-	 * Microsoft Chromium EDGE。
+	 * Chromium EDGE。
 	 */
 	static get BROWSER_EDG() {
 		 return "edg";
