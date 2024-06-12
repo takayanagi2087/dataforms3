@@ -23,7 +23,7 @@ import { QueryStringUtil } from '../util/QueryStringUtil.js';
  * そこでVer2.xxではこれを回避する機能を用意しました。
  * web.xmlのuse-unique-idをtrueに設定すると、htmlに記述したidを
  * data-idに設定し、idにはサーバから与えられたrealIdプロパティの
- * 値を設定します。realIdコンポーネントの階層情報を持ちページ内で
+ * 値を設定します。realIdはコンポーネントの階層情報を持ちページ内で
  * ユニークな値になります。
  *
  * </pre>
@@ -35,14 +35,29 @@ import { QueryStringUtil } from '../util/QueryStringUtil.js';
  *
  */
 export class WebComponent {
+	
+	/**
+	 * IDの一意化済フラグ。
+	 */
+	#idPrepared = false;
+	
+
+	/**
+	 * 子のコンポーネントのマップ。
+	 */
+	#componentMap = {};
+	get componentMap() {
+		return this.#componentMap;
+	}
+	
 	/**
 	 * コンストラクタ。
 	 */
 	constructor() {
 		this.id = null;
-		this.componentMap = {};
+		this.#componentMap = {};
 		this.parent = null;
-		this.idPrepared = false;
+		this.#idPrepared = false;
 	}
 
 	/**
@@ -206,7 +221,7 @@ export class WebComponent {
 			ret = $(sel);
 //			logger.log("A:" + this.id + ":get(" + id + ") sel=" + sel + ",sel.length=" + ret.length);
 		} else {
-			if (currentPage.useUniqueId && this.idPrepared) {
+			if (currentPage.useUniqueId && this.#idPrepared) {
 				// ユニークIDが有効でidアトリビュート設定済
 				let sel = "#" + this.selectorEscape(this.realId);
 				if (id != null) {
@@ -453,7 +468,7 @@ export class WebComponent {
 			}
 			jq.attr("id", this.realId);
 		}
-		this.idPrepared = true;
+		this.#idPrepared = true;
 	}
 
 	/**
