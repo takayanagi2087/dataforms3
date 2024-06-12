@@ -199,26 +199,21 @@ export class InitDevelopmentToolForm extends EditForm {
 */
 
 	/**
-	 * 保存や削除後の画面状態遷移を行います。
-	 */
-/*
-	changeStateForAfterUpdate() {
-		super.changeStateForAfterUpdate();
-	}
-*/
-
-	/**
 	 * 保存ボタンのイベント処理を行います。
 	 * <pre>
 	 * 対応するFormのsaveメソッドを呼び出し、保存処理を行います。
 	 * ファイルアップロードフィールドもサーバーに送信されます。
 	 * </pre>
 	 */
-	save() {
-		super.save();
+	async save() {
+		await super.save();
 		this.get("nextMessage").show();
+		this.get("buttonDiv").hide();
 	}
 
+	/**
+	 * 更新後の画面繊維は行わない。
+	 */
 	changeStateForAfterUpdate() {
 		
 	}

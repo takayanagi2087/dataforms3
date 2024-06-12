@@ -13,6 +13,7 @@ public class InitDevelopmentToolPage extends BasePage {
 	 */
 	public InitDevelopmentToolPage() {
 		this.addForm(new InitDevelopmentToolForm());
+		this.setMenuItem(false);
 	}
 
 	/**

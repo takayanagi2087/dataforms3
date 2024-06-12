@@ -225,4 +225,9 @@ public class InitDevelopmentToolForm extends EditForm {
 	public void deleteData(Map<String, Object> data) throws Exception {
 		// 削除処理　この処理は呼ばれない。
 	}
+	
+	@Override
+	protected String getSavedMessage(Map<String, Object> data) {
+		return null;
+	}
 }
