@@ -632,10 +632,12 @@ public class FunctionMap {
 	 */
 	public PageInfo findPageInfo(final String classname) {
 		PageInfo ret = null;
-		for (PageInfo p: this.pageList) {
-			if (p.getPageClass().equals(classname)) {
-				ret = p;
-				break;
+		if (this.pageList != null) {
+			for (PageInfo p: this.pageList) {
+				if (p.getPageClass().equals(classname)) {
+					ret = p;
+					break;
+				}
 			}
 		}
 		return ret;
@@ -667,9 +669,12 @@ public class FunctionMap {
 					@SuppressWarnings("unchecked")
 					Class<? extends WebComponent> pcls = (Class<? extends WebComponent>) cls;
 					String classname = pcls.getName();
+					logger.debug("pageClassName=" + classname);
 					PageInfo p = this.findPageInfo(classname);
 					if (p == null) {
 						this.addPage(new PageInfo(pcls));
+					} else {
+//						this.addPage(new PageInfo(pcls));
 					}
 				}
 
