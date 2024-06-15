@@ -133,7 +133,7 @@ public class Dao implements JDBCConnectableObject {
 
 
 	@Override
-	public final Connection getConnection() {
+	public Connection getConnection() {
 		return this.jdbcConnectableObject.get().getConnection();
 	}
 
@@ -240,7 +240,7 @@ public class Dao implements JDBCConnectableObject {
 	}
 
 	/**
-	 * SQLジェネレータを取得するします。
+	 * SQLジェネレータを取得します。
 	 * @return SQLジェネレータ。
 	 */
 	public SqlGenerator getSqlGenerator() {
