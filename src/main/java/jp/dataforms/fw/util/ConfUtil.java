@@ -31,7 +31,7 @@ public class ConfUtil {
 	private static final String ENCODING = "utf-8";
 	
 	/**
-	 * 設定情報インターフェース。
+	 * 設定情報クラスと判定するためのインターフェース。
 	 */
 	public static interface  ConfClass {}
 	
