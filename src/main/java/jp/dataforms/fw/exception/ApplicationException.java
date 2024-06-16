@@ -28,9 +28,9 @@ public class ApplicationException extends Exception {
 	 */
 	public enum ResponseMode {
 		/** エラー情報をJSONで送る。 */
-		JSON
+		JSON, 
 		/** エラーページへのリダイレクト。 */
-		, REDIRECT_TO_ERROR_PAGE
+		REDIRECT_TO_ERROR_PAGE
 	}
 
 	/**
@@ -46,19 +46,6 @@ public class ApplicationException extends Exception {
 	 */
 	public ApplicationException(final WebEntryPoint epoint, final String msgkey, final String... args) {
 		super(MessagesUtil.getMessage(epoint, msgkey, args));
-		this.messageKey = msgkey;
-	}
-
-
-	/**
-	 * コンストラクタ。
-	 *
-	 * @param msgkey メッセージのキー。
-	 * @param message メッセージのテキスト。
-	 * @deprecated
-	 */
-	public ApplicationException(final String msgkey, final String message) {
-		super(message);
 		this.messageKey = msgkey;
 	}
 

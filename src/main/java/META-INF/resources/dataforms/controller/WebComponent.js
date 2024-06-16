@@ -134,20 +134,7 @@ export class WebComponent {
 	}
 
 	/**
-	 * ServerMethodのインスタンスを取得します。
-	 * @param {String} method メソッド名。
-	 * @returns {ServerMethod} ServerMethodのインスタンス。
-	 * @deprecated async/awaitに対応した、getWebMethodを使用してください。
-	 */
-	getServerMethod(method) {
-		return new ServerMethod(this.getUniqId() + "." + method);
-	}
-
-	/**
 	 * WebMethodを取得します。
-	 * <pre>
-	 * WebMethodはServerMethodのasync,await対応版です。
-	 * </pre>
 	 * @param {String} method メソッド名。
 	 * @returns {WebMethod} WebMethodのインスタンス。
 	 */

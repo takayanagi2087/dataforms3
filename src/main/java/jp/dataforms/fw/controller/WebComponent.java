@@ -268,28 +268,15 @@ public class WebComponent implements JDBCConnectableObject {
 	 * </pre>
 	 * @param cls 指定クラス。
 	 * @return 自分自身のスクリプトパス。
+	 * @throws Exception 例外。
 	 */
 	protected String getClassScriptPath(final Class<?> cls) throws Exception {
 		logger.debug("getClassScriptPath:cls=" + cls.getName());
-/*		if (MenuForm.class.isAssignableFrom(cls) || LoginInfoForm.class.isAssignableFrom(cls)) {
-			// MenuForm等はframeのパスにある。
-			WebComponent cmp = null;
-			try {
-				cmp = (WebComponent) cls.getDeclaredConstructor().newInstance();
-			} catch (Exception ex) {
-				logger.error(ex.getMessage(), ex);
-				throw new ApplicationError(ex);
-			}
-			return "/" + cmp.getWebResourcePath(cls) + ".js";
-		} else {
-*/			String clsname = cls.getName();
-			FunctionMap conv = FunctionMap.getAppFunctionMap();
-			String ret = conv.getWebPath(clsname) + ".js";
-			logger.debug("getClassScriptPath() = " + ret);
-			return ret;
-			// String jspath = clsname.replaceAll("\\.", "/") + ".js";
-			// return "/" + jspath;
-//		}
+		String clsname = cls.getName();
+		FunctionMap conv = FunctionMap.getAppFunctionMap();
+		String ret = conv.getWebPath(clsname) + ".js";
+		logger.debug("getClassScriptPath() = " + ret);
+		return ret;
 	}
 
 
@@ -626,6 +613,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 * 指定されたパスのWebリソースの更新日付を取得します。
 	 * @param path パス。
 	 * @return 更新日付(yyyyMMddHHmmss形式)。
+	 * @throws Exception 例外。
 	 */
 	protected String getLastUpdate(final String path) throws Exception {
 		String ret = webResourceTimestampCache.get(path);

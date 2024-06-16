@@ -1080,23 +1080,6 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	 * @param param パラメータ。
 	 * @return 変換したマップ。
 	 *
-	 * @deprecated getRowMapを利用してください。
-	 */
-	public Map<String, Object> getLineMap(final Map<String, Object> param) {
-		Map<String, Object> ret = new HashMap<String, Object>();
-		for (String k : param.keySet()) {
-			Object v = param.get(k);
-			ret.put(k.replaceAll("^.+\\[[0-9]+\\]\\.", ""), v);
-		}
-		return ret;
-	}
-
-
-	/**
-	 * キーから"xxx[x]."の部分を取り除いたマップを取得します。
-	 * @param param パラメータ。
-	 * @return 変換したマップ。
-	 *
 	 */
 	public Map<String, Object> getRowMap(final Map<String, Object> param) {
 		Map<String, Object> ret = new HashMap<String, Object>();

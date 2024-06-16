@@ -230,33 +230,19 @@ export class Form extends WebComponent {
 	 * フォームのサブミットを行います。
 	 *
 	 * @param {String} method 送信先のメソッド.
-	 * @param {Function} func 応答処理 function(data)。
 	 * @return {Promise} funcが指定されなかった場合、Promiseを返す。
 	 */
-	async submit(method, func) {
+	async submit(method) {
 		let form = this;
 		let f = this.get();
-		if (func != null) {
-			let m = new ServerMethod(this.getUniqId() + "." + method);
-			m.submit(f, function(data) {
-				if (data instanceof Blob) {
-					// blobが来た場合。
-					form.downloadBlob(m, data);
-				} else {
-					func(data);
-				}
-			});
+		let m = this.getWebMethod(method);
+		let data = await m.submit(f);
+		if (data instanceof Blob) {
+			// blobが来た場合。
+			form.downloadBlob(m, data);
 			return null;
 		} else {
-			let m = this.getWebMethod(method);
-			let data = await m.submit(f);
-			if (data instanceof Blob) {
-				// blobが来た場合。
-				form.downloadBlob(m, data);
-				return null;
-			} else {
-				return data;
-			}
+			return data;
 		}
 	}
 
@@ -272,29 +258,16 @@ export class Form extends WebComponent {
 	 * @param {Function} func 応答処理 function(data)。
 	 * @return {Promise} funcが指定されなかった場合、Promiseを返す。
 	 */
-	async submitWithoutFile(method, func) {
+	async submitWithoutFile(method) {
 		let form = this;
-		if (func != null) {
-			let m = new ServerMethod(this.getUniqId() + "." + method);
-			m.submitWithoutFile(form.get(), function(data) {
-				if (data instanceof Blob) {
-					// blobが来た場合。
-					form.downloadBlob(m, data);
-				} else {
-					func(data);
-				}
-			});
+		let m = this.getWebMethod(method);
+		let data = await m.submitWithoutFile(form.get());
+		if (data instanceof Blob) {
+			// blobが来た場合。
+			form.downloadBlob(m, data);
 			return null;
 		} else {
-			let m = this.getWebMethod(method);
-			let data = await m.submitWithoutFile(form.get());
-			if (data instanceof Blob) {
-				// blobが来た場合。
-				form.downloadBlob(m, data);
-				return null;
-			} else {
-				return data;
-			}
+			return data;
 		}
 	}
 
@@ -302,37 +275,24 @@ export class Form extends WebComponent {
 	 * ファイルフィールドも含めてsubmitします。
 	 *
 	 * @param {String} method メソッド。
-	 * @param {Function} func 応答処理 function(data)。
 	 * @return {Promise} funcが指定されなかった場合、Promiseを返す。
 	 */
-	async submitWithFile(method, func) {
+	async submitWithFile(method) {
 		let form = this;
-		if (func != null) {
-			let m = new ServerMethod(this.getUniqId() + "." + method);
-			m.submitWithFile(form.get(), function(data) {
-				if (data instanceof Blob) {
-					// blobが来た場合。
-					form.downloadBlob(m, data);
-				} else {
-					func(data);
-				}
-			});
+		let m = this.getWebMethod(method);
+		let data = await m.submitWithFile(form.get());
+		if (data instanceof Blob) {
+			// blobが来た場合。
+			form.downloadBlob(m, data);
+			return null;
 		} else {
-			let m = this.getWebMethod(method);
-			let data = await m.submitWithFile(form.get());
-			if (data instanceof Blob) {
-				// blobが来た場合。
-				form.downloadBlob(m, data);
-				return null;
-			} else {
-				return data;
-			}
+			return data;
 		}
 	}
 
 	/**
 	 * blobをダウンロードします。
-	 * @param {Object} m WebMethodまたはServerMethodのオブジェクト。
+	 * @param {Object} m WebMethodのオブジェクト。
 	 * @param {Object} data ダウンロードデータ。
 	 */
 	downloadBlob(m, data) {
@@ -357,39 +317,6 @@ export class Form extends WebComponent {
 			document.body.removeChild(a);
 		}
 
-	}
-
-
-	/**
-	 * ダウンロード用のsubmitを行います。
-	 * <pre>
-	 * BinaryResponseを返すサーバメソッドに対して、submitを行い、結果をダウンロードします。
-	 * サーバメソッドがエラーの発生などの要因でJSONを返した場合、funcにその内容を渡します。
-	 * funcを省略した場合、エラーメッセージが返されたという前提でalertを表示する応答処理を実行します。
-	 * </pre>
-	 * @param {String} method メソッド名。
-	 * @param {Function} func 応答処理 function(data)。
-	 * @deprecated submitのみでバイナリデータのダウンロードも可能になりました。(submitForDownloadは互換性維持のためにしばらく残します)
-	 */
-	submitForDownload(method, func) {
-		let form = this;
-		let m = new ServerMethod(this.getUniqId() + "." + method);
-		let rfunc = function(data) {
-			if (data instanceof Blob) {
-				// blobが来た場合。
-				form.downloadBlob(m, data);
-			} else {
-				// ダウンロードを期待したがJSONが来た場合。
-				if (func == null) {
-					func = function(ret) {
-						let systemName = MessagesUtil.getMessage("message.systemname");
-						currentPage.alert(systemName, ret.result);
-					}
-				}
-				func.call(form, data);
-			}
-		}
-		m.submitWithFile(form.get(), rfunc);
 	}
 
 	/**

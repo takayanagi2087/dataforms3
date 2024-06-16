@@ -30,12 +30,16 @@ public class ConfUtil {
 	 */
 	private static final String ENCODING = "utf-8";
 	
+	/**
+	 * 設定情報インターフェース。
+	 */
+	public static interface  ConfClass {}
 	
 	/**
 	 * 開発ツール設定情報。
 	 */
 	@Data
-	public static class DevelopmentTool {
+	public static class DevelopmentTool implements ConfClass {
 		/**
 		 * 開発ツール初期化済フラグ。
 		 */
@@ -72,7 +76,7 @@ public class ConfUtil {
 	 * アプリケーション初期化設定。
 	 */
 	@Data
-	public static class Initialize {
+	public static class Initialize implements ConfClass {
 		/**
 		 * 初期化時に作成する特権ユーザのレベル。
 		 */
@@ -107,7 +111,7 @@ public class ConfUtil {
 	 * JNDI Data Source設定。
 	 */
 	@Data
-	public static class JndiDataSource {
+	public static class JndiDataSource implements ConfClass {
 		/**
 		 * JNDIデータソースの前につける文字列。
 		 */
@@ -122,7 +126,7 @@ public class ConfUtil {
 	 * Mail設定。
 	 */
 	@Data
-	public static class Mail {
+	public static class Mail implements ConfClass {
 		/**
 		 * mailSessionの名称。
 		 */
@@ -139,7 +143,7 @@ public class ConfUtil {
 	 * TODO: この項目の構造を健闘。
 	 */
 	@Data
-	public static class UserEditFormConfig {
+	public static class UserEditFormConfig implements ConfClass  {
 		/**
 		 * メールアドレスの必須チェック設定。
 		 */
@@ -150,7 +154,7 @@ public class ConfUtil {
 	 * ユーザ登録ページの設定。
 	 */
 	@Data
-	public static class UserRegistPageConfig {
+	public static class UserRegistPageConfig implements ConfClass {
 		/**
 		 * メールアドレスをログインIDとする。
 		 */
@@ -169,7 +173,7 @@ public class ConfUtil {
 	 * メッセージリソース設定。
 	 */
 	@Data
-	public static class MessageResource {
+	public static class MessageResource implements ConfClass {
 		/**
 		 * クライアントに送信して使用するメッセージリソースの名称を指定します。
 		 * このファイルはdataforms2.jar内に存在します。
@@ -196,7 +200,7 @@ public class ConfUtil {
 	 * 暗号化設定。
 	 */
 	@Data
-	public static class CryptConfig {
+	public static class CryptConfig implements ConfClass {
 		/**
 		 * 暗号化アルゴリズムを選択します。("des" or "aes")。
 		 */
@@ -240,7 +244,7 @@ public class ConfUtil {
 	 * その確認を行います。
 	 */
 	@Data
-	public static class OnetimePasswordConfig {
+	public static class OnetimePasswordConfig implements ConfClass {
 		/**
 		 * ワンタイムパスワードを使用するかどうか。
 		 */
@@ -262,7 +266,7 @@ public class ConfUtil {
 	 * ストリーミングブロックサイズ。
 	 */
 	@Data
-	public static class StreamingBlockSize {
+	public static class StreamingBlockSize implements ConfClass {
 		/**
 		 * UserAgentパターン。
 		 */
@@ -277,7 +281,7 @@ public class ConfUtil {
 	 * ContentType情報。
 	 */
 	@Data
-	public static class ContentType {
+	public static class ContentType implements ConfClass {
 		/**
 		 * ファイル名パターン。
 		 */
@@ -292,7 +296,7 @@ public class ConfUtil {
 	 * ページオーバーライド情報。
 	 */
 	@Data
-	public static class PageOverride {
+	public static class PageOverride implements ConfClass {
 		/**
 		 * 変更元のページ。
 		 */
@@ -307,7 +311,7 @@ public class ConfUtil {
 	 * アプリケーション設定。
 	 */
 	@Data
-	public static class Application {
+	public static class Application implements ConfClass {
 		/**
 		 * サポート言語リスト。
 		 */
@@ -479,7 +483,7 @@ public class ConfUtil {
 	 * DataForms設定情報。
 	 */
 	@Data
-	public static class Conf {
+	public static class Conf implements ConfClass {
 		/**
 		 * 開発ツール設定情報。
 		 */
@@ -526,29 +530,6 @@ public class ConfUtil {
 		return ret;
 	}
 	
-	/**
-	 * Confをコピーします。
-	 * @param src コピー元。
-	 * @param dst コピー先。
-	 * @throws Exception 例外。
-	 */
-	@SuppressWarnings("unchecked")
-	public void copyConf(final Map<String, Object> src, final Object dst) throws Exception {
-		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
-		for (String key: src.keySet()) {
-			Object obj = src.get(key);
-			Object odst = this.getProperty(dst, key);
-//			logger.debug("*** key = " + key + ":" + obj.getClass().getName() + " -> " + odst.getClass().getName());
-			if (odst instanceof Map || odst instanceof List || (!(obj instanceof Map))) {
-				String name = key;
-				Object value = src.get(key);
-				logger.debug("copyConf name=" + name + ",value=" + value);
-				BeanUtils.setProperty(dst, key, value);
-			} else {
-				this.copyConf((Map<String, Object>) obj, odst);
-			}
-		}
-	}
 
 	/**
 	 * jarの中のデフォルト設定ファイルを取得する。
@@ -603,6 +584,59 @@ public class ConfUtil {
 	}
 	
 	/**
+	 * Confをコピーします。
+	 * @param src コピー元。
+	 * @param dst コピー先。
+	 * @throws Exception 例外。
+	 */
+	public void copyConf(final Object src, final Object dst) throws Exception {
+		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
+		Map<String, Object> map = this.getPropertyMap(src);
+		for (String key: map.keySet()) {
+			Object obj = map.get(key);
+			Object odst = this.getProperty(dst, key);
+			if (obj != null) {
+				if (obj instanceof ConfClass) {
+					this.copyConf(obj, odst);
+				} else {
+/*					logger.debug("*** key = " + key);
+					logger.debug("*** obj = " + obj.getClass().getName());
+					if (odst != null) {
+						logger.debug("*** odst = " +  odst.getClass().getName());
+					}*/
+					String name = key;
+					Object value = map.get(key);
+					logger.debug("copyConf name=" + name + ",value=" + value);
+					BeanUtils.setProperty(dst, key, value);
+				}
+			}
+		}
+	}	
+
+	/**
+	 * プロパティマップを取得します。
+	 * @param src ソース。
+	 * @return プロパティマップ。
+	 * @throws Exception 例外。
+	 */
+	public Map<String, Object> getPropertyMap(final Object src) throws Exception {
+		Map<String, Object> ret = new HashMap<String, Object>();
+		Method[] mlist = src.getClass().getMethods();
+		for (Method m: mlist) {
+			String fn = m.getName();
+			if (fn.indexOf("get") == 0) {
+				String pname = fn.substring(3, 4).toLowerCase() + fn.substring(4);
+				logger.debug("pname=" + pname);
+				Object obj = m.invoke(src);
+				ret.put(pname, obj);
+			}
+		}
+		return ret;
+	}
+	
+	
+	
+	/**
 	 * アプリケーションのデフォルト設定を読み込みます。
 	 * @param servlet DataFormsServlet。
 	 * @throws Exception 例外。
@@ -619,8 +653,7 @@ public class ConfUtil {
 				if (cf.exists()) {
 					logger.debug("confPath=" + confPath);
 					String jsonc = FileUtil.readTextFile(confPath, ENCODING);
-					@SuppressWarnings("unchecked")
-					Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
+					Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
 					this.copyConf(appConf, this.conf);
 				}
 			}
@@ -631,8 +664,7 @@ public class ConfUtil {
 					File cf = new File(serverConf);
 					if (cf.exists()) {
 						String jsonc = FileUtil.readTextFile(serverConf, "utf-8");
-						@SuppressWarnings("unchecked")
-						Map<String, Object> appConf  =  (Map<String, Object>) JsonUtil.decode(jsonc, HashMap.class);
+						Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
 						this.copyConf(appConf, this.conf);
 					}
 				}

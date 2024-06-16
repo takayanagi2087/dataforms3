@@ -627,17 +627,6 @@ export class HtmlTable extends WebComponent {
 	/**
 	 * 指定行のフィールドを取得します。
 	 * @param {Integer} idx 指定行。
-	 * @param {Field} field フィールド。
-	 * @returns {Field} フィールド。
-	 * @deprecated getRowFieldを使用してください。
-	 */
-	getLineField(idx, field) {
-		return this.getRowField(idx, field);
-	}
-
-	/**
-	 * 指定行のフィールドを取得します。
-	 * @param {Integer} idx 指定行。
 	 * @param {Object} fobj フィールドIDまたはカラムフィールド。
 	 * @returns {Field} フィールド。
 	 */
@@ -674,16 +663,6 @@ export class HtmlTable extends WebComponent {
 			f.attach();
 		}
 		return lidx;
-	}
-
-	/**
-	 * 指定行のデータを設定します。
-	 * @param {Integer} idx 行。
-	 * @param {Object} line フォームデータ。
-	 * @deprecated setRowDataを使用してください。
-	 */
-	setLineData(idx, line) {
-		this.setRowData(idx, line)
 	}
 
 	/**
@@ -825,17 +804,6 @@ export class HtmlTable extends WebComponent {
 	 * @param {Number} line 指定行インデックス。
 	 * @param {Boolean} lk ロック指定。
 	 * @returns {Boolean} 指定行が存在する場合true。
-	 * @deprecated lockRowを使用してください。
-	 */
-	lockLine(line, lk) {
-		return this.lockRow(line, lk);
-	}
-
-	/**
-	 * テーブルの指定行をロック/アンロックします。
-	 * @param {Number} line 指定行インデックス。
-	 * @param {Boolean} lk ロック指定。
-	 * @returns {Boolean} 指定行が存在する場合true。
 	 */
 	lockRow(line, lk) {
 		let flg = false;
@@ -860,20 +828,6 @@ export class HtmlTable extends WebComponent {
 				break;
 			}
 		}
-	}
-
-	/**
-	 * 同じ行の指定フィールドを取得します。
-	 * @param {jQuery} f 指定フィールドに対応したjQueryオブジェクト。
-	 * @param {String} tid 取得するフィールドID.
-	 * @return {jQuery} 見つけた要素のjQueryオブジェクト。
-	 * <pre>
-	 * fで指定されたjQueryオブジェクトと同じ行にある、tidをもつ要素を取得します。
-	 * </pre>
-	 * @deprecated getSameRowFieldを使用してください。
-	 */
-	getSameLineField(f, tid) {
-		return this.getSameRowField(f, tid);
 	}
 
 	/**

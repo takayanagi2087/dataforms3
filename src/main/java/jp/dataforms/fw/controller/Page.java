@@ -242,7 +242,6 @@ public class Page extends DataForms implements WebEntryPoint {
 			basicJsCache.add("/dataforms/util/QueryStringUtil.js");
 			basicJsCache.add("/dataforms/util/StringUtil.js");
 			basicJsCache.add("/dataforms/util/NumberUtil.js");
-			basicJsCache.add("/dataforms/util/ServerMethod.js");
 			basicJsCache.add("/dataforms/response/JsonResponse.js");
 			basicJsCache.add("/dataforms/util/WebMethod.js");
 			basicJsCache.add("/dataforms/util/SimpleDateFormat.js");

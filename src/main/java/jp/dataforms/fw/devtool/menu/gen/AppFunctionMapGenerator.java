@@ -26,6 +26,7 @@ import jp.dataforms.fw.util.FileUtil;
 
 /**
  * AppFunctionMapクラスジェネレータ。
+ * 
  */
 public class AppFunctionMapGenerator extends JavaSrcGenerator {
 	/**
@@ -36,6 +37,7 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 	/**
 	 * ページのテンプレートを取得します。
 	 * @return ページテンプレート。
+	 * @throws Exception 例外。
 	 */
 	protected Template getTemplate() throws Exception {
 		Template tmp = new Template(this.getClass(), "template/AppFunctionMap.java.templete");
