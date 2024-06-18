@@ -151,11 +151,71 @@ public class InitDevelopmentToolForm extends EditForm {
 	 * @param webSrcPath webのソースパス。
 	 * @throws Exception 例外。
 	 */
+	private void copyMessages(final String webSrcPath) throws Exception {
+		ConfUtil util = new ConfUtil();
+		File p = new File(webSrcPath + "/frame/messages");
+		if (!p.exists()) {
+			p.mkdirs();
+		}
+		{
+			String prop = util.getConfFile("./conf/AppClientMessages_ja.properties");
+			FileUtil.writeTextFile(p + "/AppClientMessages_ja.properties", prop, "utf-8");
+		}
+		{
+			String prop = util.getConfFile("./conf/AppClientMessages.properties");
+			FileUtil.writeTextFile(p + "/AppClientMessages.properties", prop, "utf-8");
+		}
+		{
+			String prop = util.getConfFile("./conf/AppMessages_ja.properties");
+			FileUtil.writeTextFile(p + "/AppMessages_ja.properties", prop, "utf-8");
+		}
+		{
+			String prop = util.getConfFile("./conf/AppMessages.properties");
+			FileUtil.writeTextFile(p + "/AppMessages.properties", prop, "utf-8");
+		}
+	}
+
+	/**
+	 * web.xmlをコピーします。
+	 * @param webSrcPath webのソースパス。
+	 * @throws Exception 例外。
+	 */
+	private void copyAppFrame(final String webSrcPath) throws Exception {
+		ConfUtil util = new ConfUtil();
+		File p = new File(webSrcPath + "/frame/flex");
+		if (!p.exists()) {
+			p.mkdirs();
+		}
+		String prop = util.getConfFile("./conf/AppFrame.css");
+		FileUtil.writeTextFile(p + "/AppFrame.css", prop, "utf-8");
+	}
+
+	/**
+	 * web.xmlをコピーします。
+	 * @param webSrcPath webのソースパス。
+	 * @throws Exception 例外。
+	 */
+	private void copyJsLib(final String webSrcPath) throws Exception {
+		File p = new File(webSrcPath + "/frame");
+		if (!p.exists()) {
+			p.mkdirs();
+		}
+		String scripts = this.getWebResource(DataFormsServlet.getCssAndScript());
+		FileUtil.writeTextFile(p + "/jslib.html", scripts, "utf-8");
+	}
+
+	/**
+	 * web.xmlをコピーします。
+	 * @param webSrcPath webのソースパス。
+	 * @throws Exception 例外。
+	 */
 	private void copyWebXML(final String webSrcPath) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String webxml = util.getWebXML();
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/web.xml", webxml, "utf-8");
 	}
+
+	
 	
 	/**
 	 * log4j2.xmlをコピーします。
@@ -211,6 +271,10 @@ public class InitDevelopmentToolForm extends EditForm {
 		String dataSource = (String) data.get(ID_DATA_SOURCE);
 		String derbyDbPath = (String) data.get(ID_DERBY_DB_PATH);
 		this.copyWebXML(webSrcPath);
+		this.copyMessages(webSrcPath);
+		this.copyAppFrame(webSrcPath);
+		this.copyJsLib(webSrcPath);
+
 		this.copyLog4j2XML(javaSrcPath);
 		this.copyContextXML(webSrcPath, dataSource, derbyDbPath);
 		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource);

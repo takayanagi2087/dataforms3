@@ -545,6 +545,20 @@ public class ConfUtil {
 	}
 	
 	/**
+	 * 設定ファイルを取得します。
+	 * @param path パス。
+	 * @return 設定ファイルの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getConfFile(final String path) throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream(path);
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルトweb.xml = \n" + ret);
+		return ret;
+	}
+	
+	/**
 	 * デフォルトのweb.xmlを取得します。
 	 * @return web.xmlの内容。
 	 * @throws Exception 例外。
