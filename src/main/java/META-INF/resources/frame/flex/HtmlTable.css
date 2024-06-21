@@ -160,6 +160,14 @@ table.columnFixedTable .fixedColumn {
 	width: 64px;
 }
 
+/* 横スクロール用DIV */
+div.hScrollDiv {
+	display: block;
+	width: 100%;
+	overflow-x:auto;
+}
+
+
 /* PC,タブレット  (以下の記述はCssFilerを通したときのみ有効) */
 @media screen and (min-width: var(--tb-screen-min)) {
 	.queryResultForm .topPageButton,

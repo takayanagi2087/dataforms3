@@ -12,9 +12,13 @@ import jp.dataforms.fw.controller.QueryResultForm;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.common.SortOrderField;
+import jp.dataforms.fw.field.sqltype.BigintField;
 import jp.dataforms.fw.field.sqltype.CharField;
 import jp.dataforms.fw.field.sqltype.DateField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
+import jp.dataforms.fw.field.sqltype.NumericField;
+import jp.dataforms.fw.field.sqltype.SmallintField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
@@ -44,10 +48,15 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		// TODO: jsでimportを利用して改善したい。
 		this.addField(new DateField("dummyDate"));
 		this.addField(new TimestampField("dummyTimestamp"));
-		this.addField(new IntegerField("dummyNumber"));
+		this.addField(new SmallintField("dummySmallint"));
+		this.addField(new IntegerField("dummyInteger"));
+		this.addField(new BigintField("dummyBigint"));
+		this.addField(new NumericField("dummyNumeric", 16, 2));
 		this.addField(new CharField("dummyChar", 1));
+		this.addField(new SortOrderField("dummySortOrder"));
 		
 		this.htmlTable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT);
+//		this.htmlTable.setFixedColumns(2);
 		this.addHtmlTable(this.htmlTable);
 	}
 
