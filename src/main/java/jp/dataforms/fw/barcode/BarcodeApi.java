@@ -26,6 +26,13 @@ import jp.dataforms.fw.response.Response;
 public abstract class BarcodeApi extends WebApi {
 
 	/**
+	 * コンストラクタ。
+	 */
+	public BarcodeApi() {
+		
+	}
+	
+	/**
 	 * 認証を行います。
 	 */
 	@Override

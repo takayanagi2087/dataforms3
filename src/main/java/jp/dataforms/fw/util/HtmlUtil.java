@@ -6,7 +6,16 @@ import java.util.regex.Pattern;
 /**
  * HTMLユーティリティ。
  */
-public class HtmlUtil {
+public final class HtmlUtil {
+	
+	
+	/**
+	 * コンストラクタ。
+	 */
+	private HtmlUtil() {
+		
+	}
+	
 	/**
 	 * HTMLのタイトルを取得します。
 	 * @param html HTML文字列。

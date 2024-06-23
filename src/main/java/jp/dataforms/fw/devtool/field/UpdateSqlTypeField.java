@@ -14,15 +14,15 @@ public class UpdateSqlTypeField extends PropertiesSingleSelectField {
 		/**
 		 * insert文。
 		 */
-		INSERT("0")
+		INSERT("0"),
 		/**
 		 * update文。
 		 */
-		, UPDATE("1")
+		UPDATE("1"),
 		/**
 		 * delete文。
 		 */
-		, DELETE("2");
+		DELETE("2");
 
 		/**
 		 * テキスト値。

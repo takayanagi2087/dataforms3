@@ -21,6 +21,13 @@ public class SimplePageGenerator extends JavaSrcGenerator {
 	 */
 	private static Logger logger = LogManager.getLogger(SimplePageGenerator.class);
 
+	/**
+	 * コンストラクタ。
+	 */
+	public SimplePageGenerator() {
+		
+	}
+	
 	@Override
 	protected Template getTemplate() throws Exception {
 		Template tmp = new Template(this.getClass(), "simpletemplate/Page.java.template");

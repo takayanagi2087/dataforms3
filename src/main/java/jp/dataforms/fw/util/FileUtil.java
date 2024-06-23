@@ -251,6 +251,13 @@ public final class FileUtil {
 	 */
 	public static class DeleteVisitor extends SimpleFileVisitor<Path> {
 
+		/**
+		 * コンストラクタ。
+		 */
+		public DeleteVisitor() {
+			
+		}
+		
 		@Override
 		public FileVisitResult visitFile(final Path path, final BasicFileAttributes attributes) throws IOException {
 			logger.debug(() -> "delete file : " + path.getFileName());

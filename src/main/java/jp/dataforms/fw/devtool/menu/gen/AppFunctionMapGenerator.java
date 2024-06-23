@@ -34,6 +34,14 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 	 */
 	private static Logger logger = LogManager.getLogger(AppFunctionMapGenerator.class);
 
+	
+	/**
+	 * コンストラクタ。
+	 */
+	public AppFunctionMapGenerator() {
+		
+	}
+	
 	/**
 	 * ページのテンプレートを取得します。
 	 * @return ページテンプレート。

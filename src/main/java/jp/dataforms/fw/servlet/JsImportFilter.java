@@ -46,6 +46,12 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 	 */
 	private static Map<String, String> jsMap = Collections.synchronizedMap(new HashMap<String, String>());
 
+	/**
+	 * コンストラクタ。
+	 */
+	public JsImportFilter() {
+		
+	}
 	
 	/**
 	 * import文のキャッシュ対策を行う。

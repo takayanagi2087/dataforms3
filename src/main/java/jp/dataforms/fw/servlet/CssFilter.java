@@ -48,7 +48,13 @@ public class CssFilter extends DataFormsFilter implements Filter {
 	 */
 	private static Map<String, String> cssMap = Collections.synchronizedMap(new HashMap<String, String>());
 
-
+	/**
+	 * コンストラクタ。
+	 */
+	public CssFilter() {
+		
+	}
+	
 	/**
 	 * スタイルシートを読み込みます。
 	 * @param req 要求情報。

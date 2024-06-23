@@ -10,6 +10,13 @@ import jp.dataforms.fw.response.Response;
  */
 public abstract class WebApi extends WebProcess {
 	/**
+	 * コンストラクタ。
+	 */
+	public WebApi() {
+		
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 * <pre>
 	 * APIを使用できるユーザを判定する処理を実装します。

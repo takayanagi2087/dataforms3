@@ -89,6 +89,13 @@ public class WebComponent implements JDBCConnectableObject {
 	private WeakReference<WebComponent> parent = null;
 
 	/**
+	 * コンストラクタ。
+	 */
+	public WebComponent() {
+		
+	}
+	
+	/**
 	 * クラス名からデフォルトのフィールドIDを取得します。
 	 * @return デフォルトのフィールドID。
 	 */

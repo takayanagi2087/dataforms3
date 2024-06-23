@@ -32,6 +32,13 @@ public abstract class FormSrcGenerator extends JavaSrcGenerator {
 
 
 	/**
+	 * コンストラクタ。
+	 */
+	public FormSrcGenerator() {
+		
+	}
+	
+	/**
 	 * フォームクラス名を取得します。
 	 * @param data POSTデータ。
 	 * @return フォームクラス名。

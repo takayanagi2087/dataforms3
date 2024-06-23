@@ -16,6 +16,13 @@ import jp.dataforms.fw.util.StringUtil;
 public class QueryResultFormGenerator extends FormSrcGenerator {
 
 	/**
+	 * コンストラクタ。
+	 */
+	public QueryResultFormGenerator() {
+		
+	}
+	
+	/**
 	 * 問合せ結果フォームのテンプレートを取得します。
 	 */
 	@Override

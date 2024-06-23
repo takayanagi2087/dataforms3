@@ -20,7 +20,12 @@ public abstract class Response {
 	 */
 	private Object result = null;
 
-
+	/**
+	 * コンストラクタ。
+	 */
+	public Response() {
+		
+	}
 
 	/**
 	 * コンテントタイプを取得します。

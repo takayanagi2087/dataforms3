@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import jp.dataforms.test.component.PageTester;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -61,6 +62,7 @@ public class Browser {
 	/**
 	 * コンストラクタ。
 	 * @param binfo ブラウザ情報。
+	 * @throws Exception 例外。
 	 */
 	public Browser(final BrowserInfo binfo) throws Exception {
 		this.browserInfo = binfo;
@@ -129,23 +131,23 @@ public class Browser {
 	 * @param url URL。
 	 * @return ページのインスタンス。
 	 */
-/*	public Page open(final String url) {
+	public PageTester open(final String url) {
 		By locator = By.xpath("//body");
 		return this.open(url, locator);
 	}
-*/
+
 	/**
 	 * ページを開きます。
 	 * @param url URL。
 	 * @param id ページが表示されたと判定する要素ID
 	 * @return ページのインスタンス。
 	 */
-/*	public Page  open(final String url, final String id) {
+	public PageTester open(final String url, final String id) {
 		String xpath = "//*[@data-id='" + id + "']";
 		logger.debug("xpath=" + xpath);
 		return this.open(url, By.xpath(xpath));
 	}
-*/
+
 	
 	/**
 	 * ページを開きます。
@@ -153,15 +155,15 @@ public class Browser {
 	 * @param locator ページが表示されたと判定する要素の指定。
 	 * @return ページのインスタンス。
 	 */
-/*	public Page open(final String url, final By locator) {
+	public PageTester open(final String url, final By locator) {
 		this.webDriver.get(url);
 		WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		Browser.sleep(5);
 		WebElement element = this.webDriver.findElement(By.xpath("//body"));
-		Page page = new Page(this, null, element);
+		PageTester page = new PageTester(this, null, element);
 		return page;
-	}*/
+	}
 
 
 	/**

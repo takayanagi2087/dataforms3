@@ -146,23 +146,23 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 		/**
 		 * 生成しない (対応するHTMLタグは生成しません).
 		 */
-		NONE
+		NONE,
 		/**
 		 * 入力タグ (&lt;input&gt;/&lt;select&gt;/&lt;textarea&gt;タグ等を生成します。).
 		 */
-		, INPUT
+		INPUT,
 		/**
 		 * 読取専用タグ (&lt;input&gt;/&lt;select&gt;/&lt;textarea&gt;タグ等を生成しreadonly属性を設定します。).
 		 */
-		, INPUT_READONLY
+		INPUT_READONLY,
 		/**
 		 * 非表示タグ (&lt;input type=&quot;hidden&quot;&gt;を生成します。).
 		 */
-		, INPUT_HIDDEN
+		INPUT_HIDDEN,
 		/**
 		 * 表示タグ (&lt;span&gt;&lt;/span&gt;タグを生成します。).
 		 */
-		, SPAN
+		SPAN
 	}
 
 

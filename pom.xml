@@ -171,45 +171,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<!-- バージョン情報ファイルの作成 -->
-					<execution>
-						<id>generate-dataforms-mf</id>
-						<phase>prepare-package</phase>
-						<configuration>
-							<executable>${env.MAKEVER}</executable>
-							<arguments>
-								<argument>${project.basedir}</argument>
-								<argument>${project.version}-${maven.build.timestamp}</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<!-- Jsdoc作成 -->
-					<execution>
-						<id>generate jsdoc</id>
-						<phase>prepare-package</phase>
-						<configuration>
-							<executable>${env.JSDOC}</executable>
-							<arguments>
-								<argument>-d</argument>
-								<argument>src/main/java/META-INF/resources/doc/jsdoc</argument>
-								<argument>-r</argument>
-								<argument>src/main/java/META-INF/resources/dataforms</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- javadocの作成 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -222,9 +183,14 @@
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
-					<additionalJOption>-Dfile.encoding=UTF-8</additionalJOption>
+					
+					<!--
+					<additionalJOption>-J-Dfile.encoding=UTF-8</additionalJOption>
+					-->
+					
 					<reportOutputDirectory>src/main/java/META-INF/resources/doc</reportOutputDirectory>
 					<destDir>javadoc</destDir>
+					<!--
 					<additionalDependencies>
 						<additionalDependency>
 							<groupId>org.apache.tomcat</groupId>
@@ -250,11 +216,64 @@
 							<groupId>com.google.zxing</groupId>
 							<artifactId>javase</artifactId>
 						</additionalDependency>
+
+						<additionalDependency>
+							<groupId>com.google.code.gson</groupId>
+							<artifactId>gson</artifactId>
+						</additionalDependency>
+
+						<additionalDependency>
+							<groupId>org.seleniumhq.selenium</groupId>
+							<artifactId>selenium-java</artifactId>
+						</additionalDependency>
 					</additionalDependencies>
+					-->
 				</configuration>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<!-- Jsdoc作成 -->
+					<execution>
+						<id>generate jsdoc</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>${env.JSDOC}</executable>
+							<arguments>
+								<argument>-d</argument>
+								<argument>src/main/java/META-INF/resources/doc/jsdoc</argument>
+								<argument>-r</argument>
+								<argument>src/main/java/META-INF/resources/dataforms</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<!-- バージョン情報ファイルの作成 -->
+					<execution>
+						<id>generate-dataforms-mf</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>${env.MAKEVER}</executable>
+							<arguments>
+								<argument>${project.basedir}</argument>
+								<argument>${project.version}-${maven.build.timestamp}</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -265,9 +284,9 @@
 				<configuration>
 					<source>21</source>
 					<target>21</target>
-					<compilerArgument>-Xlint:deprecation</compilerArgument>
 				</configuration>
 			</plugin>
+			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -282,6 +301,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 </project>

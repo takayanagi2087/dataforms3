@@ -34,6 +34,13 @@ public class SequentialProperties extends Properties {
 	private List<String> keyList = null;
 
 	/**
+	 * コンストラクタ。
+	 */
+	public SequentialProperties() {
+		
+	}
+	
+	/**
 	 * キーの順序リストを取得します。
 	 * @param path パス。
 	 * @throws Exception 例外。

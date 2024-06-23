@@ -358,11 +358,11 @@ public final class CryptUtil {
 		/**
 		 * 可逆パスワード。
 		 */
-		REVERSIBLE_PASSWORD
+		REVERSIBLE_PASSWORD,
 		/**
 		 * 不可逆パスワード。
 		 */
-		, IRREVERSIBLE_PASSWORD
+		IRREVERSIBLE_PASSWORD
 	};
 
 	/**

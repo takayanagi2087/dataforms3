@@ -44,6 +44,13 @@ public abstract class FieldSetGenerator {
 		return label;
 	}
 
+	/**
+	 * フィールドDIVのタグを生成します。
+	 * @param field フィールド。
+	 * @param tabs インデントじ
+	 * @param fieldTag フィールドタグ。
+	 * @return フィールドdivタグ。
+	 */
 	protected abstract String getFieldDiv(final Field<?> field, final String tabs, final String fieldTag);
 
 

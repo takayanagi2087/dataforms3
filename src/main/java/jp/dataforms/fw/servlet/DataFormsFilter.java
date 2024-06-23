@@ -27,6 +27,13 @@ public class DataFormsFilter {
 	private static Logger logger = LogManager.getLogger(DataFormsFilter.class);
 
 	/**
+	 * コンストラクタ。
+	 */
+	public DataFormsFilter() {
+		
+	}
+	
+	/**
 	 * Webリソースのタイムスタンプキャッシュ。
 	 */
 	private static Map<String, Long> webResourceTimestampCache = Collections.synchronizedMap(new HashMap<String, Long>());

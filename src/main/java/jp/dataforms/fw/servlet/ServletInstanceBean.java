@@ -17,6 +17,12 @@ public class ServletInstanceBean {
 	 */
 	private static Logger logger = LogManager.getLogger(ServletInstanceBean.class);
 
+	/**
+	 * コンストラクタ。
+	 */
+	public ServletInstanceBean() {
+		
+	}
 
 	/**
 	 * サーブレット初期化メソッド。

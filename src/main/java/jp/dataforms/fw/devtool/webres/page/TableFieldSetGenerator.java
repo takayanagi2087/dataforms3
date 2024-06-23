@@ -7,6 +7,14 @@ import jp.dataforms.fw.field.base.Field;
  * テーブルタグのフィールドセットジェネレータ。
  */
 public class TableFieldSetGenerator extends FieldSetGenerator {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	public TableFieldSetGenerator() {
+		
+	}
+	
 	/**
 	 * フィールドDIVのタグを生成します。
 	 * @param field フィールド。

@@ -70,6 +70,14 @@ public class ConfUtil {
 		 * フィールドレイアウト。
 		 */
 		private String fieldLayout = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public DevelopmentTool() {
+			
+		}
+		
 	}
 	
 	/**
@@ -105,6 +113,14 @@ public class ConfUtil {
 		 * フィールドを追加することにより追加情報を入力することが可能になります。
 		 */
 		private String userInfoTableClass = null;
+		
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public Initialize() {
+			
+		}
 	}
 	
 	/**
@@ -120,6 +136,12 @@ public class ConfUtil {
 		 * 使用するJNDIデータソースを指定する。
 		 */
 		private String dataSource = null;
+		/**
+		 * コンストラクタ。
+		 */
+		public JndiDataSource() {
+			
+		}
 	}
 	
 	/**
@@ -135,6 +157,13 @@ public class ConfUtil {
 		 * メール送信者アドレス。
 		 */
 		private String mailFrom = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public Mail() {
+			
+		}
 	}
 	
 	
@@ -148,6 +177,13 @@ public class ConfUtil {
 		 * メールアドレスの必須チェック設定。
 		 */
 		private Boolean requiredMailAddress = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public UserEditFormConfig() {
+			
+		}
 	}
 	
 	/**
@@ -167,6 +203,13 @@ public class ConfUtil {
 		 * ユーザ有効化ページのURLをメールする。
 		 */
 		private Boolean sendUserEnableMail = null; 
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public UserRegistPageConfig() {
+			
+		}
 	}
 	
 	/**
@@ -194,6 +237,13 @@ public class ConfUtil {
 		 * このファイルはアプリケーション側で用意します。
 		 */
 		private String appMessages = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public MessageResource() {
+			
+		}
 	}
 	
 	/**
@@ -237,6 +287,12 @@ public class ConfUtil {
 		 */
 		private String csrfSessionidCryptPassword = null;
 		
+		/**
+		 * コンストラクタ。
+		 */
+		public CryptConfig() {
+			
+		}
 	}
 	
 	/**
@@ -260,6 +316,12 @@ public class ConfUtil {
 		 */
 		private Integer cookieExpiration = null;
 		
+		/**
+		 * コンストラクタ。
+		 */
+		public OnetimePasswordConfig() {
+			
+		}
 	}
 	
 	/**
@@ -275,6 +337,13 @@ public class ConfUtil {
 		 * ブロックサイズ。
 		 */
 		private Integer blockSize = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public StreamingBlockSize() {
+			
+		}
 	}
 	
 	/**
@@ -290,6 +359,13 @@ public class ConfUtil {
 		 * Content-type。
 		 */
 		private String contentType = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public ContentType() {
+			
+		}
 	}
 	
 	/**
@@ -305,6 +381,13 @@ public class ConfUtil {
 		 * 変更先のページ。
 		 */
 		private String to = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public PageOverride() {
+			
+		}
 	}
 	
 	/**
@@ -477,6 +560,13 @@ public class ConfUtil {
 		 */
 		private String encoding = null;
 
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public Application() {
+			
+		}
 	}
 	
 	/**
@@ -498,6 +588,13 @@ public class ConfUtil {
 		 * アプリケーション動作設定。
 		 */
 		private Application application = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public Conf() {
+			
+		}
 	}
 	
 	/**
@@ -653,7 +750,6 @@ public class ConfUtil {
 	/**
 	 * アプリケーションのデフォルト設定を読み込みます。
 	 * @param servlet DataFormsServlet。
-	 * @throws Exception 例外。
 	 */
 	public void readDefaultConf(DataFormsServlet servlet) {
 		try {

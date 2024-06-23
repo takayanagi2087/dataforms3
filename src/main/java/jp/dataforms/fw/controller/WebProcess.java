@@ -23,7 +23,12 @@ public abstract class WebProcess extends WebComponent implements WebEntryPoint {
      */
     private WeakReference<HttpServletResponse> response = null;
 
-
+    /**
+     * コンストラクタ。
+     */
+    public WebProcess() {
+    	
+    }
 
 	/**
 	 * 要求情報を取得します。

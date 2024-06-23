@@ -20,6 +20,13 @@ public abstract class JavaSrcGenerator {
 	private static Logger logger = LogManager.getLogger(JavaSrcGenerator.class);
 
 	/**
+	 * コンストラクタ。
+	 */
+	public JavaSrcGenerator() {
+		
+	}
+	
+	/**
 	 * テンプレートを取得します。
 	 * @return テンプレート。
 	 * @throws Exception 例外。

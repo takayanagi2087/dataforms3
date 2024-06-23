@@ -36,15 +36,15 @@ public class FormHtmlGenerator extends HtmlGenerator {
 		/**
 		 * tableタグを使用したレイアウト。
 		 */
-		TABLE
+		TABLE,
 		/**
 		 * display: gridを指定したDIV。
 		 */
-		, GRID
+		GRID,
 		/**
 		 * display: flexを指定したDIV。
 		 */
-		, FLEX
+		FLEX
 	}
 
 	/**

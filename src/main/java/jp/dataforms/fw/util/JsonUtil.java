@@ -113,6 +113,12 @@ public class JsonUtil {
 	 * Jsonのシーケンス例外。
 	 */
 	public static class JsonSequenceException extends Exception {
+		/**
+		 * コンストラクタ。
+		 */
+		public JsonSequenceException() {
+			
+		}
 		
 	}
 	
@@ -205,6 +211,7 @@ public class JsonUtil {
 		/**
 		 * オブジェクトの処理メソッドです。
 		 * @param obj オブジェクト。
+		 * @throws Exception 例外。
 		 */
 		void process(Object obj) throws Exception;
 	}

@@ -7,6 +7,14 @@ import jp.dataforms.fw.field.base.Field;
  * DIVタグのフィールドセット生成クラス。
  */
 public abstract class DivFieldSetGenerator extends FieldSetGenerator {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	public DivFieldSetGenerator() {
+		
+	}
+	
 	/**
 	 * DIVのクラスを取得します。
 	 * @return DIVのクラス。

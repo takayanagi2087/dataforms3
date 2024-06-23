@@ -49,6 +49,13 @@ public class DataForms extends WebComponent {
      * 編集フォームのID。
      */
     public static final String ID_EDIT_FORM = "editForm";
+    
+    /**
+     * コンストラクタ。
+     */
+    public DataForms() {
+    	
+    }
 
     /**
      * HTMLテキスト中のtitleの内容を取得します。

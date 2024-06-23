@@ -26,6 +26,13 @@ public class StreamingFileCleaner implements HttpSessionListener {
 	 */
 	private Logger logger = LogManager.getLogger(StreamingFileCleaner.class);
 
+	/**
+	 * コンストラクタ。
+	 */
+	public StreamingFileCleaner() {
+		
+	}
+	
 	@Override
 	public void sessionCreated(final HttpSessionEvent arg0) {
 	}

@@ -6,7 +6,15 @@ import java.util.Calendar;
  * 日付時刻ユーティリティ。
  *
  */
-public class DateTimeUtil {
+public final class DateTimeUtil {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	private DateTimeUtil() {
+		
+	}
+	
 	/**
 	 * 現在の日付を取得します。
 	 * @return 現在の日付。

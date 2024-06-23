@@ -15,6 +15,14 @@ import jp.dataforms.fw.util.JsonUtil;
 public class EditFormGenerator extends FormSrcGenerator {
 
 	/**
+	 * コンストラクタ。
+	 */
+	public EditFormGenerator() {
+		
+	}
+	
+	
+	/**
 	 * 問合せ結果フォームのテンプレートを取得します。
 	 */
 	@Override

@@ -21,6 +21,13 @@ public class SimpleFormGenerator extends JavaSrcGenerator {
 	 */
 	private static Logger logger = LogManager.getLogger(SimpleFormGenerator.class);
 
+	/**
+	 * コンストラクタ。
+	 */
+	public SimpleFormGenerator() {
+		
+	}
+	
 	@Override
 	protected Template getTemplate() throws Exception {
 		Template tmp = new Template(this.getClass(), "simpletemplate/Form.java.template");

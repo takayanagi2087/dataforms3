@@ -47,8 +47,8 @@ public class FunctionMap {
 		private String basePackage = null;
 		/**
 		 * コンストラクタ。
-		 * @param path
-		 * @param basePackage
+		 * @param path パス。
+		 * @param basePackage 基本パッケージ。
 		 */
 		public PathPackage(final String path, final String basePackage) {
 			this.path = path;
@@ -239,6 +239,7 @@ public class FunctionMap {
 		
 		/**
 		 * 言語ごとのページ名のマップを取得します。
+		 * @throws Exception 例外。
 		 */
 		public void readPageTitleMap() throws Exception {
 			if (this.langNameMap == null) {

@@ -259,7 +259,7 @@ public class InitDevelopmentToolForm extends EditForm {
 		conf = conf.replaceAll("\"javaSourcePath\": null", "\"javaSourcePath\": \"" + javaSrcPath + "\"");
 		conf = conf.replaceAll("\"webSourcePath\": null", "\"webSourcePath\": \"" + webSrcPath + "\"");
 		conf = conf.replaceAll("\"jndiPrefix\": \"java:/comp/env/\"", "\"jndiPrefix\": \"" + jndiPrefix + "\"");
-		conf = conf.replaceAll("\"dataSource\": \"jdbc/dfdb\"", "\"dataSource\": \"" + dataSource + "\"");
+		conf = conf.replaceAll("\"dataSource\": null", "\"dataSource\": \"" + dataSource + "\"");
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/dataforms.conf.jsonc", conf, "utf-8");
 	}
 	

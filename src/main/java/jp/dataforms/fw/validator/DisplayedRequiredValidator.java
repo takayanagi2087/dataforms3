@@ -5,7 +5,13 @@ package jp.dataforms.fw.validator;
  *
  */
 public class DisplayedRequiredValidator extends RequiredValidator {
-
+	/**
+	 * コンストラクタ。
+	 */
+	public DisplayedRequiredValidator() {
+		
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * <pre>

@@ -47,8 +47,8 @@ public final class WebAuthnUtil {
 	/**
 	 * URL安全なBASE64に変換.
 	 *
-	 * @param base64
-	 * @return base64url
+	 * @param base64 BASE64形式の文字列。
+	 * @return URL安全なBASE64。
 	 */
 	public String convertBase64SafeUrl(final String base64) {
 	    if(base64 == null) {
@@ -65,8 +65,8 @@ public final class WebAuthnUtil {
 	/**
 	 * 通常 (URL非安全) のBASE64に変換.
 	 *
-	 * @param base64url
-	 * @return base64
+	 * @param base64url URL安全なBASE64。
+	 * @return base64 BASE64形式の文字列。
 	 */
 	public static String convertBase64UnSafeUrl(final String base64url) {
 	    if(base64url == null) {

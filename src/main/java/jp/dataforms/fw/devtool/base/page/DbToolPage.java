@@ -8,6 +8,15 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
  * DB管理ページ。
  */
 public class DbToolPage extends DeveloperPage {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	public DbToolPage() {
+		
+	}
+	
+	
 	@Override
 	public boolean isAuthenticated(Map<String, Object> params) throws Exception {
 		if (DataFormsServlet.getConf().getDevelopmentTool().getDisableDatabaseTool()) {

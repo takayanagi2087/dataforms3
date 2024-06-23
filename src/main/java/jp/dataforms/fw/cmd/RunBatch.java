@@ -11,6 +11,15 @@ import java.net.URL;
  * バッチ実行コマンド。
  */
 public class RunBatch {
+	
+	/**
+	 * コンストラクタ。
+	 */
+	public RunBatch() {
+		
+	}
+	
+	
 	/**
 	 * バッチ処理の呼び出し。
 	 * @param url バッチURL。

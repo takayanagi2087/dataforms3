@@ -15,6 +15,13 @@ public abstract class FileResponse extends Response {
 	private String fileName = null;
 
 	/**
+	 * コンストラクタ。
+	 */
+	public FileResponse() {
+		
+	}
+	
+	/**
 	 * ファイル名を取得します。
 	 * @return ファイル名。
 	 */

@@ -88,7 +88,7 @@
 			// JNDIデータソースの前につける文字列 
 			"jndiPrefix": "java:/comp/env/"
 			// 使用するJNDIデータソースを指定する
-			, "dataSource": "jdbc/dfdb"
+			, "dataSource": null
 		}
 		// ----------------------------------
 		// Mail関連設定

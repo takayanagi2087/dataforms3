@@ -146,6 +146,13 @@ public class DataFormsServlet extends HttpServlet {
 	private static ServletInstanceBean servletInstanceBean = null;
 
 	/**
+	 * コンストラクタ。
+	 */
+	public DataFormsServlet() {
+		
+	}
+	
+	/**
 	 * Pageの拡張子を取得します。
 	 * <pre>
 	 * Servletアノテーションの先頭のURLパターンから、拡張子を取得します。
@@ -404,8 +411,7 @@ public class DataFormsServlet extends HttpServlet {
 		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
 		String jndiPrefix = DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix();
 		if (dataSourceName == null) {
-			// web.xmlにデータソースの指定が無い場合。
-			DataFormsServlet.configStatus = "error.notfounddatasourcesetting";
+			// DataFormsServlet.configStatus = "error.notfounddatasourcesetting";
 		} else {
 			try {
 				if (dataSourceName != null) {
@@ -559,13 +565,13 @@ public class DataFormsServlet extends HttpServlet {
 	public final Connection getConnection() throws Exception {
 		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
 		if (dataSourceName != null) {
-			Connection conn = this.dataSource.getConnection();
-			conn.setAutoCommit(false);
-			return conn;
-		} else {
-			return null;
-		}
-
+			if (this.dataSource != null) {
+				Connection conn = this.dataSource.getConnection();
+				conn.setAutoCommit(false);
+				return conn;
+			} 
+		} 
+		return null;
 	}
 
 	/**
