@@ -1,0 +1,51 @@
+{
+	// WebDriver設定ファイル。
+	"selenium": {
+		"browser": "chrome"
+		, "headless": false
+		, "browserList": [
+			// Google Chrome
+			{
+				"name": "chrome",
+				"driver": "C:/eclipse/selenium/driver/chromedriver-win64/chromedriver.exe",
+				"className": "org.openqa.selenium.chrome.ChromeDriver",
+				"optionClassName": "org.openqa.selenium.chrome.ChromeOptions",
+				"propName": "webdriver.chrome.driver"
+			},
+			// Firefox
+			{
+				"name": "firefox",
+				"driver": "C:/eclipse/selenium/driver/geckodriver-v0.34.0-win64/geckodriver.exe",
+				"className": "org.openqa.selenium.firefox.FirefoxDriver",
+				"optionClassName": "org.openqa.selenium.firefox.FirefoxOptions",
+				"propName": "webdriver.gecko.driver"
+			},
+			// Microsoft Edge
+			{
+				"name": "edge",
+				"driver": "C:/eclipse/selenium/driver/edgedriver_win64/msedgedriver.exe",
+				"className": "org.openqa.selenium.edge.EdgeDriver",
+				"optionClassName": "org.openqa.selenium.edge.EdgeOptions",
+				"propName": "webdriver.edge.driver"
+			}
+		]
+	}
+	// テスト対象のアプリケーション
+	, "testApp" : {
+		// WebアプリケーションのURL。
+		"applicationURL":   "http://localhost:21080/sample/"
+		// テスト結果の保存パス
+		, "testResult": "C:/eclipse/workspaceDataforms3/schedule/testresult"
+	}
+	// テスト対象のプロジェクト
+	, "project": {
+		// Eclipseプロジェクトのパス。
+		"projectPath":      "C:/eclipse/pleiades/workspace/sample",
+		// Eclipseプロジェクトのパス
+		"tomcatConfigPath": "C:/eclipse/workspaceDataforms3/Servers/localhost の Tomcat10 (Java21)-config",
+		// テストソース。
+		"testSrc":          "C:/eclipse/workspaceDataforms3/sample/testsrc",
+		// ソースのsnapshot
+		"snapshot":			"C:/eclipse/workspaceDataforms3/sample/snapshot"
+	}
+}

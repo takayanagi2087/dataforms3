@@ -57,16 +57,20 @@ public class Tester {
 		this.webElement = element;
 	}
 
-/*	public Page getPage() {
-		Page page = null;
-		for (WebComponent c = this; c != null; c = c.parent) {
-			if (c instanceof Page) {
-				page = (Page) c;
+	/**
+	 * ページのテスターを取得します。
+	 * @return ページのテスター。
+	 */
+	public PageTester getPage() {
+		PageTester page = null;
+		for (Tester c = this; c != null; c = c.parent) {
+			if (c instanceof PageTester) {
+				page = (PageTester) c;
 				break;
 			}
 		}
 		return page;
-	}*/
+	}
 	
 	/**
 	 * IDを取得します。
