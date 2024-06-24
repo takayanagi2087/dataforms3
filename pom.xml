@@ -11,7 +11,6 @@
 		env.JSDOC : jsdocコマンド (ex: C:\Users\takay\AppData\Roaming\npm\jsdoc.cmd)
 		env.MAKEVER : バージョン情報作成コマンド。 (ex: makever.bat)
 	-->
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Java VMのパス　-->
@@ -177,6 +176,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
+					<!-- META-INF/resources 以下の*.html,*.js等をjarに含める -->
 					<execution>
 						<id>copy-resources</id>
 						<phase>generate-resources</phase>
@@ -193,6 +193,7 @@
 							<outputDirectory>target/classes/META-INF/resources</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- javaのソースと各種リソースをjarに含める -->
 					<execution>
 						<id>copy-sources</id>
 						<phase>generate-resources</phase>
@@ -284,23 +285,6 @@
 					<target>21</target>
 				</configuration>
 			</plugin>
-
-			<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			-->
 		</plugins>
 	</build>
 </project>

@@ -1,5 +1,6 @@
 package jp.dataforms.test.executor;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,9 +33,13 @@ public class TestExecutor {
 	@Data
 	public static class Selenium {
 		/**
-		 * ブラウザ名。
+		 * ドライバーのファイル名。
 		 */
-		private String browser = null;
+		private String driver = null;
+		/**
+		 * ドライバのフォルダ。
+		 */
+		private String driverFolder = null;
 		/**
 		 * headlessフラグ。
 		 */
@@ -42,7 +47,7 @@ public class TestExecutor {
 		/**
 		 * ブラウザリスト。
 		 */
-		private List<BrowserInfo> browserList = null;
+		private List<BrowserInfo> driverList = null;
 		
 		/**
 		 * コンストラクタ。
@@ -51,15 +56,31 @@ public class TestExecutor {
 			
 		}
 		
+		private String getDriverPath() throws Exception {
+			String ret = null;
+			File dir = new File(this.getDriverFolder());
+			File[] list = dir.listFiles();
+			for (File f: list) {
+				String name = f.getName();
+				if (name.indexOf(this.driver) == 0) {
+					ret = f.getAbsolutePath();
+				}
+			}
+			return ret;
+		}
+		
 		/**
 		 * ブラウザ情報を取得します。
 		 * @return ブラウザ情報。
 		 */
-		public BrowserInfo getBrowserInfo() {
+		public BrowserInfo getBrowserInfo() throws Exception {
+			String driverPath = this.getDriverPath();
+			logger.debug("driverPath=" + driverPath);
 			BrowserInfo ret = null;
-			for (BrowserInfo bi: this.browserList) {
-				if (bi.getName().equals(this.browser)) {
+			for (BrowserInfo bi: this.driverList) {
+				if (bi.getName().equals(this.driver)) {
 					ret = bi;
+					ret.setDriver(driverPath);
 					break;
 				}
 			}
@@ -90,36 +111,6 @@ public class TestExecutor {
 	}
 	
 	/**
-	 * プロジェクト。
-	 */
-	@Data
-	public static class Project {
-		/**
-		 * Eclipseプロジェクトのパス。
-		 */
-		private String projectPath = null;
-		/**
-		 * Eclipseプロジェクトの設定パス。
-		 */
-		private String tomcatConfigPath = null;
-		/**
-		 * テストソース。
-		 */
-		private String testSrc = null;
-		/**
-		 * ソースのsnapshot。
-		 */
-		private String snapshot = null;
-		
-		/**
-		 * コンストラクタ。
-		 */
-		public Project() {
-			
-		}
-	}
-	
-	/**
 	 * テスト設定情報。
 	 */
 	@Data
@@ -132,11 +123,6 @@ public class TestExecutor {
 		 * テスト対象アプリケーション情報。
 		 */
 		private WebApplication testApp = null;
-		/**
-		 * プロジェクト情報。
-		 */
-		private Project project = null;
-		
 		/**
 		 * コンストラクタ。
 		 */
@@ -186,7 +172,7 @@ public class TestExecutor {
 	 * @param args コマンドライン。
 	 * <pre>
 	 * args[0]	...	テスト設定ファイル。
-	 * args[1]	... テストURL。
+	 * args[1]	... テストURI。
 	 * </pre>
 	 */
 	public static void main(String[] args) {
