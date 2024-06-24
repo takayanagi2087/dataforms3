@@ -458,6 +458,9 @@ public class DataFormsServlet extends HttpServlet {
 	private void checkDBStructure() {
 		try {
 			Connection conn = this.getConnection();
+			if (conn == null) {
+				return;
+			}
 			try {
 				JDBCConnectableObject cobj = new JDBCConnectableObject() {
 					@Override
