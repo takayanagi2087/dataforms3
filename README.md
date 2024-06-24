@@ -43,7 +43,7 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 * 作成したプロジェクトMavenプロジェクトに変換。
 * pom.xmlに以下の依存関係を追加。
 
-
+``` 
 	<repositories>
 		<repository>
 			<id>jp.dataforms</id>
@@ -57,7 +57,7 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 			<version>3.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-
+``` 
 * ビルドした後Tomcat10にWebアプリケーションを追加して実行し、ブラウザからアクセスするとプロジェクト初期化画面が表示されます。
 
 ## Requirement
