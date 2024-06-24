@@ -41,10 +41,24 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 * Webパースペクティブを表示。
 * 動的Webプロジェクトを作成。
 * 作成したプロジェクトMavenプロジェクトに変換。
+* pom.xmlに以下の依存関係を追加。
 
 
+	<repositories>
+		<repository>
+			<id>jp.dataforms</id>
+			<url>https://www.dataforms.jp/mvn/repository</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>jp.dataforms</groupId>
+			<artifactId>dataforms3</artifactId>
+			<version>3.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 
-
+* ビルドした後Tomcat10にWebアプリケーションを追加して実行し、ブラウザからアクセスするとプロジェクト初期化画面が表示されます。
 
 ## Requirement
 主に、Eclipse(pleiades2024-06) + Java21 + Tomcat10 + Apache Derby,PostgreSQLでテストしています。
