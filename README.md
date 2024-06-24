@@ -37,8 +37,11 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 * [Pleiades All in One ](https://willbrains.jp/)をダウンロードしインストール。
 * EclipseのサーバービューにTomcat10(java21)を追加。
 * Pleiadesに付属するtomcat10のlibフォルダに[Apache Derby](https://db.apache.org/derby/)からダウンロードした組み込みDerbyのドライバをコピー。
-* jakarta.mail-XXX.jar, jakarta.mail-api-XXX.jar, jakarta.activation-api-XXX. jar,angus-activation-XXX.jar tomcat10のlibフォルダにコピー。
-* 続きがありますがまだ出来ていません。
+* jakarta.mail-XXX.jar, jakarta.mail-api-XXX.jar, jakarta.activation-api-XXX.jar, angus-activation-XXX.jar tomcat10のlibフォルダにコピー。
+* Webパースペクティブを表示。
+* 動的Webプロジェクトを作成。
+* 作成したプロジェクトMavenプロジェクトに変換。
+
 
 
 

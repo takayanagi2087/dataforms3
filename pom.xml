@@ -171,6 +171,46 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<!-- for resources copy -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/main/java/META-INF/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>target/classes/META-INF/resources</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-sources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/main/java/jp/dataforms</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>target/classes/jp/dataforms</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- javadocの作成 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -183,51 +223,8 @@
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
-					
-					<!--
-					<additionalJOption>-J-Dfile.encoding=UTF-8</additionalJOption>
-					-->
-					
 					<reportOutputDirectory>src/main/java/META-INF/resources/doc</reportOutputDirectory>
 					<destDir>javadoc</destDir>
-					<!--
-					<additionalDependencies>
-						<additionalDependency>
-							<groupId>org.apache.tomcat</groupId>
-							<artifactId>tomcat-servlet-api</artifactId>
-							<version>9.0.10</version>
-						</additionalDependency>
-						<additionalDependency>
-							<groupId>javax.activation</groupId>
-							<artifactId>activation</artifactId>
-							<version>1.1.1</version>
-						</additionalDependency>
-						<additionalDependency>
-							<groupId>javax.mail</groupId>
-							<artifactId>mail</artifactId>
-							<version>1.4</version>
-						</additionalDependency>
-						<additionalDependency>
-							<groupId>org.apache.derby</groupId>
-							<artifactId>derbyshared</artifactId>
-							<version>10.17.1.0</version>
-						</additionalDependency>
-						<additionalDependency>
-							<groupId>com.google.zxing</groupId>
-							<artifactId>javase</artifactId>
-						</additionalDependency>
-
-						<additionalDependency>
-							<groupId>com.google.code.gson</groupId>
-							<artifactId>gson</artifactId>
-						</additionalDependency>
-
-						<additionalDependency>
-							<groupId>org.seleniumhq.selenium</groupId>
-							<artifactId>selenium-java</artifactId>
-						</additionalDependency>
-					</additionalDependencies>
-					-->
 				</configuration>
 				<executions>
 					<execution>
@@ -277,6 +274,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- コンパイル -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -286,6 +284,7 @@
 					<target>21</target>
 				</configuration>
 			</plugin>
+
 			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
