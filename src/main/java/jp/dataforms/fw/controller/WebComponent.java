@@ -26,6 +26,7 @@ import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.validator.FieldValidator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -156,7 +157,9 @@ public class WebComponent implements JDBCConnectableObject {
 	public final void addComponent(final WebComponent comp) {
 		comp.parent = new WeakReference<WebComponent>(this);
 		if (this.componentMap.containsKey(comp.getId())) {
-			logger.error("Dupulicate component id " + comp.getId());
+			if (!(comp instanceof FieldValidator)) {
+				logger.error("Dupulicate component id " + comp.getId());
+			}
 		}
 		this.componentMap.put(comp.getId(), comp);
 		this.componentList.add(comp);
