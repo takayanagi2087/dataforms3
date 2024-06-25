@@ -10,6 +10,7 @@
 		以下の環境変数を設定してください。
 		env.JSDOC : jsdocコマンド (ex: C:\Users\takay\AppData\Roaming\npm\jsdoc.cmd)
 		env.MAKEVER : バージョン情報作成コマンド。 (ex: makever.bat)
+		env.RREP : リモートリポジトリのURL。
 	-->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +18,13 @@
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
 	</properties>
+	<distributionManagement>
+		<repository>
+			<id>deploy-repository</id>
+			<name>deployRepository</name>
+			<url>${env.RREP}</url>
+		</repository>
+	</distributionManagement>	
 	
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
