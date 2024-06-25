@@ -212,6 +212,15 @@ export class InitDevelopmentToolForm extends EditForm {
 	}
 
 	/**
+	 * 更新処理変更後の画面状態の遷移処理。
+	 */
+	changeStateForAfterUpdate() {
+		this.get("nextMessage").show();
+		this.get("buttonDiv").hide();
+	}
+
+	
+	/**
 	 * 更新後の画面繊維は行わない。
 	 */
 	changeStateForAfterUpdate() {

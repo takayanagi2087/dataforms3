@@ -129,6 +129,18 @@ public class TestExecutor {
 		public Conf() {
 			
 		}
+		
+		/**
+		 * 設定ファイルを読み込みます。
+		 * @param confFile 設定ファイル。
+		 * @return テスト設定情報。
+		 * @throws Exception 例外。
+		 */
+		public static Conf read(final String confFile) throws Exception {
+			String json = FileUtil.readTextFile(confFile, "utf-8");
+			return  (Conf) JsonUtil.decode(json, Conf.class);
+			
+		}
 	}
 	
 	/**
@@ -157,8 +169,8 @@ public class TestExecutor {
 	 */
 	public void exec() throws Exception {
 		logger.debug("path=" + this.confFile);
-		String json = FileUtil.readTextFile(this.confFile, "utf-8");
-		this.conf = (Conf) JsonUtil.decode(json, Conf.class);
+//		String json = FileUtil.readTextFile(this.confFile, "utf-8");
+		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
 		
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();

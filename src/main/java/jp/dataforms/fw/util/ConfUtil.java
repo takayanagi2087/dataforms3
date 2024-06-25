@@ -595,6 +595,27 @@ public class ConfUtil {
 		public Conf() {
 			
 		}
+		
+		/**
+		 * 設定ファイルを読み込みます。
+		 * @param confFile 設定ファイル。
+		 * @return 設定字情報。
+		 * @throws Exception
+		 */
+		public static Conf read(final String confFile) throws Exception {
+			String jsonc = FileUtil.readTextFile(confFile, ENCODING);
+			return readJson(jsonc);
+		}
+
+		/**
+		 * JSON形式のテキストを読み込みます。
+		 * @param jsonc JSON形式の文字列。
+		 * @return 設定情報。
+		 */
+		private static Conf readJson(final String jsonc) {
+			Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
+			return appConf;
+		}
 	}
 	
 	/**
@@ -755,15 +776,14 @@ public class ConfUtil {
 		try {
 			// jarのリソース中のデフォルト設定を取得する。
 			String defaultJsonc = this.getDefaultConfFile();
-			this.conf  =  (Conf) JsonUtil.decode(defaultJsonc, Conf.class);
+			this.conf  =  Conf.readJson(defaultJsonc);
 			{
 				// アプリケーション設定ファイルの読み込み
 				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");
 				File cf = new File(confPath);
 				if (cf.exists()) {
 					logger.debug("confPath=" + confPath);
-					String jsonc = FileUtil.readTextFile(confPath, ENCODING);
-					Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
+					Conf appConf  =  Conf.read(confPath);
 					this.copyConf(appConf, this.conf);
 				}
 			}
@@ -773,8 +793,7 @@ public class ConfUtil {
 				if (serverConf != null) {
 					File cf = new File(serverConf);
 					if (cf.exists()) {
-						String jsonc = FileUtil.readTextFile(serverConf, "utf-8");
-						Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
+						Conf appConf = Conf.read(serverConf);
 						this.copyConf(appConf, this.conf);
 					}
 				}
