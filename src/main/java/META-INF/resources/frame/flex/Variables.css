@@ -34,8 +34,8 @@
 	/* 色の系統指定(最後の色が有効になります) */
 	--base-color: 207,51%;	/* 青系統 */
 	--base-color: 0,0%;		/* グレー系統 */
-	--base-color: 140,38%;	/* 緑系統 */
 	--base-color: 0,70%;	/* 赤系統 */
+	--base-color: 140,38%;	/* 緑系統 */
 
 	--frame-base-color: var(--base-color);	/* フレームのベース色 */
 	--menu-base-color: var(--base-color);	/* メニューのベース色 */
