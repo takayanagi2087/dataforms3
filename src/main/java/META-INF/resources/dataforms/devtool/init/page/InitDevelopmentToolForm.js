@@ -207,8 +207,6 @@ export class InitDevelopmentToolForm extends EditForm {
 	 */
 	async save() {
 		await super.save();
-		this.get("nextMessage").show();
-		this.get("buttonDiv").hide();
 	}
 
 	/**
@@ -217,14 +215,6 @@ export class InitDevelopmentToolForm extends EditForm {
 	changeStateForAfterUpdate() {
 		this.get("nextMessage").show();
 		this.get("buttonDiv").hide();
-	}
-
-	
-	/**
-	 * 更新後の画面繊維は行わない。
-	 */
-	changeStateForAfterUpdate() {
-		
 	}
 
 	/**
