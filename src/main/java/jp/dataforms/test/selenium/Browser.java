@@ -122,10 +122,27 @@ public class Browser {
 	 * ウインドウサイズを設定します。
 	 * @param dim サイズ情報。
 	 */
-	public void setSize(Dimension dim) {
+	public void setSize(final Dimension dim) {
 		this.webDriver.manage().window().setSize(dim);
 	}
 
+	/**
+	 * クライアントサイズを設定します。
+	 * @param dim サイズ情報。
+	 */
+	public void setClientSize(Dimension dim) {
+		this.setSize(dim);
+		int w = dim.width;
+		int h = dim.height;
+
+		WebElement el = this.getWebDriver().findElement(By.cssSelector("html"));
+		int width = Integer.parseInt(el.getAttribute("clientWidth"));
+		int height = Integer.parseInt(el.getAttribute("clientHeight"));
+		int dw = w - width;
+		int dh = h - height;
+		this.setSize(new Dimension(w + dw, h + dh));
+	}
+	
 	/**
 	 * ページを開きます。
 	 * @param url URL。

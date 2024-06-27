@@ -1,13 +1,19 @@
 package jp.dataforms.test.executor;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
+import jp.dataforms.test.annotation.CheckItemInfo;
+import jp.dataforms.test.checkitem.CheckItem;
+import jp.dataforms.test.component.PageTester;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
 import lombok.Data;
@@ -78,7 +84,7 @@ public class TestExecutor {
 			logger.debug("driverPath=" + driverPath);
 			BrowserInfo ret = null;
 			for (BrowserInfo bi: this.driverList) {
-				if (bi.getName().equals(this.driver)) {
+				if (bi.getDriver().equals(this.driver)) {
 					ret = bi;
 					ret.setDriver(driverPath);
 					break;
@@ -164,6 +170,33 @@ public class TestExecutor {
 	}
 	
 	/**
+	 * 指定された条件のチェック項目を取得します。
+	 * @param basePackage クラスを検索するパッケージ。
+	 * @param target ターゲットクラス。
+	 * @param type チェックタイプ。
+	 * @param regression 回帰テスト用項目。
+	 * @return チェック項目リスト。
+	 * @throws Exception 例外。
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Class<? extends CheckItem>> findCheckItem(
+			final String basePackage,
+			final Class<? extends WebComponent> target, 
+			final CheckItemInfo.Type type, 
+			final Boolean regression) throws Exception  {
+		List<Class<? extends CheckItem>> ret = new ArrayList<Class<? extends CheckItem>>();
+		ClassFinder cf = new ClassFinder();
+		List<Class<?>> list = cf.findClasses(basePackage, CheckItem.class);
+		for (Class<?> cls: list) {
+			CheckItemInfo a = cls.getAnnotation(CheckItemInfo.class);
+			if (a != null) {
+				ret.add((Class<? extends CheckItem>) cls);
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * テスト実行。
 	 * @throws Exception 例外。
 	 */
@@ -175,7 +208,17 @@ public class TestExecutor {
 		
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
 		Browser browser = new Browser(bi);
-		browser.open(this.conf.getTestApp().getApplicationURL() + uri);
+		PageTester pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri);
+		List<Class<? extends CheckItem>> list = this.findCheckItem("jp.dataforms.test.checkitem.component", null, null, null);
+		for (Class<? extends CheckItem> cls: list) {
+			logger.debug("checkClass=" + cls.getName());
+			CheckItem ci = cls.getConstructor().newInstance();
+			if (ci != null) {
+				logger.debug("checkTarget=" + ci.getTargetClass().getName());
+				logger.info("CONDITION:" + ci.getCondition());
+				ci.test(pt);
+			}
+		}
 	}
 	
 	
