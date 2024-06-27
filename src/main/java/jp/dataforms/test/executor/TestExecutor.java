@@ -13,7 +13,8 @@ import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.test.annotation.CheckItemInfo;
 import jp.dataforms.test.checkitem.CheckItem;
-import jp.dataforms.test.component.PageTester;
+import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveCheckItem;
+import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
 import lombok.Data;
@@ -172,27 +173,43 @@ public class TestExecutor {
 	/**
 	 * 指定された条件のチェック項目を取得します。
 	 * @param basePackage クラスを検索するパッケージ。
+	 * @param baseCheckItem チェック項目の基本クラス。
 	 * @param target ターゲットクラス。
-	 * @param type チェックタイプ。
-	 * @param regression 回帰テスト用項目。
 	 * @return チェック項目リスト。
 	 * @throws Exception 例外。
 	 */
-	@SuppressWarnings("unchecked")
-	public List<Class<? extends CheckItem>> findCheckItem(
+	public List<CheckItem> findCheckItem(
 			final String basePackage,
-			final Class<? extends WebComponent> target, 
-			final CheckItemInfo.Type type, 
-			final Boolean regression) throws Exception  {
-		List<Class<? extends CheckItem>> ret = new ArrayList<Class<? extends CheckItem>>();
+			final Class<? extends CheckItem> baseCheckItem, 
+			final Class<? extends WebComponent> target) throws Exception  {
+		
+		List<CheckItem> ret = new ArrayList<CheckItem>();
 		ClassFinder cf = new ClassFinder();
-		List<Class<?>> list = cf.findClasses(basePackage, CheckItem.class);
+		List<Class<?>> list = cf.findClasses(basePackage, baseCheckItem);
 		for (Class<?> cls: list) {
 			CheckItemInfo a = cls.getAnnotation(CheckItemInfo.class);
 			if (a != null) {
-				ret.add((Class<? extends CheckItem>) cls);
+				CheckItem ci = (CheckItem) cls.getConstructor().newInstance();
+				ret.add(ci);
 			}
 		}
+		// テスト項目をソート
+		ret.sort((a, b) -> {
+			String ta = a.getTargetClass().getName();
+			String tb = b.getTargetClass().getName();
+			int cmp = ta.compareTo(tb);
+			if (cmp == 0) {
+				String ga = a.getGroup();
+				String gb = b.getGroup();
+				cmp = ga.compareTo(gb);
+				if (cmp == 0) {
+					String sa = a.getSeq();
+					String sb = b.getSeq();
+					cmp = sa.compareTo(sb);
+				}
+			}
+			return cmp;
+		});
 		return ret;
 	}
 
@@ -205,20 +222,21 @@ public class TestExecutor {
 //		String json = FileUtil.readTextFile(this.confFile, "utf-8");
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
-		
+
+		ResponsiveCheckItem.setHeight(400);
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
 		Browser browser = new Browser(bi);
-		PageTester pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri);
-		List<Class<? extends CheckItem>> list = this.findCheckItem("jp.dataforms.test.checkitem.component", null, null, null);
-		for (Class<? extends CheckItem> cls: list) {
-			logger.debug("checkClass=" + cls.getName());
-			CheckItem ci = cls.getConstructor().newInstance();
-			if (ci != null) {
-				logger.debug("checkTarget=" + ci.getTargetClass().getName());
-				logger.info("CONDITION:" + ci.getCondition());
-				ci.test(pt);
-			}
+		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri);
+
+		List<CheckItem> list = this.findCheckItem("jp.dataforms.test.checkitem.component", ResponsiveCheckItem.class, null);
+		for (CheckItem ci: list) {
+			logger.debug("checkTarget=" + ci.getTargetClass().getName());
+			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
+			logger.info("CONDITION:" + ci.getCondition());
+			ci.test(pt);
+			Browser.sleep(5);
 		}
+		browser.close();
 	}
 	
 	

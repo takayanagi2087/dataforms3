@@ -13,13 +13,13 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * ページのテスター。
+ * ページのテスト要素。
  */
-public class PageTester extends DataFormsTester {
+public class PageTestElement extends DataFormsTestElement {
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(PageTester.class);
+	private static Logger logger = LogManager.getLogger(PageTestElement.class);
 
 	/**
 	 * コンストラクタ。
@@ -27,7 +27,7 @@ public class PageTester extends DataFormsTester {
 	 * @param parent 親コンポーネント。
 	 * @param element 要素。
 	 */
-	public PageTester(final Browser browser, final Tester parent, final WebElement element) {
+	public PageTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 
@@ -42,10 +42,10 @@ public class PageTester extends DataFormsTester {
 	 * @param cls ダイアログクラス。
 	 * @return ダイアログ。
 	 */
-	public DialogTester getDialog(final String id, final Class<? extends DialogTester> cls) {
+	public DialogTestElement getDialog(final String id, final Class<? extends DialogTestElement> cls) {
 		try {
 			WebElement element = this.getWebElement().findElement(By.xpath("//div[@data-id='" + id + "']"));
-			DialogTester form = cls.getConstructor(Browser.class, WebComponent.class, WebElement.class).newInstance(this.getBrowser(), this, element);
+			DialogTestElement form = cls.getConstructor(Browser.class, WebComponent.class, WebElement.class).newInstance(this.getBrowser(), this, element);
 			return form;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
@@ -58,24 +58,24 @@ public class PageTester extends DataFormsTester {
 	 * @param id ID。
 	 * @return ダイアログ。
 	 */
-	public DialogTester  getDialog(final String id) {
-		return this.getDialog(id, DialogTester.class);
+	public DialogTestElement  getDialog(final String id) {
+		return this.getDialog(id, DialogTestElement.class);
 	}
 
 	/**
 	 * AlertDialogを所得します。
 	 * @return AlertDialog。
 	 */
-	public AlertDialogTester getAlertDialog() {
-		return (AlertDialogTester) this.getDialog(AlertDialogTester.ID, AlertDialogTester.class);
+	public AlertDialogTestElement getAlertDialog() {
+		return (AlertDialogTestElement) this.getDialog(AlertDialogTestElement.ID, AlertDialogTestElement.class);
 	}
 	
 	/**
 	 * ConfirmDialogを所得します。
 	 * @return ConfirmDialog。
 	 */
-	public ConfirmDialogTester getConfirmDialog() {
-		return (ConfirmDialogTester) this.getDialog(ConfirmDialogTester.ID, ConfirmDialogTester.class);
+	public ConfirmDialogTestElement getConfirmDialog() {
+		return (ConfirmDialogTestElement) this.getDialog(ConfirmDialogTestElement.ID, ConfirmDialogTestElement.class);
 	}
 	
 	/**

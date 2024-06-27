@@ -14,13 +14,13 @@ import jp.dataforms.test.selenium.Browser;
 import lombok.Getter;
 
 /**
- * テスターの基本クラス。
+ * テスト要素の基本クラス。
  */
-public class Tester {
+public class TestElement {
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(Tester.class);
+	private static Logger logger = LogManager.getLogger(TestElement.class);
 
 	/**
 	 * TIMEOUT。
@@ -31,7 +31,7 @@ public class Tester {
 	 * 親コンポーネント。
 	 */
 	@Getter
-	private Tester parent = null;
+	private TestElement parent = null;
 
 	/**
 	 * ブラウザ。
@@ -51,7 +51,7 @@ public class Tester {
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public Tester(final Browser browser, final Tester parent, final WebElement element) {
+	public TestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		this.browser = browser;
 		this.parent = parent;
 		this.webElement = element;
@@ -61,11 +61,11 @@ public class Tester {
 	 * ページのテスターを取得します。
 	 * @return ページのテスター。
 	 */
-	public PageTester getPage() {
-		PageTester page = null;
-		for (Tester c = this; c != null; c = c.parent) {
-			if (c instanceof PageTester) {
-				page = (PageTester) c;
+	public PageTestElement getPage() {
+		PageTestElement page = null;
+		for (TestElement c = this; c != null; c = c.parent) {
+			if (c instanceof PageTestElement) {
+				page = (PageTestElement) c;
 				break;
 			}
 		}
@@ -146,7 +146,7 @@ public class Tester {
 	 * @param id フィールドID。
 	 * @return フィールド。
 	 */
-	public FieldTester getField(final String id) {
+	public FieldTestElement getField(final String id) {
 		logger.debug("*** getField=" + this.getWebElement().getAttribute("id"));
 		String xpath = this.getXPathRange() + "//*[@data-id='" + id + "']";
 		logger.debug("*** xpath=" + xpath);
@@ -157,7 +157,7 @@ public class Tester {
 		}
 		if (elements.size() == 1) {
 			WebElement element = elements.get(0);
-			return new FieldTester(this.getBrowser(), this, element);
+			return new FieldTestElement(this.getBrowser(), this, element);
 		}
 		return null;
 	}
@@ -168,12 +168,12 @@ public class Tester {
 	 * @param id ID。
 	 * @return Button。
 	 */
-	public ButtonTester getButton(final String id) {
+	public ButtonTestElement getButton(final String id) {
 		String xpath = this.getXPathRange() + "//*[@data-id='" + id + "']";
 		List<WebElement> elements = this.findWebElements(By.xpath(xpath));
 		logger.debug("*** input elements=" + elements.size());
 		if (elements.size() == 1) {
-			return new ButtonTester(this.getBrowser(), this, elements.get(0));
+			return new ButtonTestElement(this.getBrowser(), this, elements.get(0));
 		}
 		return null;
 	}
@@ -184,7 +184,7 @@ public class Tester {
 	 * @param id フィールドID。
 	 * @return フィールド。
 	 */
-	public FieldTester getField(final int ridx, final String id) {
+	public FieldTestElement getField(final int ridx, final String id) {
 		String fid = this.getId() + "[" + ridx + "]." + id;
 		return this.getField(fid);
 	}

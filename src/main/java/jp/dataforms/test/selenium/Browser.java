@@ -14,7 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import jp.dataforms.test.component.PageTester;
+import jp.dataforms.test.component.PageTestElement;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -148,7 +148,7 @@ public class Browser {
 	 * @param url URL。
 	 * @return ページのインスタンス。
 	 */
-	public PageTester open(final String url) {
+	public PageTestElement open(final String url) {
 		By locator = By.xpath("//body");
 		return this.open(url, locator);
 	}
@@ -159,7 +159,7 @@ public class Browser {
 	 * @param id ページが表示されたと判定する要素ID
 	 * @return ページのインスタンス。
 	 */
-	public PageTester open(final String url, final String id) {
+	public PageTestElement open(final String url, final String id) {
 		String xpath = "//*[@data-id='" + id + "']";
 		logger.debug("xpath=" + xpath);
 		return this.open(url, By.xpath(xpath));
@@ -172,13 +172,13 @@ public class Browser {
 	 * @param locator ページが表示されたと判定する要素の指定。
 	 * @return ページのインスタンス。
 	 */
-	public PageTester open(final String url, final By locator) {
+	public PageTestElement open(final String url, final By locator) {
 		this.webDriver.get(url);
 		WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		Browser.sleep(5);
 		WebElement element = this.webDriver.findElement(By.xpath("//body"));
-		PageTester page = new PageTester(this, null, element);
+		PageTestElement page = new PageTestElement(this, null, element);
 		return page;
 	}
 

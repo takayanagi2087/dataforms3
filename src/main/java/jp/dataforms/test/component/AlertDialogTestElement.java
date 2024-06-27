@@ -6,9 +6,9 @@ import org.openqa.selenium.WebElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * AlertDialogのテスター。
+ * AlertDialogのテスト要素。
  */
-public class AlertDialogTester extends DialogTester {
+public class AlertDialogTestElement extends DialogTestElement {
 	/**
 	 * AlertDialogのID。
 	 */
@@ -25,7 +25,7 @@ public class AlertDialogTester extends DialogTester {
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public AlertDialogTester(final Browser browser, final Tester parent, final WebElement element) {
+	public AlertDialogTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 

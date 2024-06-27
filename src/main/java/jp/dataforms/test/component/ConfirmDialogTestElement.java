@@ -6,9 +6,9 @@ import org.openqa.selenium.WebElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * ConfirmDialogのテスター。
+ * ConfirmDialogのテスト要素。
  */
-public class ConfirmDialogTester extends DialogTester {
+public class ConfirmDialogTestElement extends DialogTestElement {
 	/**
 	 * ConfirmDialogのID。
 	 */
@@ -31,7 +31,7 @@ public class ConfirmDialogTester extends DialogTester {
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public ConfirmDialogTester(final Browser browser, final Tester parent, final WebElement element) {
+	public ConfirmDialogTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 

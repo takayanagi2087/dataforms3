@@ -10,14 +10,19 @@ import org.openqa.selenium.WebElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * フォームのテスター。
+ * EditFormのテスト要素。
  */
-public class FormTester extends Tester {
+public class EditFormTestElement extends FormTestElement {
 	/**
 	 * Logger.
 	 */
-	 private static Logger logger = LogManager.getLogger(FormTester.class);
+	 private static Logger logger = LogManager.getLogger(EditFormTestElement.class);
 
+	 /**
+	  * フィールドID。
+	  */
+	 public static final String ID = "editForm";
+	 
 	/**
 	 * リセットボタンのID。
 	 */
@@ -34,7 +39,7 @@ public class FormTester extends Tester {
 	 * @param parent 親コンポーネント。
 	 * @param webElement FormのWebElement。
 	 */
-	public FormTester(final Browser browser, final Tester parent, final WebElement webElement) {
+	public EditFormTestElement(final Browser browser, final TestElement parent, final WebElement webElement) {
 		super(browser, parent, webElement);
 	}
 
@@ -44,7 +49,7 @@ public class FormTester extends Tester {
 	 * @param value 値。
 	 */
 	public void setValue(final String id, final String value) {
-		FieldTester field = this.getField(id);
+		FieldTestElement field = this.getField(id);
 		field.setValue(value);
 	}
 	
@@ -53,12 +58,12 @@ public class FormTester extends Tester {
 	 * @param id ID。
 	 * @return テーブルのインスタンス。
 	 */
-	public TableTester getTable(final String id) {
+	public TableTestElement getTable(final String id) {
 		String xpath = this.getXPathRange() + "//table[@data-id='" + id + "']";
 		List<WebElement> elements = this.findWebElements(By.xpath(xpath));
 		logger.debug("*** input elements=" + elements.size());
 		if (elements.size() == 1) {
-			return new TableTester(this.getBrowser(), this, elements.get(0));
+			return new TableTestElement(this.getBrowser(), this, elements.get(0));
 		}
 		return null;
 	}

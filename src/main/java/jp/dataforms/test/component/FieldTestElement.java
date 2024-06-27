@@ -6,16 +6,16 @@ import org.openqa.selenium.support.ui.Select;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * フィールドのテスター。
+ * フィールドのテスト要素。
  */
-public class FieldTester extends Tester {
+public class FieldTestElement extends TestElement {
 	/**
 	 * コンストラクタ。
 	 * @param browser ブラウザ。
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public FieldTester(final Browser browser, final Tester parent, final WebElement element) {
+	public FieldTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 

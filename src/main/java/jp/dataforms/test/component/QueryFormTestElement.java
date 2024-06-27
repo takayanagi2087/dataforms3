@@ -5,9 +5,9 @@ import org.openqa.selenium.WebElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
- * 問合せフォームのテスター。
+ * 問合せフォームのテスト要素。
  */
-public class QueryFormTester extends FormTester{
+public class QueryFormTestElement extends FormTestElement{
 	/**
 	 * 問い合わせフォーム。
 	 */
@@ -34,7 +34,7 @@ public class QueryFormTester extends FormTester{
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public QueryFormTester(final Browser browser, final Tester parent, final WebElement element) {
+	public QueryFormTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 
@@ -43,20 +43,20 @@ public class QueryFormTester extends FormTester{
 	 * 検索を実行します。
 	 */
 	public void query() {
-		ButtonTester queryButton = this.getButton(ID_QUERY_BUTTON);
+		ButtonTestElement queryButton = this.getButton(ID_QUERY_BUTTON);
 		queryButton.click();
-		DataFormsTester parent = (DataFormsTester) this.getParent();
-		parent.waitVisibility(QueryResultFormTester.ID);
+		DataFormsTestElement parent = (DataFormsTestElement) this.getParent();
+		parent.waitVisibility(QueryResultFormTestElement.ID);
 	}
 
 	/**
 	 * 新規登録を実行します。
 	 */
 	public void newData() {
-		ButtonTester newButton = this.getButton(ID_NEW_BUTTON);
+		ButtonTestElement newButton = this.getButton(ID_NEW_BUTTON);
 		newButton.click();
-		DataFormsTester parent = (DataFormsTester) this.getParent();
-		parent.waitVisibility(EditFormTester.ID);
+		DataFormsTestElement parent = (DataFormsTestElement) this.getParent();
+		parent.waitVisibility(EditFormTestElement.ID);
 	}
 
 }

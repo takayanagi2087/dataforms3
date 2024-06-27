@@ -2,7 +2,7 @@ package jp.dataforms.test.checkitem;
 
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.annotation.CheckItemInfo;
-import jp.dataforms.test.component.Tester;
+import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
 
 
@@ -127,7 +127,7 @@ public abstract class CheckItem {
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	public abstract ResultType test(final Tester tester) throws Exception;
+	public abstract ResultType test(final TestElement tester) throws Exception;
 	
 	/**
 	 * 結果の保存処理。

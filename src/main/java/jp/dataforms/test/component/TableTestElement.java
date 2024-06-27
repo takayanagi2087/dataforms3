@@ -9,16 +9,16 @@ import jp.dataforms.test.selenium.Browser;
 
 
 /**
- * テーブルのテスター。
+ * テーブルのテスト要素。
  */
-public class TableTester extends Tester {
+public class TableTestElement extends TestElement {
 	/**
 	 * コンストラクタ。
 	 * @param browser ブラウザ。
 	 * @param parent 親コンポーネント。
 	 * @param element WebElement。
 	 */
-	public TableTester(final Browser browser, final Tester parent, final WebElement element) {
+	public TableTestElement(final Browser browser, final TestElement parent, final WebElement element) {
 		super(browser, parent, element);
 	}
 
@@ -26,7 +26,7 @@ public class TableTester extends Tester {
 	 * 追加ボタンを取得します。
 	 * @return 追加ボタン。
 	 */
-	public ButtonTester getAddButton() {
+	public ButtonTestElement getAddButton() {
 		String id = this.getId() + ".addButton";
 		return this.getButton(id);
 	}
@@ -36,7 +36,7 @@ public class TableTester extends Tester {
 	 * @param ridx 行インデックス。
 	 * @return 追加ボタン。
 	 */
-	public ButtonTester getAddButton(final int ridx) {
+	public ButtonTestElement getAddButton(final int ridx) {
 		String id = this.getId() + "[" + ridx + "].addButton";
 		return this.getButton(id);
 	}
@@ -46,7 +46,7 @@ public class TableTester extends Tester {
 	 * @param ridx 行インデックス。
 	 * @return 追加ボタン。
 	 */
-	public ButtonTester getDeleteButton(final int ridx) {
+	public ButtonTestElement getDeleteButton(final int ridx) {
 		String id = this.getId() + "[" + ridx + "].deleteButton";
 		return this.getButton(id);
 	}
@@ -55,7 +55,7 @@ public class TableTester extends Tester {
 	 * 行追加します。
 	 */
 	public void addRow() {
-		ButtonTester addButton = this.getAddButton();
+		ButtonTestElement addButton = this.getAddButton();
 		addButton.click();
 	}
 
@@ -64,7 +64,7 @@ public class TableTester extends Tester {
 	 * @param ridx 行インデックス。
 	 */
 	public void addRow(int ridx) {
-		ButtonTester addButton = this.getAddButton(ridx);
+		ButtonTestElement addButton = this.getAddButton(ridx);
 		addButton.click();
 	}
 
@@ -75,7 +75,7 @@ public class TableTester extends Tester {
 	 * @param value 値。
 	 */
 	public void setValue(final int ridx, final String id, final String value) {
-		FieldTester field = this.getField(ridx, id);
+		FieldTestElement field = this.getField(ridx, id);
 		field.setValue(value);
 	}
 	

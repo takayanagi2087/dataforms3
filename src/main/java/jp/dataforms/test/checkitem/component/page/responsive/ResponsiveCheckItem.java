@@ -1,6 +1,8 @@
 package jp.dataforms.test.checkitem.component.page.responsive;
 
 import jp.dataforms.test.checkitem.CheckItem;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * ページサイズチック項目クラス。
@@ -29,6 +31,12 @@ public abstract class ResponsiveCheckItem extends CheckItem {
 	 */
 	public static final int SP_WIDTH = 768;
 
+	/**
+	 * ページの高さ。
+	 */
+	@Getter
+	@Setter
+	private static int height = 800;
 	
 	/**
 	 * コンストラクタ。
