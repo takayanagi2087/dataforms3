@@ -27,11 +27,11 @@ import lombok.Getter;
 /**
  * テスト実行ツール。
  */
-public class TestExecutor {
+public class PageTester {
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(TestExecutor.class);
+	private static Logger logger = LogManager.getLogger(PageTester.class);
 	
 	/**
 	 * 設定ファイルのパス。
@@ -172,7 +172,7 @@ public class TestExecutor {
 	 * @param pageClass ページクラス。
 	 * 
 	 */
-	public TestExecutor(final String confFile, final Class<? extends Page> pageClass) {
+	public PageTester(final String confFile, final Class<? extends Page> pageClass) {
 		this.confFile = confFile;
 		this.pageClass = pageClass;
 	}
@@ -226,7 +226,6 @@ public class TestExecutor {
 	 */
 	public void exec() throws Exception {
 		logger.debug("path=" + this.confFile);
-//		String json = FileUtil.readTextFile(this.confFile, "utf-8");
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
 		FunctionMap map = FunctionMap.getAppFunctionMap();
@@ -261,7 +260,7 @@ public class TestExecutor {
 	 */
 	public static void main(String[] args) {
 		try {
-			TestExecutor exec = new TestExecutor(args[0], LoginPage.class);
+			PageTester exec = new PageTester(args[0], LoginPage.class);
 			exec.exec();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
