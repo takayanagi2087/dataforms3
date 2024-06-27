@@ -1,6 +1,10 @@
 package jp.dataforms.test.checkitem.component.page.responsive;
 
+import java.io.File;
+
+import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.checkitem.CheckItem;
+import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +33,7 @@ public abstract class ResponsiveCheckItem extends CheckItem {
 	/**
 	 * スマートフォンの最大幅。
 	 */
-	public static final int SP_WIDTH = 768;
+	public static final int SP_WIDTH = 700;
 
 	/**
 	 * ページの高さ。
@@ -45,5 +49,14 @@ public abstract class ResponsiveCheckItem extends CheckItem {
 	 */
 	public ResponsiveCheckItem(final String condition, final String expected) {
 		super(condition, expected);
+	}
+	
+	@Override
+	protected String saveAttachFile(Page page, TestElement testElement, ResultType result) throws Exception {
+		String imageFile =  this.getResultPath() + "/" + this.getFileName() + ".png";
+		String path = testElement.getBrowser().saveScreenShot(imageFile);
+		File f = new File(path);
+		String ret = "<img src='" + f.getName() + "' width='1024'/>";
+		return ret;
 	}
 }

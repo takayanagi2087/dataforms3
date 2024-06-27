@@ -1,5 +1,7 @@
 package jp.dataforms.test.selenium;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,10 +11,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.io.Files;
 
 import jp.dataforms.test.component.PageTestElement;
 import lombok.Getter;
@@ -267,9 +273,10 @@ public class Browser {
 	 * 画面サイズを調整しスクリーンショットを保存します。
 	 * @param filename ファイル名。
 	 * @param width 画像の幅指定。
+	 * @return 保存したファイルのパス。
 	 * @throws Exception 例外。
 	 */
-/*	public String saveResizedScreenShot(final String filename, final int width) throws Exception {
+	public String saveResizedScreenShot(final String filename, final int width) throws Exception {
 		Dimension orgDim = this.webDriver.manage().window().getSize();
 		WebElement body = this.webDriver.findElement(By.xpath("//body"));
 		int w = orgDim.getWidth();
@@ -283,7 +290,7 @@ public class Browser {
 		this.webDriver.manage().window().setSize(orgDim);
 		return ret;
 	}
-*/
+
 	/**
 	 * スクリーンショットを保存します。
 	 * @param filename ファイル名。
@@ -291,10 +298,10 @@ public class Browser {
 	 * @throws Exception 例外。
 	 *
 	 */
-/*	public String saveResizedScreenShot( final String filename) throws Exception {
+	public String saveResizedScreenShot( final String filename) throws Exception {
 		return this.saveResizedScreenShot(filename, -1);
 	}
-*/
+
 	/**
 	 * スクリーンショットの取得のみを行います。。
 	 * @param filename ファイル名。
@@ -302,15 +309,15 @@ public class Browser {
 	 * @throws IOException 例外。
 	 *
 	 */
-/*	public String saveScreenShot(final String filename) throws IOException {
+	public String saveScreenShot(final String filename) throws IOException {
 		Browser.sleep(2);
 	    File sfile = ((TakesScreenshot) this.webDriver).getScreenshotAs(OutputType.FILE);
 	    
-	    String result = this.getTester().getTestResult();
+//	    String result = this.getTester().getTestResult();
 	    
 		logger.debug("screenShot=" + filename);
 
-		File file = new File(result + filename);
+		File file = new File(filename);
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
@@ -318,7 +325,7 @@ public class Browser {
 		Browser.sleep(2);
 		return file.getAbsolutePath();
 	}
-*/
+
 	/**
 	 * ブラウザを閉じます。
 	 */

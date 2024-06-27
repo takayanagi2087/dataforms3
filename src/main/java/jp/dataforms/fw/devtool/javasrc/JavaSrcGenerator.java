@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.Form;
-import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
 
 /**
@@ -79,7 +78,7 @@ public abstract class JavaSrcGenerator {
 		protected String getStringResourse(final Class<?> cls, final String path) throws Exception {
 			logger.info("getResource:" + cls.getName() + "," + path);
 			InputStream is = cls.getResourceAsStream(path);
-			String text = new String(FileUtil.readInputStream(is), DataFormsServlet.getEncoding());
+			String text = new String(FileUtil.readInputStream(is), "utf-8");
 			return text;
 		}
 

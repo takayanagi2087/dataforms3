@@ -7,17 +7,22 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.app.login.page.LoginPage;
+import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.test.annotation.CheckItemInfo;
 import jp.dataforms.test.checkitem.CheckItem;
+import jp.dataforms.test.checkitem.CheckItem.ResultType;
 import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveCheckItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * テスト実行ツール。
@@ -153,21 +158,23 @@ public class TestExecutor {
 	/**
 	 * 設定情報。
 	 */
+	@Getter
 	private Conf conf = null;
+	
 	/**
-	 * URI。
+	 * テスト対象のページクラス。
 	 */
-	private String uri = null;
+	private Class<? extends Page> pageClass = null;
 	
 	/**
 	 * コンストラクタ。
 	 * @param confFile 設定ファイルのパス。
-	 * @param uri テストのURI。
+	 * @param pageClass ページクラス。
 	 * 
 	 */
-	public TestExecutor(final String confFile, final String uri) {
+	public TestExecutor(final String confFile, final Class<? extends Page> pageClass) {
 		this.confFile = confFile;
-		this.uri = uri;
+		this.pageClass = pageClass;
 	}
 	
 	/**
@@ -178,7 +185,7 @@ public class TestExecutor {
 	 * @return チェック項目リスト。
 	 * @throws Exception 例外。
 	 */
-	public List<CheckItem> findCheckItem(
+	public List<CheckItem> queryCheckItem(
 			final String basePackage,
 			final Class<? extends CheckItem> baseCheckItem, 
 			final Class<? extends WebComponent> target) throws Exception  {
@@ -222,19 +229,23 @@ public class TestExecutor {
 //		String json = FileUtil.readTextFile(this.confFile, "utf-8");
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
-
-		ResponsiveCheckItem.setHeight(400);
+		FunctionMap map = FunctionMap.getAppFunctionMap();
+		String uri = map.getWebPath(this.pageClass.getName());
+		CheckItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
+		logger.info("uri = " + uri);
+		ResponsiveCheckItem.setHeight(540);
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
 		Browser browser = new Browser(bi);
-		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri);
-
-		List<CheckItem> list = this.findCheckItem("jp.dataforms.test.checkitem.component", ResponsiveCheckItem.class, null);
+		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
+		Page page = this.pageClass.getConstructor().newInstance();
+		List<CheckItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveCheckItem.class, null);
 		for (CheckItem ci: list) {
 			logger.debug("checkTarget=" + ci.getTargetClass().getName());
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
-			ci.test(pt);
-			Browser.sleep(5);
+			ResultType result = ci.test(page, pt);
+			ci.saveResult(page, pt, result);
+			Browser.sleep(10);
 		}
 		browser.close();
 	}
@@ -250,7 +261,7 @@ public class TestExecutor {
 	 */
 	public static void main(String[] args) {
 		try {
-			TestExecutor exec = new TestExecutor(args[0], args[1]);
+			TestExecutor exec = new TestExecutor(args[0], LoginPage.class);
 			exec.exec();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

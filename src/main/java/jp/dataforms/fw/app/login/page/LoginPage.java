@@ -21,6 +21,16 @@ public class LoginPage extends BasePage {
 		this.addForm(new LoginForm());
 	}
 
+	/**
+	 * Pageのタイトルを返します。
+	 *
+	 * @return Pageのタイトル。
+	 */
+	@Override
+	public String getPageName() {
+		return "ログインページ";
+	}
+
 
 	/**
 	 * {@inheritDoc}

@@ -16,7 +16,7 @@ public class PageSpCheckItem extends ResponsiveCheckItem {
 	 * テスト条件。
 	 */
 	private static final String CONDITION = """
-		スマートフォンレイアウトの最大幅で表示。
+		スマートフォンの画面幅で表示。
 		""";
 	
 	/**
@@ -33,7 +33,7 @@ public class PageSpCheckItem extends ResponsiveCheckItem {
 	}
 	
 	@Override
-	public ResultType  test(final TestElement tester) throws Exception {
+	public ResultType  test(final Page page, final TestElement tester) throws Exception {
 		
 		Browser b = tester.getBrowser();
 		b.setClientSize(new Dimension(SP_WIDTH, ResponsiveCheckItem.getHeight()));
