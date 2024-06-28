@@ -3,7 +3,7 @@ package jp.dataforms.test.checkitem.component.page.responsive;
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.checkitem.CheckItem;
+import jp.dataforms.test.checkitem.TestItem;
 import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import lombok.Setter;
 /**
  * ページサイズチック項目クラス。
  */
-public abstract class ResponsiveCheckItem extends CheckItem {
+public abstract class ResponsiveTestItem extends TestItem {
 	/**
 	 * グループ名。
 	 */
@@ -47,7 +47,7 @@ public abstract class ResponsiveCheckItem extends CheckItem {
 	 * @param condition テスト条件。
 	 * @param expected 期待値。
 	 */
-	public ResponsiveCheckItem(final String condition, final String expected) {
+	public ResponsiveTestItem(final String condition, final String expected) {
 		super(condition, expected);
 	}
 	

@@ -1,5 +1,7 @@
 package jp.dataforms.test.checkitem.component.page.responsive;
 
+import org.openqa.selenium.Dimension;
+
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.annotation.CheckItemInfo;
 import jp.dataforms.test.component.TestElement;
@@ -8,32 +10,34 @@ import jp.dataforms.test.selenium.Browser;
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveCheckItem.GROUP, seq = "001")
-public class PagePcMaxCheckItem extends ResponsiveCheckItem {
+@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "003")
+public class PageTabMaxTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。
 	 */
 	private static final String CONDITION = """
-		ページを全面表示する。
+		タブレットレイアウトの最大幅で表示。
 		""";
 	
 	/**
 	 * テストの期待値。
 	 */
 	private static final String EXPECTED = """
-		PCレイアウトとなること。
+		タブレットレイアウトとなること。
 		""";
 	/**
 	 * コンストラクタ。
 	 */
-	public PagePcMaxCheckItem() {
+	public PageTabMaxTestItem() {
 		super(CONDITION, EXPECTED);
 	}
 	
 	@Override
 	public ResultType  test(final Page page, final TestElement tester) throws Exception {
+		
 		Browser b = tester.getBrowser();
-		b.maximize();
+		b.setClientSize(new Dimension(TAB_MAX_WIDTH, ResponsiveTestItem.getHeight()));
+		
 		return ResultType.USER_CHECK;
 	}
 }

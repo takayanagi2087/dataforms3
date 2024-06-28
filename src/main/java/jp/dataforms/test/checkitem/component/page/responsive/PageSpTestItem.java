@@ -10,25 +10,25 @@ import jp.dataforms.test.selenium.Browser;
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveCheckItem.GROUP, seq = "004")
-public class PageTabMinCheckItem extends ResponsiveCheckItem {
+@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "005")
+public class PageSpTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。
 	 */
 	private static final String CONDITION = """
-		タブレットレイアウトの最大幅で表示。
+		スマートフォンの画面幅で表示。
 		""";
 	
 	/**
 	 * テストの期待値。
 	 */
 	private static final String EXPECTED = """
-		タブレットレイアウトとなること。
+		スマートフォンレイアウトとなること。
 		""";
 	/**
 	 * コンストラクタ。
 	 */
-	public PageTabMinCheckItem() {
+	public PageSpTestItem() {
 		super(CONDITION, EXPECTED);
 	}
 	
@@ -36,7 +36,7 @@ public class PageTabMinCheckItem extends ResponsiveCheckItem {
 	public ResultType  test(final Page page, final TestElement tester) throws Exception {
 		
 		Browser b = tester.getBrowser();
-		b.setClientSize(new Dimension(TAB_MIN_WIDTH, ResponsiveCheckItem.getHeight()));
+		b.setClientSize(new Dimension(SP_WIDTH, ResponsiveTestItem.getHeight()));
 		
 		return ResultType.USER_CHECK;
 	}

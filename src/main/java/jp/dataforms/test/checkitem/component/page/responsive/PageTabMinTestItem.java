@@ -10,8 +10,8 @@ import jp.dataforms.test.selenium.Browser;
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveCheckItem.GROUP, seq = "003")
-public class PageTabMaxCheckItem extends ResponsiveCheckItem {
+@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "004")
+public class PageTabMinTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。
 	 */
@@ -28,7 +28,7 @@ public class PageTabMaxCheckItem extends ResponsiveCheckItem {
 	/**
 	 * コンストラクタ。
 	 */
-	public PageTabMaxCheckItem() {
+	public PageTabMinTestItem() {
 		super(CONDITION, EXPECTED);
 	}
 	
@@ -36,7 +36,7 @@ public class PageTabMaxCheckItem extends ResponsiveCheckItem {
 	public ResultType  test(final Page page, final TestElement tester) throws Exception {
 		
 		Browser b = tester.getBrowser();
-		b.setClientSize(new Dimension(TAB_MAX_WIDTH, ResponsiveCheckItem.getHeight()));
+		b.setClientSize(new Dimension(TAB_MIN_WIDTH, ResponsiveTestItem.getHeight()));
 		
 		return ResultType.USER_CHECK;
 	}

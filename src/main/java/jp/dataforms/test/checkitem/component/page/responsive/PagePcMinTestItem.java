@@ -10,8 +10,8 @@ import jp.dataforms.test.selenium.Browser;
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveCheckItem.GROUP, seq = "002")
-public class PagePcMinCheckItem extends ResponsiveCheckItem {
+@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "002")
+public class PagePcMinTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。
 	 */
@@ -28,7 +28,7 @@ public class PagePcMinCheckItem extends ResponsiveCheckItem {
 	/**
 	 * コンストラクタ。
 	 */
-	public PagePcMinCheckItem() {
+	public PagePcMinTestItem() {
 		super(CONDITION, EXPECTED);
 	}
 	
@@ -36,7 +36,7 @@ public class PagePcMinCheckItem extends ResponsiveCheckItem {
 	public ResultType  test(final Page page, final TestElement tester) throws Exception {
 		
 		Browser b = tester.getBrowser();
-		b.setClientSize(new Dimension(PC_MIN_WIDTH, ResponsiveCheckItem.getHeight()));
+		b.setClientSize(new Dimension(PC_MIN_WIDTH, ResponsiveTestItem.getHeight()));
 		
 		return ResultType.USER_CHECK;
 	}

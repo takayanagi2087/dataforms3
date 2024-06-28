@@ -16,9 +16,9 @@ import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.test.annotation.CheckItemInfo;
-import jp.dataforms.test.checkitem.CheckItem;
-import jp.dataforms.test.checkitem.CheckItem.ResultType;
-import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveCheckItem;
+import jp.dataforms.test.checkitem.TestItem;
+import jp.dataforms.test.checkitem.TestItem.ResultType;
+import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveTestItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
@@ -186,18 +186,18 @@ public class PageTester {
 	 * @return チェック項目リスト。
 	 * @throws Exception 例外。
 	 */
-	public List<CheckItem> queryCheckItem(
+	public List<TestItem> queryCheckItem(
 			final String basePackage,
-			final Class<? extends CheckItem> baseCheckItem, 
+			final Class<? extends TestItem> baseCheckItem, 
 			final Class<? extends WebComponent> target) throws Exception  {
 		
-		List<CheckItem> ret = new ArrayList<CheckItem>();
+		List<TestItem> ret = new ArrayList<TestItem>();
 		ClassFinder cf = new ClassFinder();
 		List<Class<?>> list = cf.findClasses(basePackage, baseCheckItem);
 		for (Class<?> cls: list) {
 			CheckItemInfo a = cls.getAnnotation(CheckItemInfo.class);
 			if (a != null) {
-				CheckItem ci = (CheckItem) cls.getConstructor().newInstance();
+				TestItem ci = (TestItem) cls.getConstructor().newInstance();
 				ret.add(ci);
 			}
 		}
@@ -209,7 +209,7 @@ public class PageTester {
 	 * チェック項目リストをソートします。
 	 * @param list チェック項目リスト。
 	 */
-	protected void sortCheckItem(List<CheckItem> list) {
+	protected void sortCheckItem(List<TestItem> list) {
 		// テスト項目をソート
 		list.sort((a, b) -> {
 			String ta = a.getTargetClass().getName();
@@ -234,17 +234,17 @@ public class PageTester {
 	 * @return レスポンシブデザインテストの結果リスト。
 	 * @throws Exception 例外。
 	 */
-	protected List<CheckItem> checkResponsive() throws Exception {
+	protected List<TestItem> checkResponsive() throws Exception {
 		FunctionMap map = FunctionMap.getAppFunctionMap();
 		String uri = map.getWebPath(this.pageClass.getName());
 		logger.info("uri = " + uri);
-		ResponsiveCheckItem.setHeight(540);
+		ResponsiveTestItem.setHeight(540);
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
 		Browser browser = new Browser(bi);
 		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
 		Page page = this.pageClass.getConstructor().newInstance();
-		List<CheckItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveCheckItem.class, null);
-		for (CheckItem ci: list) {
+		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveTestItem.class, null);
+		for (TestItem ci: list) {
 			logger.debug("checkTarget=" + ci.getTargetClass().getName());
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
@@ -272,7 +272,7 @@ public class PageTester {
 	 * @param list テスト結果リスト。
 	 * @throws Exception 例外。
 	 */
-	protected void saveIndexHtml(final List<CheckItem> list) throws Exception {
+	protected void saveIndexHtml(final List<TestItem> list) throws Exception {
 		Template indexTemplate = this.getTemplate();
 		Page page = this.pageClass.getConstructor().newInstance();
 		indexTemplate.replace("pageName", page.getPageName());
@@ -280,11 +280,11 @@ public class PageTester {
 		indexTemplate.replace("pageClass", pageClassName);
 		StringBuilder sb = new StringBuilder();
 		int no = 1;
-		for (CheckItem ci: list) {
+		for (TestItem ci: list) {
 			sb.append(ci.getListRow(no++));
 		}
 		indexTemplate.replace("resultList", sb.toString());
-		String fn = CheckItem.getTestResult() + "/index.html";
+		String fn = TestItem.getTestResult() + "/index.html";
 		FileUtil.writeTextFile(fn, indexTemplate.getSource(), "utf-8");
 	}
 	
@@ -296,8 +296,8 @@ public class PageTester {
 		logger.debug("path=" + this.confFile);
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
-		CheckItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
-		List<CheckItem> list = this.checkResponsive();
+		TestItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
+		List<TestItem> list = this.checkResponsive();
 		this.saveIndexHtml(list);
 		
 	}

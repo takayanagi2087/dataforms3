@@ -20,11 +20,11 @@ import lombok.Setter;
 /**
  * テスト項目クラス。
  */
-public abstract class CheckItem {
+public abstract class TestItem {
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(CheckItem.class);
+	private static Logger logger = LogManager.getLogger(TestItem.class);
 	
 	/**
 	 * テストの条件。
@@ -115,7 +115,7 @@ public abstract class CheckItem {
 	 * @param condition テスト条件。
 	 * @param expected 期待値。
 	 */
-	public CheckItem(final String condition, final String expected) {
+	public TestItem(final String condition, final String expected) {
 		this.condition = condition;
 		this.expected = expected;
 	}
@@ -205,7 +205,7 @@ public abstract class CheckItem {
 	 * @return 結果の出力先。 
 	 */
 	public String getResultPath() {
-		String path = CheckItem.testResult + "/" + this.getGroup(); 
+		String path = TestItem.testResult + "/" + this.getGroup(); 
 		logger.debug("result path=" + path);
 		return path;
 	}
@@ -216,7 +216,7 @@ public abstract class CheckItem {
 	 * @throws Exception 例外。
 	 */
 	protected Template getTemplate() throws Exception {
-		Template tmp = new Template(CheckItem.class, "template/template.html");
+		Template tmp = new Template(TestItem.class, "template/template.html");
 		return tmp;
 	}
 	
