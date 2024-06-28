@@ -1,6 +1,8 @@
 package jp.dataforms.test.checkitem;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,6 +76,38 @@ public abstract class CheckItem {
 	 */
 	protected void setCheckResult(final ResultType checkResult) {
 		this.checkResult = checkResult;
+	}
+	
+	/**
+	 * テスト時刻。
+	 */
+	private Date testDate = null;
+	
+	
+	/**
+	 * テスト日時を取得します。
+	 * @return テスト時刻。
+	 */
+	public Date getTestDate() {
+		return testDate;
+	}
+
+	
+	/**
+	 * テスト時刻を設定します。
+	 * @param testDate テスト日時。
+	 */
+	protected void setTestDate(final Date testDate) {
+		this.testDate = testDate;
+	}
+	
+	/**
+	 * テスト日時の表示形式を取得します。
+	 * @return テスト日時の表示形式。
+	 */
+	public String getTestDateText() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		return fmt.format(this.testDate);
 	}
 	
 	/**
@@ -165,6 +199,7 @@ public abstract class CheckItem {
 	@Setter
 	private static String testResult = null;
 	
+
 	/**
 	 * 結果の出力先を取得します。
 	 * @return 結果の出力先。 
@@ -215,12 +250,16 @@ public abstract class CheckItem {
 	 */
 	public void saveResult(final Page page, final TestElement testElement, final ResultType result) throws Exception {
 		Template templ = this.getTemplate();
+		Date today = new Date();
+		this.setTestDate(today);
+		this.setCheckResult(result);
 		templ.replace("pageName", page.getPageName());
 		templ.replace("pageClass", page.getClass().getName());
 		templ.replace("group", this.getGroup());
 		templ.replace("seq", this.getSeq());
 		templ.replace("condition", this.getCondition());
 		templ.replace("expected", this.getExpected());
+		templ.replace("testDate", this.getTestDateText());
 		templ.replace("result", result.name());
 		templ.replace("attachFiles", this.saveAttachFile(page, testElement, result));
 		logger.debug("html=" + templ.getSource());
@@ -231,6 +270,25 @@ public abstract class CheckItem {
 		String resultPath = this.getResultPath() + "/" + this.getFileName() + ".html";
 		logger.debug("resultPath=" + resultPath);
 		FileUtil.writeTextFile(resultPath, templ.getSource(), "utf-8");
+	}
+	
+	/**
+	 * テスト結果一覧の行を取得します。
+	 * @param no 行番号。
+	 * @return テスト結果一覧の行。
+	 */
+	public String getListRow(final int no) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\t\t\t\t<tr>");
+		sb.append("<td>" + no + "</td>");
+		String link = "./" + this.getGroup() + "/" + this.getGroup() + "-" + this.getSeq() + ".html";
+		sb.append("<td><a href='" + link + "'>" + this.getGroup() + "-" + this.getSeq() + "</a></td>");
+		sb.append("<td>" + this.getCondition() + "</td>");
+		sb.append("<td>" + this.getExpected() + "</td>");
+		sb.append("<td>" + this.getTestDateText() + "</td>");
+		sb.append("<td>" + this.getCheckResult().name() + "</td>");
+		sb.append("</tr>\n");
+		return sb.toString();
 	}
 }
 

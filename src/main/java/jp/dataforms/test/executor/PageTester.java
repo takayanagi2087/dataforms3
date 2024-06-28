@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
@@ -200,8 +201,17 @@ public class PageTester {
 				ret.add(ci);
 			}
 		}
+		this.sortCheckItem(ret);
+		return ret;
+	}
+
+	/**
+	 * チェック項目リストをソートします。
+	 * @param list チェック項目リスト。
+	 */
+	protected void sortCheckItem(List<CheckItem> list) {
 		// テスト項目をソート
-		ret.sort((a, b) -> {
+		list.sort((a, b) -> {
 			String ta = a.getTargetClass().getName();
 			String tb = b.getTargetClass().getName();
 			int cmp = ta.compareTo(tb);
@@ -217,20 +227,16 @@ public class PageTester {
 			}
 			return cmp;
 		});
-		return ret;
 	}
 
 	/**
-	 * テスト実行。
+	 * レスポンシブデザインテストを実行します。
+	 * @return レスポンシブデザインテストの結果リスト。
 	 * @throws Exception 例外。
 	 */
-	public void exec() throws Exception {
-		logger.debug("path=" + this.confFile);
-		this.conf = Conf.read(confFile);
-		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
+	protected List<CheckItem> checkResponsive() throws Exception {
 		FunctionMap map = FunctionMap.getAppFunctionMap();
 		String uri = map.getWebPath(this.pageClass.getName());
-		CheckItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
 		logger.info("uri = " + uri);
 		ResponsiveCheckItem.setHeight(540);
 		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
@@ -244,9 +250,56 @@ public class PageTester {
 			logger.info("CONDITION:" + ci.getCondition());
 			ResultType result = ci.test(page, pt);
 			ci.saveResult(page, pt, result);
-			Browser.sleep(10);
+			Browser.sleep(1);
 		}
 		browser.close();
+		return list;
+	}
+	
+	/**
+	 * ページのテンプレートを取得します。
+	 * @return ページテンプレート。
+	 * @throws Exception 例外。
+	 */
+	protected Template getTemplate() throws Exception {
+		Template tmp = new Template(PageTester.class, "template/index.html");
+		return tmp;
+	}
+
+	
+	/**
+	 * テスト結果リストindex.htmlの作成。
+	 * @param list テスト結果リスト。
+	 * @throws Exception 例外。
+	 */
+	protected void saveIndexHtml(final List<CheckItem> list) throws Exception {
+		Template indexTemplate = this.getTemplate();
+		Page page = this.pageClass.getConstructor().newInstance();
+		indexTemplate.replace("pageName", page.getPageName());
+		String pageClassName = this.pageClass.getName();
+		indexTemplate.replace("pageClass", pageClassName);
+		StringBuilder sb = new StringBuilder();
+		int no = 1;
+		for (CheckItem ci: list) {
+			sb.append(ci.getListRow(no++));
+		}
+		indexTemplate.replace("resultList", sb.toString());
+		String fn = CheckItem.getTestResult() + "/index.html";
+		FileUtil.writeTextFile(fn, indexTemplate.getSource(), "utf-8");
+	}
+	
+	/**
+	 * テスト実行。
+	 * @throws Exception 例外。
+	 */
+	public void exec() throws Exception {
+		logger.debug("path=" + this.confFile);
+		this.conf = Conf.read(confFile);
+		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
+		CheckItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
+		List<CheckItem> list = this.checkResponsive();
+		this.saveIndexHtml(list);
+		
 	}
 	
 	
