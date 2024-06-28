@@ -1,14 +1,14 @@
 package jp.dataforms.test.checkitem.component.page.responsive;
 
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.annotation.CheckItemInfo;
+import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.TestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "001")
+@TestItemInfo(group = ResponsiveTestItem.GROUP, seq = "001")
 public class PagePcMaxTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。

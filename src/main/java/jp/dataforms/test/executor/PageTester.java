@@ -15,7 +15,7 @@ import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
-import jp.dataforms.test.annotation.CheckItemInfo;
+import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.checkitem.TestItem;
 import jp.dataforms.test.checkitem.TestItem.ResultType;
 import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveTestItem;
@@ -195,7 +195,7 @@ public class PageTester {
 		ClassFinder cf = new ClassFinder();
 		List<Class<?>> list = cf.findClasses(basePackage, baseCheckItem);
 		for (Class<?> cls: list) {
-			CheckItemInfo a = cls.getAnnotation(CheckItemInfo.class);
+			TestItemInfo a = cls.getAnnotation(TestItemInfo.class);
 			if (a != null) {
 				TestItem ci = (TestItem) cls.getConstructor().newInstance();
 				ret.add(ci);
@@ -212,18 +212,13 @@ public class PageTester {
 	protected void sortCheckItem(List<TestItem> list) {
 		// テスト項目をソート
 		list.sort((a, b) -> {
-			String ta = a.getTargetClass().getName();
-			String tb = b.getTargetClass().getName();
-			int cmp = ta.compareTo(tb);
+			String ga = a.getGroup();
+			String gb = b.getGroup();
+			int cmp = ga.compareTo(gb);
 			if (cmp == 0) {
-				String ga = a.getGroup();
-				String gb = b.getGroup();
-				cmp = ga.compareTo(gb);
-				if (cmp == 0) {
-					String sa = a.getSeq();
-					String sb = b.getSeq();
-					cmp = sa.compareTo(sb);
-				}
+				String sa = a.getSeq();
+				String sb = b.getSeq();
+				cmp = sa.compareTo(sb);
 			}
 			return cmp;
 		});
@@ -245,7 +240,6 @@ public class PageTester {
 		Page page = this.pageClass.getConstructor().newInstance();
 		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveTestItem.class, null);
 		for (TestItem ci: list) {
-			logger.debug("checkTarget=" + ci.getTargetClass().getName());
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
 			ResultType result = ci.test(page, pt);

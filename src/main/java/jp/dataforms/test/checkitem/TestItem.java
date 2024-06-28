@@ -8,10 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.util.FileUtil;
-import jp.dataforms.test.annotation.CheckItemInfo;
+import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
 import lombok.Setter;
@@ -122,23 +121,11 @@ public abstract class TestItem {
 	
 
 	/**
-	 * チェック対象のクラスを取得します。
-	 * @return チェック対象のクラスを取得します。
-	 */
-	public Class<? extends WebComponent> getTargetClass() {
-		CheckItemInfo a = this.getClass().getAnnotation(CheckItemInfo.class);
-		if (a != null) {
-			return a.target();
-		}
-		return null;
-	}
-	
-	/**
 	 * グループを取得します。
 	 * @return グループを取得します。
 	 */
 	public String getGroup() {
-		CheckItemInfo a = this.getClass().getAnnotation(CheckItemInfo.class);
+		TestItemInfo a = this.getClass().getAnnotation(TestItemInfo.class);
 		if (a != null) {
 			return a.group();
 		}
@@ -151,7 +138,7 @@ public abstract class TestItem {
 	 * @return テスト順を取得します。
 	 */
 	public String getSeq() {
-		CheckItemInfo a = this.getClass().getAnnotation(CheckItemInfo.class);
+		TestItemInfo a = this.getClass().getAnnotation(TestItemInfo.class);
 		if (a != null) {
 			return a.seq();
 		}
@@ -164,7 +151,7 @@ public abstract class TestItem {
 	 * @return 回帰テスト対象フラグ。
 	 */
 	public boolean getRegression() {
-		CheckItemInfo a = this.getClass().getAnnotation(CheckItemInfo.class);
+		TestItemInfo a = this.getClass().getAnnotation(TestItemInfo.class);
 		if (a != null) {
 			return a.regression();
 		} else {
@@ -176,8 +163,8 @@ public abstract class TestItem {
 	 * テスト順を取得します。
 	 * @return テスト順を取得します。
 	 */
-	public CheckItemInfo.Type getType() {
-		CheckItemInfo a = this.getClass().getAnnotation(CheckItemInfo.class);
+	public TestItemInfo.Type getType() {
+		TestItemInfo a = this.getClass().getAnnotation(TestItemInfo.class);
 		return a.type();
 	}
 	

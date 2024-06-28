@@ -3,14 +3,14 @@ package jp.dataforms.test.checkitem.component.page.responsive;
 import org.openqa.selenium.Dimension;
 
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.annotation.CheckItemInfo;
+import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.TestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
  * ページの全面表示テスト。
  */
-@CheckItemInfo(target = Page.class, group = ResponsiveTestItem.GROUP, seq = "005")
+@TestItemInfo(group = ResponsiveTestItem.GROUP, seq = "005")
 public class PageSpTestItem extends ResponsiveTestItem {
 	/**
 	 * テスト条件。

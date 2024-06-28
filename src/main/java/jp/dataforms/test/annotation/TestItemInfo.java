@@ -5,20 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import jp.dataforms.fw.controller.WebComponent;
-
 /**
  * テストターゲット。
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CheckItemInfo {
-	/**
-	 * テスト対象クラスを指定します。
-	 * @return テスト対象クラス。
-	 */
-	Class<? extends WebComponent> target() default WebComponent.class;
-
+public @interface TestItemInfo {
 	/**
 	 * テスト項目のグルーブ名を取得します。
 	 * @return テスト項目のグルーブ名。
