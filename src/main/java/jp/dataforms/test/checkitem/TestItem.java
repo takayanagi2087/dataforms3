@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.controller.Page;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
@@ -25,6 +26,18 @@ public abstract class TestItem {
 	 */
 	private static Logger logger = LogManager.getLogger(TestItem.class);
 	
+	/**
+	 * テスト対象ページクラス。
+	 */
+	@Getter
+	private Class<? extends Page> pageClass = null;
+	
+	/**
+	 * テスト対象コンポーネントクラス。
+	 */
+	@Getter
+	private Class<? extends WebComponent> compClass = null;
+
 	/**
 	 * テストの条件。
 	 */
@@ -111,10 +124,14 @@ public abstract class TestItem {
 	
 	/**
 	 * コンストラクタ。
+	 * @param pageClass ページクラス。
+	 * @param compClass ページクラス。
 	 * @param condition テスト条件。
 	 * @param expected 期待値。
 	 */
-	public TestItem(final String condition, final String expected) {
+	public TestItem(final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass, final String condition, final String expected) {
+		this.pageClass = pageClass;
+		this.compClass = compClass;
 		this.condition = condition;
 		this.expected = expected;
 	}

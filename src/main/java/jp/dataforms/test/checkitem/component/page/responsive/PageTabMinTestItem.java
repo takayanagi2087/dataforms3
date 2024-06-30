@@ -3,6 +3,7 @@ package jp.dataforms.test.checkitem.component.page.responsive;
 import org.openqa.selenium.Dimension;
 
 import jp.dataforms.fw.controller.Page;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.TestElement;
 import jp.dataforms.test.selenium.Browser;
@@ -27,9 +28,11 @@ public class PageTabMinTestItem extends ResponsiveTestItem {
 		""";
 	/**
 	 * コンストラクタ。
+	 * @param pageClass ページクラス。
+	 * @param compClass ページクラス。
 	 */
-	public PageTabMinTestItem() {
-		super(CONDITION, EXPECTED);
+	public PageTabMinTestItem(final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) {
+		super(pageClass, compClass, CONDITION, EXPECTED);
 	}
 	
 	@Override

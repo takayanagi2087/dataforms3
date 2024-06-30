@@ -3,6 +3,7 @@ package jp.dataforms.test.checkitem.component.page.responsive;
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
+import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.checkitem.TestItem;
 import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
@@ -44,11 +45,13 @@ public abstract class ResponsiveTestItem extends TestItem {
 	
 	/**
 	 * コンストラクタ。
+	 * @param pageClass ページクラス。
+	 * @param compClass ページクラス。
 	 * @param condition テスト条件。
 	 * @param expected 期待値。
 	 */
-	public ResponsiveTestItem(final String condition, final String expected) {
-		super(condition, expected);
+	public ResponsiveTestItem(final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass, final String condition, final String expected) {
+		super(pageClass, compClass, condition, expected);
 	}
 	
 	@Override

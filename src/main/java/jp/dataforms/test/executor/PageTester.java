@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
@@ -178,18 +179,46 @@ public class PageTester {
 		this.pageClass = pageClass;
 	}
 	
+	
+	
+	private TestItem getTestItemInstance(Class<?> cls, final Class<? extends Page> pageClass, 
+			final Class<? extends WebComponent> compClass) throws Exception {
+		if (pageClass != null && compClass != null) {
+			TestItem ci = (TestItem) cls.getConstructor(Class.class, Class.class).
+					newInstance(pageClass, compClass);
+			return ci;
+		} else if (pageClass == null && compClass != null) {
+			TestItem ci = (TestItem) cls.getConstructor(Class.class).
+					newInstance(compClass);
+			return ci;
+		} else if (pageClass != null && compClass == null) {
+			TestItem ci = (TestItem) cls.getConstructor(Class.class).
+					newInstance(pageClass);
+			return ci;
+		} else if (pageClass == null && compClass == null) {
+			TestItem ci = (TestItem) cls.getConstructor().
+					newInstance();
+			return ci;
+		}
+		return null;
+	}
+	
+	
+	
 	/**
 	 * 指定された条件のチェック項目を取得します。
 	 * @param basePackage クラスを検索するパッケージ。
 	 * @param baseCheckItem チェック項目の基本クラス。
-	 * @param target ターゲットクラス。
+	 * @param pageClass ページクラス。
+	 * @param compClass ターゲットクラス。
 	 * @return チェック項目リスト。
 	 * @throws Exception 例外。
 	 */
 	public List<TestItem> queryCheckItem(
 			final String basePackage,
 			final Class<? extends TestItem> baseCheckItem, 
-			final Class<? extends WebComponent> target) throws Exception  {
+			final Class<? extends Page> pageClass, 
+			final Class<? extends WebComponent> compClass) throws Exception  {
 		
 		List<TestItem> ret = new ArrayList<TestItem>();
 		ClassFinder cf = new ClassFinder();
@@ -197,7 +226,8 @@ public class PageTester {
 		for (Class<?> cls: list) {
 			TestItemInfo a = cls.getAnnotation(TestItemInfo.class);
 			if (a != null) {
-				TestItem ci = (TestItem) cls.getConstructor().newInstance();
+				logger.debug("TestItemClass=" + cls.getName());
+				TestItem ci = this.getTestItemInstance(cls, pageClass, compClass);
 				ret.add(ci);
 			}
 		}
@@ -226,10 +256,13 @@ public class PageTester {
 
 	/**
 	 * レスポンシブデザインテストを実行します。
+	 * @param pageClass ページクラス。
+	 * @param compClass コンポーネントクラス。
+	 * 
 	 * @return レスポンシブデザインテストの結果リスト。
 	 * @throws Exception 例外。
 	 */
-	protected List<TestItem> checkResponsive() throws Exception {
+	protected List<TestItem> checkResponsive(final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
 		FunctionMap map = FunctionMap.getAppFunctionMap();
 		String uri = map.getWebPath(this.pageClass.getName());
 		logger.info("uri = " + uri);
@@ -238,7 +271,7 @@ public class PageTester {
 		Browser browser = new Browser(bi);
 		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
 		Page page = this.pageClass.getConstructor().newInstance();
-		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveTestItem.class, null);
+		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveTestItem.class, pageClass, compClass);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
@@ -291,7 +324,7 @@ public class PageTester {
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
 		TestItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
-		List<TestItem> list = this.checkResponsive();
+		List<TestItem> list = this.checkResponsive(LoginPage.class, LoginForm.class);
 		this.saveIndexHtml(list);
 		
 	}
