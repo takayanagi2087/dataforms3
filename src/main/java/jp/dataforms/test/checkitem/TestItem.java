@@ -209,7 +209,7 @@ public abstract class TestItem {
 	 * @return 結果の出力先。 
 	 */
 	public String getResultPath() {
-		String path = TestItem.testResult + "/" + this.getGroup(); 
+		String path = TestItem.testResult; 
 		logger.debug("result path=" + path);
 		return path;
 	}
@@ -244,6 +244,25 @@ public abstract class TestItem {
 		return this.getGroup() + "-" + this.getSeq();
 	}
 	
+	/**
+	 * テスト結果を保存するパスを取得します。
+	 * @return テスト結果を保存するパス。
+	 */
+	public String getTestItemPath() {
+		Class<? extends Page> pageClass = this.getPageClass();
+		Class<? extends WebComponent> compClass = this.getCompClass();
+		String resultPath = this.getResultPath() + "/" + pageClass.getName() + "/" + compClass.getSimpleName();
+		return resultPath;
+	}
+	
+	/**
+	 * 結果ファイルのパスを取得します。
+	 * @return 結果ファイルのパス。
+	 */
+	public String getTestItemHtmlPath() {
+		String resultPath = this.getTestItemPath() + "/" + this.getFileName() + ".html";
+		return resultPath;
+	}
 	
 	/**
 	 * 結果の保存処理。
@@ -267,11 +286,11 @@ public abstract class TestItem {
 		templ.replace("result", result.name());
 		templ.replace("attachFiles", this.saveAttachFile(page, testElement, result));
 		logger.debug("html=" + templ.getSource());
-		File dir = new File(this.getResultPath());
+		String resultPath = this.getTestItemHtmlPath();
+		File dir = new File(resultPath).getParentFile();
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		String resultPath = this.getResultPath() + "/" + this.getFileName() + ".html";
 		logger.debug("resultPath=" + resultPath);
 		FileUtil.writeTextFile(resultPath, templ.getSource(), "utf-8");
 	}
@@ -285,7 +304,7 @@ public abstract class TestItem {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\t\t\t\t<tr>");
 		sb.append("<td>" + no + "</td>");
-		String link = "./" + this.getGroup() + "/" + this.getGroup() + "-" + this.getSeq() + ".html";
+		String link = "./" + this.getCompClass().getSimpleName() + "/" + this.getFileName() + ".html";
 		sb.append("<td><a href='" + link + "'>" + this.getGroup() + "-" + this.getSeq() + "</a></td>");
 		sb.append("<td>" + this.getCondition() + "</td>");
 		sb.append("<td>" + this.getExpected() + "</td>");

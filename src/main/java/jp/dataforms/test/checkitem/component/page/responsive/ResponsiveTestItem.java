@@ -56,7 +56,7 @@ public abstract class ResponsiveTestItem extends TestItem {
 	
 	@Override
 	protected String saveAttachFile(Page page, TestElement testElement, ResultType result) throws Exception {
-		String imageFile =  this.getResultPath() + "/" + this.getFileName() + ".png";
+		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
 		String path = testElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);
 		String ret = "<img src='" + f.getName() + "' width='1024'/>";

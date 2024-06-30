@@ -313,8 +313,6 @@ public class Browser {
 		Browser.sleep(2);
 	    File sfile = ((TakesScreenshot) this.webDriver).getScreenshotAs(OutputType.FILE);
 	    
-//	    String result = this.getTester().getTestResult();
-	    
 		logger.debug("screenShot=" + filename);
 
 		File file = new File(filename);

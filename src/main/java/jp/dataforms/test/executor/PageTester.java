@@ -311,7 +311,7 @@ public class PageTester {
 			sb.append(ci.getListRow(no++));
 		}
 		indexTemplate.replace("resultList", sb.toString());
-		String fn = TestItem.getTestResult() + "/index.html";
+		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
 		FileUtil.writeTextFile(fn, indexTemplate.getSource(), "utf-8");
 	}
 	
@@ -323,7 +323,7 @@ public class PageTester {
 		logger.debug("path=" + this.confFile);
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
-		TestItem.setTestResult(this.conf.getTestApp().getTestResult() + "/" + this.pageClass.getName());
+		TestItem.setTestResult(this.conf.getTestApp().getTestResult());
 		List<TestItem> list = this.checkResponsive(LoginPage.class, LoginForm.class);
 		this.saveIndexHtml(list);
 		
