@@ -5,7 +5,7 @@ import java.io.File;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.checkitem.TestItem;
-import jp.dataforms.test.component.TestElement;
+import jp.dataforms.test.component.PageTestElement;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -55,9 +55,9 @@ public abstract class ResponsiveTestItem extends TestItem {
 	}
 	
 	@Override
-	protected String saveAttachFile(Page page, TestElement testElement, ResultType result) throws Exception {
+	protected String saveAttachFile(Page page, PageTestElement pageTestElement, ResultType result) throws Exception {
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
-		String path = testElement.getBrowser().saveScreenShot(imageFile);
+		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);
 		String ret = "<img src='" + f.getName() + "' width='1024'/>";
 		return ret;

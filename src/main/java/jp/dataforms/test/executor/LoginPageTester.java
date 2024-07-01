@@ -10,7 +10,6 @@ import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.checkitem.TestItem;
-import jp.dataforms.test.checkitem.TestItem.ResultType;
 import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
@@ -41,8 +40,7 @@ public class LoginPageTester extends PageTester {
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
-			ResultType result = ci.test(page, pt);
-			ci.saveResult(page, pt, result);
+			ci.exec(page, pt);
 			Browser.sleep(1);
 		}
 		return list;

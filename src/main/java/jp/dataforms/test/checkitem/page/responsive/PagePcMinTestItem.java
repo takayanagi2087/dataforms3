@@ -36,7 +36,7 @@ public class PagePcMinTestItem extends ResponsiveTestItem {
 	}
 	
 	@Override
-	public ResultType  test(final Page page, final PageTestElement pageTestElement) throws Exception {
+	protected ResultType  test(final Page page, final PageTestElement pageTestElement) throws Exception {
 		Browser b = pageTestElement.getBrowser();
 		b.setClientSize(new Dimension(PC_MIN_WIDTH, ResponsiveTestItem.getHeight()));
 		

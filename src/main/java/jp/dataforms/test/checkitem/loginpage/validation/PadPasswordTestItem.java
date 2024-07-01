@@ -9,7 +9,6 @@ import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.AlertDialogTestElement;
 import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
-import jp.dataforms.test.component.TestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
@@ -46,9 +45,13 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 	
 	
 	@Override
-	public ResultType test(Page page, PageTestElement pageTestElement) throws Exception {
+	protected PageTestElement start(Page page, PageTestElement pageTestElement) throws Exception {
 		Browser browser = pageTestElement.getBrowser();
-		pageTestElement = browser.reload();
+		return browser.reload();
+	}
+	
+	@Override
+	protected ResultType test(Page page, PageTestElement pageTestElement) throws Exception {
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue("user");
 		f.getField("password").setValue("PadPassword");
@@ -62,14 +65,18 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 		} else {
 			ret = ResultType.SYSTEM_NG;
 		}
-//		pageTestElement.getAlertDialog().clickOkButton();
 		return ret;
 	}
 
 	@Override
-	protected String saveAttachFile(Page page, TestElement testElement, ResultType result) throws Exception {
+	protected void finish(Page page, PageTestElement pageTestElement) throws Exception {
+		pageTestElement.getAlertDialog().clickOkButton();
+	}
+	
+	@Override
+	protected String saveAttachFile(Page page, PageTestElement pageTestElement, ResultType result) throws Exception {
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
-		String path = testElement.getBrowser().saveScreenShot(imageFile);
+		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);
 		String ret = "<img src='" + f.getName() + "' width='1024'/>";
 		return ret;

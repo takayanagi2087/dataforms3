@@ -12,7 +12,6 @@ import jp.dataforms.test.annotation.TestItemInfo.Type;
 import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
-import jp.dataforms.test.component.TestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
@@ -49,7 +48,7 @@ public class LoginIdOnlyValidationTestItem extends LoginFormTestItem {
 	
 	
 	@Override
-	public ResultType test(Page page, final PageTestElement pageTestElement) throws Exception {
+	protected ResultType test(Page page, final PageTestElement pageTestElement) throws Exception {
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue("user");
 		f.getButton("loginButton").click();
@@ -66,9 +65,9 @@ public class LoginIdOnlyValidationTestItem extends LoginFormTestItem {
 	}
 
 	@Override
-	protected String saveAttachFile(Page page, TestElement testElement, ResultType result) throws Exception {
+	protected String saveAttachFile(Page page, PageTestElement pageTestElement, ResultType result) throws Exception {
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
-		String path = testElement.getBrowser().saveScreenShot(imageFile);
+		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);
 		String ret = "<img src='" + f.getName() + "' width='1024'/>";
 		return ret;
