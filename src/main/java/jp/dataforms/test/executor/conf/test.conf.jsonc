@@ -43,4 +43,19 @@
 		// テスト結果の保存パス
 		, "testResult": "C:/eclipse/pleiades/workspace/sample"
 	}
+	// テストに使用するユーザ。
+	, "testUser": {
+		// 管理者
+		"admin": {
+			"loginId": "admin",
+			"password": "admin"
+			
+		},
+		// ユーザ
+		"user": {
+			"loginId": "user",
+			"password": "user"
+			
+		}
+	}
 }

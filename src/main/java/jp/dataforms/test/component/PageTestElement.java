@@ -1,6 +1,7 @@
 package jp.dataforms.test.component;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.selenium.Browser;
 
 /**
@@ -45,8 +45,10 @@ public class PageTestElement extends DataFormsTestElement {
 	public DialogTestElement getDialog(final String id, final Class<? extends DialogTestElement> cls) {
 		try {
 			WebElement element = this.getWebElement().findElement(By.xpath("//div[@data-id='" + id + "']"));
-			DialogTestElement form = cls.getConstructor(Browser.class, WebComponent.class, WebElement.class).newInstance(this.getBrowser(), this, element);
-			return form;
+			DialogTestElement dialog = cls
+					.getConstructor(Browser.class, TestElement.class, WebElement.class)
+					.newInstance(this.getBrowser(), this, element);
+			return dialog;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 		}
@@ -99,4 +101,27 @@ public class PageTestElement extends DataFormsTestElement {
 		element.click();
 	}
 
+	/**
+	 * エラーメッセージを取得します。
+	 * @return エラーメッセージ。
+	 */
+	public String getErrorMessage() {
+		String message = this.findWebElement(By.id("errorMessages")).getText().trim();
+		return message;
+	}
+	
+	/**
+	 * エラーメッセージリストを取得します。
+	 * @return エラーメッセージリスト。
+	 */
+	public List<String> getErrorMessageList() {
+		List<String> list = new ArrayList<String>();
+		String message = this.findWebElement(By.id("errorMessages")).getText().trim();
+		String[] sp = message.split("\n");
+		for (int i = 0; i < sp.length; i++) {
+			list.add(sp[i].trim());
+		}
+		return list;
+	}
+	
 }

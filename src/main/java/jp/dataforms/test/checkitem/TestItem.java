@@ -12,6 +12,7 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
+import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.component.TestElement;
 import lombok.Getter;
 import lombok.Setter;
@@ -189,11 +190,11 @@ public abstract class TestItem {
 	 * テストを実行します。
 	 * 
 	 * @param page ページクラスのインスタンス。
-	 * @param testElement テスト要素。
+	 * @param pageTestElement ページのテスト要素。
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	public abstract ResultType test(final Page page, final TestElement testElement) throws Exception;
+	public abstract ResultType test(final Page page, final PageTestElement pageTestElement) throws Exception;
 	
 	
 	/**

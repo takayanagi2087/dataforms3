@@ -7,8 +7,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.app.login.page.LoginForm;
-import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
@@ -19,7 +17,7 @@ import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.checkitem.TestItem;
 import jp.dataforms.test.checkitem.TestItem.ResultType;
-import jp.dataforms.test.checkitem.component.page.responsive.ResponsiveTestItem;
+import jp.dataforms.test.checkitem.page.responsive.ResponsiveTestItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
@@ -29,7 +27,7 @@ import lombok.Getter;
 /**
  * テスト実行ツール。
  */
-public class PageTester {
+public abstract class PageTester {
 	/**
 	 * Logger.
 	 */
@@ -125,6 +123,21 @@ public class PageTester {
 	}
 	
 	/**
+	 * テストに使用するUser。
+	 */
+	@Data
+	public static class TestUser {
+		/**
+		 * LoginID。
+		 */
+		String loginId = null;
+		/**
+		 * パスワード。
+		 */
+		String password = null;
+	}
+	
+	/**
 	 * テスト設定情報。
 	 */
 	@Data
@@ -137,6 +150,11 @@ public class PageTester {
 		 * テスト対象アプリケーション情報。
 		 */
 		private WebApplication testApp = null;
+		
+		/**
+		 * ユーザリスト。
+		 */
+		private List<TestUser> userList = null;
 		/**
 		 * コンストラクタ。
 		 */
@@ -180,7 +198,14 @@ public class PageTester {
 	}
 	
 	
-	
+	/**
+	 * テスト項目のインスタンスを取得します。
+	 * @param cls テスト項目のクラス。
+	 * @param pageClass ページクラス。
+	 * @param compClass テスト対象コンポーネントクラス。
+	 * @return テスト項目のインスタンス。
+	 * @throws Exception 例外。
+	 */
 	private TestItem getTestItemInstance(Class<?> cls, final Class<? extends Page> pageClass, 
 			final Class<? extends WebComponent> compClass) throws Exception {
 		if (pageClass != null && compClass != null) {
@@ -254,24 +279,42 @@ public class PageTester {
 		});
 	}
 
+	
+	/**
+	 * ブラウザを取得します。
+	 * @return ブラウザ。
+	 * @throws Exception 例外。
+	 */
+	protected Browser getBrowser() throws Exception {
+		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
+		Browser browser = new Browser(bi);
+		return browser;
+	}
+	
+	
+	/**
+	 * ページのインスタンスを取得します。
+	 * @return ページのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	protected Page getPageInstance() throws Exception {
+		Page page = this.pageClass.getConstructor().newInstance();
+		return page;
+	}
+	
 	/**
 	 * レスポンシブデザインテストを実行します。
+	 * @param pt ページテスト要素。
 	 * @param pageClass ページクラス。
 	 * @param compClass コンポーネントクラス。
 	 * 
 	 * @return レスポンシブデザインテストの結果リスト。
 	 * @throws Exception 例外。
 	 */
-	protected List<TestItem> checkResponsive(final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
-		FunctionMap map = FunctionMap.getAppFunctionMap();
-		String uri = map.getWebPath(this.pageClass.getName());
-		logger.info("uri = " + uri);
+	protected List<TestItem> testResponsive(final PageTestElement pt, final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
+		Page page = this.getPageInstance();
 		ResponsiveTestItem.setHeight(540);
-		BrowserInfo bi = this.conf.getSelenium().getBrowserInfo();
-		Browser browser = new Browser(bi);
-		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
-		Page page = this.pageClass.getConstructor().newInstance();
-		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.component", ResponsiveTestItem.class, pageClass, compClass);
+		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.page", ResponsiveTestItem.class, pageClass, compClass);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
@@ -279,7 +322,6 @@ public class PageTester {
 			ci.saveResult(page, pt, result);
 			Browser.sleep(1);
 		}
-		browser.close();
 		return list;
 	}
 	
@@ -316,20 +358,37 @@ public class PageTester {
 	}
 	
 	/**
-	 * テスト実行。
-	 * @throws Exception 例外。
+	 * 設定ファイルをﾖ見込みます。
+	 * @throws Exception 例外。　
 	 */
-	public void exec() throws Exception {
+	public void readConf() throws Exception {
 		logger.debug("path=" + this.confFile);
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
-		TestItem.setTestResult(this.conf.getTestApp().getTestResult());
-		List<TestItem> list = this.checkResponsive(LoginPage.class, LoginForm.class);
-		this.saveIndexHtml(list);
-		
 	}
 	
+
+	/**
+	 * ページをオープンします。
+	 * @param browser ブラウザ。
+	 * @return オープンしたページ要素。
+	 * @throws Exception 例外。
+	 */
+	protected PageTestElement openPage(Browser browser) throws Exception {
+		FunctionMap map = FunctionMap.getAppFunctionMap();
+		String uri = map.getWebPath(this.pageClass.getName());
+		logger.info("uri = " + uri);
+		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
+		return pt;
+	}
+
 	
+	/**
+	 * テスト実行。
+	 * @throws Exception 例外。
+	 */
+	public abstract void exec() throws Exception;
+
 	/**
 	 * メイン処理。
 	 * @param args コマンドライン。
@@ -338,12 +397,12 @@ public class PageTester {
 	 * args[1]	... テストURI。
 	 * </pre>
 	 */
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 		try {
 			PageTester exec = new PageTester(args[0], LoginPage.class);
 			exec.exec();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-	}
+	}*/
 }

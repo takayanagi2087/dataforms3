@@ -30,6 +30,15 @@ public class AlertDialogTestElement extends DialogTestElement {
 	}
 
 	/**
+	 * メッセージを取得します。
+	 * @return メッセージ。
+	 */
+	public String getMessage() {
+		String text = this.findWebElement(By.id("mainDiv.alertDialog.alertMessage")).getText().trim();
+		return text;
+	}
+	
+	/**
 	 * ボタンをクリックします。
 	 */
 	public void clickOkButton() {

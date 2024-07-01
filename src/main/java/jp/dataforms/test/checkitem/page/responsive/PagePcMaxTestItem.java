@@ -1,9 +1,9 @@
-package jp.dataforms.test.checkitem.component.page.responsive;
+package jp.dataforms.test.checkitem.page.responsive;
 
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.test.annotation.TestItemInfo;
-import jp.dataforms.test.component.TestElement;
+import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
@@ -34,8 +34,8 @@ public class PagePcMaxTestItem extends ResponsiveTestItem {
 	}
 	
 	@Override
-	public ResultType  test(final Page page, final TestElement tester) throws Exception {
-		Browser b = tester.getBrowser();
+	public ResultType  test(final Page page, final PageTestElement pageTestElement) throws Exception {
+		Browser b = pageTestElement.getBrowser();
 		b.maximize();
 		return ResultType.USER_CHECK;
 	}

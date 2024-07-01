@@ -334,12 +334,15 @@ public class Browser {
 
 	/**
 	 * ブラウザのリロードを行います。
+	 * @return ページのテスト要素。
 	 */
-	public void reload() {
+	public PageTestElement reload() {
 		this.webDriver.navigate().refresh();
 		Browser.sleep(5);
 		By locator = By.xpath("//body");
 		this.waitVisibility(locator);
+		WebElement element = this.webDriver.findElement(By.xpath("//body"));
+		return new PageTestElement(this, null, element);
 	}
 
 	/**
