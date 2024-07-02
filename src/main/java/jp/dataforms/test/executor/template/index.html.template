@@ -11,7 +11,7 @@
 		class TestResult {
 			#testResult = 
 // ### testResult begin
-${resultList};
+${resultList}
 // ### testResult end
 			/**
 			 * テスト項目リストを表示する。

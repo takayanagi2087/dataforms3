@@ -358,7 +358,7 @@ public abstract class TestItem {
 		/**
 		 * テストタイプ。
 		 */
-		private TestItemInfo.Type testType = null;
+		private String testType = null;
 		/**
 		 * 結果詳細HTMLリンク。
 		 */
@@ -397,7 +397,7 @@ public abstract class TestItem {
 	public TestItemResult getTestItemResult() {
 		TestItemResult ret = new TestItemResult();
 
-		ret.setTestType(this.getType());
+		ret.setTestType(this.getType().name());
 		String link = "./" + this.getCompClass().getSimpleName() + "/" + this.getFileName() + ".html";
 		ret.setLink(link);
 		ret.setCompClass(this.getCompClass().getSimpleName());

@@ -2,9 +2,7 @@ package jp.dataforms.test.executor;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -341,30 +339,6 @@ public abstract class PageTester {
 	}
 
 	/**
-	 * index.htmlからテスト結果のjson部分を取得します。
-	 * @return テスト結果のjson部分。
-	 * @throws Exception 例外。
-	 */
-	@SuppressWarnings("unchecked")
-	protected Map<String, Object> readTestResult() throws Exception {
-		Page page = this.pageClass.getConstructor().newInstance();
-		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
-		File f = new File(fn);
-		Map<String, Object> ret = null;
-		if (f.exists()) {
-			String indexHtml = FileUtil.readTextFile(fn, "utf-8");
-			logger.debug("indexHtml=" + indexHtml);
-			Pattern p = Pattern.compile("// ### testResult begin([\\s\\S]*)// ### testResult end", Pattern.MULTILINE);
-			Matcher m = p.matcher(indexHtml);
-			if (m.find()) {
-				String json = m.group(1);
-				ret = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
-			}
-		}
-		return ret;
-	}
-	
-	/**
 	 * ページのテスト結果情報のクラス。
 	 */
 	@Data
@@ -383,6 +357,32 @@ public abstract class PageTester {
 		 */
 		private List<TestItemResult> testItemList = null;
 	}
+	
+	
+	/**
+	 * index.htmlからテスト結果のjson部分を取得します。
+	 * @return テスト結果のjson部分。
+	 * @throws Exception 例外。
+	 */
+	protected PageTestResult readTestResult() throws Exception {
+		Page page = this.pageClass.getConstructor().newInstance();
+		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
+		File f = new File(fn);
+		PageTestResult ret = null;
+		if (f.exists()) {
+			String indexHtml = FileUtil.readTextFile(fn, "utf-8");
+			logger.debug("indexHtml=" + indexHtml);
+			Pattern p = Pattern.compile("// ### testResult begin([\\s\\S]*)// ### testResult end", Pattern.MULTILINE);
+			Matcher m = p.matcher(indexHtml);
+			if (m.find()) {
+				String json = m.group(1);
+				logger.debug("*** json=" + json);
+				ret = (PageTestResult) JsonUtil.decode(json, PageTestResult.class);
+			}
+		}
+		return ret;
+	}
+	
 	
 	
 	/**

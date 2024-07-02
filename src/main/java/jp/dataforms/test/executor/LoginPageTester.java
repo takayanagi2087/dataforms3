@@ -61,8 +61,8 @@ public class LoginPageTester extends PageTester {
 		List<TestItem> list = new ArrayList<TestItem>();
 		list.addAll(this.testResponsive(pt, LoginPage.class, LoginForm.class));
 		list.addAll(this.testValidation(pt));
-//		Map<String, Object> result = this.readTestResult();
-//		logger.debug("*** old result=" + result);
+		PageTestResult result = this.readTestResult();
+		logger.debug("*** old result=" + result);
 		// this.getResultJson(list);
 		this.saveIndexHtml(list);
 		browser.close();
