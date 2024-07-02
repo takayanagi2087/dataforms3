@@ -387,7 +387,12 @@ public abstract class TestItem {
 		 * テスト日時。
 		 */
 		private String result = null;
-		
+		/**
+		 * コンストラクタ。
+		 */
+		public TestItemResult() {
+			
+		}
 	}
 
 	/**

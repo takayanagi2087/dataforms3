@@ -132,11 +132,18 @@ public abstract class PageTester {
 		/**
 		 * LoginID。
 		 */
-		String loginId = null;
+		private  String loginId = null;
 		/**
 		 * パスワード。
 		 */
-		String password = null;
+		private String password = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public TestUser() {
+			
+		}
 	}
 	
 	/**
@@ -356,15 +363,66 @@ public abstract class PageTester {
 		 * テスト項目リスト。
 		 */
 		private List<TestItemResult> testItemList = null;
+		
+		/**
+		 * コンストラクタ。
+		 */
+		public PageTestResult() {
+			this.testItemList = new ArrayList<TestItemResult>();
+		}
+		
+		/**
+		 * テスト結果を検索します。
+		 * @param item テスト項目結果。
+		 * @return ヒットしたインデックス。
+		 */
+		public int find(final TestItemResult item) {
+			int ret = -1;
+			for (int i = 0; i < this.testItemList.size(); i++) {
+				TestItemResult r = this.testItemList.get(i);
+				if (r.getLink().equals(item.getLink())) {
+					ret = i;
+					break;
+				}
+			}
+			return ret;
+		}
+		
+		/**
+		 * テスト結果を更新します。
+		 * @param list 新規テスト結果リスト。
+		 */
+		public void update(final List<TestItemResult> list) {
+			for (int i = 0; i < list.size(); i++) {
+				int idx = this.find(list.get(i));
+				if (idx >= 0) {
+					this.testItemList.set(idx, list.get(i));
+				} else {
+					this.testItemList.add(list.get(i));
+				}
+			}
+			this.testItemList.sort((a, b) -> {
+				String ga = a.getCompClass();
+				String gb = b.getCompClass();
+				int cmp = ga.compareTo(gb);
+				if (cmp == 0) {
+					String sa = a.getTestId();
+					String sb = b.getTestId();
+					cmp = sa.compareTo(sb);
+				}
+				return cmp;
+			});
+
+		}
 	}
 	
 	
 	/**
-	 * index.htmlからテスト結果のjson部分を取得します。
+	 * index.htmlから既存のテスト結果を取得します。
 	 * @return テスト結果のjson部分。
 	 * @throws Exception 例外。
 	 */
-	protected PageTestResult readTestResult() throws Exception {
+	protected PageTestResult readOldTestResult() throws Exception {
 		Page page = this.pageClass.getConstructor().newInstance();
 		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
 		File f = new File(fn);
@@ -386,12 +444,12 @@ public abstract class PageTester {
 	
 	
 	/**
-	 * テスト結果の保存処理。
+	 * 保存するページのテスト結果を作成します。
 	 * @param list テスト結果リスト。
-	 * @return JSON形式の結果。
+	 * @return ページのテスト結果。
 	 * @throws Exception 例外。
 	 */
-	protected String getResultJson(final List<TestItem> list) throws Exception {
+	protected PageTestResult getPageTestResult(final List<TestItem> list) throws Exception {
 		Page page = this.pageClass.getConstructor().newInstance();
 		List<TestItemResult> testItemList = new ArrayList<TestItemResult>();
 		for (TestItem ti: list) {
@@ -401,10 +459,7 @@ public abstract class PageTester {
 		result.setPageName(page.getPageName());
 		result.setPageClassName(page.getClass().getName());
 		result.setTestItemList(testItemList);
-		String ret = JsonUtil.encode(result, true);
-		logger.debug("getResultJson=" + ret);
-		return ret;
-		
+		return result;
 	}
 	
 	
@@ -414,6 +469,15 @@ public abstract class PageTester {
 	 * @throws Exception 例外。
 	 */
 	protected void saveIndexHtml(final List<TestItem> list) throws Exception {
+		PageTestResult newResult = this.getPageTestResult(list);
+		PageTestResult result = this.readOldTestResult();
+		if (result == null) {
+			result = newResult;
+		} else {
+			result.update(newResult.getTestItemList());
+		}
+		String json = JsonUtil.encode(result, true);
+		
 		Template indexTemplate = this.getTemplate();
 		Page page = this.pageClass.getConstructor().newInstance();
 		String source = indexTemplate.getSource();
@@ -422,7 +486,7 @@ public abstract class PageTester {
 		if (m.find()) {
 			int s = m.start();
 			int e = m.end();
-			source = source.substring(0, s) + this.getResultJson(list) + source.substring(e);
+			source = source.substring(0, s) + json + source.substring(e);
 		}
 		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
 		FileUtil.writeTextFile(fn, source, "utf-8");
