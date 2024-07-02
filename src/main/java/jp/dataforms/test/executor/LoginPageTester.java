@@ -1,6 +1,8 @@
 package jp.dataforms.test.executor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,10 +11,10 @@ import org.openqa.selenium.Dimension;
 import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.checkitem.TestItem;
-import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
+import jp.dataforms.test.testitem.TestItem;
+import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
 
 /**
  * ログインページテスター。
@@ -31,12 +33,17 @@ public class LoginPageTester extends PageTester {
 		super(confFile, LoginPage.class);
 	}
 	
-	
+	/**
+	 * バリデージョンのテスト。
+	 * @param pt ページのテスト要素。
+	 * @return テスト結果リスト。
+	 * @throws Exception 例外。
+	 */
 	private List<TestItem> testValidation(final PageTestElement pt) throws Exception {
 		Page page = this.getPageInstance();
 		Browser b = pt.getBrowser();
 		b.setClientSize(new Dimension(1024, 540));
-		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.loginpage", LoginFormTestItem.class, null, null);
+		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.loginpage", LoginFormTestItem.class, null, null);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
@@ -52,8 +59,13 @@ public class LoginPageTester extends PageTester {
 		TestItem.setTestResult(this.getConf().getTestApp().getTestResult());
 		Browser browser = this.getBrowser();
 		PageTestElement pt = openPage(browser);
-		this.testResponsive(pt, LoginPage.class, LoginForm.class);
-		this.testValidation(pt);
+		List<TestItem> list = new ArrayList<TestItem>();
+		list.addAll(this.testResponsive(pt, LoginPage.class, LoginForm.class));
+		list.addAll(this.testValidation(pt));
+//		Map<String, Object> result = this.readTestResult();
+//		logger.debug("*** old result=" + result);
+		// this.getResultJson(list);
+		this.saveIndexHtml(list);
 		browser.close();
 	}
 	

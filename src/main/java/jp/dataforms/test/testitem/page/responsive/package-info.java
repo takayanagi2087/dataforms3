@@ -1,4 +1,4 @@
 /**
  * レスポンシブデザインテスト項目パッケージ。
  */
-package jp.dataforms.test.checkitem.page.responsive;
+package jp.dataforms.test.testitem.page.responsive;

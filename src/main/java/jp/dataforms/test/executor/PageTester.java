@@ -2,7 +2,11 @@ package jp.dataforms.test.executor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,11 +19,11 @@ import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
-import jp.dataforms.test.checkitem.TestItem;
-import jp.dataforms.test.checkitem.page.responsive.ResponsiveTestItem;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
+import jp.dataforms.test.testitem.TestItem;
+import jp.dataforms.test.testitem.page.responsive.ResponsiveTestItem;
 import lombok.Data;
 import lombok.Getter;
 
@@ -313,7 +317,7 @@ public abstract class PageTester {
 	protected List<TestItem> testResponsive(final PageTestElement pt, final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
 		Page page = this.getPageInstance();
 		ResponsiveTestItem.setHeight(540);
-		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.checkitem.page", ResponsiveTestItem.class, pageClass, compClass);
+		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.page", ResponsiveTestItem.class, pageClass, compClass);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
@@ -331,10 +335,56 @@ public abstract class PageTester {
 	 * @throws Exception 例外。
 	 */
 	protected Template getTemplate() throws Exception {
-		Template tmp = new Template(PageTester.class, "template/index.html");
+		Template tmp = new Template(PageTester.class, "template/index.html.template");
 		return tmp;
 	}
 
+	/**
+	 * index.htmlからテスト結果のjson部分を取得します。
+	 * @return テスト結果のjson部分。
+	 * @throws Exception 例外。
+	 */
+	@SuppressWarnings("unchecked")
+	protected Map<String, Object> readTestResult() throws Exception {
+		Page page = this.pageClass.getConstructor().newInstance();
+		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
+		File f = new File(fn);
+		Map<String, Object> ret = null;
+		if (f.exists()) {
+			String indexHtml = FileUtil.readTextFile(fn, "utf-8");
+			logger.debug("indexHtml=" + indexHtml);
+			Pattern p = Pattern.compile("// ### testResult begin([\\s\\S]*)// ### testResult end", Pattern.MULTILINE);
+			Matcher m = p.matcher(indexHtml);
+			if (m.find()) {
+				String json = m.group(1);
+				ret = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * テスト結果の保存処理。
+	 * @param list テスト結果リスト。
+	 * @return JSON形式の結果。
+	 * @throws Exception 例外。
+	 */
+	protected String getResultJson(final List<TestItem> list) throws Exception {
+		Page page = this.pageClass.getConstructor().newInstance();
+		List<Map<String, Object>> testItemList = new ArrayList<Map<String, Object>>();
+		for (TestItem ti: list) {
+			testItemList.add(ti.getResultMap());
+		}
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("pageName", page.getPageName());
+		result.put("pageClassName", page.getClass().getName());
+		result.put("testItemList", testItemList);
+		String ret = JsonUtil.encode(result, true);
+		logger.debug("getResultJson=" + ret);
+		return ret;
+		
+	}
+	
 	
 	/**
 	 * テスト結果リストindex.htmlの作成。
@@ -344,17 +394,16 @@ public abstract class PageTester {
 	protected void saveIndexHtml(final List<TestItem> list) throws Exception {
 		Template indexTemplate = this.getTemplate();
 		Page page = this.pageClass.getConstructor().newInstance();
-		indexTemplate.replace("pageName", page.getPageName());
-		String pageClassName = this.pageClass.getName();
-		indexTemplate.replace("pageClass", pageClassName);
-		StringBuilder sb = new StringBuilder();
-		int no = 1;
-		for (TestItem ci: list) {
-			sb.append(ci.getListRow(no++));
+		String source = indexTemplate.getSource();
+		Pattern p = Pattern.compile("\\$\\{resultList\\}");
+		Matcher m = p.matcher(indexTemplate.getSource());
+		if (m.find()) {
+			int s = m.start();
+			int e = m.end();
+			source = source.substring(0, s) + this.getResultJson(list) + source.substring(e);
 		}
-		indexTemplate.replace("resultList", sb.toString());
 		String fn = TestItem.getTestResult() + "/" + page.getClass().getName() + "/index.html";
-		FileUtil.writeTextFile(fn, indexTemplate.getSource(), "utf-8");
+		FileUtil.writeTextFile(fn, source, "utf-8");
 	}
 	
 	/**

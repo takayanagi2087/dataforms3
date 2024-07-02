@@ -1,15 +1,15 @@
-package jp.dataforms.test.checkitem.loginpage.validation;
+package jp.dataforms.test.testitem.loginpage.validation;
 
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.annotation.TestItemInfo.Type;
-import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.AlertDialogTestElement;
 import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
+import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
 
 /**
  * LoginFormのバリデーション。
@@ -33,7 +33,6 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 	 */
 	private static final String EXPECTED = """
 		「ユーザIDまたはパスワードが違います。」というメッセージが表示されること。
-				
 		""";
 
 	/**

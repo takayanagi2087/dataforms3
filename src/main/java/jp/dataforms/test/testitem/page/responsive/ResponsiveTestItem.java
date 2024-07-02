@@ -1,11 +1,11 @@
-package jp.dataforms.test.checkitem.page.responsive;
+package jp.dataforms.test.testitem.page.responsive;
 
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
-import jp.dataforms.test.checkitem.TestItem;
 import jp.dataforms.test.component.PageTestElement;
+import jp.dataforms.test.testitem.TestItem;
 import lombok.Getter;
 import lombok.Setter;
 

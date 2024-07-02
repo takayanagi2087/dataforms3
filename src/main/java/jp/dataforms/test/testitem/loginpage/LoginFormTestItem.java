@@ -1,8 +1,8 @@
-package jp.dataforms.test.checkitem.loginpage;
+package jp.dataforms.test.testitem.loginpage;
 
 import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
-import jp.dataforms.test.checkitem.TestItem;
+import jp.dataforms.test.testitem.TestItem;
 
 /**
  * LoginPage, LoginFormのテスト項目。

@@ -1,4 +1,4 @@
-package jp.dataforms.test.checkitem.loginpage.validation;
+package jp.dataforms.test.testitem.loginpage.validation;
 
 import java.io.File;
 import java.util.List;
@@ -9,10 +9,10 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.annotation.TestItemInfo.Type;
-import jp.dataforms.test.checkitem.loginpage.LoginFormTestItem;
 import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
+import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
 
 /**
  * LoginFormのバリデーション。
@@ -36,7 +36,6 @@ public class LoginIdOnlyValidationTestItem extends LoginFormTestItem {
 	 */
 	private static final String EXPECTED = """
 		「パスワードが入力されていません。」「パスキーが入力されていません。」というメッセージが表示されること。
-				
 		""";
 
 	/**

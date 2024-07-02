@@ -1,4 +1,4 @@
 /**
  * 各種コンポーネントのテスト項目パッケージ。
  */
-package jp.dataforms.test.checkitem.page;
+package jp.dataforms.test.testitem.page;

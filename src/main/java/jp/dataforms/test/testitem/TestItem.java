@@ -1,8 +1,10 @@
-package jp.dataforms.test.checkitem;
+package jp.dataforms.test.testitem;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -347,6 +349,22 @@ public abstract class TestItem {
 		sb.append("<td>" + this.getCheckResult().name() + "</td>");
 		sb.append("</tr>\n");
 		return sb.toString();
+	}
+	
+	/**
+	 * 結果マップを取得します。
+	 * @return 結果マップ。
+	 */
+	public Map<String, Object> getResultMap() {
+		Map<String, Object> ret = new HashMap<String, Object>();
+		String link = "./" + this.getCompClass().getSimpleName() + "/" + this.getFileName() + ".html";
+		ret.put("link", link);
+		ret.put("testId", this.getGroup() + "-" + this.getSeq());
+		ret.put("condition", this.getCondition());
+		ret.put("expected", this.getExpected());
+		ret.put("testDate", this.getTestDateText());
+		ret.put("checkResult", this.getCheckResult().name());
+		return ret;
 	}
 }
 

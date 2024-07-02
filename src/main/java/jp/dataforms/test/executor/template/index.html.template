@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+	<html>
+		<head>
+		<meta charset="UTF-8">
+		<title>TestResult</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script type="module">
+		/**
+		 * テスト結果操作クラス。
+		 */
+		class TestResult {
+			#testResult = 
+// ### testResult begin
+${resultList};
+// ### testResult end
+			/**
+			 * テスト項目リストを表示する。
+			 */
+			#showTestItemList() {
+				let no = 1;
+				let row = "";
+				for (let i = 0; i < this.#testResult.testItemList.length; i++) {
+					let item = this.#testResult.testItemList[i];
+					row += "<tr class='" + item.checkResult + "'>";
+					row += "<td>" + (no++) + "</td>";
+					row += "<td><a href='" + item.link +  "'>" + item.link + "</a></td>";
+					row += "<td>" + item.condition + "</td>";
+					row += "<td>" + item.expected + "</td>";
+					row += "<td>" + item.testDate + "</td>";
+					row += "<td>" + item.checkResult + "</td>";
+					row += "</tr>";
+				}
+				$("table#testItemList tbody").html(row);
+			}
+			
+			/**
+			 * ページにテスト結果を表示します。
+			 */
+			showTestResult() {
+				$("#pageName").text(this.#testResult.pageName);
+				$("#pageClassName").text(this.#testResult.pageClassName);
+				this.#showTestItemList();
+			}
+		}
+			
+		$(async () => {
+			let r = new TestResult();
+			r.showTestResult();
+		});
+			
+		</script>
+	</head>
+	<body>
+		<table>
+			<tbody>
+				<tr>
+					<th>ページ名称</th>
+					<td id="pageName"></td>
+				</tr>
+				<tr>
+					<th>ページクラス</th>
+					<td id="pageClassName"></td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="testItemList">
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>TEST ID</th>
+					<th>テスト条件</th>
+					<th>期待値</th>
+					<th>テスト日時</th>
+					<th>結果</th>
+				</tr>
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+	</body>
+</html>
