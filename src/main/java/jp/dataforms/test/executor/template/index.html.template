@@ -27,7 +27,7 @@ ${resultList};
 					row += "<td>" + item.condition + "</td>";
 					row += "<td>" + item.expected + "</td>";
 					row += "<td>" + item.testDate + "</td>";
-					row += "<td>" + item.checkResult + "</td>";
+					row += "<td>" + item.result  + "</td>";
 					row += "</tr>";
 				}
 				$("table#testItemList tbody").html(row);

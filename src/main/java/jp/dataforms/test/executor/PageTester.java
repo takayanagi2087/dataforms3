@@ -23,6 +23,7 @@ import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.selenium.BrowserInfo;
 import jp.dataforms.test.testitem.TestItem;
+import jp.dataforms.test.testitem.TestItem.TestItemResult;
 import jp.dataforms.test.testitem.page.responsive.ResponsiveTestItem;
 import lombok.Data;
 import lombok.Getter;
@@ -364,6 +365,27 @@ public abstract class PageTester {
 	}
 	
 	/**
+	 * ページのテスト結果情報のクラス。
+	 */
+	@Data
+	public static class PageTestResult {
+		/**
+		 * ページ名称。
+		 */
+		public String pageName = null;
+		/**
+		 * ページクラス名。
+		 */
+		public String pageClassName = null;
+		
+		/**
+		 * テスト項目リスト。
+		 */
+		private List<TestItemResult> testItemList = null;
+	}
+	
+	
+	/**
 	 * テスト結果の保存処理。
 	 * @param list テスト結果リスト。
 	 * @return JSON形式の結果。
@@ -371,14 +393,14 @@ public abstract class PageTester {
 	 */
 	protected String getResultJson(final List<TestItem> list) throws Exception {
 		Page page = this.pageClass.getConstructor().newInstance();
-		List<Map<String, Object>> testItemList = new ArrayList<Map<String, Object>>();
+		List<TestItemResult> testItemList = new ArrayList<TestItemResult>();
 		for (TestItem ti: list) {
-			testItemList.add(ti.getResultMap());
+			testItemList.add(ti.getTestItemResult());
 		}
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("pageName", page.getPageName());
-		result.put("pageClassName", page.getClass().getName());
-		result.put("testItemList", testItemList);
+		PageTestResult result = new PageTestResult();
+		result.setPageName(page.getPageName());
+		result.setPageClassName(page.getClass().getName());
+		result.setTestItemList(testItemList);
 		String ret = JsonUtil.encode(result, true);
 		logger.debug("getResultJson=" + ret);
 		return ret;

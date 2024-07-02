@@ -3,8 +3,6 @@ package jp.dataforms.test.testitem;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +13,7 @@ import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.PageTestElement;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -74,22 +73,22 @@ public abstract class TestItem {
 	/**
 	 * チェック結果。
 	 */
-	private ResultType checkResult = null;
+	private ResultType result = null;
 
 	/**
 	 * チェック結果を取得します。
 	 * @return チェック結果。
 	 */
-	public ResultType getCheckResult() {
-		return checkResult;
+	public ResultType getResult() {
+		return result;
 	}
 
 	/**
 	 * チェック結果を設定します。
-	 * @param checkResult チェック結果。
+	 * @param result チェック結果。
 	 */
-	protected void setCheckResult(final ResultType checkResult) {
-		this.checkResult = checkResult;
+	protected void setResult(final ResultType result) {
+		this.result = result;
 	}
 	
 	/**
@@ -312,7 +311,7 @@ public abstract class TestItem {
 		Template templ = this.getTemplate();
 		Date today = new Date();
 		this.setTestDate(today);
-		this.setCheckResult(result);
+		this.setResult(result);
 		templ.replace("pageName", page.getPageName());
 		templ.replace("pageClass", page.getClass().getName());
 		templ.replace("group", this.getGroup());
@@ -346,24 +345,67 @@ public abstract class TestItem {
 		sb.append("<td>" + this.getCondition() + "</td>");
 		sb.append("<td>" + this.getExpected() + "</td>");
 		sb.append("<td>" + this.getTestDateText() + "</td>");
-		sb.append("<td>" + this.getCheckResult().name() + "</td>");
+		sb.append("<td>" + this.getResult().name() + "</td>");
 		sb.append("</tr>\n");
 		return sb.toString();
 	}
 	
 	/**
-	 * 結果マップを取得します。
-	 * @return 結果マップ。
+	 * テスト結果情報。
 	 */
-	public Map<String, Object> getResultMap() {
-		Map<String, Object> ret = new HashMap<String, Object>();
+	@Data
+	public static class TestItemResult {
+		/**
+		 * テストタイプ。
+		 */
+		private TestItemInfo.Type testType = null;
+		/**
+		 * 結果詳細HTMLリンク。
+		 */
+		private String link = null;
+		/**
+		 * テスト対象のコンポーネントクラス名。
+		 */
+		private String compClass = null;
+		/**
+		 * テストID。
+		 */
+		private String testId = null;
+		/**
+		 * テスト条件。
+		 */
+		private String condition = null;
+		/**
+		 * テスト期待値。
+		 */
+		private String expected = null;
+		/**
+		 * テスト日時。
+		 */
+		private String testDate = null;
+		/**
+		 * テスト日時。
+		 */
+		private String result = null;
+		
+	}
+
+	/**
+	 * テスト結果を取得します。
+	 * @return テスト結果。
+	 */
+	public TestItemResult getTestItemResult() {
+		TestItemResult ret = new TestItemResult();
+
+		ret.setTestType(this.getType());
 		String link = "./" + this.getCompClass().getSimpleName() + "/" + this.getFileName() + ".html";
-		ret.put("link", link);
-		ret.put("testId", this.getGroup() + "-" + this.getSeq());
-		ret.put("condition", this.getCondition());
-		ret.put("expected", this.getExpected());
-		ret.put("testDate", this.getTestDateText());
-		ret.put("checkResult", this.getCheckResult().name());
+		ret.setLink(link);
+		ret.setCompClass(this.getCompClass().getSimpleName());
+		ret.setTestId(this.getGroup() + "-" + this.getSeq());
+		ret.setCondition(this.getCondition());
+		ret.setExpected(this.getExpected());
+		ret.setTestDate(this.getTestDateText());
+		ret.setResult(this.getResult().name());
 		return ret;
 	}
 }
