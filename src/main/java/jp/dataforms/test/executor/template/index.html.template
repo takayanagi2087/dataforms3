@@ -21,9 +21,10 @@ ${resultList}
 				let row = "";
 				for (let i = 0; i < this.#testResult.testItemList.length; i++) {
 					let item = this.#testResult.testItemList[i];
-					row += "<tr class='" + item.checkResult + "'>";
+					row += "<tr class='" + item.result + "'>";
 					row += "<td>" + (no++) + "</td>";
-					row += "<td><a href='" + item.link +  "'>" + item.link + "</a></td>";
+					row += "<td>" + item.compClass + "</td>";
+					row += "<td><a href='" + item.link +  "'>" + item.testId + "</a></td>";
 					row += "<td>" + item.condition + "</td>";
 					row += "<td>" + item.expected + "</td>";
 					row += "<td>" + item.testDate + "</td>";
@@ -46,6 +47,15 @@ ${resultList}
 		$(async () => {
 			let r = new TestResult();
 			r.showTestResult();
+			$(".dispCheckbox").click((ev) => {
+				let ck = $(ev.target).prop("checked");
+				let v = $(ev.target).val();
+				if (ck) {
+					$("tr." + v).show();
+				} else {
+					$("tr." + v).hide();
+				}
+			});
 		});
 			
 		</script>
@@ -61,13 +71,22 @@ ${resultList}
 					<th>ページクラス</th>
 					<td id="pageClassName"></td>
 				</tr>
+				<tr>
+					<th>表示設定</th>
+					<td>
+						<input type="checkbox" class="dispCheckbox" id="okItem" value="SYSTEM_OK" checked /><label for="okItem">OK</label>
+						<input type="checkbox" class="dispCheckbox" id="ngItem" value="SYSTEM_NG" checked /><label for="ngItem">NG</label>
+						<input type="checkbox" class="dispCheckbox" id="userCheckItem" value="USER_CHECK" checked /><label for="userCheckItem">USER CHECK</label>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		<table id="testItemList">
 			<thead>
 				<tr>
 					<th>No.</th>
-					<th>TEST ID</th>
+					<th>コンポーネント</th>
+					<th>ID</th>
 					<th>テスト条件</th>
 					<th>期待値</th>
 					<th>テスト日時</th>
