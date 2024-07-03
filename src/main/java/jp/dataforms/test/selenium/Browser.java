@@ -188,7 +188,15 @@ public class Browser {
 		return page;
 	}
 
-
+	/**
+	 * ページを取得します。
+	 * @return ページテスト要素。
+	 */
+	public PageTestElement getPage() {
+		WebElement element = this.webDriver.findElement(By.xpath("//body"));
+		PageTestElement page = new PageTestElement(this, null, element);
+		return page;
+	}
 	/**
 	 * HTML要素を検索する。
 	 * @param by 検索条件。

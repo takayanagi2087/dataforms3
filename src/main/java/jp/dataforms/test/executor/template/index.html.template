@@ -23,10 +23,11 @@ ${resultList}
 					let item = this.#testResult.testItemList[i];
 					row += "<tr class='" + item.result + "'>";
 					row += "<td>" + (no++) + "</td>";
+					row += "<td>" + item.testType + "</td>";
 					row += "<td>" + item.compClass + "</td>";
 					row += "<td><a href='" + item.link +  "'>" + item.testId + "</a></td>";
-					row += "<td>" + item.condition + "</td>";
-					row += "<td>" + item.expected + "</td>";
+					row += "<td style='width: 400px;'>" + item.condition + "</td>";
+					row += "<td style='width: 400px;'>" + item.expected + "</td>";
 					row += "<td>" + item.testDate + "</td>";
 					row += "<td>" + item.result  + "</td>";
 					row += "</tr>";
@@ -85,6 +86,7 @@ ${resultList}
 			<thead>
 				<tr>
 					<th>No.</th>
+					<th>区分</th>
 					<th>コンポーネント</th>
 					<th>ID</th>
 					<th>テスト条件</th>

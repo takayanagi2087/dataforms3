@@ -159,7 +159,6 @@ public abstract class PageTester {
 		 * テスト対象アプリケーション情報。
 		 */
 		private WebApplication testApp = null;
-		
 		/**
 		 * ユーザリスト。
 		 */
@@ -181,6 +180,22 @@ public abstract class PageTester {
 			String json = FileUtil.readTextFile(confFile, "utf-8");
 			return  (Conf) JsonUtil.decode(json, Conf.class);
 			
+		}
+		
+		/**
+		 * テストするむユーザ情報を取得します。
+		 * @param loginId ログインID。
+		 * @return ユーザ情報。
+		 */
+		public TestUser getTestUser(final String loginId) {
+			TestUser ret = null;
+			for (TestUser u: this.userList) {
+				if (u.getLoginId().equals(loginId)) {
+					ret = u;
+					break;
+				}
+			}
+			return ret;
 		}
 	}
 	
@@ -313,14 +328,14 @@ public abstract class PageTester {
 	
 	/**
 	 * レスポンシブデザインテストを実行します。
-	 * @param pt ページテスト要素。
+	 * @param browser ブラウザ。
 	 * @param pageClass ページクラス。
 	 * @param compClass コンポーネントクラス。
 	 * 
 	 * @return レスポンシブデザインテストの結果リスト。
 	 * @throws Exception 例外。
 	 */
-	protected List<TestItem> testResponsive(final PageTestElement pt, final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
+	protected List<TestItem> testResponsive(final Browser browser, final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
 		Page page = this.getPageInstance();
 		ResponsiveTestItem.setHeight(540);
 		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.page", ResponsiveTestItem.class, pageClass, compClass);
@@ -329,7 +344,7 @@ public abstract class PageTester {
 			logger.info("CONDITION:" + ci.getCondition());
 //			ResultType result = ci.test(page, pt);
 //			ci.saveResult(page, pt, result);
-			ci.exec(page, pt);
+			ci.exec(page, browser);
 			Browser.sleep(1);
 		}
 		return list;
@@ -500,6 +515,7 @@ public abstract class PageTester {
 		logger.debug("path=" + this.confFile);
 		this.conf = Conf.read(confFile);
 		logger.debug("conf=" + JsonUtil.encode(this.conf, true));
+		TestItem.setConf(this.conf);
 	}
 	
 

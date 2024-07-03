@@ -47,7 +47,8 @@ public class LoginIdOnlyValidationTestItem extends LoginFormTestItem {
 	
 	
 	@Override
-	protected ResultType test(Page page, final PageTestElement pageTestElement) throws Exception {
+	protected ResultType test(final Page page, final Browser browser) throws Exception {
+		PageTestElement pageTestElement = browser.getPage();
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue("user");
 		f.getButton("loginButton").click();
@@ -64,7 +65,8 @@ public class LoginIdOnlyValidationTestItem extends LoginFormTestItem {
 	}
 
 	@Override
-	protected String saveAttachFile(Page page, PageTestElement pageTestElement, ResultType result) throws Exception {
+	protected String saveAttachFile(final Page page, final Browser browser, final ResultType result) throws Exception {
+		PageTestElement pageTestElement = browser.getPage();
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
 		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);

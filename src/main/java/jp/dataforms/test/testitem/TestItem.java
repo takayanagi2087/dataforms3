@@ -12,7 +12,8 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator.Template;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.test.annotation.TestItemInfo;
-import jp.dataforms.test.component.PageTestElement;
+import jp.dataforms.test.executor.PageTester.Conf;
+import jp.dataforms.test.selenium.Browser;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,14 @@ public abstract class TestItem {
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(TestItem.class);
+	
+	/**
+	 * 設定情報。
+	 */
+	@Getter
+	@Setter
+	private static Conf conf = null;
+	
 	
 	/**
 	 * テスト対象ページクラス。
@@ -189,46 +198,44 @@ public abstract class TestItem {
 	/**
 	 * テストの開始時に必要な処理がある場合、その処理を記述します。
 	 * @param page ページ。
-	 * @param pageTestElement ページテスト要素。
-	 * @return ページテスト要素。
+	 * @param browser ブラウザ。
 	 * @throws Exception 例外。
 	 */
-	protected PageTestElement start(final Page page, final PageTestElement pageTestElement) throws Exception {
-		return pageTestElement;
+	protected void start(final Page page, final Browser browser) throws Exception {
 	}
 	
 	/**
 	 * テストを実行します。
 	 * 
 	 * @param page ページクラスのインスタンス。
-	 * @param pageTestElement ページのテスト要素。
+	 * @param browser ブラウザ。
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	protected abstract ResultType test(final Page page, final PageTestElement pageTestElement) throws Exception;
+	protected abstract ResultType test(final Page page, final Browser browser) throws Exception;
 	
 	/**
 	 * テストの終了時に必要な処理がある場合、その処理を記述します。
 	 * @param page ページ。
-	 * @param pageTestElement ページテスト要素。
+	 * @param browser ブラウザ。
 	 * @throws Exception 例外。
 	 */
-	protected void finish(final Page page, final PageTestElement pageTestElement) throws Exception {
+	protected void finish(final Page page, final Browser browser) throws Exception {
 	
 	}
 	
 	/**
 	 * テストを実行します。
 	 * @param page ページクラスのインスタンス。
-	 * @param pageTestElement ページのテスト要素。
+	 * @param browser ブラウザ。
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	public ResultType exec(final Page page, final PageTestElement pageTestElement) throws Exception {
-		PageTestElement pt = this.start(page, pageTestElement);
-		ResultType ret = this.test(page, pt);
-		this.saveResult(page, pageTestElement, ret);
-		this.finish(page, pt);
+	public ResultType exec(final Page page, final Browser browser) throws Exception {
+		this.start(page, browser);
+		ResultType ret = this.test(page, browser);
+		this.saveResult(page, browser, ret);
+		this.finish(page, browser);
 		return ret;
 	}
 	
@@ -263,12 +270,12 @@ public abstract class TestItem {
 	/**
 	 * 添付ファイルを作成します。
 	 * @param page ページクラスのインスタンス。
-	 * @param pageTestElement テスト要素。
+	 * @param browser ブラウザ。
 	 * @param result テスト要素。
 	 * @return リンク情報。
 	 * @throws Exception 例外。
 	 */
-	protected String saveAttachFile(final Page page, final PageTestElement pageTestElement, final ResultType result) throws Exception {
+	protected String saveAttachFile(final Page page, final Browser browser, final ResultType result) throws Exception {
 		return "";
 	}
 	
@@ -303,11 +310,11 @@ public abstract class TestItem {
 	/**
 	 * 結果の保存処理。
 	 * @param page ページクラスのインスタンス。
-	 * @param pageTestElement テスト要素。
+	 * @param browser ブラウザ。
 	 * @param result テスト結果。
 	 * @throws Exception 例外。
 	 */
-	protected void saveResult(final Page page, final PageTestElement pageTestElement, final ResultType result) throws Exception {
+	protected void saveResult(final Page page, final Browser browser, final ResultType result) throws Exception {
 		Template templ = this.getTemplate();
 		Date today = new Date();
 		this.setTestDate(today);
@@ -320,7 +327,7 @@ public abstract class TestItem {
 		templ.replace("expected", this.getExpected());
 		templ.replace("testDate", this.getTestDateText());
 		templ.replace("result", result.name());
-		templ.replace("attachFiles", this.saveAttachFile(page, pageTestElement, result));
+		templ.replace("attachFiles", this.saveAttachFile(page, browser, result));
 		logger.debug("html=" + templ.getSource());
 		String resultPath = this.getTestItemHtmlPath();
 		File dir = new File(resultPath).getParentFile();

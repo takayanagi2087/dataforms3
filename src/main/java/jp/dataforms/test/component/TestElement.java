@@ -170,6 +170,7 @@ public class TestElement {
 	 */
 	public ButtonTestElement getButton(final String id) {
 		String xpath = this.getXPathRange() + "//*[@data-id='" + id + "']";
+		logger.debug("getButton xpath=" + xpath);
 		List<WebElement> elements = this.findWebElements(By.xpath(xpath));
 		logger.debug("*** input elements=" + elements.size());
 		if (elements.size() == 1) {

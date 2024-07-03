@@ -10,7 +10,6 @@ import org.openqa.selenium.Dimension;
 import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.testitem.TestItem;
 import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
@@ -34,19 +33,18 @@ public class LoginPageTester extends PageTester {
 	
 	/**
 	 * バリデージョンのテスト。
-	 * @param pt ページのテスト要素。
+	 * @param browser ブラウザ。
 	 * @return テスト結果リスト。
 	 * @throws Exception 例外。
 	 */
-	private List<TestItem> testValidation(final PageTestElement pt) throws Exception {
+	private List<TestItem> testValidation(final Browser browser) throws Exception {
 		Page page = this.getPageInstance();
-		Browser b = pt.getBrowser();
-		b.setClientSize(new Dimension(1024, 540));
+		browser.setClientSize(new Dimension(1024, 540));
 		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.loginpage", LoginFormTestItem.class, null, null);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
-			ci.exec(page, pt);
+			ci.exec(page, browser);
 			Browser.sleep(1);
 		}
 		return list;
@@ -57,10 +55,10 @@ public class LoginPageTester extends PageTester {
 	public void exec() throws Exception {
 		TestItem.setTestResult(this.getConf().getTestApp().getTestResult());
 		Browser browser = this.getBrowser();
-		PageTestElement pt = openPage(browser);
+		this.openPage(browser);
 		List<TestItem> list = new ArrayList<TestItem>();
-		list.addAll(this.testResponsive(pt, LoginPage.class, LoginForm.class));
-		list.addAll(this.testValidation(pt));
+		list.addAll(this.testResponsive(browser, LoginPage.class, LoginForm.class));
+		list.addAll(this.testValidation(browser));
 		// this.getResultJson(list);
 		this.saveIndexHtml(list);
 		browser.close();
