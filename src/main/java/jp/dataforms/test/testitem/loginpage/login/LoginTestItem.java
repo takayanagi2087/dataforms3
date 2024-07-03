@@ -1,9 +1,8 @@
-package jp.dataforms.test.testitem.loginpage.validation;
+package jp.dataforms.test.testitem.loginpage.login;
 
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
-import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.component.ButtonTestElement;
 import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
@@ -14,43 +13,30 @@ import jp.dataforms.test.testitem.TestItem;
 import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
 
 /**
- * 管理者ログイン。
+ * ログインテストの基本クラス。
  */
-@TestItemInfo(group = "login", seq = "001")
-public class AdminLoginTestItem extends LoginFormTestItem {
-	/**
-	 * Logger.
-	 */
-	// private static Logger logger = LogManager.getLogger(PadPasswordTestItem.class);
-
-	/**
-	 * テスト条件。
-	 */
-	private static final String CONDITION = """
-		管理者でログインする。
-		""";
-
-	/**
-	 * 期待値。
-	 */
-	private static final String EXPECTED = """
-		管理者のサイトマップが表示されること。
-		""";
+public abstract class LoginTestItem extends LoginFormTestItem {
 
 	/**
 	 * コンストラクタ。
+	 * @param condition テスト条件。
+	 * @param expected 期待値。
 	 */
-	public AdminLoginTestItem() {
-		super(CONDITION, EXPECTED);
+	public LoginTestItem(final String condition, final String expected) {
+		super(condition, expected);
 	}
 	
-	
+	/**
+	 * ログインIDを取得します。
+	 * @return ログインID。
+	 */
+	protected abstract String getLoginId();
 	
 	@Override
 	protected ResultType test(final Page page, final Browser browser) throws Exception {
 		PageTestElement pageTestElement = browser.getPage();
 		Conf conf = TestItem.getConf();
-		TestUser user = conf.getTestUser("admin");
+		TestUser user = conf.getTestUser(this.getLoginId());
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue(user.getLoginId());
 		f.getField("password").setValue(user.getPassword());
@@ -60,7 +46,7 @@ public class AdminLoginTestItem extends LoginFormTestItem {
 		return ret;
 	}
 
-	
+
 	@Override
 	protected String saveAttachFile(final Page page, final Browser browser, final ResultType result) throws Exception {
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
@@ -77,5 +63,4 @@ public class AdminLoginTestItem extends LoginFormTestItem {
 		ButtonTestElement btn = pageTestElement.getButton("logoutButton");
 		btn.click();
 	}
-
 }
