@@ -32,7 +32,7 @@ public class WebAuthnPage extends GuestPage {
 	 */
     @Override
 	public String getPageDescription() {
-		return "ユーザアカウントに生体情報を登録します。(何らかの生体認証をサポートした機器が必要です)";
+		return "利用している端末をパスキーとして登録します。";
 	}
 
 	/**
