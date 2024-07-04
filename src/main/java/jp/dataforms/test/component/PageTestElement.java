@@ -17,6 +17,11 @@ import jp.dataforms.test.selenium.Browser;
  */
 public class PageTestElement extends DataFormsTestElement {
 	/**
+	 * ログインボタンのID。
+	 */
+	private static final String ID_LOGOUT_BUTTON = "logoutButton";
+	
+	/**
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(PageTestElement.class);
@@ -130,6 +135,6 @@ public class PageTestElement extends DataFormsTestElement {
 	 * @return ログアウトボタン。
 	 */
 	public ButtonTestElement getLogoutButton() {
-		return this.getButton("logoutButton");
+		return this.getButton(ID_LOGOUT_BUTTON);
 	}
 }

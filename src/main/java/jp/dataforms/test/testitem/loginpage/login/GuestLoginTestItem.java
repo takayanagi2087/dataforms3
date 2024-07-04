@@ -1,6 +1,7 @@
 package jp.dataforms.test.testitem.loginpage.login;
 
 import jp.dataforms.test.annotation.TestItemInfo;
+import jp.dataforms.test.selenium.Browser;
 
 /**
  * ゲストログインテスト項目。
@@ -37,4 +38,15 @@ public class GuestLoginTestItem extends LoginTestItem {
 	protected String getLoginId() {
 		return "guest";
 	}
+	
+	@Override
+	protected ResultType checkSiteMap(final Browser browser) {
+		ResultType ret = ResultType.SYSTEM_NG;
+		if (!this.findLink(browser, "/app/user/page/ChangePasswordPage.df")) {
+			// ユーザページが表示されていないことを確認。
+			ret = ResultType.SYSTEM_OK;
+		}
+		return ret;
+	}
+	
 }

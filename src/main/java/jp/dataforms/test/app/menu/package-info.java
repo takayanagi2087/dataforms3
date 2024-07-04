@@ -1,4 +1,4 @@
 /**
  * アプリケーションフォームパッケージ。
  */
-package jp.dataforms.test.app;
+package jp.dataforms.test.app.menu;

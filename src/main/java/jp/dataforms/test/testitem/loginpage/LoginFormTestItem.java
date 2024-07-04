@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
 import jp.dataforms.test.app.login.LoginPageTestElement;
+import jp.dataforms.test.app.menu.SiteMapPageTestElement;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.testitem.TestItem;
 
@@ -23,13 +24,24 @@ public abstract class LoginFormTestItem extends TestItem {
 	}
 	
 	/**
-	 * ページのテスト要素を取得する。
+	 * ログインページのテスト要素を取得します。
 	 * @param browser ブラウザ。
 	 * @return ログインページのテスト要素。
 	 */
-	protected LoginPageTestElement getPageTestElement(final Browser browser) {
+	protected LoginPageTestElement getLoginPageTestElement(final Browser browser) {
 		WebElement element = browser.findElement(By.xpath("//body"));
 		LoginPageTestElement page = new LoginPageTestElement(browser, element);
+		return page;
+	}
+	
+	/**
+	 * サイトマップページのテスト要素を取得します。
+	 * @param browser ブラウザ。
+	 * @return サイトマップページのテスト要素。
+	 */
+	protected SiteMapPageTestElement getSietMapPageTestElement(final Browser browser) {
+		WebElement element = browser.findElement(By.xpath("//body"));
+		SiteMapPageTestElement page = new SiteMapPageTestElement(browser, element);
 		return page;
 	}
 }

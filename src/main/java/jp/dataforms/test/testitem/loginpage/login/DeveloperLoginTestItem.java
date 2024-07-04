@@ -13,7 +13,7 @@ public class DeveloperLoginTestItem extends LoginTestItem {
 	/**
 	 * Logger.
 	 */
-	// private static Logger logger = LogManager.getLogger(PadPasswordTestItem.class);
+	 // private static Logger logger = LogManager.getLogger(DeveloperLoginTestItem.class);
 
 	/**
 	 * テスト条件。
@@ -46,4 +46,14 @@ public class DeveloperLoginTestItem extends LoginTestItem {
 		browser.setClientSize(new Dimension(1024, 800));
 		super.saveResult(browser, result);
 	}
+	
+	@Override
+	protected ResultType checkSiteMap(final Browser browser) {
+		ResultType ret = ResultType.SYSTEM_NG;
+		if (this.findLink(browser, "/devtool/menu/page/MenuEditPage.df")) {
+			ret = ResultType.SYSTEM_OK;
+		}
+		return ret;
+	}
+	
 }

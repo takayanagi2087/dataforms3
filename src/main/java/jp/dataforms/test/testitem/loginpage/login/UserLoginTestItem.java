@@ -1,6 +1,7 @@
 package jp.dataforms.test.testitem.loginpage.login;
 
 import jp.dataforms.test.annotation.TestItemInfo;
+import jp.dataforms.test.selenium.Browser;
 
 /**
  * 管理者ログインテスト項目。
@@ -37,4 +38,15 @@ public class UserLoginTestItem extends LoginTestItem {
 	protected String getLoginId() {
 		return "user";
 	}
+	
+	@Override
+	protected ResultType checkSiteMap(final Browser browser) {
+		ResultType ret = ResultType.SYSTEM_NG;
+		if (!this.findLink(browser, "/app/user/page/UserManagementPage.df")) {
+			// 管理者ページが表示されていないことを確認。
+			ret = ResultType.SYSTEM_OK;
+		}
+		return ret;
+	}
+	
 }
