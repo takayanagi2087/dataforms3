@@ -61,7 +61,7 @@ public abstract class LoginTestItem extends LoginFormTestItem {
 	protected void finish(final Browser browser) throws Exception {
 		Browser.sleep(2);
 		PageTestElement pageTestElement = browser.getPageTestElement();
-		ButtonTestElement btn = pageTestElement.getButton("logoutButton");
+		ButtonTestElement btn = pageTestElement.getLogoutButton();
 		btn.click();
 	}
 }

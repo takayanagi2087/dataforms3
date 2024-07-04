@@ -124,4 +124,12 @@ public class PageTestElement extends DataFormsTestElement {
 		return list;
 	}
 	
+	
+	/**
+	 * ログアウトボタンを取得します。
+	 * @return ログアウトボタン。
+	 */
+	public ButtonTestElement getLogoutButton() {
+		return this.getButton("logoutButton");
+	}
 }
