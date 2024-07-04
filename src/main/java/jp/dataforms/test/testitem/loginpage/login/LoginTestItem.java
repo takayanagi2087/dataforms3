@@ -3,8 +3,9 @@ package jp.dataforms.test.testitem.loginpage.login;
 import java.io.File;
 
 import jp.dataforms.fw.controller.Page;
+import jp.dataforms.test.app.login.LoginFormTestElement;
+import jp.dataforms.test.app.login.LoginPageTestElement;
 import jp.dataforms.test.component.ButtonTestElement;
-import jp.dataforms.test.component.FormTestElement;
 import jp.dataforms.test.component.PageTestElement;
 import jp.dataforms.test.executor.PageTester.Conf;
 import jp.dataforms.test.executor.PageTester.TestUser;
@@ -34,13 +35,13 @@ public abstract class LoginTestItem extends LoginFormTestItem {
 	
 	@Override
 	protected ResultType test(final Browser browser) throws Exception {
-		PageTestElement pageTestElement = browser.getPageTestElement();
+		LoginPageTestElement pageTestElement = this.getPageTestElement(browser);
 		Conf conf = TestItem.getConf();
 		TestUser user = conf.getTestUser(this.getLoginId());
-		FormTestElement f = pageTestElement.getForm("loginForm");
-		f.getField("loginId").setValue(user.getLoginId());
-		f.getField("password").setValue(user.getPassword());
-		f.getButton("loginButton").click();
+		LoginFormTestElement f = pageTestElement.getLoginForm();
+		f.getLoginIdField().setValue(user.getLoginId());
+		f.getPasswordField().setValue(user.getPassword());
+		f.getLoginButton().click();
 		Browser.sleep(2);
 		ResultType ret = ResultType.SYSTEM_OK;
 		return ret;
