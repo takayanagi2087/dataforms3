@@ -33,7 +33,7 @@ public abstract class LoginTestItem extends LoginFormTestItem {
 	protected abstract String getLoginId();
 	
 	@Override
-	protected ResultType test(final Page page, final Browser browser) throws Exception {
+	protected ResultType test(final Browser browser) throws Exception {
 		PageTestElement pageTestElement = browser.getPageTestElement();
 		Conf conf = TestItem.getConf();
 		TestUser user = conf.getTestUser(this.getLoginId());
@@ -57,7 +57,7 @@ public abstract class LoginTestItem extends LoginFormTestItem {
 	}
 	
 	@Override
-	protected void finish(final Page page, final Browser browser) throws Exception {
+	protected void finish(final Browser browser) throws Exception {
 		Browser.sleep(2);
 		PageTestElement pageTestElement = browser.getPageTestElement();
 		ButtonTestElement btn = pageTestElement.getButton("logoutButton");

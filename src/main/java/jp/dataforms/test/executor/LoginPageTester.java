@@ -9,7 +9,6 @@ import org.openqa.selenium.Dimension;
 
 import jp.dataforms.fw.app.login.page.LoginForm;
 import jp.dataforms.fw.app.login.page.LoginPage;
-import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.selenium.Browser;
 import jp.dataforms.test.testitem.TestItem;
 import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
@@ -38,13 +37,12 @@ public class LoginPageTester extends PageTester {
 	 * @throws Exception 例外。
 	 */
 	private List<TestItem> testValidation(final Browser browser) throws Exception {
-		Page page = this.getPageInstance();
 		browser.setClientSize(new Dimension(1024, 540));
 		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.loginpage", LoginFormTestItem.class, null, null);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
-			ci.exec(page, browser);
+			ci.exec(browser);
 			Browser.sleep(1);
 		}
 		return list;

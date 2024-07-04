@@ -44,12 +44,12 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 	
 	
 	@Override
-	protected void start(final Page page, final Browser browser) throws Exception {
+	protected void start(final Browser browser) throws Exception {
 		browser.reload();
 	}
 	
 	@Override
-	protected ResultType test(final Page page, final Browser browser) throws Exception {
+	protected ResultType test(final Browser browser) throws Exception {
 		PageTestElement pageTestElement = browser.getPageTestElement();
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue("user");
@@ -68,7 +68,7 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 	}
 
 	@Override
-	protected void finish(final Page page, final Browser browser) throws Exception {
+	protected void finish(final Browser browser) throws Exception {
 		browser.getPageTestElement().getAlertDialog().clickOkButton();
 	}
 	

@@ -35,7 +35,7 @@ public class PageSpTestItem extends ResponsiveTestItem {
 	}
 	
 	@Override
-	protected ResultType  test(final Page page, final Browser browser) throws Exception {
+	protected ResultType  test(final Browser browser) throws Exception {
 		browser.setClientSize(new Dimension(SP_WIDTH, ResponsiveTestItem.getHeight()));
 		return ResultType.USER_CHECK;
 	}

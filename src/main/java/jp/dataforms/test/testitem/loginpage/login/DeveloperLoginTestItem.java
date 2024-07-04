@@ -2,7 +2,6 @@ package jp.dataforms.test.testitem.loginpage.login;
 
 import org.openqa.selenium.Dimension;
 
-import jp.dataforms.fw.controller.Page;
 import jp.dataforms.test.annotation.TestItemInfo;
 import jp.dataforms.test.selenium.Browser;
 
@@ -43,8 +42,8 @@ public class DeveloperLoginTestItem extends LoginTestItem {
 	}
 	
 	@Override
-	protected void saveResult(Page page, Browser browser, ResultType result) throws Exception {
+	protected void saveResult(Browser browser, ResultType result) throws Exception {
 		browser.setClientSize(new Dimension(1024, 800));
-		super.saveResult(page, browser, result);
+		super.saveResult(browser, result);
 	}
 }

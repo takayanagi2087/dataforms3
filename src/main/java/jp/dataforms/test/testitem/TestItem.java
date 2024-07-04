@@ -131,6 +131,17 @@ public abstract class TestItem {
 		return fmt.format(this.testDate);
 	}
 	
+	
+	/**
+	 * ページのインスタンスを取得します。
+	 * @return ページのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	protected Page getPageInstance() throws Exception {
+		Page page = this.pageClass.getConstructor().newInstance();
+		return page;
+	}
+	
 	/**
 	 * コンストラクタ。
 	 * @param pageClass ページクラス。
@@ -196,45 +207,41 @@ public abstract class TestItem {
 
 	/**
 	 * テストの開始時に必要な処理がある場合、その処理を記述します。
-	 * @param page ページ。
 	 * @param browser ブラウザ。
 	 * @throws Exception 例外。
 	 */
-	protected void start(final Page page, final Browser browser) throws Exception {
+	protected void start(final Browser browser) throws Exception {
 	}
 	
 	/**
 	 * テストを実行します。
 	 * 
-	 * @param page ページクラスのインスタンス。
 	 * @param browser ブラウザ。
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	protected abstract ResultType test(final Page page, final Browser browser) throws Exception;
+	protected abstract ResultType test(final Browser browser) throws Exception;
 	
 	/**
 	 * テストの終了時に必要な処理がある場合、その処理を記述します。
-	 * @param page ページ。
 	 * @param browser ブラウザ。
 	 * @throws Exception 例外。
 	 */
-	protected void finish(final Page page, final Browser browser) throws Exception {
+	protected void finish(final Browser browser) throws Exception {
 	
 	}
 	
 	/**
 	 * テストを実行します。
-	 * @param page ページクラスのインスタンス。
 	 * @param browser ブラウザ。
 	 * @return テスト結果。
 	 * @throws Exception 例外。
 	 */
-	public ResultType exec(final Page page, final Browser browser) throws Exception {
-		this.start(page, browser);
-		ResultType ret = this.test(page, browser);
-		this.saveResult(page, browser, ret);
-		this.finish(page, browser);
+	public ResultType exec(final Browser browser) throws Exception {
+		this.start(browser);
+		ResultType ret = this.test(browser);
+		this.saveResult(browser, ret);
+		this.finish(browser);
 		return ret;
 	}
 	
@@ -308,16 +315,16 @@ public abstract class TestItem {
 	
 	/**
 	 * 結果の保存処理。
-	 * @param page ページクラスのインスタンス。
 	 * @param browser ブラウザ。
 	 * @param result テスト結果。
 	 * @throws Exception 例外。
 	 */
-	protected void saveResult(final Page page, final Browser browser, final ResultType result) throws Exception {
+	protected void saveResult(final Browser browser, final ResultType result) throws Exception {
 		Template templ = this.getTemplate();
 		Date today = new Date();
 		this.setTestDate(today);
 		this.setResult(result);
+		Page page = this.getPageInstance();
 		templ.replace("pageName", page.getPageName());
 		templ.replace("pageClass", page.getClass().getName());
 		templ.replace("group", this.getGroup());

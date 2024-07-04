@@ -338,15 +338,13 @@ public abstract class PageTester {
 	 * @throws Exception 例外。
 	 */
 	protected List<TestItem> testResponsive(final Browser browser, final Class<? extends Page> pageClass, final Class<? extends WebComponent> compClass) throws Exception {
-		Page page = this.getPageInstance();
+//		Page page = this.getPageInstance();
 		ResponsiveTestItem.setHeight(540);
 		List<TestItem> list = this.queryCheckItem("jp.dataforms.test.testitem.page", ResponsiveTestItem.class, pageClass, compClass);
 		for (TestItem ci: list) {
 			logger.info("GROUP:" + ci.getGroup() + ", SEQ:" + ci.getSeq());
 			logger.info("CONDITION:" + ci.getCondition());
-//			ResultType result = ci.test(page, pt);
-//			ci.saveResult(page, pt, result);
-			ci.exec(page, browser);
+			ci.exec(browser);
 			Browser.sleep(1);
 		}
 		return list;
