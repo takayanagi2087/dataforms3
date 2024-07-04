@@ -192,7 +192,7 @@ public class Browser {
 	 * ページを取得します。
 	 * @return ページテスト要素。
 	 */
-	public PageTestElement getPage() {
+	public PageTestElement getPageTestElement() {
 		WebElement element = this.webDriver.findElement(By.xpath("//body"));
 		PageTestElement page = new PageTestElement(this, null, element);
 		return page;

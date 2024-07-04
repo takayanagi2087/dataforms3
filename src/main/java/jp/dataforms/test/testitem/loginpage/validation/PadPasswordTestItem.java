@@ -50,7 +50,7 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 	
 	@Override
 	protected ResultType test(final Page page, final Browser browser) throws Exception {
-		PageTestElement pageTestElement = browser.getPage();
+		PageTestElement pageTestElement = browser.getPageTestElement();
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getField("loginId").setValue("user");
 		f.getField("password").setValue("PadPassword");
@@ -69,12 +69,12 @@ public class PadPasswordTestItem extends LoginFormTestItem {
 
 	@Override
 	protected void finish(final Page page, final Browser browser) throws Exception {
-		browser.getPage().getAlertDialog().clickOkButton();
+		browser.getPageTestElement().getAlertDialog().clickOkButton();
 	}
 	
 	@Override
 	protected String saveAttachFile(final Page page, final Browser browser, final ResultType result) throws Exception {
-		PageTestElement pageTestElement = browser.getPage();
+		PageTestElement pageTestElement = browser.getPageTestElement();
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
 		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);

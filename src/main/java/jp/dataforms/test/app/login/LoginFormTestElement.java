@@ -1,4 +1,4 @@
-package jp.dataforms.test.app;
+package jp.dataforms.test.app.login;
 
 
 import org.openqa.selenium.WebElement;
@@ -10,7 +10,7 @@ import jp.dataforms.test.selenium.Browser;
 /**
  * ログインフォーム要素。 
  */
-public class LoginFormElement extends FormTestElement {
+public class LoginFormTestElement extends FormTestElement {
 	/**
 	 * ログインフォーム。
 	 */
@@ -36,7 +36,7 @@ public class LoginFormElement extends FormTestElement {
 	 * @param parent 親コンポーネント。
 	 * @param webElement FormのWebElement。
 	 */
-	public LoginFormElement(final Browser browser, final TestElement parent, final WebElement webElement) {
+	public LoginFormTestElement(final Browser browser, final TestElement parent, final WebElement webElement) {
 		super(browser, parent, webElement);
 	}
 	

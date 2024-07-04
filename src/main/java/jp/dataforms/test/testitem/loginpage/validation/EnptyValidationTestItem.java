@@ -47,7 +47,7 @@ public class EnptyValidationTestItem extends LoginFormTestItem {
 	
 	@Override
 	protected ResultType test(final Page page, final Browser browser) throws Exception {
-		PageTestElement pageTestElement = browser.getPage();
+		PageTestElement pageTestElement = browser.getPageTestElement();
 		FormTestElement f = pageTestElement.getForm("loginForm");
 		f.getButton("loginButton").click();
 		Browser.sleep(2);
@@ -62,7 +62,7 @@ public class EnptyValidationTestItem extends LoginFormTestItem {
 
 	@Override
 	protected String saveAttachFile(final Page page, final Browser browser, final ResultType result) throws Exception {
-		PageTestElement pageTestElement = browser.getPage();
+		PageTestElement pageTestElement = browser.getPageTestElement();
 		String imageFile =  this.getTestItemPath() + "/" + this.getFileName() + ".png";
 		String path = pageTestElement.getBrowser().saveScreenShot(imageFile);
 		File f = new File(path);

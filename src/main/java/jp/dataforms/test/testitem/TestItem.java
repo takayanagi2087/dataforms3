@@ -35,7 +35,6 @@ public abstract class TestItem {
 	@Setter
 	private static Conf conf = null;
 	
-	
 	/**
 	 * テスト対象ページクラス。
 	 */

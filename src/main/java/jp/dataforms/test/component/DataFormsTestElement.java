@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import jp.dataforms.test.app.LoginFormElement;
+import jp.dataforms.test.app.login.LoginFormTestElement;
 import jp.dataforms.test.selenium.Browser;
 
 /**
@@ -119,8 +119,8 @@ public class DataFormsTestElement extends TestElement {
 	 * ログインフォームを取得します。
 	 * @return ログインフォーム。
 	 */
-	public LoginFormElement getLoginForm() {
-		LoginFormElement f = (LoginFormElement) this.getForm(LoginFormElement.class);
+	public LoginFormTestElement getLoginForm() {
+		LoginFormTestElement f = (LoginFormTestElement) this.getForm(LoginFormTestElement.class);
 		return f;
 	}
 

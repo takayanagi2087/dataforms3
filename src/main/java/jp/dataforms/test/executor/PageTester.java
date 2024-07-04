@@ -26,6 +26,7 @@ import jp.dataforms.test.testitem.page.responsive.ResponsiveTestItem;
 import lombok.Data;
 import lombok.Getter;
 
+
 /**
  * テスト実行ツール。
  */
@@ -230,7 +231,7 @@ public abstract class PageTester {
 	 * @return テスト項目のインスタンス。
 	 * @throws Exception 例外。
 	 */
-	private TestItem getTestItemInstance(Class<?> cls, final Class<? extends Page> pageClass, 
+	private TestItem getTestItemInstance(Class<? extends TestItem> cls, final Class<? extends Page> pageClass, 
 			final Class<? extends WebComponent> compClass) throws Exception {
 		if (pageClass != null && compClass != null) {
 			TestItem ci = (TestItem) cls.getConstructor(Class.class, Class.class).
@@ -276,7 +277,8 @@ public abstract class PageTester {
 			TestItemInfo a = cls.getAnnotation(TestItemInfo.class);
 			if (a != null) {
 				logger.debug("TestItemClass=" + cls.getName());
-				TestItem ci = this.getTestItemInstance(cls, pageClass, compClass);
+				@SuppressWarnings("unchecked")
+				TestItem ci = this.getTestItemInstance((Class<? extends TestItem>) cls, pageClass, compClass);
 				ret.add(ci);
 			}
 		}
@@ -529,7 +531,7 @@ public abstract class PageTester {
 		FunctionMap map = FunctionMap.getAppFunctionMap();
 		String uri = map.getWebPath(this.pageClass.getName());
 		logger.info("uri = " + uri);
-		PageTestElement pt = browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
+		PageTestElement pt = (PageTestElement) browser.open(this.conf.getTestApp().getApplicationURL() + uri.substring(1) + ".df");
 		return pt;
 	}
 
