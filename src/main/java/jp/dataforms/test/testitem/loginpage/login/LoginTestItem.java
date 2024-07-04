@@ -10,9 +10,9 @@ import jp.dataforms.test.app.menu.SiteMapFormTestElement;
 import jp.dataforms.test.app.menu.SiteMapPageTestElement;
 import jp.dataforms.test.component.ButtonTestElement;
 import jp.dataforms.test.component.PageTestElement;
-import jp.dataforms.test.executor.PageTester.Conf;
-import jp.dataforms.test.executor.PageTester.TestUser;
 import jp.dataforms.test.selenium.Browser;
+import jp.dataforms.test.tester.PageTester.Conf;
+import jp.dataforms.test.tester.PageTester.TestUser;
 import jp.dataforms.test.testitem.TestItem;
 import jp.dataforms.test.testitem.loginpage.LoginFormTestItem;
 

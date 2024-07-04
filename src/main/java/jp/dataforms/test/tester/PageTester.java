@@ -1,4 +1,4 @@
-package jp.dataforms.test.executor;
+package jp.dataforms.test.tester;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -545,15 +545,22 @@ public abstract class PageTester {
 	 * @param args コマンドライン。
 	 * <pre>
 	 * args[0]	...	テスト設定ファイル。
-	 * args[1]	... テストURI。
+	 * args[1]	...	テスタークラス名。
 	 * </pre>
 	 */
-/*	public static void main(String[] args) {
+	public static void main(String[] args) {
 		try {
-			PageTester exec = new PageTester(args[0], LoginPage.class);
-			exec.exec();
+			if (args.length == 2) {
+				@SuppressWarnings("unchecked")
+				Class<? extends PageTester> testerClass = (Class<? extends PageTester>) Class.forName(args[1]);
+				PageTester exec = testerClass.getConstructor(String.class).newInstance(args[0]);
+				exec.readConf();
+				exec.exec();
+			} else {
+				System.err.println("使い方:jp.dataforms.test.tester.PageTester <ConfFile> <PageTesterClass>");
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-	}*/
+	}
 }

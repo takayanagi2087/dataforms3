@@ -113,9 +113,6 @@ public class TestElement {
 		return this.webElement.findElements(by);
 	}
 
-
-	
-	
 	/**
 	 * クリックします。
 	 */
@@ -189,7 +186,4 @@ public class TestElement {
 		String fid = this.getId() + "[" + ridx + "]." + id;
 		return this.getField(fid);
 	}
-
-
-
 }

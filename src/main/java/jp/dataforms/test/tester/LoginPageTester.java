@@ -1,4 +1,4 @@
-package jp.dataforms.test.executor;
+package jp.dataforms.test.tester;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,6 @@ public class LoginPageTester extends PageTester {
 		List<TestItem> list = new ArrayList<TestItem>();
 		list.addAll(this.testResponsive(browser, LoginPage.class, LoginForm.class));
 		list.addAll(this.testValidation(browser));
-		// this.getResultJson(list);
 		this.saveIndexHtml(list);
 		browser.close();
 	}
@@ -67,7 +66,6 @@ public class LoginPageTester extends PageTester {
 	 * @param args コマンドライン。
 	 * <pre>
 	 * args[0]	...	テスト設定ファイル。
-	 * args[1]	... テストURI。
 	 * </pre>
 	 */
 	public static void main(String[] args) {
