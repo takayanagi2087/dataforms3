@@ -42,6 +42,24 @@ ${resultList}
 				$("#pageName").text(this.#testResult.pageName);
 				$("#pageClassName").text(this.#testResult.pageClassName);
 				this.#showTestItemList();
+				
+				$(".dispCheckbox").each((_, el) => {
+					this.showCheckedResult(el);
+				});
+			}
+			
+			/**
+			 * checkboxに応じた表示設定。
+			 * @param {Element} el HTML要素。 
+			 */
+			showCheckedResult(el) {
+				let ck = $(el).prop("checked");
+				let v = $(el).val();
+				if (ck) {
+					$("tr." + v).show();
+				} else {
+					$("tr." + v).hide();
+				}
 			}
 		}
 			
@@ -49,13 +67,7 @@ ${resultList}
 			let r = new TestResult();
 			r.showTestResult();
 			$(".dispCheckbox").click((ev) => {
-				let ck = $(ev.target).prop("checked");
-				let v = $(ev.target).val();
-				if (ck) {
-					$("tr." + v).show();
-				} else {
-					$("tr." + v).hide();
-				}
+				r.showCheckedResult(ev.target);
 			});
 		});
 			
