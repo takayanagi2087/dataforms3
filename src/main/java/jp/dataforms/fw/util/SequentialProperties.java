@@ -140,6 +140,15 @@ public class SequentialProperties extends Properties {
 		return sb.toString();
 	}
 
+	/**
+	 * ファイルに保存します。
+	 * @param file ファイル。
+	 * @throws Exception 例外。
+	 */
+	public void saveFile(final String file) throws Exception {
+		String text = this.getSaveText();
+		FileUtil.writeTextFile(file, text, "utf-8");
+	}
 
 }
 

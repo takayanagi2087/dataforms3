@@ -3,8 +3,8 @@
 <Configuration status="off">
 	<Properties>
 		<Property name="format1">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-6p %c{10} %m%n</Property>
-		<Property name="logfile">log/dataforms2.log</Property>
-		<Property name="logfile-archive">log/dataforms2_%d{yyyy-MM-dd}-%i.log</Property>
+		<Property name="logfile">log/dataforms3.log</Property>
+		<Property name="logfile-archive">log/dataforms3_%d{yyyy-MM-dd}-%i.log</Property>
 	</Properties>
 
 	<Appenders>
