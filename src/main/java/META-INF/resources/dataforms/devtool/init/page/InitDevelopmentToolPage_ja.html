@@ -6,11 +6,20 @@
 		<meta name="description" content="プロジェクト内の設定ファイルを作成します。">
 		<style>
 			table.confFile th {
+				width: calc(100% - 8px) !important;
 				padding-left: 8px;
 				padding-right: 8px;
 				background-color: white;
 				font-weight: bold;
 				text-align: left;
+			}
+			.confField {
+				width: calc(100% - 300px) !important;
+			}
+			@media screen and (max-width: 768px) {
+				.confField {
+					width: 100% !important;
+				}
 			}
 		</style>
 	</head>
@@ -19,7 +28,7 @@
 			<form id="editForm">
 				<div>
 					Eclipseのプロジェクト内に以下のファイルを作成して、プロジェクトを初期化します。<br/>
-					<table class="confFile">
+					<table class="confFile responsive">
 						<tbody>
 							<tr>
 								<th>/src/java/log4j2.xml</th>
@@ -49,35 +58,35 @@
 					<div class="fieldDiv">
 						<div class="label"><label for="javaSrcPath">Javaソースパス</label></div>
 						<div class="field">
-							<input type="text" id="javaSrcPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="javaSrcPath" class="confField" />
 							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="webSrcPath">Webソースパス</label></div>
 						<div class="field">
-							<input type="text" id="webSrcPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="webSrcPath" class="confField" />
 							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="jndiPrefix">JNDI 接頭辞</label></div>
 						<div class="field">
-							<input type="text" id="jndiPrefix" style="width: calc(100% - 300px);" />
+							<input type="text" id="jndiPrefix" class="confField" />
 							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="dataSource">データソース名</label></div>
 						<div class="field">
-							<input type="text" id="dataSource" style="width: calc(100% - 300px);" />
+							<input type="text" id="dataSource" class="confField" />
 							dataforms.conf.jsoncとcontext.xmlの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="derbyDbPath">Derbyのデータパス</label></div>
 						<div class="field">
-							<input type="text" id="derbyDbPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="derbyDbPath" class="confField" />
 							context.xmlの設定値
 						</div>
 					</div>

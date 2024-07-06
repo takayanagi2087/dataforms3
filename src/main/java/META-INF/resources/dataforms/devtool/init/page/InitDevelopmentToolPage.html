@@ -6,11 +6,20 @@
 		<meta name="description" content="Create a configuration file in your project.">
 		<style>
 			table.confFile th {
+				width: calc(100% - 8px) !important;
 				padding-left: 8px;
 				padding-right: 8px;
 				background-color: white;
 				font-weight: bold;
 				text-align: left;
+			}
+			.confField {
+				width: calc(100% - 300px) !important;
+			}
+			@media screen and (max-width: 768px) {
+				.confField {
+					width: 100% !important;
+				}
 			}
 		</style>
 	</head>
@@ -19,7 +28,7 @@
 			<form id="editForm">
 				<div>
 					Create the following files in your Eclipse project to initialize the project.<br/>
-					<table class="confFile">
+					<table class="confFile responsive">
 						<tbody>
 							<tr>
 								<th>/src/java/log4j2.xml</th>
@@ -49,35 +58,35 @@
 					<div class="fieldDiv">
 						<div class="label"><label for="javaSrcPath">Java Source Path</label></div>
 						<div class="field">
-							<input type="text" id="javaSrcPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="javaSrcPath" class="confField" />
 							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="webSrcPath">Web Source Path</label></div>
 						<div class="field">
-							<input type="text" id="webSrcPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="webSrcPath" class="confField" />
 							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="jndiPrefix">JNDI Prefix</label></div>
 						<div class="field">
-							<input type="text" id="jndiPrefix" style="width: calc(100% - 300px);" />
+							<input type="text" id="jndiPrefix" class="confField" />
 							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="dataSource">Data Source Name</label></div>
 						<div class="field">
-							<input type="text" id="dataSource" style="width: calc(100% - 300px);" />
+							<input type="text" id="dataSource" class="confField" />
 							dataforms.conf.jsonc and context.xml settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="derbyDbPath">Derby Data Path</label></div>
 						<div class="field">
-							<input type="text" id="derbyDbPath" style="width: calc(100% - 300px);" />
+							<input type="text" id="derbyDbPath" class="confField" />
 							context.xml settings
 						</div>
 					</div>
