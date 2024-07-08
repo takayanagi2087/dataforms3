@@ -381,6 +381,7 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.table.page.TableGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.TestSrcGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.webres.page.WebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.expwebres.page.ExportWebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));

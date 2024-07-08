@@ -146,22 +146,6 @@ public class Page extends DataForms implements WebEntryPoint {
 
 
 	/**
-	 * キャッシュ・マニフェストファイルのパスを取得します。
-	 * @return キャッシュ・マニフェストファイルのパス。
-	 */
-/*	public static String getAppcacheFile() {
-		return appcacheFile;
-	}
-*/
-	/**
-	 * キャッシュ・マニフェストファイルのパスを設定します。
-	 * @param appcacheFile キャッシュ・マニフェストファイルのパス。
-	 */
-/*	public static void setAppcacheFile(final String appcacheFile) {
-		Page.appcacheFile = appcacheFile;
-	}
-*/
-	/**
 	 * クラスを継承関係を元にソートします。
 	 * @param list クラスリスト。
 	 * @param baseclass 基本クラス。
@@ -669,16 +653,6 @@ public class Page extends DataForms implements WebEntryPoint {
 		}
 		htmltext = htmltext.replaceAll("\\<[Tt][Ii][Tt][Ll][Ee]>.*\\</[Tt][Ii][Tt][Ll][Ee]\\>", "<title>" + this.getPageTitle() + "</title>");
 		htmltext = htmltext.replaceAll("\\</[Bb][Oo][Dd][Yy]\\>", "\t<noscript><br/><div class='noscriptDiv'><b>" + MessagesUtil.getMessage(this.getPage(), "message.noscript") + "</b></div></noscript>\n\t</body>");
-//		logger.debug("id変換後 html=" + this.convertIdArrtibute(htmltext));
-		for (String key: this.getFormMap().keySet()) {
-			WebComponent comp = this.getFormMap().get(key);
-			if (comp instanceof Form) {
-				Form f = (Form) comp;
-				if (f.getDeployOnServer()) {
-					htmltext = this.replaceFormHtml(htmltext, f.getId(), f);
-				}
-			}
-		}
 		return this.convertIdAttribute(htmltext);
 	}
 

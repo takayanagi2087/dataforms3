@@ -303,6 +303,10 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		String cls = (String) data.get(ID_PAGE_CLASS_NAME);
 		String classname = pkg + "." + cls;
 
+		logger.debug("classname=" + classname);
+		logger.debug("data=" + JsonUtil.encode(data, true));
+		
+		
 		Class<?> clazz = Class.forName(classname);
 		Page p = (Page) clazz.getDeclaredConstructor().newInstance();
 		PageClassInfo pi = new PageClassInfo(p);

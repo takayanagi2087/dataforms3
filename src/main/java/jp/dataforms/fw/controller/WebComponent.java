@@ -346,6 +346,26 @@ public class WebComponent implements JDBCConnectableObject {
 		}
 	}
 
+	/**
+	 * HTMLからCSS部分を取得する。
+	 * @return HTML中のCSSリスト。
+	 * @throws Exception 例外。
+	 */
+	private List<String> getCssList() throws Exception {
+		logger.debug("getCssList():");
+		List<String> list = null;
+		if (this.additionalHtml != null) {
+			list = new ArrayList<String>();
+			logger.debug(() -> "additionalHtml=" + this.additionalHtml);
+			String htmlpath = this.getAppropriatePath(this.additionalHtml, this.getPage().getRequest());
+			String htmltext = this.getWebResource(htmlpath);
+			logger.debug(() -> "htmltext=" + htmltext);
+			if (htmltext != null) {
+				list = this.getCssList(htmltext);
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * 各オブジェクトのプロパティマップを作成します。。
@@ -369,8 +389,11 @@ public class WebComponent implements JDBCConnectableObject {
 		obj.put("jsClass", this.getJsClass());
 		String additionalHtmlText = this.getAdditionalHtmlText();
 		if (additionalHtmlText != null) {
-//			logger.debug("id変換後 html=" + this.convertIdArrtibute(additionalHtmlText));
 			obj.put("additionalHtmlText", this.convertIdAttribute(additionalHtmlText));
+			List<String> cssList = this.getCssList();
+			if (cssList != null) {
+				obj.put("cssList", cssList);
+			}
 		}
 		obj.put("realId", this.getRealId());
 		return obj;
@@ -743,6 +766,28 @@ public class WebComponent implements JDBCConnectableObject {
     	} else {
     		return htmltext;
     	}
+    }
+
+	/**
+     * HTMLテキスト中のCSS設定&lt;style&gt;&lt;/style&gt;を取得します。
+     * @param htmltext HTMLのテキスト。
+     * @return Bodyの中のテキスト。
+     */
+    protected List<String> getCssList(final String htmltext) {
+    	List<String> list = new ArrayList<String>();
+    	Pattern p = Pattern.compile("<style[\\s\\S]*>[\\s\\S]*</style>",
+    			Pattern.MULTILINE
+    	);
+    	Matcher m = p.matcher(htmltext);
+    	while (m.find()) {
+    		String css = m.group();
+    		list.add(css);
+    		logger.debug("*** css=" + css);
+    	}
+    	if (list.size() == 0) {
+    		list = null;
+    	}
+    	return list;
     }
 
 	/**

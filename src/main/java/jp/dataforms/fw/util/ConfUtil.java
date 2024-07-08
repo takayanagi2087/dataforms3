@@ -52,7 +52,10 @@ public class ConfUtil {
 		 * HTML, jsのソースパス。
 		 */
 		private String webSourcePath = null;
-		
+		/**
+		 * テストツールのソースパス。
+		 */
+		private String testSourcePath = null;
 		/**
 		 * 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
 		 */

@@ -11,6 +11,8 @@
 		, "javaSourcePath": null
 		// HTML,jsのソースパス
 		, "webSourcePath": null
+		// テストツールの出力パス。
+		, "testSourcePath" : null
 		// 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
 		, "exportImportDir": "/tmp/data"
 		// ソースコード生成ツール無効設定

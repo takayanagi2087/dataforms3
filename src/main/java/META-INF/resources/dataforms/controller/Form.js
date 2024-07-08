@@ -199,6 +199,13 @@ export class Form extends WebComponent {
 				obj.html(fhtml);
 				this.parentDivId = obj.parents("div[" + this.getIdAttribute() +"]:first").attr(this.getIdAttribute());
 			}
+			logger.log("cssList=", this.cssList);
+			if (this.cssList != null) {
+				for (let i = 0; i < this.cssList.length; i++) {
+					logger.log("css=" + this.cssList[i]);
+					$("head").append(this.cssList[i]);
+				}
+			}
 		} else {
 			let obj = $(this.convertSelector("#" + this.selectorEscape(this.id)));
 			this.parentDivId = obj.parents("div[" + this.getIdAttribute() +"]:first").attr(this.getIdAttribute());

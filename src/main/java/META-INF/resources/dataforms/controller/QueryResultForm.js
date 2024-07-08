@@ -277,6 +277,8 @@ export class QueryResultForm extends Form {
 				editForm.setFieldValue(id, v);
 			}
 		}
+		logger.log("pkFieldList=", this.pkFieldList);
+		logger.log("selectedQueryString=" + this.selectedQueryString);
 		return true;
 	}
 
