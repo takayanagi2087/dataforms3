@@ -16,6 +16,7 @@ import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.field.OverwriteModeField;
+import jp.dataforms.fw.devtool.pageform.gen.FormTestElementGenerator;
 import jp.dataforms.fw.devtool.pageform.gen.PageTesterGenerator;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
@@ -107,7 +108,7 @@ public class TestSrcGeneratorEditForm extends EditForm {
 		this.addField(new TextField(ID_PAGE_TESTER_CLASS_NAME)).setComment("ページテスタークラス名");
 		this.addField(new OverwriteModeField(ID_PAGE_TESTER_OVERWRITE_MODE)).setComment("ページテスター上書きモード");
 		
-		this.addField(new TextField(ID_TEST_ELEMENT_PACKAGE_NAME)).setComment("テスト要素パッケージ");
+		this.addField(new TextField(ID_TEST_ELEMENT_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("テスト要素パッケージ");
 		this.addField(new TextField(ID_PAGE_TEST_ELEMENT_CLASS_NAME)).setComment("ページテスト要素クラス名");
 		this.addField(new OverwriteModeField(ID_PAGE_TEST_ELEMENT_OVERWRITE_MODE)).setComment("ページテスト要素上書きモード");
 
@@ -119,6 +120,42 @@ public class TestSrcGeneratorEditForm extends EditForm {
 
 		HtmlTable formTable = new HtmlTable("formTable", flist);
 		this.addHtmlTable(formTable);
+	}
+	
+	/**
+	 * ページのインスタンスを作成します。
+	 * @param classname クラス名。
+	 * @return ページのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	private Page newPageInstance(final String classname) throws Exception {
+		Class<?> clazz = Class.forName(classname);
+		Page p = (Page) clazz.getDeclaredConstructor().newInstance();
+		return p;
+	}
+	
+	/**
+	 * ページ中のフォームクラスの一覧を取得します。
+	 * @param page ページ・
+	 * @return フォームクラスの一覧。
+	 */
+	private List<Form> getFormList(final Page page) {
+		List<Form> list = new ArrayList<Form>();
+		Set<String> set = page.getFormMap().keySet();
+		for (String key: set) {
+			WebComponent cmp = page.getFormMap().get(key);
+			if (cmp instanceof Form) {
+				if (cmp instanceof SideMenuForm) {
+					continue;
+				}
+				if (cmp instanceof LoginInfoForm) {
+					continue;
+				}
+				Form f = (Form) page.getFormMap().get(key);
+				list.add(f);
+			}
+		}
+		return list;
 	}
 	
 	@Override
@@ -133,40 +170,36 @@ public class TestSrcGeneratorEditForm extends EditForm {
 
 		logger.debug("classname=" + classname);
 		logger.debug("data=" + JsonUtil.encode(data, true));
-		Class<?> clazz = Class.forName(classname);
-		Page p = (Page) clazz.getDeclaredConstructor().newInstance();
+		Page p = this.newPageInstance(classname);
 
 		Map<String, Object> ret = new HashMap<String, Object>();
 		ret.put(ID_TEST_TOOL_SRC_PATH, DataFormsServlet.getConf().getDevelopmentTool().getTestSourcePath());
 		ret.put(ID_PACKAGE_NAME, pkg);
+		String spkg = "";
+		if (pkg.indexOf("jp.dataforms.fw") == 0) {
+			spkg = pkg.substring("jp.dataforms.fw".length());
+		} else if (pkg.indexOf(basePackage) == 0) {
+			spkg = pkg.substring(basePackage.length());
+		}
+		
 		ret.put(ID_PAGE_CLASS_NAME, cls);
-		ret.put(ID_TESTER_PACKAGE_NAME, basePackage + ".tester");
+		ret.put(ID_TESTER_PACKAGE_NAME, basePackage + ".tester" + spkg);
 		ret.put(ID_PAGE_TESTER_CLASS_NAME, p.getClass().getSimpleName() + "Tester");
 		ret.put(ID_PAGE_TESTER_OVERWRITE_MODE, OverwriteModeField.ERROR);
-		ret.put(ID_TEST_ELEMENT_PACKAGE_NAME, basePackage + ".element");
+		ret.put(ID_TEST_ELEMENT_PACKAGE_NAME, basePackage + ".element" + spkg);
 		ret.put(ID_PAGE_TEST_ELEMENT_CLASS_NAME, p.getClass().getSimpleName() + "TestElement");
 		ret.put(ID_PAGE_TEST_ELEMENT_OVERWRITE_MODE, OverwriteModeField.ERROR);
 		
-		Set<String> set = p.getFormMap().keySet();
+		List<Form> flist = this.getFormList(p);
 		int no = 1;
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		for (String key: set) {
-			WebComponent cmp = p.getFormMap().get(key);
-			if (cmp instanceof Form) {
-				if (cmp instanceof SideMenuForm) {
-					continue;
-				}
-				if (cmp instanceof LoginInfoForm) {
-					continue;
-				}
-				Form f = (Form) p.getFormMap().get(key);
-				Map<String, Object> m = new HashMap<String, Object>();
-				m.put("rowNo",  no++);
-				m.put(ID_FORM_CLASS_NAME, f.getClass().getSimpleName());
-				m.put(ID_FORM_TEST_ELEMENT_CLASS_NAME, f.getClass().getSimpleName() + "TestElement");
-				m.put(ID_FORM_TEST_ELEMENT_OVERWRITE_MODE, OverwriteModeField.ERROR);
-				list.add(m);
-			}
+		for (Form f: flist) {
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("rowNo",  no++);
+			m.put(ID_FORM_CLASS_NAME, f.getClass().getSimpleName());
+			m.put(ID_FORM_TEST_ELEMENT_CLASS_NAME, f.getClass().getSimpleName() + "TestElement");
+			m.put(ID_FORM_TEST_ELEMENT_OVERWRITE_MODE, OverwriteModeField.ERROR);
+			list.add(m);
 		}
 		ret.put("formTable", list);
 		return ret;
@@ -179,19 +212,28 @@ public class TestSrcGeneratorEditForm extends EditForm {
 
 	@Override
 	protected void insertData(Map<String, Object> data) throws Exception {
-		PageTesterGenerator gen = new PageTesterGenerator();
+		String pkg = (String) data.get(ID_PACKAGE_NAME);
+		String cls = (String) data.get(ID_PAGE_CLASS_NAME);
+		String classname = pkg + "." + cls;
+		Page page = this.newPageInstance(classname);
+		PageTesterGenerator gen = new PageTesterGenerator(page);
 		gen.generage(this, data);
+		List<Form> flist = this.getFormList(page);
+		for (Form f: flist) {
+			String formClassName = f.getClass().getSimpleName();
+			String formSuperClassName = f.getClass().getSuperclass().getSimpleName();
+			logger.debug("form=" + formClassName + ", " + formSuperClassName);
+			FormTestElementGenerator fgen = new FormTestElementGenerator(f);
+			fgen.generage(this, data);
+		}
 	}
 
 	@Override
 	protected void updateData(Map<String, Object> data) throws Exception {
-
 	}
 
 	@Override
 	public void deleteData(Map<String, Object> data) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-
 	}
 
 }

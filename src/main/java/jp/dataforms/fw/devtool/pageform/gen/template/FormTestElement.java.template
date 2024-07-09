@@ -1,0 +1,31 @@
+package ${package};
+
+
+import org.openqa.selenium.WebElement;
+
+import jp.dataforms.test.element.TestElement;
+import jp.dataforms.test.element.field.ButtonTestElement;
+import jp.dataforms.test.element.field.FieldTestElement;
+import jp.dataforms.test.selenium.Browser;
+
+${importList}
+
+/**
+ * ${formClass} フォームテスト要素。 
+ */
+public class ${formClass}TestElement extends ${superFormClass}TestElement {
+	
+${constantList}
+	
+	/**
+	 * コンストラクタ。
+	 * @param browser ブラウザ。
+	 * @param parent 親コンポーネント。
+	 * @param webElement FormのWebElement。
+	 */
+	public ${formClass}TestElement(final Browser browser, final TestElement parent, final WebElement webElement) {
+		super(browser, parent, webElement);
+	}
+	
+${methodList}	
+}
