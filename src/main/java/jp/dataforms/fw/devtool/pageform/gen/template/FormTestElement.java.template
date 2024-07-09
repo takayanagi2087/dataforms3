@@ -14,6 +14,10 @@ ${importList}
  * ${formClass} フォームテスト要素。 
  */
 public class ${formClass}TestElement extends ${superFormClass}TestElement {
+	/**
+	 * フォームID。
+	 */
+	public static final String ID = "${formId}";
 	
 ${constantList}
 	

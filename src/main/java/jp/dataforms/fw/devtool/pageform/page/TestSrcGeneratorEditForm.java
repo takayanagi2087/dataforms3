@@ -17,6 +17,7 @@ import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.field.OverwriteModeField;
 import jp.dataforms.fw.devtool.pageform.gen.FormTestElementGenerator;
+import jp.dataforms.fw.devtool.pageform.gen.PageTestElementGenerator;
 import jp.dataforms.fw.devtool.pageform.gen.PageTesterGenerator;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
@@ -226,6 +227,8 @@ public class TestSrcGeneratorEditForm extends EditForm {
 			FormTestElementGenerator fgen = new FormTestElementGenerator(f);
 			fgen.generage(this, data);
 		}
+		PageTestElementGenerator ptgen = new PageTestElementGenerator(page, flist);
+		ptgen.generage(this, data);
 	}
 
 	@Override

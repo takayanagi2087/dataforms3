@@ -31,7 +31,7 @@ public class FormTestElementGenerator extends JavaSrcGenerator {
 	
 	/**
 	 * コンストラクタ。
-	 * @param form ページ。
+	 * @param form フォーム。
 	 */
 	public FormTestElementGenerator(final Form form) {
 		this.form = form;
@@ -78,7 +78,7 @@ public class FormTestElementGenerator extends JavaSrcGenerator {
 	
 
 	/**
-	 * 定数定義リストを作成します。
+	 * メソッドリストを作成します。
 	 * @param form フォームクラス。
 	 * @return 定数定義リスト。
 	 */
@@ -112,6 +112,7 @@ public class FormTestElementGenerator extends JavaSrcGenerator {
 		String importList = "import " + this.getTestElementClassName(this.form.getClass().getSuperclass()) + ";";
 		Template tmp = this.getTemplate();
 		tmp.replace("importList", importList);
+		tmp.replace("formId", this.form.getId());
 		tmp.replace("formClass", this.form.getClass().getSimpleName());
 		tmp.replace("superFormClass", this.form.getClass().getSuperclass().getSimpleName());
 		tmp.replace("package", testElementPackageName);

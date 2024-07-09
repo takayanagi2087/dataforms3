@@ -1,0 +1,22 @@
+package ${package};
+
+import org.openqa.selenium.WebElement;
+
+import jp.dataforms.test.element.controller.PageTestElement;
+import jp.dataforms.test.selenium.Browser;
+
+/**
+ * ${pageName} ページのテスト要素。
+ */
+public class ${pageClass}TestElement extends PageTestElement {
+	/**
+	 * コンストラクタ。
+	 * @param browser ブラウザ。
+	 * @param element WebElement。
+	 */
+	public ${pageClass}TestElement(final Browser browser, final WebElement element) {
+		super(browser, null, element);
+	}
+	
+${methodList}
+}
