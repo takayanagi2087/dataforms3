@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
-import jp.dataforms.fw.field.sqltype.VarcharField;
+import jp.dataforms.fw.field.base.TextField;
 
 /**
  * データベース情報フォームクラス。
@@ -23,9 +23,9 @@ public class DatabaseInfoForm extends Form {
 	 */
 	public DatabaseInfoForm() {
 		super(null);
-		this.addField(new VarcharField("dbServerName", 256));
-		this.addField(new VarcharField("dbServerVersion", 256));
-		this.addField(new VarcharField("dbServerURL", 256));
+		this.addField(new TextField("dbServerName")).setComment("DBサーバ名");
+		this.addField(new TextField("dbServerVersion")).setComment("DBサーババージョン");
+		this.addField(new TextField("dbServerURL").setComment("DB接続URL"));
 //		this.addField(new PackageNameField()).addValidator(new RequiredValidator());
 	}
 

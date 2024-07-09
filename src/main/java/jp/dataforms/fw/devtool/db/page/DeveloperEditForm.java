@@ -61,7 +61,7 @@ public class DeveloperEditForm extends EditForm {
 	 * コンストラクタ。
 	 */
 	public DeveloperEditForm() {
-		this.addField(new FlagField("userImportFlag"));
+		this.addField(new FlagField("userImportFlag")).setComment("ユーザインポートフラグ");
 		UserInfoTable table = UserInfoTableUtil.newUserInfoTable(); // new UserInfoTable();
 		table.getLoginIdField().addValidator(new RequiredValidator());
 		table.getPasswordField().addValidator(new RequiredValidator());

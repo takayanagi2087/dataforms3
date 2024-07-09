@@ -63,7 +63,7 @@ public abstract class EditForm extends Form {
 	 */
 	public EditForm(final String id) {
 		super(id);
-		this.addField(new TextField("saveMode")).setHidden(true);
+		this.addField(new TextField("saveMode")).setHidden(true).setComment("保存モード");
 
 	}
 
