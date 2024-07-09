@@ -23,6 +23,11 @@ public class InitializeDatabasePage extends DeveloperPage {
 		this.setMenuItem(false);
 	}
 
+	@Override
+	public String getPageName() {
+		return "データベース初期化";
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * DBが初期化されている場合は表示不可のページ。
