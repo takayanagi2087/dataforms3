@@ -5,7 +5,7 @@
 		<title></title>
 		<style>
 			.testClassName {
-				width: calc(100% - 146px) !important;
+				width: calc(100% - 300px) !important;
 			}
 			.overwrieMode {
 				width: 140px !important;
@@ -32,17 +32,31 @@
 					<div class="field"><input type="text" id="pageClassName" /></div>
 				</div>
 				<div class="fieldDiv">
+					<div class="label"><label for="testerPackageName">テスターパッケージ</label></div>
+					<div class="field">
+						<input type="text" id="testerPackageName" />
+					</div>
+				</div>
+				<div class="fieldDiv">
 					<div class="label"><label for="pageTesterClassName">ページテスタークラス名</label></div>
 					<div class="field">
 						<input type="text" id="pageTesterClassName" class="testClassName"/>
 						<select id="pageTesterOverwriteMode" class="overwrieMode"></select>
+						<button id="testerButton" type="button" class="overwrieMode" class="overwrieMode">生成</button>
+					</div>
+				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="testElementPackageName">テスト要素パッケージ</label></div>
+					<div class="field">
+						<input type="text" id="testElementPackageName" />
 					</div>
 				</div>
 				<div class="fieldDiv">
 					<div class="label"><label for="pageTestElementClassName">ページテスト要素クラス名</label></div>
 					<div class="field">
 						<input type="text" id="pageTestElementClassName" class="testClassName" />
-						<select id="pageTestElementOverwriteMode" class="overwrieMode"></select>
+						<select id="pageTestElementOverwriteMode" class="overwrieMode" ></select>
+						<button id="testElementButton" type="button" class="overwrieMode">生成</button>
 					</div>
 				</div>
 			</div>
@@ -50,6 +64,9 @@
 				<table id="formTable">
 					<thead>
 						<tr>
+							<th>
+								No.
+							</th>
 							<th>
 								フォームクラス名
 							</th>
@@ -59,18 +76,27 @@
 							<th>
 								上書きモード
 							</th>
+							<th>
+								
+							</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>
+							<td style="width: 32px; text-align: right;">
+								<span id="formTable[0].rowNo" ></span>
+							</td>
+							<td style="width: 300px;">
 								<input type="text" id="formTable[0].formClassName" />
 							</td>
-							<td>
+							<td style="width: 400px;">
 								<input type="text" id="formTable[0].formTestElementClassName" />
 							</td>
-							<td>
+							<td style="width: 140px;">
 								<select id="formTable[0].formTestElementOverwriteMode" ></select>
+							</td>
+							<td style="width: 100px;">
+								<button id="formTable[0].testElementButton" type="button" style="width: 100%;">生成</button>
 							</td>
 						</tr>
 					</tbody>
