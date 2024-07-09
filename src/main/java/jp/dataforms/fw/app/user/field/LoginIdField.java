@@ -22,7 +22,7 @@ public class LoginIdField extends VarcharField {
 	/**
 	 * フィールドコメント。
 	 */
-	private static final String COMMENT = "ログインID.";
+	private static final String COMMENT = "ログインID";
 
 	/**
 	 * コンストラクタ。

@@ -12,5 +12,6 @@ public class PasswordRequiredFlagField extends FlagField {
 	public PasswordRequiredFlagField() {
 		super(null);
 		this.setDefaultValue("1");
+		this.setComment("パスワード必須フラグ");
 	}
 }

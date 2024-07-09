@@ -12,5 +12,6 @@ public class PasskeyRequiredFlagField extends FlagField {
 	public PasskeyRequiredFlagField() {
 		super(null);
 		this.setDefaultValue("0");
+		this.setComment("PassKey必須フラグ");
 	}
 }
