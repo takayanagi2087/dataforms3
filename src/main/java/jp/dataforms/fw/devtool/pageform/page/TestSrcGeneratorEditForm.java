@@ -28,7 +28,6 @@ import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.JsonUtil;
-import jp.dataforms.fw.validator.RequiredValidator;
 
 /**
  * テストソース生成フォーム。
@@ -123,23 +122,21 @@ public class TestSrcGeneratorEditForm extends EditForm {
 		this.addField(new TextField(ID_PACKAGE_NAME)).setReadonly(true);
 		this.addField(new TextField(ID_PAGE_CLASS_NAME)).setComment("ページクラス名").setReadonly(true);
 
-		this.addField(new TextField(ID_TESTER_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("出力パッケージ名");
-		this.addField(new TextField(ID_PAGE_TESTER_CLASS_NAME)).setComment("ページテスタークラス名");
+		this.addField(new TextField(ID_TESTER_PACKAGE_NAME)).setReadonly(true).setComment("出力パッケージ名");
+		this.addField(new TextField(ID_PAGE_TESTER_CLASS_NAME)).setReadonly(true).setComment("ページテスタークラス名");
 		this.addField(new OverwriteModeField(ID_PAGE_TESTER_OVERWRITE_MODE)).setComment("ページテスター上書きモード");
 		
-		this.addField(new TextField(ID_TEST_ELEMENT_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("テスト要素パッケージ");
-		this.addField(new TextField(ID_PAGE_TEST_ELEMENT_CLASS_NAME)).setComment("ページテスト要素クラス名");
+		this.addField(new TextField(ID_TEST_ELEMENT_PACKAGE_NAME)).setReadonly(true).setComment("テスト要素パッケージ");
+		this.addField(new TextField(ID_PAGE_TEST_ELEMENT_CLASS_NAME)).setReadonly(true).setComment("ページテスト要素クラス名");
 		this.addField(new OverwriteModeField(ID_PAGE_TEST_ELEMENT_OVERWRITE_MODE)).setComment("ページテスト要素上書きモード");
-		this.addField(new TextField(ID_TEST_ITEM_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("テスト項目パッケージ");
+		this.addField(new TextField(ID_TEST_ITEM_PACKAGE_NAME)).setReadonly(true).setComment("テスト項目パッケージ");
 
 		FieldList flist = new FieldList();
 		flist.addField(new RowNoField()).setReadonly(true);
 		flist.addField(new TextField(ID_FORM_CLASS_NAME)).setReadonly(true).setComment("フォームクラス名");
 		flist.addField(new TextField(ID_FORM_TEST_ELEMENT_CLASS_NAME)).setReadonly(true).setComment("フォームテスト要素クラス名");
-
-		flist.addField(new TextField(ID_FORM_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("");
-		flist.addField(new TextField(ID_FORM_SAMPLE_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("");
-		
+		flist.addField(new TextField(ID_FORM_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("テスト項目基本クラス名");
+		flist.addField(new TextField(ID_FORM_SAMPLE_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("サンプルテスト項目クラス名");
 		flist.addField(new OverwriteModeField(ID_FORM_TEST_ELEMENT_OVERWRITE_MODE)).setComment("フォームテスト要素上書きモード");
 
 		HtmlTable formTable = new HtmlTable("formTable", flist);

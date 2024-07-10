@@ -143,6 +143,7 @@ div.gridLayout > div div.field {
 	div.gridLayout > div {
 		grid-column: 1 / 2 !important;
 		flex-flow: column;
+		min-width: 288px;
 	}
 	div.gridLayout > div div.label {
 		width: calc(100% - 0px) !important;
