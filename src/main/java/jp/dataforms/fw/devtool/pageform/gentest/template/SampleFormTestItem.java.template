@@ -16,7 +16,7 @@ ${importList}
 	type = Type.NORMAL, 	// Type.NORMAL or Type.ERROR or Type.BOUNDARY
 	regression = false		// 回帰テストで使用する項目の場合trueを指定します。
 )
-public class ${formClass}SampleTestItem extends DatabaseInfoFormTestItem {
+public class ${formClass}SampleTestItem extends ${formClass}TestItem {
 	/**
 	 * テスト条件。
 	 */
