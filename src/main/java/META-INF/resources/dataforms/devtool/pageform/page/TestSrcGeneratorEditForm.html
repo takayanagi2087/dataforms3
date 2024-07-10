@@ -59,7 +59,14 @@
 						<button id="testElementButton" type="button" class="overwrieMode">生成</button>
 					</div>
 				</div>
+				<div class="fieldDiv">
+					<div class="label"><label for="testItemPackageName">テスト項目パッケージ</label></div>
+					<div class="field">
+						<input type="text" id="testItemPackageName" />
+					</div>
+				</div>
 			</div>
+			<h2>フォーム一覧</h2>
 			<div>
 				<table id="formTable">
 					<thead>
@@ -71,7 +78,13 @@
 								フォームクラス名
 							</th>
 							<th>
-								フォームテスト要素クラス名
+								テスト要素クラス名
+							</th>
+							<th>
+								テスト項目基本クラス名
+							</th>
+							<th>
+								サンプルテスト項目クラス名
 							</th>
 							<th>
 								上書きモード
@@ -86,11 +99,17 @@
 							<td style="width: 32px; text-align: right;">
 								<span id="formTable[0].rowNo" ></span>
 							</td>
-							<td style="width: 300px;">
+							<td style="width: 200px;">
 								<input type="text" id="formTable[0].formClassName" />
 							</td>
-							<td style="width: 400px;">
+							<td style="width: 300px;">
 								<input type="text" id="formTable[0].formTestElementClassName" />
+							</td>
+							<td style="width: 300px;">
+								<input type="text" id="formTable[0].formTestItemClassName" />
+							</td>
+							<td style="width: 300px;">
+								<input type="text" id="formTable[0].formSampleTestItemClassName" />
 							</td>
 							<td style="width: 140px;">
 								<select id="formTable[0].formTestElementOverwriteMode" ></select>

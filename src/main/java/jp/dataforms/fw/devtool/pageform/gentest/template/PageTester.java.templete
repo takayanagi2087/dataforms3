@@ -19,7 +19,7 @@ public class ${pageTesterClass} extends PageTester {
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(${pageTesterClass}.class);
+	// private static Logger logger = LogManager.getLogger(${pageTesterClass}.class);
 	
 	/**
 	 * コンストラクタ。
@@ -50,9 +50,10 @@ public class ${pageTesterClass} extends PageTester {
 		TestItem.setTestResult(this.getConf().getTestApp().getTestResult());
 		Browser browser = this.getBrowser();
 		this.openPage(browser);
+		String pageName = browser.getTitle();
 		List<TestItem> list = new ArrayList<TestItem>();
 		// list.addAll(this.testSomething(browser));
-		this.saveIndexHtml(list);
+		this.saveIndexHtml(pageName, list);
 		browser.close();
 	}
 	

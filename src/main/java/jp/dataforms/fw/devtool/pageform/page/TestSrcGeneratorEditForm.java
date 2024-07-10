@@ -16,9 +16,11 @@ import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.field.OverwriteModeField;
-import jp.dataforms.fw.devtool.pageform.gen.FormTestElementGenerator;
-import jp.dataforms.fw.devtool.pageform.gen.PageTestElementGenerator;
-import jp.dataforms.fw.devtool.pageform.gen.PageTesterGenerator;
+import jp.dataforms.fw.devtool.pageform.gentest.FormTestElementGenerator;
+import jp.dataforms.fw.devtool.pageform.gentest.FormTestItemGenerator;
+import jp.dataforms.fw.devtool.pageform.gentest.PageTestElementGenerator;
+import jp.dataforms.fw.devtool.pageform.gentest.PageTesterGenerator;
+import jp.dataforms.fw.devtool.pageform.gentest.SampleFormTestItemGenerator;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.RowNoField;
@@ -68,10 +70,16 @@ public class TestSrcGeneratorEditForm extends EditForm {
 	public static final String ID_PAGE_TESTER_OVERWRITE_MODE = "pageTesterOverwriteMode";
 	
 	/**
-	 * テスト要素のフィールドID。
+	 * テスト要素パッケージのフィールドID。
 	 */
 	public static final String ID_TEST_ELEMENT_PACKAGE_NAME = "testElementPackageName";
 
+	/**
+	 * テスト項目パッケージのフィールドID。
+	 */
+	public static final String ID_TEST_ITEM_PACKAGE_NAME = "testItemPackageName";
+
+	
 	/**
 	 * ページテスト要素クラス名のフィールドID。
 	 */
@@ -95,6 +103,16 @@ public class TestSrcGeneratorEditForm extends EditForm {
 	/**
 	 * フォームテスト要素クラス名。
 	 */
+	public static final String ID_FORM_TEST_ITEM_CLASS_NAME = "formTestItemClassName";
+
+	/**
+	 * フォームテスト要素クラス名。
+	 */
+	public static final String ID_FORM_SAMPLE_TEST_ITEM_CLASS_NAME = "formSampleTestItemClassName";
+	
+	/**
+	 * フォームテスト要素クラス名。
+	 */
 	public  static final String ID_FORM_TEST_ELEMENT_OVERWRITE_MODE = "formTestElementOverwriteMode";
 
 	/**
@@ -112,11 +130,16 @@ public class TestSrcGeneratorEditForm extends EditForm {
 		this.addField(new TextField(ID_TEST_ELEMENT_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("テスト要素パッケージ");
 		this.addField(new TextField(ID_PAGE_TEST_ELEMENT_CLASS_NAME)).setComment("ページテスト要素クラス名");
 		this.addField(new OverwriteModeField(ID_PAGE_TEST_ELEMENT_OVERWRITE_MODE)).setComment("ページテスト要素上書きモード");
+		this.addField(new TextField(ID_TEST_ITEM_PACKAGE_NAME)).addValidator(new RequiredValidator()).setComment("テスト項目パッケージ");
 
 		FieldList flist = new FieldList();
-		flist.addField(new RowNoField());
-		flist.addField(new TextField(ID_FORM_CLASS_NAME)).setComment("フォームクラス名");
-		flist.addField(new TextField(ID_FORM_TEST_ELEMENT_CLASS_NAME)).setComment("フォームテスト要素クラス名");
+		flist.addField(new RowNoField()).setReadonly(true);
+		flist.addField(new TextField(ID_FORM_CLASS_NAME)).setReadonly(true).setComment("フォームクラス名");
+		flist.addField(new TextField(ID_FORM_TEST_ELEMENT_CLASS_NAME)).setReadonly(true).setComment("フォームテスト要素クラス名");
+
+		flist.addField(new TextField(ID_FORM_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("");
+		flist.addField(new TextField(ID_FORM_SAMPLE_TEST_ITEM_CLASS_NAME)).setReadonly(true).setComment("");
+		
 		flist.addField(new OverwriteModeField(ID_FORM_TEST_ELEMENT_OVERWRITE_MODE)).setComment("フォームテスト要素上書きモード");
 
 		HtmlTable formTable = new HtmlTable("formTable", flist);
@@ -190,6 +213,7 @@ public class TestSrcGeneratorEditForm extends EditForm {
 		ret.put(ID_TEST_ELEMENT_PACKAGE_NAME, basePackage + ".element" + spkg);
 		ret.put(ID_PAGE_TEST_ELEMENT_CLASS_NAME, p.getClass().getSimpleName() + "TestElement");
 		ret.put(ID_PAGE_TEST_ELEMENT_OVERWRITE_MODE, OverwriteModeField.ERROR);
+		ret.put(ID_TEST_ITEM_PACKAGE_NAME, basePackage + ".testitem" + spkg);
 		
 		List<Form> flist = this.getFormList(p);
 		int no = 1;
@@ -199,6 +223,8 @@ public class TestSrcGeneratorEditForm extends EditForm {
 			m.put("rowNo",  no++);
 			m.put(ID_FORM_CLASS_NAME, f.getClass().getSimpleName());
 			m.put(ID_FORM_TEST_ELEMENT_CLASS_NAME, f.getClass().getSimpleName() + "TestElement");
+			m.put(ID_FORM_TEST_ITEM_CLASS_NAME, f.getClass().getSimpleName() + "TestItem");
+			m.put(ID_FORM_SAMPLE_TEST_ITEM_CLASS_NAME, f.getClass().getSimpleName() + "SampleTestItem");
 			m.put(ID_FORM_TEST_ELEMENT_OVERWRITE_MODE, OverwriteModeField.ERROR);
 			list.add(m);
 		}
@@ -216,6 +242,7 @@ public class TestSrcGeneratorEditForm extends EditForm {
 		String pkg = (String) data.get(ID_PACKAGE_NAME);
 		String cls = (String) data.get(ID_PAGE_CLASS_NAME);
 		String classname = pkg + "." + cls;
+		// PageTesterクラスの生成。
 		Page page = this.newPageInstance(classname);
 		PageTesterGenerator gen = new PageTesterGenerator(page);
 		gen.generage(this, data);
@@ -224,9 +251,23 @@ public class TestSrcGeneratorEditForm extends EditForm {
 			String formClassName = f.getClass().getSimpleName();
 			String formSuperClassName = f.getClass().getSuperclass().getSimpleName();
 			logger.debug("form=" + formClassName + ", " + formSuperClassName);
-			FormTestElementGenerator fgen = new FormTestElementGenerator(f);
-			fgen.generage(this, data);
+			// FormTestElementクラスの生成。
+			{
+				FormTestElementGenerator fgen = new FormTestElementGenerator(f);
+				fgen.generage(this, data);
+			}
+			// FormTestItemクラスの生成。
+			{
+				FormTestItemGenerator fgen = new FormTestItemGenerator(f);
+				fgen.generage(this, data);
+			}
+			// SampleFormTestItemクラスの生成。
+			{
+				SampleFormTestItemGenerator fgen = new SampleFormTestItemGenerator(f);
+				fgen.generage(this, data);
+			}
 		}
+		// PageTestElementクラス
 		PageTestElementGenerator ptgen = new PageTestElementGenerator(page, flist);
 		ptgen.generage(this, data);
 	}

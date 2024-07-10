@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.pageform.gen;
+package jp.dataforms.fw.devtool.pageform.gentest;
 
 import java.io.File;
 import java.util.Map;

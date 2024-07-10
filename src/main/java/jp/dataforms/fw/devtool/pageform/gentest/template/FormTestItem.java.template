@@ -1,0 +1,19 @@
+package ${package};
+
+import jp.dataforms.test.testitem.TestItem;
+${importList}
+
+/**
+ * ${formClass}テスト項目基本クラス。
+ */
+public abstract class ${formClass}TestItem extends TestItem {
+	/**
+	 * コンストラクタ。
+	 * @param condition テスト条件。
+	 * @param expected 期待値。
+	 */
+	public ${formClass}TestItem(final String condition, final String expected) {
+		super(${pageClass}.class, ${formClass}.class, condition, expected);
+	}
+}
+
