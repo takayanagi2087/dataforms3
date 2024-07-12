@@ -16,7 +16,6 @@ import jp.dataforms.fw.devtool.menu.page.MenuTable;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.HtmlUtil;
-import jp.dataforms.fw.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -510,7 +509,7 @@ public class FunctionMap {
 	 */
 	public String getWebComponentClass(final String context, final String uri) {
 		logger.debug("context, url = " + context + "," + uri);
-		String path = uri.substring(context.length() + 1);
+		String path = uri.substring(context.length());
 		int idx = path.lastIndexOf(".");
 		if (idx >= 0) {
 			path = path.substring(0, idx);
@@ -519,6 +518,9 @@ public class FunctionMap {
 				path = path.substring(p.getPath().length());
 				path = p.getBasePackage() + path;
 			}
+		}
+		if (path.charAt(0) == '/') {
+			path = path.substring(1);
 		}
 		path = path.replaceAll("/", ".");
 		return path;
