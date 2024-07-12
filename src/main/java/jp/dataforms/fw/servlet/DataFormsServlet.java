@@ -682,7 +682,6 @@ public class DataFormsServlet extends HttpServlet {
 	private String getTargetClassName(final String context, final String uri) {
 		FunctionMap conv = WebComponent.getFunctionMap();
 		String ret = conv.getWebComponentClass(context, uri);
-		logger.debug("*** path=" + ret);
 		return ret;
 	}
 
