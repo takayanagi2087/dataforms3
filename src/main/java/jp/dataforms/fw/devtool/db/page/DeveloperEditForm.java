@@ -213,7 +213,7 @@ public class DeveloperEditForm extends EditForm {
 			List<Map<String, Object>> list  = tmdao.queryTableClass(p);
 			for (Map<String, Object> m: list) {
 				String className = (String) m.get("className");
-				if (className.indexOf(WebComponent.BASE_PACKAGE + ".app.dao.user") == 0) {
+				if (className.indexOf(WebComponent.BASE_PACKAGE + ".app.user.dao") == 0) {
 					if ("1".equals(userImportFlag)) {
 						// ユーザ関連テーブルを作成しデータをインポートする。
 						tmdao.updateTable(className);
@@ -240,6 +240,7 @@ public class DeveloperEditForm extends EditForm {
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 		String userImportFlag = (String) data.get("userImportFlag");
+		logger.debug("userImportFlag = " + userImportFlag);
 		this.initDb(userImportFlag);
 		if (!"1".equals(userImportFlag)) {
 			long userid = this.getPage().getUserId();
