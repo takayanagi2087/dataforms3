@@ -24,14 +24,12 @@ export class DeveloperEditForm extends EditForm {
 		}
 		this.get("userImportFlag").click((ev) => {
 			if ($(ev.currentTarget).prop("checked")) {
-				this.get("userInfoTable").hide();
+				this.find(".userInfo").hide();
 			} else {
-				this.get("userInfoTable").show();
+				this.find(".userInfo").show();
 			}
 		});
 	}
-
-
 
 	/**
 	 * フォームデータを設定します。
@@ -40,9 +38,9 @@ export class DeveloperEditForm extends EditForm {
 		super.setFormData(data);
 		if (this.userInfoDataExists) {
 			if (data.userImportFlag == "1") {
-				this.get("userInfoTable").hide();
+				this.find(".userInfo").hide();
 			} else {
-				this.get("userInfoTable").show();
+				this.find(".userInfo").show();
 			}
 		}
 	}
