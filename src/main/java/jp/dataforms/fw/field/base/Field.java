@@ -1217,7 +1217,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 
 
 	/**
-	 * dataforms2.jarが提供するフィールドかどうかを判定します。
+	 * dataforms3.jarが提供するフィールドかどうかを判定します。
 	 * @param classname フィールドの完全クラス名。
 	 * @return dataforms2.jarが提供するフィールドクラスの場合true.
 	 */

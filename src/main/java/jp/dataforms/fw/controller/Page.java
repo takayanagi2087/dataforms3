@@ -53,17 +53,17 @@ public class Page extends DataForms implements WebEntryPoint {
     private static Logger logger = LogManager.getLogger(Page.class.getName());
 
 	/**
-	 * dataforms2.jarのバージョン。
+	 * dataforms3.jarのバージョン。
 	 */
 	private static String dataformsVersion = null;
 
 	/**
-	 * dataforms2.jarの提供者。
+	 * dataforms3.jarの提供者。
 	 */
 	private static String dataformsVendor = null;
 
 	/**
-	 * dataforms2.jarの作成日時。
+	 * dataforms3.jarの作成日時。
 	 */
 	private static String dataformsCreateDate = null;
 

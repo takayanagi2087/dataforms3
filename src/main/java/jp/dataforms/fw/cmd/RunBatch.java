@@ -57,7 +57,7 @@ public class RunBatch {
 	public static void main(final String[] args) {
 		if (args.length != 1) {
 			System.out.println("Usage:");
-			System.out.println("java -cp dataforms2.jar dataforms.cmd.RunBatch <batch url>");
+			System.out.println("java -cp dataforms3.jar dataforms.cmd.RunBatch <batch url>");
 		} else {
 			try {
 				RunBatch app = new RunBatch();

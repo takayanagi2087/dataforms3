@@ -194,7 +194,7 @@ public class TableGeneratorEditForm extends EditForm {
 			ret.put("superClassPackage", superClassPackage);
 			ret.put("superClassSimpleName", superClassSimpleName);
 			Field<?> field = Field.newFieldInstance(cls);
-			// dataforms2.jarの提供するFieldクラスを直接指定する場合。
+			// dataforms3.jarの提供するFieldクラスを直接指定する場合。
 			ret.put("fieldLength", field.getLengthParameter());
 			ret.put("fieldComment", field.getComment());
 			JsonResponse result = new JsonResponse(JsonResponse.SUCCESS, ret);

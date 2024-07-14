@@ -104,7 +104,7 @@ public class ConfUtil {
 		 * このリストに記載されたテーブルはデータベースに実体が作成されません。
 		 * 複数のテーブルクラスの基底クラスとして定義し、
 		 * テーブルの実体を作成する必要がないテーブルクラスを指定します。
-		 * dataforms2.jarに含まれたUserInfoTableに項目を追加する場合、
+		 * dataforms3.jarに含まれたUserInfoTableに項目を追加する場合、
 		 * このコメントを有効にしてUserInfoTableから派生したテーブルクラスに項目を追加します。
 		 */
 		private List<String> abstractTableList = null;
@@ -222,12 +222,12 @@ public class ConfUtil {
 	public static class MessageResource implements ConfClass {
 		/**
 		 * クライアントに送信して使用するメッセージリソースの名称を指定します。
-		 * このファイルはdataforms2.jar内に存在します。
+		 * このファイルはdataforms3.jar内に存在します。
 		 */
 		private String clientMessages = null;
 		/**
 		 * サーバ側で使用するメッセージリソースの名称を指定します。
-		 * このファイルはdataforms2.jar内に存在します。
+		 * このファイルはdataforms3.jar内に存在します。
 		 */
 		private String messages = null;
 		/**
