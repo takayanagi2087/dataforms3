@@ -376,6 +376,20 @@ public class FunctionMap {
 	}
 	
 	/**
+	 * 他のJar中のページを追加します。
+	 * @param pgclass 他のJar中のページクラス名。
+	 */
+	private void addOtherJarPage(final String pgclass) {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Page> tp = (Class<? extends Page>) Class.forName(pgclass);
+			this.addPage(new PageInfo(tp));
+		} catch (ClassNotFoundException e) {
+			logger.info("package jp.dataforms.test not found.");
+		}
+	}
+	
+	/**
 	 * 開発ツールのページを追加します。
 	 */
 	private void addDeveloperPage() {
@@ -390,14 +404,7 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
-		// dataformsXtester.jarがリンクされていた場合テストツール開発ツールを追加する。
-		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Page> tp = (Class<? extends Page>) Class.forName("jp.dataforms.test.devtool.pageform.page.TestSrcGeneratorPage");
-			this.addPage(new PageInfo(tp));
-		} catch (ClassNotFoundException e) {
-			logger.info("package jp.dataforms.test not found.");
-		}
+		this.addOtherJarPage("jp.dataforms.test.devtool.pageform.page.TestSrcGeneratorPage");
 		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.VersionInfoPage.class));
 	}
