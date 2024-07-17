@@ -82,8 +82,8 @@ public class FunctionMap {
 	protected void addFwPathPackage() {
 		this.addPathPackage(new PathPackage("/dataforms/devtool", WebComponent.BASE_PACKAGE + ".devtool"));
 		this.addPathPackage(new PathPackage("/dataforms/test", "jp.dataforms.test"));
-		
 		this.addPathPackage(new PathPackage("/dataforms/app", WebComponent.BASE_PACKAGE + ".app"));
+		this.addPathPackage(new PathPackage("/dataforms/doc", WebComponent.BASE_PACKAGE + ".doc"));
 		this.addPathPackage(new PathPackage("/dataforms", WebComponent.BASE_PACKAGE));
 	}
 
@@ -163,6 +163,7 @@ public class FunctionMap {
 		this.addMenu(new Menu("/dataforms/app", "Basic Function", "ja\t基本機能"));
 		this.addMenu(new Menu("/dataforms/devtool", "Develop tool", "ja\t開発ツール"));
 		this.addMenu(new Menu("/dataforms/test", "Test develop tool", "ja\tテスト開発ツール"));
+		this.addMenu(new Menu("/dataforms/doc", "Documents", "ja\tドキュメント"));
 	}
 	
 	/**
@@ -389,8 +390,8 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.doc.page.DocFramePage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.version.page.VersionInfoPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.VersionInfoPage.class));
 		// dataformsXtester.jarがリンクされていた場合テストツール開発ツールを追加する。
 		try {
 			@SuppressWarnings("unchecked")

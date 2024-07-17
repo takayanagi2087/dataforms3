@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: devtool/init/page/InitDevelopmentToolForm.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: devtool/init/page/InitDevelopmentToolForm.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileOverview {@link InitDevelopmentToolForm}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+import { EditForm } from '../../../controller/EditForm.js';
+
+/**
+ * @class InitDevelopmentToolForm
+ *
+ * @extends EditForm
+ */
+export class InitDevelopmentToolForm extends EditForm {
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 */
+	attach() {
+		super.attach();
+		// 独自のボタン(id="webMethodButton")を追加しサーバサイドのメソッドを呼び出す場合は以下の様にしてください。
+/*
+		this.get("webMethodButton").click(() => {
+			this.callWebMethod();
+			return false;
+		});
+*/
+	}
+
+	// 独自のWebメソッドを呼び出す場合は、以下のコードを参考にしてください。
+	/**
+	 * Webメソッドの呼び出しサンプル。
+	 *
+	 */
+/*
+	async callWebMethod() {
+		try {
+			if (this.validate()) {
+				let r = await this.submit("webMethod");
+				this.parent.resetErrorStatus();
+				if (r.status == JsonResponse.SUCCESS) {
+					// TODO:成功時の処理を記述します。
+					// 応答情報をログ表示
+					logger.dir(r);
+				} else {
+					this.parent.setErrorInfo(this.getValidationResult(r), this);
+				}
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+*/
+
+
+	// フォーム単位のバリデーションを行う場合は以下のコメントを参考に実装してください。
+	/**
+	 * フォームのバリデーション。
+	 * &lt;pre>
+	 * フォーム内のフィールド関連チェックを実装します。
+	 * &lt;/pre>
+	 */
+/*
+	validateForm() {
+		let list = super.validateForm();
+		if (list.length == 0) {
+			if (エラー判定) {
+				list.push(new ValidationError("fieldId", MessagesUtil.getMessage("error.messagekey")));
+			}
+		}
+		return list;
+	}
+*/
+
+	// フォームの計算処理を行う場合、以下の処理を参考にしてください。
+	/**
+	 * 計算イベント処理を行います。
+	 * &lt;pre>
+	 * 計算イベントフィールドが更新された場合、このメソッドが呼び出されます。
+	 * データ入力時の自動計算が必要な場合このメソッドをオーバーライドしてください。
+	 * &lt;/pre>
+	 * @param {jQuery} element イベントが発生した要素。初期表示の時等特定フィールドが要因でない場合はnullが設定されます。
+	 *
+	 */
+/*
+	onCalc(element) {
+	}
+*/
+
+
+	// フォームの各種動作をカスタマイズするには以下のメソッドをオーバーライドしてください。
+
+	/**
+	 * 各フィールドにデータを設定します。
+	 * &lt;pre>
+	 * 新規モードの場合、削除ボタンを隠します。
+	 * &lt;/pre>
+	 * @param {Object} data フォームデータ.
+	 *
+	 */
+/*
+	setFormData(data) {
+		super.setFormData(data);
+	}
+*/
+
+	/**
+	 * 編集モードにします。
+	 * &lt;pre>
+	 * 各フィールドを編集可能状態にします。
+	 * &lt;/pre>
+	 */
+/*
+	toEditMode() {
+		super.toEditMode();
+	}
+*/
+
+	/**
+	 * 確認モードにします。
+	 * &lt;pre>
+	 * 各フィールドを編集不可状態にします。
+	 * &lt;/pre>
+	 */
+/*
+	toConfirmMode() {
+		super.toConfirmMode();
+	}
+*/
+
+	/**
+	 * 確認ボタンのイベント処理を行います。
+	 * &lt;pre>
+	 * 対応するFormのconfirmメソッドを呼び出し、問題なければ確認モードに遷移します。
+	 * ファイルアップロードフィールドはサーバーに送信されません。
+	 * &lt;/pre>
+	 */
+/*
+	confirm() {
+		super.confirm();
+	}
+*/
+		/**
+	 * 新規登録モードにします。
+	 * &lt;pre>
+	 * 対応するEditFormのgetNewDataを呼び出し、初期データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * &lt;/pre>
+	 */
+/*
+	newData() {
+		super.newData();
+	}
+*/
+
+		/**
+	 * 更新登録モードにします。
+	 * &lt;pre>
+	 * 対応するEditFormのgetDataを呼び出し、編集対象データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * &lt;/pre>
+	 */
+/*
+	updateData() {
+		super.updateData();
+	}
+*/
+
+	/**
+	 * データを参照登録します。
+	 * &lt;pre>
+	 * 対応するEditFormのgetReferDataを呼び出し、参照対象データを取得します。
+	 * 各フィールドに取得データを設定し、編集モードにします。
+	 * &lt;/pre>
+	 *
+	 */
+/*
+	referData() {
+		super.referData();
+	}
+*/
+	/**
+	 * データを参照します。
+	 * &lt;pre>
+	 * 対応するEditFormのgetDataを呼び出し、参照対象データを取得します。
+	 * 各フィールドに取得データを設定し、参照モードにします。
+	 * &lt;/pre>
+	 */
+/*
+	viewData() {
+		super.viewData();
+	}
+*/
+
+	/**
+	 * 保存ボタンのイベント処理を行います。
+	 * &lt;pre>
+	 * 対応するFormのsaveメソッドを呼び出し、保存処理を行います。
+	 * ファイルアップロードフィールドもサーバーに送信されます。
+	 * &lt;/pre>
+	 */
+	async save() {
+		await super.save();
+	}
+
+	/**
+	 * 更新処理変更後の画面状態の遷移処理。
+	 */
+	changeStateForAfterUpdate() {
+		this.get("nextMessage").show();
+		this.get("buttonDiv").hide();
+	}
+
+	/**
+	 * 保存ボタンのイベント処理を行います。
+	 * &lt;pre>
+	 * 対応するEditFormのdeleteメソッドを呼び出し、保存処理を行います。
+	 * &lt;/pre>
+	 */
+/*
+	del() {
+		super.del();
+	}
+*/
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AdminPage.html">AdminPage</a></li><li><a href="AlertDialog.html">AlertDialog</a></li><li><a href="AlertDialog_AlertDialog.html">AlertDialog</a></li><li><a href="AudioField.html">AudioField</a></li><li><a href="BackupForm.html">BackupForm</a></li><li><a href="Base64Util.html">Base64Util</a></li><li><a href="BasePage.html">BasePage</a></li><li><a href="BigintField.html">BigintField</a></li><li><a href="BigintSingleSelectField.html">BigintSingleSelectField</a></li><li><a href="BlobStoreAudioField.html">BlobStoreAudioField</a></li><li><a href="BlobStoreAudioField_BlobStoreAudioField.html">BlobStoreAudioField</a></li><li><a href="BlobStoreFileField.html">BlobStoreFileField</a></li><li><a href="BlobStoreImageField.html">BlobStoreImageField</a></li><li><a href="BlobStoreVideoField.html">BlobStoreVideoField</a></li><li><a href="BlobStoreVideoField_BlobStoreVideoField.html">BlobStoreVideoField</a></li><li><a href="CharField.html">CharField</a></li><li><a href="CharSingleSelectField.html">CharSingleSelectField</a></li><li><a href="CharSingleSelectField_CharSingleSelectField.html">CharSingleSelectField</a></li><li><a href="ClassNameValidator.html">ClassNameValidator</a></li><li><a href="ClobField.html">ClobField</a></li><li><a href="ConfigErrorPage.html">ConfigErrorPage</a></li><li><a href="ConfirmDialog.html">ConfirmDialog</a></li><li><a href="ConfirmDialog_ConfirmDialog.html">ConfirmDialog</a></li><li><a href="CreateTimestampField.html">CreateTimestampField</a></li><li><a href="CreateTimestampField_CreateTimestampField.html">CreateTimestampField</a></li><li><a href="CreateUserIdField.html">CreateUserIdField</a></li><li><a href="CreateUserIdField_CreateUserIdField.html">CreateUserIdField</a></li><li><a href="DaoAndPageGeneratorEditForm.html">DaoAndPageGeneratorEditForm</a></li><li><a href="DaoAndPageGeneratorEditForm_DaoAndPageGeneratorEditForm.html">DaoAndPageGeneratorEditForm</a></li><li><a href="DataForms.html">DataForms</a></li><li><a href="DateField.html">DateField</a></li><li><a href="DateTimeField.html">DateTimeField</a></li><li><a href="DateTimeValidator.html">DateTimeValidator</a></li><li><a href="DateValidator.html">DateValidator</a></li><li><a href="DbTableListHtmlTable.html">DbTableListHtmlTable</a></li><li><a href="DbTableListHtmlTable_DbTableListHtmlTable.html">DbTableListHtmlTable</a></li><li><a href="DeleteFlagField.html">DeleteFlagField</a></li><li><a href="DeleteFlagField_DeleteFlagField.html">DeleteFlagField</a></li><li><a href="DeveloperEditForm.html">DeveloperEditForm</a></li><li><a href="DeveloperPage.html">DeveloperPage</a></li><li><a href="Dialog.html">Dialog</a></li><li><a href="DisplayedRequiredValidator.html">DisplayedRequiredValidator</a></li><li><a href="DocFramePage.html">DocFramePage</a></li><li><a href="DoubleField.html">DoubleField</a></li><li><a href="EditForm.html">EditForm</a></li><li><a href="EditableHtmlTable.html">EditableHtmlTable</a></li><li><a href="EnumEditForm.html">EnumEditForm</a></li><li><a href="EnumEditForm_EnumEditForm.html">EnumEditForm</a></li><li><a href="EnumOptionMultiSelectField.html">EnumOptionMultiSelectField</a></li><li><a href="EnumOptionMultiSelectField_EnumOptionMultiSelectField.html">EnumOptionMultiSelectField</a></li><li><a href="EnumOptionSingleSelectField.html">EnumOptionSingleSelectField</a></li><li><a href="EnumQueryForm.html">EnumQueryForm</a></li><li><a href="EnumQueryForm_EnumQueryForm.html">EnumQueryForm</a></li><li><a href="EnumTypeSingleSelectField.html">EnumTypeSingleSelectField</a></li><li><a href="ErrorPage.html">ErrorPage</a></li><li><a href="ExistingFolderField.html">ExistingFolderField</a></li><li><a href="ExistingFolderField_ExistingFolderField.html">ExistingFolderField</a></li><li><a href="ExistingFolderField_FolderField.html">FolderField</a></li><li><a href="ExportWebResourceQueryResultForm.html">ExportWebResourceQueryResultForm</a></li><li><a href="Field.html">Field</a></li><li><a href="FieldListDialog.html">FieldListDialog</a></li><li><a href="FieldListDialog_FieldListDialog.html">FieldListDialog</a></li><li><a href="FieldListForm.html">FieldListForm</a></li><li><a href="FieldListForm_FieldListForm.html">FieldListForm</a></li><li><a href="FieldListHtmlTable.html">FieldListHtmlTable</a></li><li><a href="FieldValidator.html">FieldValidator</a></li><li><a href="FileField.html">FileField</a></li><li><a href="FileObjectField.html">FileObjectField</a></li><li><a href="FileReceiver.html">FileReceiver</a></li><li><a href="FileSizeValidator.html">FileSizeValidator</a></li><li><a href="FlagField.html">FlagField</a></li><li><a href="FlagMultiSelectField.html">FlagMultiSelectField</a></li><li><a href="FlagMultiSelectField_FlagMultiSelectField.html">FlagMultiSelectField</a></li><li><a href="FolderField.html">FolderField</a></li><li><a href="FolderField_FolderField.html">FolderField</a></li><li><a href="FolderStoreAudioField.html">FolderStoreAudioField</a></li><li><a href="FolderStoreAudioField_FolderStoreAudioField.html">FolderStoreAudioField</a></li><li><a href="FolderStoreFileField.html">FolderStoreFileField</a></li><li><a href="FolderStoreImageField.html">FolderStoreImageField</a></li><li><a href="FolderStoreVideoField.html">FolderStoreVideoField</a></li><li><a href="FolderStoreVideoField_FolderStoreVideoField.html">FolderStoreVideoField</a></li><li><a href="Form.html">Form</a></li><li><a href="FunctionSelectField.html">FunctionSelectField</a></li><li><a href="HtmlTable.html">HtmlTable</a></li><li><a href="ImageDialog.html">ImageDialog</a></li><li><a href="ImageField.html">ImageField</a></li><li><a href="ImportDataForm.html">ImportDataForm</a></li><li><a href="InitDevelopmentToolForm.html">InitDevelopmentToolForm</a></li><li><a href="InitDevelopmentToolForm_InitDevelopmentToolForm.html">InitDevelopmentToolForm</a></li><li><a href="IntegerField.html">IntegerField</a></li><li><a href="IntegerSingleSelectField.html">IntegerSingleSelectField</a></li><li><a href="JavaSourcePathField.html">JavaSourcePathField</a></li><li><a href="JoinHtmlTable.html">JoinHtmlTable</a></li><li><a href="JsonResponse.html">JsonResponse</a></li><li><a href="LangCodeField.html">LangCodeField</a></li><li><a href="LangCodeField_LangCodeField.html">LangCodeField</a></li><li><a href="LoginForm.html">LoginForm</a></li><li><a href="LoginIdField.html">LoginIdField</a></li><li><a href="LoginInfoForm.html">LoginInfoForm</a></li><li><a href="MasterMultiSelectField.html">MasterMultiSelectField</a></li><li><a href="MasterSingleSelectField.html">MasterSingleSelectField</a></li><li><a href="MaxLengthValidator.html">MaxLengthValidator</a></li><li><a href="MemoField.html">MemoField</a></li><li><a href="MemoField_MemoField.html">MemoField</a></li><li><a href="Menu.html">Menu</a></li><li><a href="MenuEditForm.html">MenuEditForm</a></li><li><a href="MenuEditForm_MenuEditForm.html">MenuEditForm</a></li><li><a href="MenuForm.html">MenuForm</a></li><li><a href="MenuTable.html">MenuTable</a></li><li><a href="MenuTable_MenuTable.html">MenuTable</a></li><li><a href="MessagesUtil.html">MessagesUtil</a></li><li><a href="MultiSelectField.html">MultiSelectField</a></li><li><a href="NumberField.html">NumberField</a></li><li><a href="NumberRangeValidator.html">NumberRangeValidator</a></li><li><a href="NumberUtil.html">NumberUtil</a></li><li><a href="NumberValidator.html">NumberValidator</a></li><li><a href="NumericField.html">NumericField</a></li><li><a href="NumericValidator.html">NumericValidator</a></li><li><a href="OnetimePasswordForm.html">OnetimePasswordForm</a></li><li><a href="OnetimePasswordForm_OnetimePasswordForm.html">OnetimePasswordForm</a></li><li><a href="Page.html">Page</a></li><li><a href="PageScrollHtmlTable.html">PageScrollHtmlTable</a></li><li><a href="PasskeySingleSelectField.html">PasskeySingleSelectField</a></li><li><a href="PasskeySingleSelectField_PasskeySingleSelectField.html">PasskeySingleSelectField</a></li><li><a href="PasswordRecenryptForm.html">PasswordRecenryptForm</a></li><li><a href="PasswordRecenryptForm_PasswordRecenryptForm.html">PasswordRecenryptForm</a></li><li><a href="PathNameField.html">PathNameField</a></li><li><a href="PathNameField_PathNameField.html">PathNameField</a></li><li><a href="PropertiesMultiSelectField.html">PropertiesMultiSelectField</a></li><li><a href="PropertiesMultiSelectField_PropertiesMultiSelectField.html">PropertiesMultiSelectField</a></li><li><a href="PropertiesSingleSelectField.html">PropertiesSingleSelectField</a></li><li><a href="PropertiesSingleSelectField_PropertiesSingleSelectField.html">PropertiesSingleSelectField</a></li><li><a href="QueryClassNameField.html">QueryClassNameField</a></li><li><a href="QueryExecutorQueryForm.html">QueryExecutorQueryForm</a></li><li><a href="QueryExecutorQueryResultForm.html">QueryExecutorQueryResultForm</a></li><li><a href="QueryForm.html">QueryForm</a></li><li><a href="QueryGeneratorEditForm.html">QueryGeneratorEditForm</a></li><li><a href="QueryGeneratorQueryResultForm.html">QueryGeneratorQueryResultForm</a></li><li><a href="QueryGeneratorQueryResultForm_QueryGeneratorQueryResultForm.html">QueryGeneratorQueryResultForm</a></li><li><a href="QueryOrTableClassNameField.html">QueryOrTableClassNameField</a></li><li><a href="QueryOrTableClassNameField_QueryOrTableClassNameField.html">QueryOrTableClassNameField</a></li><li><a href="QueryResultForm.html">QueryResultForm</a></li><li><a href="QueryStringUtil.html">QueryStringUtil</a></li><li><a href="RecordIdField.html">RecordIdField</a></li><li><a href="RecordIdField_RecordIdField.html">RecordIdField</a></li><li><a href="RegexpValidator.html">RegexpValidator</a></li><li><a href="RequiredValidator.html">RequiredValidator</a></li><li><a href="RestoreForm.html">RestoreForm</a></li><li><a href="RowNoField.html">RowNoField</a></li><li><a href="RowNoField_RowNoField.html">RowNoField</a></li><li><a href="SelectField.html">SelectField</a></li><li><a href="SelectFieldHtmlTable.html">SelectFieldHtmlTable</a></li><li><a href="SideMenu.html">SideMenu</a></li><li><a href="SimpleClassNameField.html">SimpleClassNameField</a></li><li><a href="SimpleDateFormat.html">SimpleDateFormat</a></li><li><a href="SingleSelectField.html">SingleSelectField</a></li><li><a href="SiteMapForm.html">SiteMapForm</a></li><li><a href="SiteMapPage.html">SiteMapPage</a></li><li><a href="SiteMapPage_SiteMapPage.html">SiteMapPage</a></li><li><a href="SmallintField.html">SmallintField</a></li><li><a href="SmallintSingleSelectField.html">SmallintSingleSelectField</a></li><li><a href="SortOrderField.html">SortOrderField</a></li><li><a href="SortOrderField_SortOrderField.html">SortOrderField</a></li><li><a href="StreamingField.html">StreamingField</a></li><li><a href="StringUtil.html">StringUtil</a></li><li><a href="TableClassNameField.html">TableClassNameField</a></li><li><a href="TableGeneratorEditForm.html">TableGeneratorEditForm</a></li><li><a href="TableGeneratorQueryResultForm.html">TableGeneratorQueryResultForm</a></li><li><a href="TableInfoForm.html">TableInfoForm</a></li><li><a href="TableManagementQueryResultForm.html">TableManagementQueryResultForm</a></li><li><a href="TableOrSubQueryClassNameField.html">TableOrSubQueryClassNameField</a></li><li><a href="TableOrSubQueryClassNameField_TableOrSubQueryClassNameField.html">TableOrSubQueryClassNameField</a></li><li><a href="TextField.html">TextField</a></li><li><a href="TimeField.html">TimeField</a></li><li><a href="TimeValidator.html">TimeValidator</a></li><li><a href="TimestampField.html">TimestampField</a></li><li><a href="TimestampValidator.html">TimestampValidator</a></li><li><a href="UpdateSqlForm.html">UpdateSqlForm</a></li><li><a href="UpdateSqlForm_UpdateSqlForm.html">UpdateSqlForm</a></li><li><a href="UpdateTimestampField.html">UpdateTimestampField</a></li><li><a href="UpdateTimestampField_UpdateTimestampField.html">UpdateTimestampField</a></li><li><a href="UpdateUserIdField.html">UpdateUserIdField</a></li><li><a href="UpdateUserIdField_UpdateUserIdField.html">UpdateUserIdField</a></li><li><a href="UserAttributeTypeField.html">UserAttributeTypeField</a></li><li><a href="UserAttributeValueField.html">UserAttributeValueField</a></li><li><a href="UserEditForm.html">UserEditForm</a></li><li><a href="UserEditForm_UserEditForm.html">UserEditForm</a></li><li><a href="UserPage.html">UserPage</a></li><li><a href="UserQueryForm.html">UserQueryForm</a></li><li><a href="UserRegistForm.html">UserRegistForm</a></li><li><a href="ValidationError.html">ValidationError</a></li><li><a href="VarcharField.html">VarcharField</a></li><li><a href="VarcharSingleSelectField.html">VarcharSingleSelectField</a></li><li><a href="VideoField.html">VideoField</a></li><li><a href="WebAuthnForm.html">WebAuthnForm</a></li><li><a href="WebAuthnForm_WebAuthnForm.html">WebAuthnForm</a></li><li><a href="WebAuthnUtil.html">WebAuthnUtil</a></li><li><a href="WebComponent.html">WebComponent</a></li><li><a href="WebMethod.html">WebMethod</a></li><li><a href="WebResourceForm.html">WebResourceForm</a></li><li><a href="WebResourceImageField.html">WebResourceImageField</a></li><li><a href="WebResourceImageField_WebResourceImageField.html">WebResourceImageField</a></li><li><a href="WebResourceQueryForm.html">WebResourceQueryForm</a></li><li><a href="WebResourceQueryResultForm.html">WebResourceQueryResultForm</a></li><li><a href="WebSourcePathField.html">WebSourcePathField</a></li><li><a href="ZipCodeField.html">ZipCodeField</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Jul 17 2024 09:17:37 GMT+0900 (日本標準時)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

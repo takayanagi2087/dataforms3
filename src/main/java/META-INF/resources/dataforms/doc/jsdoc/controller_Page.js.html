@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/Page.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/Page.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileOverview {@link Page}クラスを記述したファイルです。
+ */
+
+'use strict';
+
+import { DataForms } from './DataForms.js';
+import { Form } from './Form.js';
+import { Dialog } from './Dialog.js';
+import { WebMethod } from '../util/WebMethod.js';
+import { MessagesUtil } from '../util/MessagesUtil.js';
+
+
+/**
+ * 現在のページインスタンスです。
+ */
+//var currentPage = null;
+
+/**
+ * consoleのコピーです。
+ * &lt;pre>
+ * javascriptのログ出力はconsoleでなくloggerを使用してください。
+ * loggerを使用すると、web.xmlのclient-log-levelの設定で、ログレベルの変更が可能です。
+ * &lt;/pre>
+ */
+//var logger = null;
+
+
+/**
+ * @class Page
+ *
+ * ページクラス。
+ * &lt;pre>
+ * 1つのHTMLファイル(ページ)に対応するクラスです。
+ * ページは複数のFormと複数のDialogを持つことができます。
+ * &lt;/pre>
+ * @extends DataForms
+ * @prop {Object} userInfo ログインしているユーザ情報。形式は以下の通り。&lt;br/>
+ * &lt;pre>
+ * {
+ *  "userId":1000, // ユーザID
+ *  "loginId":"developer", // ログインID.
+ *  "mailAddress":"", // メールアドレス
+ *  "userName":"developer", // ユーザ名
+ *  "userLevel":"developer", // ユーザレベル
+ *   ... 以下ユーザに設定されたユーザ属性
+ *  }
+ * &lt;/pre>
+ */
+export class Page extends DataForms {
+
+	/**
+	 * Microsoft EDGE。
+	 * dataforms3ではカラム固定テープはサポートされません。
+	 */
+	static get BROWSER_EDGE() {
+		 return "edge";
+	}
+
+	/**
+	 * Chromium EDGE。
+	 */
+	static get BROWSER_EDG() {
+		 return "edg";
+	}
+
+	/**
+	 *  Microsoft Internet Explorer。
+	 * dataforms3ではサポートされません。
+	 */
+	static get BROWSER_IE() {
+		return "ie";
+	}
+
+	/**
+	 * Google chrome。
+	 */
+	static get BROWSER_CHOROME() {
+		return "chrome";
+	}
+
+	/**
+	 * Safari。
+	 */
+	static get BROWSER_SAFARI() {
+		return "safari";
+	}
+
+	/**
+	 * Firefox。
+	 */
+	static get BROWSER_FIREFOX() {
+		return "firefox";
+	}
+
+
+	/**
+	 * Opera。
+	 */
+	static get BROWSER_OPERA() {
+		return "opera";
+	}
+
+
+	/**
+	 * 其の他ブラウザ。
+	 */
+	static get BROWSER_OTHER() {
+		return "other";
+	}
+
+	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+		this.id = "mainDiv";
+	}
+
+	/**
+	 * Pagegから派生したクラスかどうかを判定します。
+	 * @return Pageから派生したクラスの場合true。
+	 */
+	isPage() {
+		return true;
+	}
+
+
+
+	/**
+	 * loggerの設定をおこないます。
+	 * &lt;pre>
+	 * consoleをサポートしないブラウザの場合、consoleオブジェクトを作成します。
+	 * consoleオブジェクトをloggerオブジェクトに代入します。
+	 * 基本的にjavascriptのログ出力はloggerを使用してください。
+	 * &lt;/pre>
+	 */
+	configureLogger() {
+		if (typeof window.console === "undefined") {
+			window.console = {};
+		}
+		if (typeof window.console.log !== "function") {
+			window.console.log = function() {};
+		}
+		if (typeof window.console.info !== "function") {
+			window.console.info = function() {};
+		}
+		if (typeof window.console.warn !== "function") {
+			window.console.warn = function() {};
+		}
+		if (typeof window.console.error !== "function") {
+			window.console.error = function() {};
+		}
+		if (typeof window.console.dir !== "function") {
+			window.console.dir = function() {};
+		}
+		logger = window.console;
+	}
+
+	/**
+	 * logレベルを設定します。
+	 * &lt;pre>
+	 * クライアントログレベルに応じて、loggerオブジェクトのメソッドを無効化します。
+	 * &lt;/pre>
+	 */
+	configureLogLevel() {
+		if (this.clientLogLevel == "info" || this.clientLogLevel == "warn" || this.clientLogLevel == "error" || this.clientLogLevel == "none") {
+			logger.log = function() {};
+		}
+		if (this.clientLogLevel == "warn" || this.clientLogLevel == "error" || this.clientLogLevel == "none") {
+			logger.info = function() {};
+		}
+		if (this.clientLogLevel == "error" || this.clientLogLevel == "none") {
+			logger.warn = function() {};
+		}
+		if (this.clientLogLevel == "none") {
+			logger.error = function() {};
+		}
+		logger.info("clientLogLevel=" + this.clientLogLevel);
+		logger.log("debug log.");
+		logger.info("info log.");
+		logger.warn("warn log.");
+		logger.error("error log.");
+		logger.info("browser type=" + this.getBrowserType());
+	}
+
+
+	/**
+	 * mainDivをFrame.htmlに指定されたフレームで囲む。
+	 * @param frame {jQuery} フレームのbodyの内容のjQueryオブジェクト。
+	 * @param frameMainDiv {jQuery}　フレームのmainDivのjQueryオブジェクト。
+	 * @param mainDiv {jQuery} ページのmainDivのjQueryオブジェクト。
+	 */
+	wrapFrame(frame, frameMainDiv, mainDiv) {
+		let p = mainDiv.parent();
+		let div = mainDiv;
+		frameMainDiv.prevAll().each((_, el) => {
+			div.before($(el));
+			div = $(el);
+		});
+		div = mainDiv;
+		frameMainDiv.nextAll().each((_, el) => {
+			div.after($(el));
+			div = $(el);
+		});
+		let fparent = frameMainDiv.parent();
+		logger.log(this.getIdAttribute() + "=" + fparent.attr(this.getIdAttribute()));
+		if (fparent.attr(this.getIdAttribute()) != "rootDiv") {
+			logger.log("parent.length=" + fparent.length);
+			logger.log("id=" + fparent.attr(this.getIdAttribute()));
+			fparent.empty();
+			p.children().wrapAll(fparent);
+			this.wrapFrame(frame, fparent, mainDiv.parent());
+		}
+
+	}
+
+	/**
+	 * 各ブロックのレイアウトを行います。
+	 * &lt;pre>
+	 * Frame.htmlを取得し、その内容にしたがってページをレイアウトします。
+	 * &lt;/pre>
+	 */
+	layout() {
+		// logger.log("this.frameBody=" + this.frameBody);
+		let frame = $("&lt;div " + this.getIdAttribute() + "=\"rootDiv\">" + this.frameBody + "&lt;/div>");
+		this.wrapFrame(frame, frame.find(this.convertSelector("#mainDiv")), $(this.convertSelector("#mainDiv")));
+		let head = $("&lt;div>" + this.frameHead + "&lt;/div>");
+		// Frame.htmlのcssパス調整
+		head.find("link[rel='stylesheet'][href*='/frame/']").each((_, el) => {
+			let href = $(el).attr("href");
+			$(el).attr("href", href.replace(/^.*\/frame\//, currentPage.contextPath + "/frame/"));
+			logger.log("frame css href=" + href + "->" + $(this).attr("el"));
+		});
+		$("head").append(head.html());
+		let systemName = MessagesUtil.getMessage("message.systemname");
+		if (systemName != null) {
+			$(this.convertSelector('#systemName')).html(systemName);
+		}
+		if (this.pageTitle == null) {
+			$(this.convertSelector('#pageName')).html($('title').html());
+		} else {
+			$('title').html(this.pageTitle);
+			$(this.convertSelector('#pageName')).html(this.pageTitle);
+		}
+		initFrame();
+	}
+
+
+	/**
+	 * ダイアログを初期化します。
+	 * @param {Array} dialogList ダイアログリスト.
+	 */
+	initDialog(dialogList) {
+		// ダイアログの初期化.
+		for (let key in dialogList) {
+			let dlgclass = dialogList[key];
+			let dlg = this.newInstance(dlgclass);
+			dlg.htmlPath = dlgclass.path + ".html";
+			dlg.init();
+		}
+	}
+
+
+	/**
+	 * トップページに遷移します。
+	 */
+	toTopPage() {
+		window.location.href = this.contextPath + this.topPage + "." + currentPage.pageExt;
+	}
+
+	/**
+	 * ブラウザの戻るボタンでフォームの制御を行うかどうかを返します。
+	 * @returns {Boolean} Pageクラスではweb.xmlの設定値を返します。
+	 */
+	isBrowserBackEnabled() {
+		if (this.browserBackButton == "disabled") {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * history.pushStateを呼び出すためのメソッドです。
+	 * &lt;pre>
+	 * Pageクラスではweb.xmlのbrowser-back-buttonがenabledの場合、
+	 * history.pushStateを呼び出します。
+	 * &lt;/pre>
+	 * @param {Object} state 状態。
+	 * @param {String} title タイトル。
+	 * @param {String} url タイトル。
+	 *
+	 */
+	pushState(state, title, url) {
+		if (this.browserBackButton == "enabled") {
+			logger.log("poshstate=" + state);
+			history.pushState(state, title, url);
+		}
+	}
+
+	/**
+	 * history.replaceStateを呼び出すためのメソッドです。
+	 * &lt;pre>
+	 * Pageクラスではweb.xmlのbrowser-back-buttonがenabledの場合、
+	 * history.replaceStateを呼び出します。
+	 * &lt;/pre>
+	 * @param {Object} state 状態。
+	 * @param {String} title タイトル。
+	 * @param {String} url タイトル。
+	 *
+	 */
+	replaceState(state, title, url) {
+		if (this.browserBackButton == "enabled") {
+			logger.log("replacestate=" + state);
+			history.replaceState(state, title, url);
+		}
+	}
+
+	/**
+	 * ブラウザの戻るボタン押下時の処理を行います。
+	 * &lt;pre>
+	 * web.xmlのbrowser-back-buttonがenabledの場合は呼ばれません。
+	 * &lt;/pre>
+	 * @param event イベント情報。
+	 */
+	onDisabledBackButton(event) {
+		history.pushState("disableBack", "disableBack", location.href);
+		return;
+	};
+
+	/**
+	 * 戻るボタンの処理。
+	 * @param {Event} ev イベント。
+	 */
+	onBackButton(event) {
+		logger.log("popstate=" + event.originalEvent.state);
+		if (event.originalEvent.state) {
+			let editForm = this.getComponent("editForm");
+			if (editForm != null) {
+				if (editForm.get().is(":visible")) {
+					editForm.back();
+				}
+			}
+		}
+		return;
+	}
+
+	/**
+	 * ブラウザの戻るボタンの設定を行います。
+	 */
+	configureBrowserBackButton() {
+		logger.log("browserBackButton=" + this.browserBackButton);
+		if (this.browserBackButton == "disabled") {
+			history.pushState("disableBack", "disableBack", location.href);
+			$(window).on("popstate", (event) => {
+				if (!event.originalEvent.state){
+					this.onDisabledBackButton(event);
+				}
+			});
+		} else {
+			$(window).on("popstate", (event) => {
+				this.onBackButton(event);
+			});
+		}
+	}
+
+	/**
+	 * ページの初期化処理を行います。
+	 */
+	async init() {
+		try {
+			super.init();
+			this.configureLogger();
+			logger.debug("queryString=" + window.location.search);
+			logger.info("language=" + this.getLanguage());
+			$.datepicker.setDefaults($.datepicker.regional[this.getLanguage()]);
+			// ページの構造情報を取得.
+			let method = new WebMethod("getPageInfo");
+			let result = await method.execute("");
+			for (let key in result.result) {
+				this[key] = result.result[key];
+			}
+			await this.dynamicImport(result.result);
+			
+			this.configureLogLevel();
+			this.configureBrowserBackButton();
+			//メッセージユーティリティの初期化.
+			MessagesUtil.init(this.messageMap);
+			if (!this.noFrame) {
+				this.layout();
+			}
+			// 各フォームの初期化
+			this.initForm(this.formMap);
+			// ダイアログの初期化
+			this.initDialog(this.dialogMap);
+			// バージョン情報などを表示。
+			$(this.convertSelector("#dataformsVersion")).html(this.dataformsVersion);
+			// クッキーチェック
+			if (this.cookieCheck) {
+				this.setCookie("cookiecheck", "true");
+				let cookiecheck = this.getCookie("cookiecheck");
+				logger.log("cookiecheck=" + cookiecheck);
+				if (cookiecheck != "true") {
+					alert(MessagesUtil.getMessage("error.cookienotsupport"));
+				}
+				this.setCookie("cookiecheck", "");
+			}
+			//
+			this.attach();
+			$(this.convertSelector("#mainDiv")).addClass("mainDiv");
+		} catch (e) {
+			console.log("currentPage=", currentPage);
+			console.log("e=", e);
+			currentPage.reportError(e);
+		}
+	}
+
+	/**
+	 * エレメントとの対応付けを行います。
+	 */
+	async attach() {
+		let thisPage = this;
+		await super.attach();
+		$(this.convertSelector("#showMenuButton")).click(() => {
+			let menu = $(thisPage.convertSelector("#menuDiv"));
+			if (menu.length == 0) {
+				;
+			} else {
+				menu.toggle("blind");
+			}
+			return false;
+		});
+		this.get().click(() => {
+			logger.log("click");
+			if ($(thisPage.convertSelector("#showMenuButton")).is(":visible")) {
+				let menu = $(thisPage.convertSelector("#menuDiv"));
+				if (menu.is(":visible")) {
+					menu.toggle("blind");
+				}
+			}
+		});
+		$(window).resize(() => { this.onResize(); });
+		this.resolveIdAttr();
+	}
+
+	/**
+	 * 指定したコンポーネント以下の要素にrealIdを設定します。
+	 * @param {WebComponent} cmp 親コンポーネント。
+	 * @param {Function} func コンポーネント判定関数。
+	 */
+	setRealIdToElement(cmp, func) {
+		if (this.useUniqueId) {
+			for (let key in cmp.componentMap) {
+				let ch = cmp.componentMap[key];
+				if (func(ch)) {
+					ch.find("[data-id]").each((_, el) => {
+						let id = $(el).attr("id");
+						if (id == null) {
+							let realId = ch.realId + "." + $(el).attr("data-id");
+							logger.log("realId=" + realId);
+							$(el).attr("id", realId);
+						}
+					});
+				} else {
+					this.setRealIdToElement(ch, func);
+				}
+			}
+		}
+	}
+
+	/**
+	 * id属性の設定漏れを解決します。
+	 */
+	resolveIdAttr() {
+		this.setRealIdToElement(this, (cmp) => { return (cmp instanceof Form);});
+		this.setRealIdToElement(this, (cmp) => { return (cmp instanceof Dialog);});
+		$("[data-id]").each((_, el) => {
+			let id = $(el).attr("id");
+			if (id == null) {
+				logger.log("data-id=" + $(el).attr("data-id"));
+				$(el).attr("id", $(el).attr("data-id"));
+			}
+		});
+	}
+
+	/**
+	 * リサイズ時の処理を行います。
+	 */
+	onResize() {
+		if ($(window).width() >= 1024) {
+			$(this.convertSelector("div.menuDiv")).css("display", "");
+		}
+		let sel = this.convertSelector("#lockLayer");
+		// let h = $("body").clientHeight();
+		let h = window.innerHeight;
+		if ($(sel).is(":visible")) {
+			$(sel).css({
+				width: $(document).width(),
+				height: h
+			});
+		}
+	}
+
+	/**
+	 * ページをロックします。
+	 * &lt;pre>
+	 * Ajax呼び出し前に呼び出され、画面をロックします。
+	 * &lt;/pre>
+	 */
+	lock() {
+		let sel = this.convertSelector("#lockLayer");
+//		let h = $("body").height();
+		let h = window.innerHeight;
+		logger.log("lock() w=" + $(document).width() + ", h=" + h);
+		$(sel).css({
+			display: 'block',
+			width: $(document).width(),
+			height: h
+		});
+	}
+
+	/**
+	 * ページをアンロックします。
+	 * &lt;pre>
+	 * Ajax呼び出しの応答受信後に呼び出され、画面をアンロックします。
+	 * &lt;/pre>
+	 */
+	unlock() {
+		let sel = this.convertSelector("#lockLayer");
+		 $(sel).css({display: 'none'});
+	}
+
+
+	/**
+	 * ページのロック状態を取得します。
+	 * @return ロックされている場合true。
+	 */
+	isLocked() {
+		return $(this.convertSelector("#lockLayer")).is(":visible");
+	}
+
+	/**
+	 * alertの代替えメソッドです。
+	 *
+	 * @param {String} title ダイアログタイトル(nullの場合システム名称)。
+	 * @param {String} msg ダイアログメッセージ。
+	 * @param {Functuion} func OKボタンが押された際の処理。
+	 * @returns {Promise} funcがnullだった場合、trueのPromiseを返します。
+	 */
+	async alert(title, msg, func) {
+		let dlg = this.getComponent("alertDialog");
+		if (title == null) {
+			dlg.title = MessagesUtil.getMessage("message.systemname");
+		} else {
+			dlg.title = title;
+		}
+		dlg.message = msg;
+		if (func != null) {
+			dlg.okFunc = func;
+			dlg.showModal({
+				minHeight: 100
+			});
+		} else {
+			let ret = new Promise((resolv) => {
+				dlg.okFunc = () => { resolv(true); };
+				dlg.showModal({
+					minHeight: 100
+				});
+			});
+			return ret;
+		}
+	}
+
+
+	/**
+	 * confirmの代替えメソッドです。
+	 * @param {String} title ダイアログタイトル(nullの場合システム名称)。
+	 * @param {String} msg メッセージ。
+	 * @param {Function} okFunc OKボタンのダイアログ。
+	 * @param {Function} cancelFunc キャンセルボタンのダイアログ。
+	 * @returns {Promise} okFunc,calselFuncの両方がnullだった場合、true/falseのPromiseを返します。
+	 */
+	async confirm(title, msg, okFunc, cancelFunc) {
+		let dlg = this.getComponent("confirmDialog");
+		if (title == null) {
+			dlg.title = MessagesUtil.getMessage("message.systemname");
+		} else {
+			dlg.title = title;
+		}
+		if (okFunc == null &amp;&amp; cancelFunc == null) {
+			let ret = new Promise((resolv) => {
+				dlg.message = msg;
+				dlg.okFunc = () => { resolv(true); };
+				dlg.cancelFunc = () => { resolv(false); };
+				dlg.showModal({
+					minHeight: 100
+				});
+			});
+			return ret;
+		} else {
+			dlg.message = msg;
+			dlg.okFunc = okFunc;
+			dlg.cancelFunc = cancelFunc;
+			dlg.showModal({
+				minHeight: 100
+			});
+		}
+	}
+
+	/**
+	 * ブラウザタイプを取得します。
+	 */
+	getBrowserType() {
+		let ua = window.navigator.userAgent.toLowerCase();
+		logger.log("ua=" + ua);
+		if (ua.indexOf("edge") >= 0) {
+			return Page.BROWSER_EDGE;
+		} else if (ua.indexOf("edg") >= 0) {
+			return Page.BROWSER_EDG;
+		} else if (ua.indexOf("msie") >= 0 || ua.indexOf("trident") >= 0) {
+			return Page.BROWSER_IE;
+		} else if (ua.indexOf(" opr") >= 0) {
+			return Page.BROWSER_OPERA;
+		} else if (ua.indexOf("chrome") >= 0) {
+			return Page.BROWSER_CHOROME;
+		} else if (ua.indexOf("firefox") >= 0) {
+			return Page.BROWSER_FIREFOX;
+		} else if (ua.indexOf("safari") >= 0) {
+			return Page.BROWSER_SAFARI;
+		} else {
+			return Page.BROWSER_OTHER;
+		}
+	}
+	
+	/**
+	 * OSを取得します。
+	 * @return {String} osの名称。
+	 */
+	getPlatform() {
+		try {
+			logger.log("navigator.userAgentData=", navigator.userAgentData);
+			return navigator.userAgentData.platform.toLowerCase();
+		} catch (e) {
+			let ua = window.navigator.userAgent.toLowerCase();
+			if (ua.indexOf("ipad") >= 0) {
+				return "ipados";
+			} else if (ua.indexOf("iphone" >= 0)) {
+				return "ios";
+			}
+		}
+	}
+
+	/**
+	 * 例外の情報を出力します。
+	 * @param {Error} e 例外。
+	 */
+	printStackTrace(e) {
+		if (e.stack) {
+			logger.error(e.stack);
+		} else {
+			logger.error(e.message, e);
+		}
+	}
+
+	/**
+	 * 例外の情報を出力します。
+	 * @param {Error} e 例外。
+	 */
+	reportError(e) {
+		this.printStackTrace(e);
+		this.alert(null, e.message);
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AdminPage.html">AdminPage</a></li><li><a href="AlertDialog.html">AlertDialog</a></li><li><a href="AlertDialog_AlertDialog.html">AlertDialog</a></li><li><a href="AudioField.html">AudioField</a></li><li><a href="BackupForm.html">BackupForm</a></li><li><a href="Base64Util.html">Base64Util</a></li><li><a href="BasePage.html">BasePage</a></li><li><a href="BigintField.html">BigintField</a></li><li><a href="BigintSingleSelectField.html">BigintSingleSelectField</a></li><li><a href="BlobStoreAudioField.html">BlobStoreAudioField</a></li><li><a href="BlobStoreAudioField_BlobStoreAudioField.html">BlobStoreAudioField</a></li><li><a href="BlobStoreFileField.html">BlobStoreFileField</a></li><li><a href="BlobStoreImageField.html">BlobStoreImageField</a></li><li><a href="BlobStoreVideoField.html">BlobStoreVideoField</a></li><li><a href="BlobStoreVideoField_BlobStoreVideoField.html">BlobStoreVideoField</a></li><li><a href="CharField.html">CharField</a></li><li><a href="CharSingleSelectField.html">CharSingleSelectField</a></li><li><a href="CharSingleSelectField_CharSingleSelectField.html">CharSingleSelectField</a></li><li><a href="ClassNameValidator.html">ClassNameValidator</a></li><li><a href="ClobField.html">ClobField</a></li><li><a href="ConfigErrorPage.html">ConfigErrorPage</a></li><li><a href="ConfirmDialog.html">ConfirmDialog</a></li><li><a href="ConfirmDialog_ConfirmDialog.html">ConfirmDialog</a></li><li><a href="CreateTimestampField.html">CreateTimestampField</a></li><li><a href="CreateTimestampField_CreateTimestampField.html">CreateTimestampField</a></li><li><a href="CreateUserIdField.html">CreateUserIdField</a></li><li><a href="CreateUserIdField_CreateUserIdField.html">CreateUserIdField</a></li><li><a href="DaoAndPageGeneratorEditForm.html">DaoAndPageGeneratorEditForm</a></li><li><a href="DaoAndPageGeneratorEditForm_DaoAndPageGeneratorEditForm.html">DaoAndPageGeneratorEditForm</a></li><li><a href="DataForms.html">DataForms</a></li><li><a href="DateField.html">DateField</a></li><li><a href="DateTimeField.html">DateTimeField</a></li><li><a href="DateTimeValidator.html">DateTimeValidator</a></li><li><a href="DateValidator.html">DateValidator</a></li><li><a href="DbTableListHtmlTable.html">DbTableListHtmlTable</a></li><li><a href="DbTableListHtmlTable_DbTableListHtmlTable.html">DbTableListHtmlTable</a></li><li><a href="DeleteFlagField.html">DeleteFlagField</a></li><li><a href="DeleteFlagField_DeleteFlagField.html">DeleteFlagField</a></li><li><a href="DeveloperEditForm.html">DeveloperEditForm</a></li><li><a href="DeveloperPage.html">DeveloperPage</a></li><li><a href="Dialog.html">Dialog</a></li><li><a href="DisplayedRequiredValidator.html">DisplayedRequiredValidator</a></li><li><a href="DocFramePage.html">DocFramePage</a></li><li><a href="DoubleField.html">DoubleField</a></li><li><a href="EditForm.html">EditForm</a></li><li><a href="EditableHtmlTable.html">EditableHtmlTable</a></li><li><a href="EnumEditForm.html">EnumEditForm</a></li><li><a href="EnumEditForm_EnumEditForm.html">EnumEditForm</a></li><li><a href="EnumOptionMultiSelectField.html">EnumOptionMultiSelectField</a></li><li><a href="EnumOptionMultiSelectField_EnumOptionMultiSelectField.html">EnumOptionMultiSelectField</a></li><li><a href="EnumOptionSingleSelectField.html">EnumOptionSingleSelectField</a></li><li><a href="EnumQueryForm.html">EnumQueryForm</a></li><li><a href="EnumQueryForm_EnumQueryForm.html">EnumQueryForm</a></li><li><a href="EnumTypeSingleSelectField.html">EnumTypeSingleSelectField</a></li><li><a href="ErrorPage.html">ErrorPage</a></li><li><a href="ExistingFolderField.html">ExistingFolderField</a></li><li><a href="ExistingFolderField_ExistingFolderField.html">ExistingFolderField</a></li><li><a href="ExistingFolderField_FolderField.html">FolderField</a></li><li><a href="ExportWebResourceQueryResultForm.html">ExportWebResourceQueryResultForm</a></li><li><a href="Field.html">Field</a></li><li><a href="FieldListDialog.html">FieldListDialog</a></li><li><a href="FieldListDialog_FieldListDialog.html">FieldListDialog</a></li><li><a href="FieldListForm.html">FieldListForm</a></li><li><a href="FieldListForm_FieldListForm.html">FieldListForm</a></li><li><a href="FieldListHtmlTable.html">FieldListHtmlTable</a></li><li><a href="FieldValidator.html">FieldValidator</a></li><li><a href="FileField.html">FileField</a></li><li><a href="FileObjectField.html">FileObjectField</a></li><li><a href="FileReceiver.html">FileReceiver</a></li><li><a href="FileSizeValidator.html">FileSizeValidator</a></li><li><a href="FlagField.html">FlagField</a></li><li><a href="FlagMultiSelectField.html">FlagMultiSelectField</a></li><li><a href="FlagMultiSelectField_FlagMultiSelectField.html">FlagMultiSelectField</a></li><li><a href="FolderField.html">FolderField</a></li><li><a href="FolderField_FolderField.html">FolderField</a></li><li><a href="FolderStoreAudioField.html">FolderStoreAudioField</a></li><li><a href="FolderStoreAudioField_FolderStoreAudioField.html">FolderStoreAudioField</a></li><li><a href="FolderStoreFileField.html">FolderStoreFileField</a></li><li><a href="FolderStoreImageField.html">FolderStoreImageField</a></li><li><a href="FolderStoreVideoField.html">FolderStoreVideoField</a></li><li><a href="FolderStoreVideoField_FolderStoreVideoField.html">FolderStoreVideoField</a></li><li><a href="Form.html">Form</a></li><li><a href="FunctionSelectField.html">FunctionSelectField</a></li><li><a href="HtmlTable.html">HtmlTable</a></li><li><a href="ImageDialog.html">ImageDialog</a></li><li><a href="ImageField.html">ImageField</a></li><li><a href="ImportDataForm.html">ImportDataForm</a></li><li><a href="InitDevelopmentToolForm.html">InitDevelopmentToolForm</a></li><li><a href="InitDevelopmentToolForm_InitDevelopmentToolForm.html">InitDevelopmentToolForm</a></li><li><a href="IntegerField.html">IntegerField</a></li><li><a href="IntegerSingleSelectField.html">IntegerSingleSelectField</a></li><li><a href="JavaSourcePathField.html">JavaSourcePathField</a></li><li><a href="JoinHtmlTable.html">JoinHtmlTable</a></li><li><a href="JsonResponse.html">JsonResponse</a></li><li><a href="LangCodeField.html">LangCodeField</a></li><li><a href="LangCodeField_LangCodeField.html">LangCodeField</a></li><li><a href="LoginForm.html">LoginForm</a></li><li><a href="LoginIdField.html">LoginIdField</a></li><li><a href="LoginInfoForm.html">LoginInfoForm</a></li><li><a href="MasterMultiSelectField.html">MasterMultiSelectField</a></li><li><a href="MasterSingleSelectField.html">MasterSingleSelectField</a></li><li><a href="MaxLengthValidator.html">MaxLengthValidator</a></li><li><a href="MemoField.html">MemoField</a></li><li><a href="MemoField_MemoField.html">MemoField</a></li><li><a href="Menu.html">Menu</a></li><li><a href="MenuEditForm.html">MenuEditForm</a></li><li><a href="MenuEditForm_MenuEditForm.html">MenuEditForm</a></li><li><a href="MenuForm.html">MenuForm</a></li><li><a href="MenuTable.html">MenuTable</a></li><li><a href="MenuTable_MenuTable.html">MenuTable</a></li><li><a href="MessagesUtil.html">MessagesUtil</a></li><li><a href="MultiSelectField.html">MultiSelectField</a></li><li><a href="NumberField.html">NumberField</a></li><li><a href="NumberRangeValidator.html">NumberRangeValidator</a></li><li><a href="NumberUtil.html">NumberUtil</a></li><li><a href="NumberValidator.html">NumberValidator</a></li><li><a href="NumericField.html">NumericField</a></li><li><a href="NumericValidator.html">NumericValidator</a></li><li><a href="OnetimePasswordForm.html">OnetimePasswordForm</a></li><li><a href="OnetimePasswordForm_OnetimePasswordForm.html">OnetimePasswordForm</a></li><li><a href="Page.html">Page</a></li><li><a href="PageScrollHtmlTable.html">PageScrollHtmlTable</a></li><li><a href="PasskeySingleSelectField.html">PasskeySingleSelectField</a></li><li><a href="PasskeySingleSelectField_PasskeySingleSelectField.html">PasskeySingleSelectField</a></li><li><a href="PasswordRecenryptForm.html">PasswordRecenryptForm</a></li><li><a href="PasswordRecenryptForm_PasswordRecenryptForm.html">PasswordRecenryptForm</a></li><li><a href="PathNameField.html">PathNameField</a></li><li><a href="PathNameField_PathNameField.html">PathNameField</a></li><li><a href="PropertiesMultiSelectField.html">PropertiesMultiSelectField</a></li><li><a href="PropertiesMultiSelectField_PropertiesMultiSelectField.html">PropertiesMultiSelectField</a></li><li><a href="PropertiesSingleSelectField.html">PropertiesSingleSelectField</a></li><li><a href="PropertiesSingleSelectField_PropertiesSingleSelectField.html">PropertiesSingleSelectField</a></li><li><a href="QueryClassNameField.html">QueryClassNameField</a></li><li><a href="QueryExecutorQueryForm.html">QueryExecutorQueryForm</a></li><li><a href="QueryExecutorQueryResultForm.html">QueryExecutorQueryResultForm</a></li><li><a href="QueryForm.html">QueryForm</a></li><li><a href="QueryGeneratorEditForm.html">QueryGeneratorEditForm</a></li><li><a href="QueryGeneratorQueryResultForm.html">QueryGeneratorQueryResultForm</a></li><li><a href="QueryGeneratorQueryResultForm_QueryGeneratorQueryResultForm.html">QueryGeneratorQueryResultForm</a></li><li><a href="QueryOrTableClassNameField.html">QueryOrTableClassNameField</a></li><li><a href="QueryOrTableClassNameField_QueryOrTableClassNameField.html">QueryOrTableClassNameField</a></li><li><a href="QueryResultForm.html">QueryResultForm</a></li><li><a href="QueryStringUtil.html">QueryStringUtil</a></li><li><a href="RecordIdField.html">RecordIdField</a></li><li><a href="RecordIdField_RecordIdField.html">RecordIdField</a></li><li><a href="RegexpValidator.html">RegexpValidator</a></li><li><a href="RequiredValidator.html">RequiredValidator</a></li><li><a href="RestoreForm.html">RestoreForm</a></li><li><a href="RowNoField.html">RowNoField</a></li><li><a href="RowNoField_RowNoField.html">RowNoField</a></li><li><a href="SelectField.html">SelectField</a></li><li><a href="SelectFieldHtmlTable.html">SelectFieldHtmlTable</a></li><li><a href="SideMenu.html">SideMenu</a></li><li><a href="SimpleClassNameField.html">SimpleClassNameField</a></li><li><a href="SimpleDateFormat.html">SimpleDateFormat</a></li><li><a href="SingleSelectField.html">SingleSelectField</a></li><li><a href="SiteMapForm.html">SiteMapForm</a></li><li><a href="SiteMapPage.html">SiteMapPage</a></li><li><a href="SiteMapPage_SiteMapPage.html">SiteMapPage</a></li><li><a href="SmallintField.html">SmallintField</a></li><li><a href="SmallintSingleSelectField.html">SmallintSingleSelectField</a></li><li><a href="SortOrderField.html">SortOrderField</a></li><li><a href="SortOrderField_SortOrderField.html">SortOrderField</a></li><li><a href="StreamingField.html">StreamingField</a></li><li><a href="StringUtil.html">StringUtil</a></li><li><a href="TableClassNameField.html">TableClassNameField</a></li><li><a href="TableGeneratorEditForm.html">TableGeneratorEditForm</a></li><li><a href="TableGeneratorQueryResultForm.html">TableGeneratorQueryResultForm</a></li><li><a href="TableInfoForm.html">TableInfoForm</a></li><li><a href="TableManagementQueryResultForm.html">TableManagementQueryResultForm</a></li><li><a href="TableOrSubQueryClassNameField.html">TableOrSubQueryClassNameField</a></li><li><a href="TableOrSubQueryClassNameField_TableOrSubQueryClassNameField.html">TableOrSubQueryClassNameField</a></li><li><a href="TextField.html">TextField</a></li><li><a href="TimeField.html">TimeField</a></li><li><a href="TimeValidator.html">TimeValidator</a></li><li><a href="TimestampField.html">TimestampField</a></li><li><a href="TimestampValidator.html">TimestampValidator</a></li><li><a href="UpdateSqlForm.html">UpdateSqlForm</a></li><li><a href="UpdateSqlForm_UpdateSqlForm.html">UpdateSqlForm</a></li><li><a href="UpdateTimestampField.html">UpdateTimestampField</a></li><li><a href="UpdateTimestampField_UpdateTimestampField.html">UpdateTimestampField</a></li><li><a href="UpdateUserIdField.html">UpdateUserIdField</a></li><li><a href="UpdateUserIdField_UpdateUserIdField.html">UpdateUserIdField</a></li><li><a href="UserAttributeTypeField.html">UserAttributeTypeField</a></li><li><a href="UserAttributeValueField.html">UserAttributeValueField</a></li><li><a href="UserEditForm.html">UserEditForm</a></li><li><a href="UserEditForm_UserEditForm.html">UserEditForm</a></li><li><a href="UserPage.html">UserPage</a></li><li><a href="UserQueryForm.html">UserQueryForm</a></li><li><a href="UserRegistForm.html">UserRegistForm</a></li><li><a href="ValidationError.html">ValidationError</a></li><li><a href="VarcharField.html">VarcharField</a></li><li><a href="VarcharSingleSelectField.html">VarcharSingleSelectField</a></li><li><a href="VideoField.html">VideoField</a></li><li><a href="WebAuthnForm.html">WebAuthnForm</a></li><li><a href="WebAuthnForm_WebAuthnForm.html">WebAuthnForm</a></li><li><a href="WebAuthnUtil.html">WebAuthnUtil</a></li><li><a href="WebComponent.html">WebComponent</a></li><li><a href="WebMethod.html">WebMethod</a></li><li><a href="WebResourceForm.html">WebResourceForm</a></li><li><a href="WebResourceImageField.html">WebResourceImageField</a></li><li><a href="WebResourceImageField_WebResourceImageField.html">WebResourceImageField</a></li><li><a href="WebResourceQueryForm.html">WebResourceQueryForm</a></li><li><a href="WebResourceQueryResultForm.html">WebResourceQueryResultForm</a></li><li><a href="WebSourcePathField.html">WebSourcePathField</a></li><li><a href="ZipCodeField.html">ZipCodeField</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Jul 17 2024 09:17:37 GMT+0900 (日本標準時)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
