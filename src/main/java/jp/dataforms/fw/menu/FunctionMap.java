@@ -390,8 +390,6 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.VersionInfoPage.class));
 		// dataformsXtester.jarがリンクされていた場合テストツール開発ツールを追加する。
 		try {
 			@SuppressWarnings("unchecked")
@@ -400,6 +398,8 @@ public class FunctionMap {
 		} catch (ClassNotFoundException e) {
 			logger.info("package jp.dataforms.test not found.");
 		}
+		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.VersionInfoPage.class));
 	}
 	
 	/**
