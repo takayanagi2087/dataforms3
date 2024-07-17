@@ -966,7 +966,7 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @return 要求情報。
 	 */
     @Override
-	public final HttpServletRequest getRequest() {
+	public HttpServletRequest getRequest() {
 		return request.get();
 	}
 
@@ -984,7 +984,7 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * @return 応答情報。
 	 */
     @Override
-	public final HttpServletResponse getResponse() {
+	public HttpServletResponse getResponse() {
 		return response.get();
 	}
 
