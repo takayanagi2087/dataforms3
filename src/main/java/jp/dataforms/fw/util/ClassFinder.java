@@ -175,6 +175,7 @@ public class ClassFinder {
 			resourceName = rootpackage.replace('.', '/');
 		}
 		URL url = this.convertUrl(classLoader.getResource(resourceName));
+		logger.info("findClasses:resourceName=" + resourceName + ", url=" + url);
 		if (url != null) {
 			logger.info("findClasses:URL = " + url);
 			logger.info("findClasses:Protocol = " + url.getProtocol());

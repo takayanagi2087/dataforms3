@@ -81,6 +81,8 @@ public class FunctionMap {
 	 */
 	protected void addFwPathPackage() {
 		this.addPathPackage(new PathPackage("/dataforms/devtool", WebComponent.BASE_PACKAGE + ".devtool"));
+		this.addPathPackage(new PathPackage("/dataforms/test", "jp.dataforms.test"));
+		
 		this.addPathPackage(new PathPackage("/dataforms/app", WebComponent.BASE_PACKAGE + ".app"));
 		this.addPathPackage(new PathPackage("/dataforms", WebComponent.BASE_PACKAGE));
 	}
@@ -159,7 +161,8 @@ public class FunctionMap {
 	 */
 	private void addFwMenu() {
 		this.addMenu(new Menu("/dataforms/app", "Basic Function", "ja\t基本機能"));
-		this.addMenu(new Menu("/dataforms/devtool", "Developer tool", "ja\t開発ツール"));
+		this.addMenu(new Menu("/dataforms/devtool", "Develop tool", "ja\t開発ツール"));
+		this.addMenu(new Menu("/dataforms/test", "Test develop tool", "ja\tテスト開発ツール"));
 	}
 	
 	/**
@@ -381,7 +384,6 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.table.page.TableGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.TestSrcGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.webres.page.WebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.expwebres.page.ExportWebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
@@ -389,6 +391,14 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.doc.page.DocFramePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.version.page.VersionInfoPage.class));
+		// dataformsXtester.jarがリンクされていた場合テストツール開発ツールを追加する。
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Page> tp = (Class<? extends Page>) Class.forName("jp.dataforms.test.devtool.pageform.page.TestSrcGeneratorPage");
+			this.addPage(new PageInfo(tp));
+		} catch (ClassNotFoundException e) {
+			logger.info("package jp.dataforms.test not found.");
+		}
 	}
 	
 	/**
