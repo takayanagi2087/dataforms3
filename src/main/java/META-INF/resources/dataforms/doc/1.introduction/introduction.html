@@ -11,38 +11,106 @@
 	</head>
 	<body>
 		<h1><span>1.</span>概要</h1>
-		<h2>開発の目的</h2>
+		<h2>dataforms3.jarとは</h2>
 		<p>
-			dataforms2.jarはJavaでWebアプリケーションを作るためフレームワークです。
+			dataforms3.jarはJava21,Tomcat10以降でWebアプリケーションを作るためフレームワークです。
+			このdataforms3.jarを依存関係に追加するだけで、Webアプリケーションを作ることができます。
 		</p>
-		<p>
-			WebアプリケーションはM(Model),V(View),C(Controller)モデルに準拠した作りが良いとされています。
-			JavaにはM,V,Cにそれぞれ複数のライブラリが存在し、それを組み合わせてアプリケーションを作るケースが多いようです。
-			このようなライブラリは非常に便利です。しかし、これらのライブラリはどんどん複雑になり巨大化しています。
-			さらに、依存ライブラリの数も増加しています。
-			そのため、ちょっとしたシステムを作っただけなのに、数分かけて巨大なwarを作る作業を散々繰り返す羽目になってしまいます。
-		</p>
-		<p>
-			ということで、M,V,Cの全てをシンプルなオリジナルライブラリで作成し、1つのjarファイルにまとめてみました。
-			ついでに、今まで経験した既存のフレームワークの問題点を幾つか解決してみようと思い、このプロジェクトを開始しました。
-		</p>
+		<h2>dataforms2.jarからの変更点</h2>
+		基本的にdataforms2.jarの構想を踏襲していますが、互換性はありません。
+		<ol>
+			<li>Tomcat10以降に対応(Tomcat9以前には対応しません)</li>
+			<li>IE11, MS EDGE対応コードの削除(Chromium版EDGEはサポートします)</li>
+			<li>非推奨機能を削除</li>
+			<li>JavascriptのModule対応</li>
+			<li>func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)</li>
+			<li>設定ファイルの形式をjsoncに変更</li>
+			<li>認証のpasskey対応</li>
+		</ol>
 		<h2>特徴</h2>
 		<p>
 			このフレームワークの特徴を以下にまとめます。
 		</p>
-		<h3>1つのjarファイルにまとまっている</h3>
+		<h3>Webアプリケーションに必要な機能が一通り入っている</h3>
 		<p>
-			このフレームワークの本体は、1つのjarファイル(dataforms2.jar)にまとまっています。
-			dataforms2.jarには、ライブラリ本体、アプリケーションの基本機能、開発ツールが入っています。
-			Servletクラスもdataforms2.jarに入っており、web.xmlに設定を記述しなくても、*.dfというパターンで、DataFormsServletというServletが動作するようになっています。
-			基本機能や開発ツールなどのページを構成するHTMLやJavascriptも、dataforms2.jarファイル中のMETA-INF/resourcesに入っています。
+			dataforms3.jarには以下の機能が入っています。
+		</p>
+		<table class="jarlist">
+			<caption>
+				dataforms3.jarの機能一覧
+			</caption>
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th style="width: 300px;">機能</th>
+					<th style="width: 400px;">説明</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="num">1</td>
+					<td style="width: 300px;">GUIを構成するクラスライブラリ</td>
+					<td style="width: 500px;">
+						Webページを構成する要素であるPage,Form,Field等のクラスをJavascriptとJavaのクラスとして実装してあります。
+						ブラウザ上で動作するJavascriptクラスとサーバ上で動作するJavaクラスが連携してGUIを実現する構造になっています。
+						またViewは純粋なHTMLを使用し、JavascriptのクラスライブラリでHTMLの各要素を制御しています。
+					</td>
+				</tr>
+				<tr>
+					<td class="num">2</td>
+					<td style="width: 300px;">各種Databaseサーバのアクセスライブラリ</td>
+					<td style="width: 500px;">
+						dataforms3.jarはTableやQuery等のデータベースアクセス用のクラスを提供しており、
+						これらのクラスを利用することによって、SQLを意識しない開発が可能になっています。
+						またdataforms3.jarは以下のデータベースに対応しています。
+						<p>
+							Apache Derby, MySQL, PostgreSQL, Oracle, Microsoft SQL Server
+						</p>
+						SQLの方言はライブラリで吸収する構造になっているため、TomcatのJNDIデータソースの接続先に応じたSQLを発行します。
+					</td>
+				</tr>
+				<tr>
+					<td class="num">2</td>
+					<td style="width: 300px;">レポート出力機能</td>
+					<td style="width: 500px;">
+						Apache POIを利用したExcelレポートとApache FOPに対応したPDFレポート機能を持っています。						
+					</td>
+				</tr>
+				<tr>
+					<td class="num">3</td>
+					<td style="width: 300px;">ユーザの管理と最新の認証機能</td>
+					<td style="width: 500px;">
+						dataforms3.jarはWebアプリケーションのユーザの管理や認証の為の機能を持っており、	ログイン画面やユーザ管理画面を作る必要はありません。
+						またログイン画面はPassKeyにも対応しており、端末の生体認証でログイン可能なWebアプリケーションを作ることができます。
+					</td>
+				</tr>
+				<tr>
+					<td class="num">4</td>
+					<td style="width: 300px;">データベース管理機能</td>
+					<td style="width: 500px;">
+						データベース中のテーブルの構造はTableクラスで定義します。
+						テーブルの管理機能を使いJavaのクラスで定義したテーブルをテータベース中に作成することができます。
+						また、Javaのテーブル構造を変更した後、その変更を簡単にデータベース中のテーブル反映することができます。
+					</td>
+				</tr>
+				<tr>
+					<td class="num">5</td>
+					<td style="width: 300px;">開発ツール</td>
+					<td style="width: 500px;">
+						データベース中のテーブルの構造を定義するためのTableクラス、そのテーブルを検索するためのQueryクラス、
+						そのテーブルの内容を表示編集するPageクラスなどを生成する開発ツールを持っています。
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			Servletクラスもdataforms3.jarに入っており、web.xmlに設定を記述しなくても、*.dfというパターンで、DataFormsServletというServletが動作するようになっています。
+			基本機能や開発ツールなどのページを構成するHTMLやJavascriptも、dataforms3.jarファイル中のMETA-INF/resourcesに入っています。
 			(これらはServlet 3.0でサポートされた機能を使用しています。)
-			基本的にWEB-INF/libにdataforms2.jarと幾つかの依存ライブラリをコピーし、web.xmlにJNDIデータソースの設定を記述すれば動作します。
 		</p>
 		<h3>依存ライブラリが少ない</h3>
 		<p>
-			このフレームワークの作成動機には、Javaで作成するWebアプリケーションの肥大化の問題があります。
-			そのため、依存するライブラリは以下のものに抑えています。
+			依存するライブラリは以下のものに抑えています。
 		</p>
 		<table class="jarlist">
 			<caption>
@@ -72,26 +140,21 @@
 					<td>郵便番号住所変換</td>
 				</tr>
 				<tr>
-					<td rowspan="4">apache commons</td>
-					<td>commons-fileupload-XXX.jar</td>
-					<td>ファイルのアップロード</td>
-				</tr>
-				<tr>
-					<td>commons-io-XXX.jar</td>
-					<td></td>
+					<td rowspan="4">Apache commons</td>
+					<td >commons-io-XXX.jar</td>
+					<td>ファイルIOライブラリ</td>
 				</tr>
 				<tr>
 					<td>commons-text-XXX.jar</td>
-					<td></td>
+					<td>テキスト操作ライブラリ</td>
 				</tr>
 				<tr>
 					<td>commons-validator-XXX.jar</td>
 					<td>入力値のバリデーション</td>
 				</tr>
 				<tr>
-					<td>jsonic</td>
-					<td>jsonic-XXX.jar</td>
-					<td>JSON変換</td>
+					<td>commons-beanutils-XXX.jar</td>
+					<td>Java Beanの操作</td>
 				</tr>
 				<tr>
 					<td>apache log4j2</td>
@@ -128,12 +191,18 @@
 						(QR-Code出力を使用しない場合は削除できます)
 					</td>
 				</tr>
+				<tr>
+					<td>gson</td>
+					<td>gson-XXX.jar</td>
+					<td>JSON変換</td>
+				</tr>
+				<tr>
+					<td>webauthn4j</td>
+					<td>webauthn4j-core-XXX.jar</td>
+					<td>Passkey認証</td>
+				</tr>
 			</tbody>
 		</table>
-		<p>
-			この中で一番大きいのがPOIなのですが、Excelレポート出力を使用しないのであればPOIは不要です。
-			また、PDF出力が不要であればFOPも不要です。
-		</p>
 		<p class="topic">
 			依存ライブラリ中のjarファイル一覧はpom.xmlの&lt;dependencies&gt;&lt;/dependencies&gt;に登録してあるもののみを挙げており、
 			これらのライブラリが依存しているものは記載していません。
@@ -175,17 +244,13 @@
 		</p>
 		<p>
 			中小のシステムではアジャイル開発で行うケースが多いため、
-			dataforms2.jarはデータベース構造の変更コストを下げる機能を装備しています。
+			dataforms3.jarはデータベース構造の変更コストを下げる機能を装備しています。
 		</p>
 		<p>
-			dataforms2.jarでテーブル構造を変更する作業は、テーブルJavaクラスの修正を行い、
+			dataforms3.jarでテーブル構造を変更する作業は、テーブルJavaクラスの修正を行い、
 			開発ツールの「テーブル管理」を使用し、その変更をデータベースに適用するだけで完了します。
 			各データベースサーバのマニュアルを調べて、テーブル修正用のスクリプトを作成する作業は不要です。
 			また、テーブル中のデータも可能な限り保持されます。
-		</p>
-		<p>
-			旧バージョンのdataforms.jarで作成したシステムで、年数回テーブル構造の変更を伴うメンテナンスが発生しているものがあります。
-			そのようなシステムでも特にトラブルなく運用を継続している実績があります。
 		</p>
 		<h3>複数のデータベースサーバに対応</h3>
 		<p>
@@ -201,7 +266,7 @@
 			<li>Microsoft SQL Server</li>
 		</ol>
 		<p>
-			dataforms2.jarの開発では、開発環境は環境構築が容易なApache Derbyを使用し、結合テスト～運用はPostgreSQL等のデータベースサーバを使用することが一般化しています。
+			dataforms3.jarの開発では、開発環境は環境構築が容易なApache Derbyを使用し、結合テスト～運用はPostgreSQL等のデータベースサーバを使用することが一般化しています。
 		</p>
 		<p>
 			データベースサーバに依存したSQLも、簡単に実行することができます。
@@ -210,7 +275,7 @@
 		<h3>クラス化されたJavascriptライブラリ</h3>
 		<p>
 			Javaのページクラスにはフォームクラスのオブジェクトが配置され、フォームクラスにはフィールドクラスのオブジェクトが配置されています。
-			dataforms2.jarでは、これらのJavaクラスに対応するJavascriptのクラスがES6の文法で記述されています。
+			dataforms3.jarでは、これらのJavaクラスに対応するJavascriptのクラスがES6の文法で記述されています。
 			(Javascriptクラスが存在しなければ、親クラスのJavascriptクラスが自動的に操作します。)
 			Javascriptクラスは、開発ツールで簡単に作成することができます。
 			開発ツールで作成したJavascriptクラスに特殊な処理を記述することにより、独自の機能を追加していくとこができます。
@@ -274,7 +339,7 @@
 			これだけで最初から登録ボタンが表示され、確認画面を経由せず保存できるようになります。
 		</p>
 		<p>
-			dataforms2.jarでは、HTMLの&lt;table&gt;タグに対応するHtmlTableクラスが用意されています。
+			dataforms3.jarでは、HTMLの&lt;table&gt;タグに対応するHtmlTableクラスが用意されています。
 			HtmlTableクラスのサブクラスには、以下の物があります。
 		</p>
 
@@ -317,9 +382,9 @@
 		</p>
 		<h3>アプリケーションの基本機能を装備</h3>
 		<p>
-			dataforms2.jarの中には、開発ツールの他にユーザの管理、ログインログアウトの機能を標準装備しています。
+			dataforms3.jarの中には、開発ツールの他にユーザの管理、ログインログアウトの機能を標準装備しています。
 			これらの機能の実装は単純ですが、システムごとに実装するのも意外と面倒なものです。
-			dataforms2.jarを使用すれば、このような手間をなくすことができます。
+			dataforms3.jarを使用すれば、このような手間をなくすことができます。
 		</p>
 		<p>
 			また、これらの機能は必要最小限のものになっています。
@@ -329,19 +394,15 @@
 		<p>
 			開発ツールで作成されたHTMLを確認してみるとわかると思いますが、
 			標準的なHTMLのみで、Javascript、onxxxx等のイベント関連アトリビュート、ライブラリが定義する特殊なアトリビュートも存在しません。
-			これが何故動作するのか不思議に思うかもしれませんが、dataforms2.jarがこのページの初期化スクリプトを自動的に生成するので、
+			これが何故動作するのか不思議に思うかもしれませんが、dataforms3.jarがこのページの初期化スクリプトを自動的に生成するので、
 			所定のイベント処理が自動的に組み込まれます。
 			つまりHTMLは純粋に見た目だけを記述することになり、外見はHTMLやCSSの文法を理解しているデザイナーさんにお任せすることができます。
 		</p>
 		<h3>フレームデザインの共通化</h3>
 		<p>
-			dataforms2.jarでは、各ページに共通したフレームデザインが設定されており、それを切り替えることが可能です。
-			dataforms2.jarの中には、/frame/flexというパスにFrameデザインを記録したHTMLやcssが入っています。
+			dataforms3.jarでは、各ページに共通したフレームデザインが設定されており、それを切り替えることが可能です。
+			dataforms3.jarの中には、/frame/flexというパスにFrameデザインを記録したHTMLやcssが入っています。
 			デザイン性を重視しない場合はこのまま使用してもよいですし、デザインに凝りたい場合、これをカスタマイズすることも可能です。
-		</p>
-		<p class="topic">
-			dataforms2.jarの中には旧バージョンの互換性を維持するため/frame/defaultというフレームデザインも残っています。
-			これはtableタグを利用してページのレイアウトを設定しています。
 		</p>
 		<p>
 			各ページのHTMLは、body直下に"mainDiv"というIDのdivが存在し、そのmainDivの中にページ固有の内容が記述されています。
@@ -350,13 +411,13 @@
 		<h3>デバイスに依存しないフレームデザイン(レスポンシブデザイン)</h3>
 		<p>
 			現在のWebアプリケーションは、PCだけでなく、タブレット、スマートフォンに対応する必要があります。
-			dataforms2.jarに含まれる各種スタイルシートにはPC用スタイル、タブレット用スタイル、スマートフォン用スタイルが設定されています。
-			PCのブラウザでdataforms2.jarの各ページを表示し、ブラウザのサイズを変更すると、各画面サイズに応じてレイアウトが変化するようになっています。
+			dataforms3.jarに含まれる各種スタイルシートにはPC用スタイル、タブレット用スタイル、スマートフォン用スタイルが設定されています。
+			PCのブラウザでdataforms3.jarの各ページを表示し、ブラウザのサイズを変更すると、各画面サイズに応じてレイアウトが変化するようになっています。
 		</p>
 		<h3>多言語対応</h3>
 		<p>
 			各言語用のhtmlやpropertiesを用意することによって、ブラウザに設定された言語に応じて、出力するHTMLを切り替えることができます。
-			dataforms2.jar内のページは英語と日本語のHTMLが作成されています。
+			dataforms3.jar内のページは英語と日本語のHTMLが作成されています。
 		</p>
 		<hr/>
 	</body>

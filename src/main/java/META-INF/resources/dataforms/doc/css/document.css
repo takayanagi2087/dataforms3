@@ -55,8 +55,6 @@ ol {
 	margin-left: 40px;
 }
 
-
-
 .wrappre {
 	border-style: solid;
 	border-width: 1px;
@@ -71,4 +69,8 @@ ol {
 .topic {
 	font-size: 10pt;
 	font-weight: bold;
+}
+
+td.num {
+	text-align: right;
 }

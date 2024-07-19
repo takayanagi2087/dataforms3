@@ -8,23 +8,23 @@
 	<body>
 		<h1><span>2.1.</span>開発環境の構築</h1>
 		<p>
-			この記事ではdataforms2.jarの開発環境を構築する手順を説明していきます。
+			この記事ではdataforms3.jarの開発環境を構築する手順を説明していきます。
 		</p>
 		<p>
 			日本語環境でよく使われているEclipse YYYY-MM Pleiades All in Oneを例に、
 			開発環境の構築と簡単なアプリケーションの開発手順を説明します。
-			基本的にJava11 + Tomcat9の開発ができるものであれば、開発環境の構築が可能だと思います。
+			基本的にJava21 + Tomcat10の開発ができるものであれば、開発環境の構築が可能だと思います。
 			別環境で開発したい場合はこの記事を参考に環境構築してください。
 		</p>
 		<h2>Eclipseを用意する</h2>
 		<p>
-			<a href="http://mergedoc.osdn.jp/index.html#pleiades.html" target="_blank">Pleiades - Eclipse プラグイン日本語化プラグイン</a>のサイトから、
+			<a href="https://willbrains.jp/" target="_blank">Pleiades - Eclipse プラグイン日本語化プラグイン</a>のサイトから、
 			Pleiades All in Oneをダウンロードします。
-			今回はpleiades-2022-12-java-win-64bit-jre_20221215.exeというファイル名のものを使用しました。
+			今回はpleiades-2024-06-java-win-64bit-jre_20240626.exeというファイル名のものを使用しました。
 			このexeファイルを実行しC:\eclipse\pleiadesに展開します。
 		</p>
 		<p>
-			展開したEclipseを起動し、ワークスペースC:\eclipse\workspaceを作成します。
+			展開したEclipseを起動し、ワークスペースC:\eclipse\pleiades\workspaceを作成します。
 			その後、Webパースペクティブを選択し、WebアプリケーションサーバであるTomcatの実行環境を構築します。
 			以下のようにサーバービューを開きます。
 		</p>
@@ -33,94 +33,111 @@
 			<img src="eclipse_start00.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			pleiades-2022-12では既にいくつかのTomcatサーバが登録されています。
-			今回使用するのは動作実績のある"Tomcat9_Java17"とします。
+			pleiades-2024-06では既にいくつかのTomcatサーバが登録されています。
+			今回使用するのは最新の"Tomcat10_Java21"です。
 			このサーバ以外は邪魔なのでサーバビューから削除します。
-			その後"Tomcat9_Java17"を起動します。
-		</p>
-		<p class="topic">
-			Tomcat10で運用したい場合は、Tomcat10を残しておいてください。
-			Tomcat10以上ではjavax.servlet等のパッケージがjakarta.servletに変更されました。
-			そのためdataforms2.jarでは2つのjavax-dataforms2とjakarta-dataforms2というartifactIdを用意してあります。
-			Tomcat10以上で開発する場合はMavenプロジェクトに移行した後pom.xmlを修正し、jakarta-dataforms2に切り替えます。
+			その後"Tomcat10_Java21"を起動します。
 		</p>
 		<p>
 			Tomcatを起動すると、コンソールにTomcatの起動ログが表示されます。
 		</p>
 		<figure>
-			<figcaption>Tomcat9_Java17の起動ログ</figcaption>
+			<figcaption>Tomcat10_Java21の起動ログ</figcaption>
 			<img src="eclipse_start01.png" style="width:50%; height:50%;"/>
-		</figure>
-		<p>
-			サーバービューを表示しTomcatが"[起動済み、同期済み]"となっていることを確認してください。
-		</p>
-		<figure>
-			<figcaption>Tomcat9_Java11の起動後のサーバービュー</figcaption>
-			<img src="eclipse_start02.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
 			Tomcatの起動が確認出来たら、一旦Tomcatを終了してください。
 		</p>
 		<h2>データベースを用意する</h2>
 		<p>
-			dataforms2.jarを動かすためには、何らかのデータベースが必要になります。
+			dataforms3.jarを動かすためには、何らかのデータベースが必要になります。
 			通常Tomcatからデータベースを使うには、サーバーソフトを別にセットアップし、それに接続するためのjdbcドライバをTomcatにインストールします。<br/>
 			サーバーソフトの設定はいろいろ面倒なので、ここでは組込み用Apache Derbyを使用します。<br/>
 			<a href="https://db.apache.org/derby/" target="_blank">Apache Derby</a>のサイトよりdb-derby-&lt;version&gt;-bin.zipダウンロードし、
-			その中に含まれているlib/derby*.jarを全て$CATALINA_HOME/lib(今回はC:\eclipse\pleiades\tomcat\9\lib)にコピーしてください。
+			その中に含まれているlib/derby*.jarを全て$CATALINA_HOME/lib(今回はC:\eclipse\pleiades\tomcat\10\lib)にコピーしてください。
 			これだけでデータベース(Apache Derby)が使えるようになります。
 		</p>
 		<h2>JavaMailのインストール</h2>
 		<p>
 			dataforms2.jarはJavaMailを使用したメールの送信機能を持っています。
 			そのためJavaMailをTomcatにインストールする必要があります。
-			<a href="https://github.com/javaee/javamail" target="_blank">https://github.com/javaee/javamail</a>のreleasesからjavax.mail.jarをダウンロードし、
-			$CATALINA_HOME/libにコピーしてください。
-		</p>
-		<p>
-			また、JavaMailはJavaBeans Activation Framework (JAF)を参照しています。
-			<a href="https://github.com/javaee/activation" target="_blank">https://github.com/javaee/activation</a>のreleasesからjavax.activation.jarをダウンロードし、
-			$CATALINA_HOME/libにコピーしてください。
-		</p>
-		<p class="topic">
-			Tomcat10の場合javax.mail.jarではなく、jakarta.mail-xxx.jarでないとダメなようです。
-			$CATALINA_HOME/libにjakarta.mail-xxx.jarとjakarta.activation-api-xxx.jarをコピーしてください。
+			以下のjarファイルをダウンローして、tomcat10/libにコピーしてください。
+			<ol>
+				<li>
+					<a href="https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api" target="_blank">jakarta.mail-api-xxx.jar</a>
+				</li>
+				<li>
+					<a href="https://mvnrepository.com/artifact/org.eclipse.angus/jakarta.mail" target="_blank">jakarta.mail-xxx.jar</a>
+				</li>
+				<li>
+					<a href="https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api" target="_blank">jakarta.activation-api-xxx.jar</a>
+				</li>
+				<li>
+					<a href="https://mvnrepository.com/artifact/org.eclipse.angus/angus-activation" target="_blank">angus-activation-xxx.jar</a>
+				</li>
+			</ol>
 		</p>
 		<h2>プロジェクトの作成</h2>
 		<p>
-			<a href="https://www.dataforms.jp/dataforms2/" target="_blank">https://www.dataforms.jp/dataforms2/</a>から
-			dataforms2.jarのブランクアプリケーションdf2blank-*.warをダウンロードして下さい。
-			ダウンロードしたwarファイルは、eclipseプロジェクトとしてインポートすることができます。
-		</p>
-		<p>
-			Eclipseのプロジェクト・エクスプローラーのコンテキストメニューの「インポート...」を選択し、表示されたダイアログで「WebのWARファイル」を選択し「次へ」ボタンを押下します。
+			Eclipseのプロジェクト・エクスプローラーのコンテキストメニューの「新規」「プロジェクト...」を選択し、
+			表示されたダイアログで「動的Webプロジェクト」を選択し「次へ」ボタンを押下します。
 		</p>
 		<figure>
-			<figcaption>WARファイルインポートの操作</figcaption>
+			<figcaption>動的Webプロジェクトの作成</figcaption>
 			<img src="eclipse_proj000.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			表示されたダイアログのWARファイルにダウンロードした、df2blank_xxx.warを指定します。
+			表示された「新規動的Webプロジェクト」ダイアログでプロジェクト名に"sample"と入力し「完了」ボタンを押下します。
 		</p>
 		<figure>
-			<figcaption>WARインポートダイアログ</figcaption>
+			<figcaption>新規動的Webプロジェクト</figcaption>
 			<img src="eclipse_proj00.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			プロジェクト名はsampleとし、ターゲットランタイムはTomcat9(java17)を選択し、「完了」ボタンを押してください。
-		</p>
-		<p>
-			インポートが終了すると、以下のようにプロジェクトエクスプローラーにsampleというプロジェクトが表示されます。
+			プロジェクト作成が終了すると、以下のようにプロジェクトエクスプローラーにsampleというプロジェクトが表示されます。
 		</p>
 		<figure>
-			<figcaption>インポートされたプロジェクト</figcaption>
+			<figcaption>作成されたプロジェクト</figcaption>
 			<img src="eclipse_proj01.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			作成したプロジェクトを"Tomcat9_Java17"に追加します。サーバビューの"Tomcat9_Java17"を右クリックし、「追加および消去」を選択します。
+			"sample"プロジェクトを右クリックし、「構成」→「Mavenプロジェクトへ変換」とメニューを選択し、
+			Mavenプロジェクトに変換します。
 		</p>
 		<figure>
-			<figcaption>Tomcat9(Java17)に作成したプロジェクトを追加</figcaption>
+			<figcaption>新規POMの作成ダイアログ</figcaption>
+			<img src="eclipse_proj02.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			この操作で作成されたPOM.XMLに以下の依存関係を追加します。
+		</p>
+		<div class="filecaption">POM.XMLに追加する記述</div>
+		<div class="wrappre">
+			<pre>
+		&lt;repositories&gt;
+			&lt;repository&gt;
+				&lt;id&gt;jp.dataforms&lt;/id&gt;
+				&lt;url&gt;https://www.dataforms.jp/mvn/repository&lt;/url&gt;
+			&lt;/repository&gt;
+		&lt;/repositories&gt;
+		&lt;dependencies&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;jp.dataforms&lt;/groupId&gt;
+				&lt;artifactId&gt;dataforms3&lt;/artifactId&gt;
+				&lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
+			&lt;/dependency&gt;
+		&lt;/dependencies&gt;
+			</pre>
+		</div>
+		<figure>
+			<figcaption>POM.XMLにdataforms3.jarを追加した状態</figcaption>
+			<img src="eclipse_proj02-1.png" style="width:50%; height:50%;"/>
+		</figure>
+		<p>
+			作成したプロジェクトを"Tomcat10_Java21"に追加します。サーバビューの"Tomcat10_Java21"を右クリックし、「追加および消去」を選択します。
+		</p>
+		<figure>
+			<figcaption>Tomcat10_Java21に作成したプロジェクトを追加</figcaption>
 			<img src="eclipse_proj03.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
@@ -131,175 +148,123 @@
 			<img src="eclipse_proj04.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			この操作の結果、以下のように"Tomcat9_Java17"にsampleプロジェクトが追加されます。
+			この操作の結果、以下のように"Tomcat10_Java21"にsampleプロジェクトが追加されます。
 		</p>
 		<figure>
 			<figcaption>プロジェクト追加後のサーバビュー</figcaption>
 			<img src="eclipse_proj05.png" style="width:50%; height:50%;"/>
 		</figure>
+		<h2>プロジェクトの初期化</h2>
 		<p>
-			これで空の動的WEBプロジェクトができました。
-			作成されたプロジェクトは以下のようになっています。
-		</p>
-		<div class="filecaption">プロジェクトファイル一覧</div>
-		<div class="wrappre">
-			<pre>
-.
-./.classpath
-./.project
-./.settings
-./.settings/.jsdtscope
-./.settings/org.eclipse.core.resources.prefs
-./.settings/org.eclipse.jdt.core.prefs
-./.settings/org.eclipse.wst.common.component
-./.settings/org.eclipse.wst.common.project.facet.core.xml
-./.settings/org.eclipse.wst.jsdt.ui.superType.container
-./.settings/org.eclipse.wst.jsdt.ui.superType.name
-./build
-./build/classes
-./build/classes/log4j2.xml
-./src
-./src/main
-./src/main/java
-./src/main/java/log4j2.xml
-./src/main/webapp
-./src/main/webapp/frame
-./src/main/webapp/frame/default
-./src/main/webapp/frame/default/AppFrame.css
-./src/main/webapp/frame/flex
-./src/main/webapp/frame/flex/AppFrame.css
-./src/main/webapp/frame/jslib.html
-./src/main/webapp/frame/messages
-./src/main/webapp/frame/messages/AppClientMessages.properties
-./src/main/webapp/frame/messages/AppClientMessages_ja.properties
-./src/main/webapp/frame/messages/AppMessages.properties
-./src/main/webapp/frame/messages/AppMessages_ja.properties
-./src/main/webapp/index.html
-./src/main/webapp/META-INF
-./src/main/webapp/META-INF/context.xml
-./src/main/webapp/META-INF/MANIFEST.MF
-./src/main/webapp/META-INF/maven
-./src/main/webapp/META-INF/maven/df2blank
-./src/main/webapp/META-INF/maven/df2blank/df2blank
-./src/main/webapp/META-INF/maven/df2blank/df2blank/pom.properties
-./src/main/webapp/META-INF/maven/df2blank/df2blank/pom.xml
-./src/main/webapp/WEB-INF
-./src/main/webapp/WEB-INF/apachefop
-./src/main/webapp/WEB-INF/apachefop/fop.xconf
-./src/main/webapp/WEB-INF/dbRebuild
-./src/main/webapp/WEB-INF/dbRebuild/derby
-./src/main/webapp/WEB-INF/dbRebuild/derby/after.sql
-./src/main/webapp/WEB-INF/dbRebuild/derby/before.sql
-./src/main/webapp/WEB-INF/dbRebuild/mysql
-./src/main/webapp/WEB-INF/dbRebuild/mysql/after.sql
-./src/main/webapp/WEB-INF/dbRebuild/mysql/before.sql
-./src/main/webapp/WEB-INF/dbRebuild/oracle
-./src/main/webapp/WEB-INF/dbRebuild/oracle/after.sql
-./src/main/webapp/WEB-INF/dbRebuild/oracle/before.sql
-./src/main/webapp/WEB-INF/dbRebuild/pgsql
-./src/main/webapp/WEB-INF/dbRebuild/pgsql/after.sql
-./src/main/webapp/WEB-INF/dbRebuild/pgsql/before.sql
-./src/main/webapp/WEB-INF/lib
-./src/main/webapp/WEB-INF/lib/batik-anim-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-awt-util-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-bridge-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-constants-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-css-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-dom-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-ext-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-extension-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-gvt-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-i18n-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-parser-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-script-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-shared-resources-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-svg-dom-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-svggen-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-transcoder-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-util-1.16.jar
-./src/main/webapp/WEB-INF/lib/batik-xml-1.16.jar
-./src/main/webapp/WEB-INF/lib/commons-beanutils-1.9.4.jar
-./src/main/webapp/WEB-INF/lib/commons-codec-1.15.jar
-./src/main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar
-./src/main/webapp/WEB-INF/lib/commons-collections4-4.4.jar
-./src/main/webapp/WEB-INF/lib/commons-compress-1.21.jar
-./src/main/webapp/WEB-INF/lib/commons-digester-2.1.jar
-./src/main/webapp/WEB-INF/lib/commons-fileupload-1.5.jar
-./src/main/webapp/WEB-INF/lib/commons-io-2.11.0.jar
-./src/main/webapp/WEB-INF/lib/commons-lang3-3.12.0.jar
-./src/main/webapp/WEB-INF/lib/commons-logging-1.2.jar
-./src/main/webapp/WEB-INF/lib/commons-math3-3.6.1.jar
-./src/main/webapp/WEB-INF/lib/commons-text-1.10.0.jar
-./src/main/webapp/WEB-INF/lib/commons-validator-1.7.jar
-./src/main/webapp/WEB-INF/lib/core-3.5.1.jar
-./src/main/webapp/WEB-INF/lib/curvesapi-1.07.jar
-./src/main/webapp/WEB-INF/lib/fontbox-2.0.24.jar
-./src/main/webapp/WEB-INF/lib/fop-2.8.jar
-./src/main/webapp/WEB-INF/lib/fop-core-2.8.jar
-./src/main/webapp/WEB-INF/lib/fop-events-2.8.jar
-./src/main/webapp/WEB-INF/lib/fop-util-2.8.jar
-./src/main/webapp/WEB-INF/lib/jai-imageio-core-1.4.0.jar
-./src/main/webapp/WEB-INF/lib/javase-3.5.1.jar
-./src/main/webapp/WEB-INF/lib/javax-dataforms2-2.31.jar
-./src/main/webapp/WEB-INF/lib/jcommander-1.82.jar
-./src/main/webapp/WEB-INF/lib/jsonic-1.3.10.jar
-./src/main/webapp/WEB-INF/lib/log4j-api-2.19.0.jar
-./src/main/webapp/WEB-INF/lib/log4j-core-2.19.0.jar
-./src/main/webapp/WEB-INF/lib/poi-5.2.3.jar
-./src/main/webapp/WEB-INF/lib/poi-ooxml-5.2.3.jar
-./src/main/webapp/WEB-INF/lib/poi-ooxml-lite-5.2.3.jar
-./src/main/webapp/WEB-INF/lib/poi-scratchpad-5.2.3.jar
-./src/main/webapp/WEB-INF/lib/qdox-1.12.jar
-./src/main/webapp/WEB-INF/lib/SparseBitSet-1.2.jar
-./src/main/webapp/WEB-INF/lib/xmlbeans-5.1.1.jar
-./src/main/webapp/WEB-INF/lib/xmlgraphics-commons-2.8.jar
-./src/main/webapp/WEB-INF/web.xml
-			</pre>
-		</div>
-		<p>
-			「/src/main/java」以下は、log4j2の設定ファイル(log4j2.xml)のみで、Javaのソースファイルはありません。
-			「/src/main/webapp/WEB-INF/lib」には、dataforms2.jarとdataforms2.jarが依存しているjarファイルが入っています。
-			Excel出力が不要であれば、POI関連のjarを削除することができます。
-			また、PDF出力が不要であれば、FOP関連のjarを削除することができます。
-		</p>
-		<p>
-			「/src/main/webapp/META-INF/context.xml」には、テータベース(組込みDevby用)への接続設定が記載されています。
-			もしPostgreSQL,MySQL(MariaDB),Oracle,MS SQL-Server等のデータベースを使用する場合、Tomcat9に該当のjdbcドライバをインストールしcontext.xmlを書き換えてください。
-			コメントに各種DBサーバの設定例を記述してありますので参考にしてください。
-		</p>
-		<p class="topic">
-			「/src/main/webapp/META-INF/context.xml」中のデータベースのURLは"jdbc:derby:./javadb/blankdb;create=true"となっています。
-			そのためデータベースファイルは"&lt;Tomcatのカレントディレクトリ&gt;/javadb/blankdb"に作成されます。
-			EclipseからTomcatを起動した場合、TomcatのカレントディレクトリはEclipseのインストールディレクトりである"C:\eclipse\pleiades\eclipse"となっています。
-			従ってデータベースのパスは"C:\eclipse\pleiades\eclipse\javadb\blankdb"となります。
-		</p>
-		<p>
-			「/src/main/webapp/WEB-INF/web.xml」にはアプリケーションの各種設定が記録されています。
-			dataforms2.jar固有の設定も、web.xmlに記述するようになっています。
-			設定項目はweb.xml中のコメントや<a href="../4.1.conf/conf.html#top">設定</a>のドキュメントを参照してください。
-			この状態でプロジェクトのクリーンビルドを行い、"Tomcat9_Java17"を起動してください。
+			Tomcatを起動し、ブラウザから"http://localhost:8080/sample"をアクセスすると以下の「プロジェクト初期化」ページが表示されます。
+			プロジェクトsample内は空の状態ですが、dataforms3.jarを参照しているため、その中のServletが動作し「プロジェクト初期化」ページを表示しています。
+			各種ソースファイルのパスなどはEclipseの動的Webプロジェクトのフォルダ構成に合わせた値が初期表示されます。
+			Eclipse以外の開発環境を使用する場合は適切に修正してください。
 		</p>
 		<figure>
-			<figcaption>Tomcat9を起動した状態</figcaption>
-			<img src="eclipse_proj07.png" style="width:50%; height:50%;"/>
+			<figcaption>プロジェクト初期化ページ(プロジェクト初期化前)</figcaption>
+			<img src="initproj-001_000.png" style="width:50%; height:50%;"/>
 		</figure>
-		<h2>プロジェクトの実行</h2>
 		<p>
-			Tomcatを起動した後、WEBブラウザから"http://localhost:8080/sample/"をアクセスすると以下のページが表示されます。
-			dataforms2.jarの中には、Webアプリケーションを構築するためのライブラリだけでなく、ユーザ管理などの基本機能や開発ツールを含んでいます。
-			初回の起動時にはデータベースの初期設定を行い、開発者権限を持ったユーザの登録するためのページが表示されます。
+			このページで「確認」→「登録」の順にボタンを押下すると、以下の設定ファイルがプロジェクト内に展開されます。
+		</p>
+		<p>			
+			"/src/main/webapp/WEB-INF/dataforms.conf.jsonc"にはアプリケーションの各種設定が記録されています。
+			 設定項目はdataforms.conf.jsonc中のコメントや<a href="../4.1.conf/conf.html#top">設定</a>のドキュメントを参照してください。 
+		</p>
+		<table>
+			<caption>展開された各種設定ファイル</caption>
+			<thead>
+				<th>
+					No.
+				</th>
+				<th>
+					ファイル名
+				</th>
+				<th>
+					内容
+				</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="num">1</td><td>./src/main/java/log4j2.xml</td><td>log4j2の設定ファイル</td>
+				</tr>
+				<tr>
+					<td class="num">2</td><td>./src/main/webapp/WEB-INF/web.xml</td><td>Webアプリケーションの設定ファイル</td>
+				</tr>
+				<tr>
+					<td class="num">3</td><td>./src/main/webapp/META-INF/context.xml</td><td>JNDIデータソースの設定などを記述</td>
+				</tr>
+				<tr>
+					<td class="num">4</td><td>./src/main/webapp/WEB-INF/dataforms.conf.jsonc</td><td>dataforms3.jarの設定ファイル</td>
+				</tr>
+				<tr>
+					<td class="num">5</td><td>./javadb</td><td>Apache debyのデータベースファイルを記録するパス</td>
+				</tr>
+				<tr>
+					<td class="num">6</td><td>./src/main/webapp/frame/flex/AppFrame.css</td><td>アプリケーションのスタイルシート</td>
+				</tr>
+				<tr>
+					<td class="num">7</td><td>./src/main/webapp/frame/jslib.html</td><td>Javascriptライブラリの参照ファイル</td>
+				</tr>
+				<tr>
+					<td class="num">8</td><td>./src/main/webapp/frame/messages/AppClientMessages.properties</td><td>クライアントメッセージリソース</td>
+				</tr>
+				<tr>
+					<td class="num">9</td><td>./src/main/webapp/frame/messages/AppClientMessages_ja.properties</td><td>クライアントメッセージリソース(日本語)</td>
+				</tr>
+				<tr>
+					<td class="num">10</td><td>./src/main/webapp/frame/messages/AppMessages.properties</td><td>サーバーメッセージリソース</td>
+				</tr>
+				<tr>
+					<td class="num">11</td><td>./src/main/webapp/frame/messages/AppMessages_ja.properties</td><td>サーバーメッセージリソース(日本語)</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			各種設定ファイルが作成されると、「プロジェクト初期化ページ(プロジェクト初期化後)」に示すように「データベース初期化」ページが表示されます。
+			Tomcatを再起動した後、「データベース初期化」のリンクをクリックし「データベース初期化」ページに遷移します。
 		</p>
 		<figure>
-			<figcaption>データベース初期設定</figcaption>
-			<img src="eclipse_proj08.png" style="width:50%; height:50%;"/>
+			<figcaption>プロジェクト初期化ページ(プロジェクト初期化後)</figcaption>
+			<img src="initproj-003_000.png" style="width:50%; height:50%;"/>
+		</figure>
+		<h2>データベース初期化</h2>
+		<p>
+			以下の「データベース初期化」ページを使用してシステムで利用するデータベースを作成します。
+			dataforms3.jarのデータベースにはユーザ情報等を管理するテーブルが定義されています。
+			そのためシステムを開発権限を持ったユーザ"developer"のパスワードを指定します。
+		</p>
+		<p>
+			プロジェクト初期化処理では"/src/main/webapp/META-INF/context.xml"にデフォルトのJNDIデータソースが設定され、
+			その接続先はApache deby(URL:jdbc:derby:./javadb/blankdb;create=true)になっています。
+			PostgreSQL等のデータベースサーバを使用する場合、この接続設定を修正してください。
+			"/src/main/webapp/META-INF/context.xml"には各種データベースへの接続設定例が記載されているので、それを参考に修正してください。
+		</p>	
+		<p>
+			プロジェクト内のcontex.xmlにJNDIデータソースを設定すると、warファイル内にDBの接続先が記録されてしまいます。
+			デプロイ先によってJNDIデータソースの接続先を変更したい場合、JDNIデータソースの設定を"/src/main/webapp/META-INF/context.xml"から
+			Servers/Tomcat10_Java21-config/context.xmlに移動してください。
+		</p>
+		<p>
+			Apache derbyは特にデータベースサーバを用意する必要がないため、手軽に開発を開始することがてきます。
+			dataforms3.jarのデータベースアクセスクラスは接続先のデータベースを自動的に判断し、適切なSQLを発行するようになっています。
+			そのため取りあえずApache derbyで開発を開始し、結合テスト以降はPostgreSQLに切り替えるような開発も可能です。
+			ただし、接続先のデータベースを切り替えた場合大半は動作しますが、
+			データベースの仕様の違いを完全に吸収出来ていない可能性があるため一通りのテストは行ってください。
+		</p>
+		<figure>
+			<figcaption>データベース初期化</figcaption>
+			<img src="initdb-001-000.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
 			このページで開発者の情報を入力すると、データベースに必要なテーブルが作成され、開発者が登録されます。
 			データベースが作成されると、ログイン画面が表示されます。
 		</p>
+		
 		<figure>
 			<figcaption>ログイン画面</figcaption>
-			<img src="eclipse_proj09.png" style="width:50%; height:50%;"/>
+			<img src="initdb-002_002.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
 			この画面から、先ほど登録した開発者権限を持つユーザでログインすることができます。
@@ -307,102 +272,8 @@
 		</p>
 		<figure>
 			<figcaption>サイトマップ</figcaption>
-			<img src="eclipse_proj10.png" style="width:50%; height:50%;"/>
+			<img src="initdb-003_000.png" style="width:50%; height:50%;"/>
 		</figure>
-		<h2>Mavenプロジェクトへの移行</h2>
-		<p>
-			df2blank-*.warをインポートした状態だと、WEB-INF/libにdataforms2.jarとそれが依存するライブラリが展開されています。
-			このままでも開発は可能ですが、これらの依存ライブラリはMavenで管理した方が効率的です。
-			プロジェクトsampleは動的 Web プロジェクトになっているので、これをMavenプロジェクトに変換します。
-			プロジェクトsampleを右クリックし、「構成→Mavenプロジェクトに変換」を選択します。
-			表示された新規POMの作成ダイアログを適切に入力します。
-		</p>
-		<figure>
-			<figcaption>新規POMの作成</figcaption>
-			<img src="eclipse_maven00.png" style="width:50%; height:50%;"/>
-		</figure>
-		<p>
-			作成されたpom.xmlには依存関係の記載がありません。
-			dataforms2.jarの依存関係の情報は以下のパスのpom.xmlに存在しています。
-			以下のpom.xmlの&lt;repositories&gt;...&lt;/repositories&gt;と&lt;dependencies&gt;...&lt;/dependencies&gt;をsample/pom.xmlにコピーします。
-		</p>
-		<pre>
-			sample/src/main/webapp/META-INF/maven/df2blank/df2blank/pom.xml
-		</pre>
-		<figure>
-			<figcaption>pom.xmlの依存関係の転記</figcaption>
-			<img src="eclipse_maven01.png" style="width:50%; height:50%;"/>
-		</figure>
-		<p>
-			pom.xmlに依存ライブラリを記述すれば、WEB-INF/lib中の依存ライブラリは不要になります。
-			そのためWEB-INF/libのjarファイル全て除します。
-		</p>
-		<h2>pom.xmlの調整</h2>
-		<p>
-			dataforms2.jarが依存するライブラリには、Excel出力で使用するApache POI,PDF出力で使用するApache FOP,QRコード生成で使用するgoogle.zxingが指定されています。
-			それぞれの機能を使用しない場合、これらのライブラリを除外してWEBアプリケーションのサイズを小さくすることができます。
-			&lt;exclusions&gt;...&lt;exclusions&gt;内にコメントアウトされている、ライブラリの除外設定を有効にしてください。
-		</p>
-		<p>
-			Tomcat10以上ではjavax.servlet等のパッケージがjakarta.servletに変更されました。
-			そのためdataforms2.jarでは2つのjavax-dataforms2とjakarta-dataforms2というartifactIdを用意してあります。
-			Tomcat10以上で開発する場合はjakarta-dataforms2を使用してください。
-		</p>
-		<div class="filecaption">pom.xmlの内容</div>
-		<div class="wrappre">
-			<pre>
-	&lt;repositories&gt;
-		&lt;repository&gt;
-			&lt;id&gt;jp.dataforms&lt;/id&gt;
-			&lt;url&gt;https://www.dataforms.jp/mvn/repository&lt;/url&gt;
-		&lt;/repository&gt;
-	&lt;/repositories&gt;
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;jp.dataforms&lt;/groupId&gt;
-			&lt;!-- tomcat9&#20197;&#21069;&#12399;javax&#12289;tomcat10&#20197;&#24460;&#12399;jakarta&#12434;&#20351;&#29992;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;!--&gt;
-			&lt;artifactId&gt;javax-dataforms2&lt;/artifactId&gt;
-			&lt;!--
-			&lt;artifactId&gt;jakarta-dataforms2&lt;/artifactId&gt;
-			--&gt;
-			&lt;version&gt;2.31&lt;/version&gt;
-			&lt;exclusions&gt;
-				&lt;!-- Excel&#20986;&#21147;&#12434;&#20351;&#12431;&#12394;&#12356;&#22580;&#21512;&#12289;&#20197;&#19979;&#12398;&#35373;&#23450;&#12434;&#26377;&#21177;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356; --&gt;
-				&lt;!--
-				&lt;exclusion&gt;
-					&lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-					&lt;artifactId&gt;poi&lt;/artifactId&gt;
-				&lt;/exclusion&gt;
-				&lt;exclusion&gt;
-					&lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-					&lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
-				&lt;/exclusion&gt;
-				&lt;exclusion&gt;
-					&lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-					&lt;artifactId&gt;poi-scratchpad&lt;/artifactId&gt;
-				&lt;/exclusion&gt;
-				--&gt;
-				&lt;!-- PDF&#20986;&#21147;&#12434;&#20351;&#12431;&#12394;&#12356;&#22580;&#21512;&#12289;&#20197;&#19979;&#12398;&#35373;&#23450;&#12434;&#26377;&#21177;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356; --&gt;
-				&lt;!--
-				&lt;exclusion&gt;
-					&lt;groupId&gt;org.apache.xmlgraphics&lt;/groupId&gt;
-					&lt;artifactId&gt;fop&lt;/artifactId&gt;
-				&lt;/exclusion&gt;
-				--&gt;
-				&lt;!-- QR&#12467;&#12540;&#12489;&#12434;&#20351;&#12431;&#12394;&#12356;&#22580;&#21512;&#12289;&#20197;&#19979;&#12398;&#35373;&#23450;&#12434;&#26377;&#21177;&#12395;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356; --&gt;
-				&lt;!--
-				&lt;exclusion&gt;
-					&lt;groupId&gt;com.google.zxing&lt;/groupId&gt;
-					&lt;artifactId&gt;javase&lt;/artifactId&gt;
-				&lt;/exclusion&gt;
-				--&gt;
-			&lt;/exclusions&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-			</pre>
-		</div>
-
 		<hr/>
 	</body>
 </html>

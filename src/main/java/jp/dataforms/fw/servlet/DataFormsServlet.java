@@ -208,7 +208,7 @@ public class DataFormsServlet extends HttpServlet {
 	/**
 	 * 設定情報ユーティリティ。
 	 */
-	private static ConfUtil confUtil = null;
+	private static ConfUtil confUtil = new ConfUtil();
 	
 	/**
 	 * 設定情報を取得します。
