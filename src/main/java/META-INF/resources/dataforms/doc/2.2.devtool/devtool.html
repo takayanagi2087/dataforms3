@@ -59,16 +59,16 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td style="text-align: right;">1</td>
+					<td class="num">1</td>
 					<td>
-						機能管理
+						メニュー作成
 					</td>
 					<td>
 						機能(Javaのパッケージ)の追加、削除を行います。これはメニューのグループになります。
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">2</td>
+					<td class="num">2</td>
 					<td>
 						テーブルJavaクラス作成
 					</td>
@@ -77,7 +77,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">3</td>
+					<td class="num">3</td>
 					<td>
 						問合せJavaクラス作成
 					</td>
@@ -86,7 +86,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">4</td>
+					<td class="num">4</td>
 					<td>
 						DAO Javaクラス作成
 					</td>
@@ -95,7 +95,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">5</td>
+					<td class="num">5</td>
 					<td>
 						ページJavaクラス作成
 					</td>
@@ -104,7 +104,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">6</td>
+					<td class="num">6</td>
 					<td>
 						Webリソース作成
 					</td>
@@ -113,7 +113,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">7</td>
+					<td class="num">7</td>
 					<td>
 						Webリソースエクスポート
 					</td>
@@ -122,7 +122,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">8</td>
+					<td class="num">8</td>
 					<td>
 						テーブル管理
 					</td>
@@ -131,12 +131,21 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">9</td>
+					<td class="num">9</td>
 					<td>
 						問合せ実行
 					</td>
 					<td>
 						問合せを実行します。
+					</td>
+				</tr>
+				<tr>
+					<td class="num">10</td>
+					<td>
+						データ更新
+					</td>
+					<td>
+						更新系のSQLを実行します。
 					</td>
 				</tr>
 			</tbody>
@@ -147,7 +156,7 @@
 		</p>
 		<ol>
 			<li>
-				「機能管理」を使用して、Javaのパッケージを登録します。
+				「メニュー作成」を使用して、メニューのグループとJavaのパッケージの対応表を作成します。
 			</li>
 			<li>
 				「テーブルJavaクラス作成」を使用して、テーブルのレイアウトを作成します。<br/>
@@ -206,23 +215,39 @@
 			</tbody>
 		</table>
 		<p>
-			src/main/webapp/WEB-INF/web.xmlに以下の設定を記述してください。
-			web.xmlにはサンプルの設定がコメントアウトされていますので、
-			コメントを外して適切に修正してください。
+			プロジェクト初期化ページで作成した"src/main/webapp/WEB-INF/dataforms.conf.jsonc"は
+			以下のようにソースファイルのパスが設定されており、
+			開発ツールがソースファイルを作成する際にこの設定を参照します。
 		</p>
-		<div class="filecaption">web.xmlのソースパス設定</div>
+		<div class="filecaption">dataforms.conf.jsoncのソースパス設定</div>
 		<div class="wrappre">
 			<pre>
-&lt;!-- &#38283;&#30330;&#12484;&#12540;&#12523;&#12398;java&#12477;&#12540;&#12473;&#20986;&#21147;&#12501;&#12457;&#12523;&#12480;&#12434;&#25351;&#23450;&#12375;&#12414;&#12377;&#12290; --&gt;
-&lt;context-param&gt;
-	&lt;param-name&gt;java-source-path&lt;/param-name&gt;
-	&lt;param-value&gt;/eclipse/workspace/sample/src/main/java&lt;/param-value&gt;
-&lt;/context-param&gt;
-&lt;!-- &#38283;&#30330;&#12484;&#12540;&#12523;&#12398;html,javascript&#31561;&#12398;WEB&#12522;&#12477;&#12540;&#12473;&#20986;&#21147;&#12501;&#12457;&#12523;&#12480;&#12434;&#25351;&#23450;&#12375;&#12414;&#12377;&#12290; --&gt;
-&lt;context-param&gt;
-	&lt;param-name&gt;web-source-path&lt;/param-name&gt;
-	&lt;param-value&gt;/eclipse/workspace/sample/src/main/webapp&lt;/param-value&gt;
-&lt;/context-param&gt;
+{
+	 // 開発ツール関連の設定
+	"developmentTool" : {
+		// 初期化済フラグ
+		// このフラグは開発ツールが初期化されていることを示します。
+		"initialized": true
+		// javaのソースパス
+		, "javaSourcePath": "C:/eclipse/pleiades/workspace/sample/src/main/java"
+		// HTML,jsのソースパス
+		, "webSourcePath": "C:/eclipse/pleiades/workspace/sample/src/main/webapp"
+		// テストツールの出力パス。
+		, "testSourcePath" : null
+		// 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
+		, "exportImportDir": "/tmp/data"
+		// ソースコード生成ツール無効設定
+		, "disableCodeGenerationTool": false
+		// DB関連ツール無効設定
+		, "disableDatabaseTool": false
+		// フィールドレイアウト
+		, "fieldLayout": "GRID"
+		// , "fieldLayout": "FLEX"
+		// , "fieldLayout": "TABLE"
+	}
+	
+	・・・
+}
 			</pre>
 		</div>
 		<h3>システム名称設定</h3>
