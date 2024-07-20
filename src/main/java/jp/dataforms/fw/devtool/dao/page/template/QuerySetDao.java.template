@@ -9,7 +9,7 @@ ${importTables}
  *
  */
 public class ${daoClassName} extends QuerySetDao {
-${properties}
+${props}
 	/**
 	 * コンストラクタ。
 	 * @throws Exception 例外。

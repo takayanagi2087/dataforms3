@@ -10,7 +10,7 @@ ${importTables}
  *
  */
 public class ${queryClassName} extends Query {
-${properties}
+${props}
 	/**
 	 * コンストラクタ.
 	 */

@@ -1109,7 +1109,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		javasrc = javasrc.replaceAll("\\$\\{packageName\\}", packageName);
 		javasrc = javasrc.replaceAll("\\$\\{queryClassName\\}", queryClassName);
 		javasrc = javasrc.replaceAll("\\$\\{importTables\\}", this.generateImportTables(data));
-		javasrc = javasrc.replaceAll("\\$\\{properties\\}", this.generateProperties(data));
+		javasrc = javasrc.replaceAll("\\$\\{props\\}", this.generateProperties(data));
 
 		ImportUtil implist = new ImportUtil();
 		implist.add(Map.class.getName());

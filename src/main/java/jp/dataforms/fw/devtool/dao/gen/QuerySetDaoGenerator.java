@@ -421,20 +421,18 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 	 * @throws Exception 例型。
 	 */
 	public void generage(final Form form, final Map<String, Object> data) throws Exception {
-/*		List<Map<String, Object>> list = this.getListQueryConfig(data);
-		logger.debug("fieldList=" + list.getClass().getName());
-		for (int i = 0; i < list.size(); i++) {
-			logger.debug("fieldInfo=" + JSON.encode(list.get(i)));
-		}*/
-//		String javasrc = this.getStringResourse(this.getClass(), "../page/template/QuerySetDao.java.template");
-		Template tmp = this.getTemplate(); //new Template(this.getClass(), "../page/template/QuerySetDao.java.template");
-		//logger.debug("template=" + javasrc);
+		Template tmp = this.getTemplate();
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_DAO_PACKAGE_NAME);
 		String daoClassName = (String) data.get(DaoAndPageGeneratorEditForm.ID_DAO_CLASS_NAME);
 		ImportUtil implist = new ImportUtil(packageName);
 		tmp.replace("packageName", packageName);
 		tmp.replace("daoClassName", daoClassName);
-		tmp.replace("properties", this.getProperties(data, implist));
+		String properties = this.getProperties(data, implist);
+		logger.debug("*** properties=" + properties);
+		logger.debug("javasrc_org={}", tmp.getSource());
+		tmp.replace("props", properties);
+
+		logger.debug("javasrc0={}", tmp.getSource());
 
 		String daoclass = packageName + "." + daoClassName;
 		String comment = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_NAME) + "用DAOクラス";
@@ -454,6 +452,8 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 				tmp.replace("listQuery", "(Query) null");
 			}
 		}
+
+		logger.debug("javasrc1={}", tmp.getSource());
 
 		String javasrc = null;
 		String pagePattern = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_PATTERN);
@@ -475,10 +475,11 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 			javasrc = tmp.getSource();
 			javasrc = this.multiRecordEditForm(data, implist, javasrc);
 		}
+		logger.debug("javasrc2={}", javasrc);
 		tmp = new Template(javasrc);
 		tmp.replace("importTables", implist.getImportText());
 		javasrc = tmp.getSource();
-		logger.debug("javasrc={}", javasrc);
+		logger.debug("javasrc3={}", javasrc);
 		String path = (String) data.get(DaoAndPageGeneratorEditForm.ID_JAVA_SOURCE_PATH);
 		String srcPath = path + "/" + daoclass.replaceAll("\\.", "/") + ".java";
 		logger.debug("srcPath=" + srcPath);
