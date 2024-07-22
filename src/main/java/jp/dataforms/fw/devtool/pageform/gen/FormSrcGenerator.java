@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator;
@@ -67,7 +66,7 @@ public abstract class FormSrcGenerator extends JavaSrcGenerator {
 	}
 
 	@Override
-	public void generage(Form form, Map<String, Object> data) throws Exception {
+	public void generage(final Map<String, Object> data) throws Exception {
 		Template tmp = this.getTemplate();
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PACKAGE_NAME);
 		String pageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_NAME);

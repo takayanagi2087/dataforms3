@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.poi.util.StringUtil;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator;
 import jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorEditForm;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -35,7 +34,7 @@ public class DbPageGenerator extends JavaSrcGenerator {
 	}
 
 	@Override
-	public void generage(final Form form, final Map<String, Object> data) throws Exception {
+	public void generage(final Map<String, Object> data) throws Exception {
 		Template tmp = this.getTemplate();
 		String functionPath = (String) data.get(DaoAndPageGeneratorEditForm.ID_FUNCTION_SELECT);
 		tmp.replace("functionPath", functionPath);

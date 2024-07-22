@@ -5,7 +5,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.devtool.javasrc.JavaSrcGenerator;
 import jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorEditForm;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -62,7 +61,7 @@ public class SimpleFormGenerator extends JavaSrcGenerator {
 	 * ソースの生成処理。
 	 */
 	@Override
-	public void generage(final Form form, final Map<String, Object> data) throws Exception {
+	public void generage(final Map<String, Object> data) throws Exception {
 		logger.info("generate simple form.");
 		this.generateFormClass(data);
 	}

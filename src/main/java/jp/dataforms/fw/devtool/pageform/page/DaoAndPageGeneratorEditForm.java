@@ -661,26 +661,26 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 		logger.debug("qf={}, qrf={}, ef={}", qf, qrf, ef);
 		if ("0".equals(qf) && "0".equals(qrf) && "0".equals(ef)) {
 			SimpleFormGenerator fgen = new SimpleFormGenerator();
-			fgen.generage(this, data);
+			fgen.generage(data);
 			SimplePageGenerator pgen = new SimplePageGenerator();
-			pgen.generage(this, data);
+			pgen.generage(data);
 		} else {
 			QuerySetDaoGenerator gen = new QuerySetDaoGenerator();
-			gen.generage(this, data);
+			gen.generage(data);
 			if ("1".equals(qf)) {
 				QueryFormGenerator qfgen = new QueryFormGenerator();
-				qfgen.generage(this, data);
+				qfgen.generage(data);
 			}
 			if ("1".equals(qrf)) {
 				QueryResultFormGenerator qrfgen = new QueryResultFormGenerator();
-				qrfgen.generage(this, data);
+				qrfgen.generage(data);
 			}
 			if ("1".equals(ef) || "2".equals(ef)) {
 				EditFormGenerator efgen = new EditFormGenerator();
-				efgen.generage(this, data);
+				efgen.generage(data);
 			}
 			DbPageGenerator pgen = new DbPageGenerator();
-			pgen.generage(this, data);
+			pgen.generage(data);
 		}
 	}
 

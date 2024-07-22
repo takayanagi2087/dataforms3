@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.SingleTableQuery;
@@ -416,11 +415,10 @@ public class QuerySetDaoGenerator extends JavaSrcGenerator {
 
 	/**
 	 * ソースを生成します。
-	 * @param form フォーム。
 	 * @param data POSTされたデータ。
 	 * @throws Exception 例型。
 	 */
-	public void generage(final Form form, final Map<String, Object> data) throws Exception {
+	public void generage(final Map<String, Object> data) throws Exception {
 		Template tmp = this.getTemplate();
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_DAO_PACKAGE_NAME);
 		String daoClassName = (String) data.get(DaoAndPageGeneratorEditForm.ID_DAO_CLASS_NAME);

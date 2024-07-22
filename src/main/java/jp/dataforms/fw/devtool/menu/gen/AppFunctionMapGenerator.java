@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.base.page.DeveloperPage;
@@ -188,11 +187,10 @@ public class AppFunctionMapGenerator extends JavaSrcGenerator {
 	
 	/**
 	 * AppFunctionMapクラスを生成します。
-	 * @param form 呼び出したフォーム。
 	 * @param data POSTされたデータ。
 	 */
 	@Override
-	public void generage(Form form, Map<String, Object> data) throws Exception {
+	public void generage(Map<String, Object> data) throws Exception {
 		String basePackage = (String) data.get(MenuEditForm.ID_APP_BASE_PACKAGE);
 		String genAddPageCode = (String) data.get(MenuEditForm.ID_GEN_ADD_PAGE_CODE);
 		logger.debug("basePackage=" + basePackage);

@@ -77,7 +77,7 @@ public class MenuEditForm extends EditForm {
 	@Override
 	protected void updateData(Map<String, Object> data) throws Exception {
 		AppFunctionMapGenerator gen = new AppFunctionMapGenerator();
-		gen.generage(this, data);
+		gen.generage(data);
 	}
 
 	@Override

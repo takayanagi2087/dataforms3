@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.util.FileUtil;
 
 /**
@@ -34,11 +33,10 @@ public abstract class JavaSrcGenerator {
 
 	/**
 	 * ソースを生成します。
-	 * @param form フォーム。
 	 * @param data POSTされたデータ。
 	 * @throws Exception 例外。
 	 */
-	public abstract void generage(final Form form, final Map<String, Object> data) throws Exception;
+	public abstract void generage(final Map<String, Object> data) throws Exception;
 
 
 	/**
