@@ -84,7 +84,7 @@ public class EditFormHtmlGenerator extends FormHtmlGenerator {
 		String tabs = this.getTabs();
 		String ret = tabs + "\t<input type=\"button\" id=\"confirmButton\" class=\"largeButton\" value=\"確認\"/>\n" +
 				tabs + "\t<input type=\"button\" id=\"saveButton\" class=\"largeButton\" value=\"登録\"/>\n" +
-				tabs + "\t<input type=\"button\" id=\"resetButton\" class=\"largeButton\" value=\"リセット\"/>\n" +
+				// tabs + "\t<input type=\"button\" id=\"resetButton\" class=\"largeButton\" value=\"リセット\"/>\n" +
 				tabs + "\t<input type=\"button\" id=\"deleteButton\" class=\"largeButton\" value=\"削除\"/>\n" +
 				tabs + "\t<input type=\"button\" id=\"backButton\" class=\"largeButton\" value=\"戻る\"/>\n";
 		return ret;
