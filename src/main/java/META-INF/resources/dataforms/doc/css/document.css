@@ -3,6 +3,7 @@
 
 p {
 	max-width: 1024px;
+	font-size: 16pt;
 }
 
 table {
@@ -67,7 +68,7 @@ ol {
 }
 
 .topic {
-	font-size: 10pt;
+	font-size: 12pt;
 	font-weight: bold;
 }
 

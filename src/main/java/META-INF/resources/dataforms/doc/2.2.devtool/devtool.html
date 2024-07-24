@@ -14,8 +14,8 @@
 		</p>
 		<h2>開発ツールについて</h2>
 		<p>
-			「2.開発環境構築」で作成したEclipseのsampleプロジェクトには既に「基本機能」と
-			「開発ツール」というメニューが存在しています。
+			「2.1.開発環境構築」で作成したEclipseのsampleプロジェクトには既に「基本機能」と
+			「開発ツール」「ドキュメント」というメニューが存在しています。
 			「基本機能」には「ユーザ管理」等アプリケーションの基本的な機能が入っています。
 			「開発ツール」はこのWebアプリケーションに新たなページを追加するための機能です。
 			この「開発ツール」を使うと作成したデータベースに新たなテーブルを作成し、
@@ -53,7 +53,7 @@
 			<thead>
 				<tr>
 					<th style="width: 40px;">No.</th>
-					<th style="width: 200px;">名称</th>
+					<th style="width: 220px;">名称</th>
 					<th>備考</th>
 				</tr>
 			</thead>
@@ -64,7 +64,7 @@
 						メニュー作成
 					</td>
 					<td>
-						機能(Javaのパッケージ)の追加、削除を行います。これはメニューのグループになります。
+						メニューとJavaのパッケージの対応表を作成します。
 					</td>
 				</tr>
 				<tr>
@@ -88,23 +88,14 @@
 				<tr>
 					<td class="num">4</td>
 					<td>
-						DAO Javaクラス作成
+						DAO &amp; ページJavaクラス作成
 					</td>
 					<td>
-						DAO(Data access object) Javaクラスを作成します。
+						DAO(Data access object) とページJavaクラスとそれに配置するフォームJavaクラスを作成します。
 					</td>
 				</tr>
 				<tr>
 					<td class="num">5</td>
-					<td>
-						ページJavaクラス作成
-					</td>
-					<td>
-						ページJavaクラスとそれに配置するフォームJavaクラスを作成します。
-					</td>
-				</tr>
-				<tr>
-					<td class="num">6</td>
 					<td>
 						Webリソース作成
 					</td>
@@ -113,7 +104,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="num">7</td>
+					<td class="num">6</td>
 					<td>
 						Webリソースエクスポート
 					</td>
@@ -122,7 +113,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="num">8</td>
+					<td class="num">7</td>
 					<td>
 						テーブル管理
 					</td>
@@ -131,7 +122,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="num">9</td>
+					<td class="num">8</td>
 					<td>
 						問合せ実行
 					</td>
@@ -140,7 +131,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="num">10</td>
+					<td class="num">9</td>
 					<td>
 						データ更新
 					</td>
@@ -170,11 +161,7 @@
 				問合せクラスはdataforms.dao.Queryから派生したクラスで、複数のテーブルを結合した問合せを作成することができます。
 			</li>
 			<li>
-				「DAO Javaクラス作成」を使用して、DAOクラスを作成します。<br/>
-				ページで使用する複数の問合せをまとめたクラスになります。
-			</li>
-			<li>
-				「ページJavaクラス作成」を使用して、ページJavaクラスとそれに配置するフォームJavaクラスを作成します。
+				「DAO &amp; ページJavaクラス作成」を使用して、DAO(Data access object)JavaクラスとページJavaクラスとそれに配置するフォームJavaクラスを作成します。
 			</li>
 			<li>
 				「Webリソース作成」を使用して、ページJavaクラスからページのHTMLを作成します。<br/>
@@ -191,7 +178,7 @@
 		<h3>ソースパスの設定</h3>
 		<p>
 			開発ツールには、JavaのソースパスとHTMLやJavascriptを出力するパスを指定する必要があります。
-			「2.開発環境構築」で作成したプロジェクトの場合、以下のようなパスになります。
+			「2.1.開発環境構築」で作成したプロジェクトの場合、以下のようなパスになります。
 		</p>
 		<table>
 			<caption>出力パス一覧</caption>
@@ -201,23 +188,23 @@
 						Javaソースパス
 					</th>
 					<td>
-						C:\eclipse\workspace\sample\src\main\java
+						C:\eclipse\pleiades\workspace\sample\src\main\java
 					</td>
 				</tr>
 				<tr>
 					<th>
-						HTML,Javascript等のパス
+						Webソース(HTML,Javascript等)パス
 					</th>
 					<td>
-						C:\eclipse\workspace\sample\src\main\webapp
+						C:\eclipse\pleiades\workspace\sample\src\main\webapp
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<p>
 			プロジェクト初期化ページで作成した"src/main/webapp/WEB-INF/dataforms.conf.jsonc"は
-			以下のようにソースファイルのパスが設定されており、
-			開発ツールがソースファイルを作成する際にこの設定を参照します。
+			以下のようにソースファイルのパスが設定されています。
+			開発ツールはソースファイルを作成する際にこの設定を参照します。
 		</p>
 		<div class="filecaption">dataforms.conf.jsoncのソースパス設定</div>
 		<div class="wrappre">
@@ -229,9 +216,9 @@
 		// このフラグは開発ツールが初期化されていることを示します。
 		"initialized": true
 		// javaのソースパス
-		, "javaSourcePath": "C:/eclipse/pleiades/workspace/sample/src/main/java"
+		, "javaSourcePath": <b>"C:/eclipse/pleiades/workspace/sample/src/main/java"</b>
 		// HTML,jsのソースパス
-		, "webSourcePath": "C:/eclipse/pleiades/workspace/sample/src/main/webapp"
+		, "webSourcePath": <b>"C:/eclipse/pleiades/workspace/sample/src/main/webapp"</b>
 		// テストツールの出力パス。
 		, "testSourcePath" : null
 		// 開発ツールでデータをエクスポート/インポートする際に使用するパスを指定します。
@@ -268,45 +255,93 @@
 			<figcaption>システム名変更後のログイン画面</figcaption>
 			<img src="changedsystemname.png" style="width:50%; height:50%;"/>
 		</figure>
-		<h3>機能の登録</h3>
+		<h3>メニュー作成</h3>
 		<p>
-			dataforms3.jarの中には、既に「基本機能」と「開発ツール」という機能が入っています。
-			機能はJavaのパッケージに対応し、そのパッケージの配下に各種クラスを作成していきます。
-			メニューはこの機能でグルーピングされます。
+			dataforms3.jarの中には、既に「基本機能」と「開発ツール」というメニューが定義されています。
+			この画面で今回作成するWebシステムの独自メニューを追加します。
 		</p>
 		<figure>
 			<figcaption>機能管理画面</figcaption>
 			<img src="menuedit001.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
-			「+」ボタンを押して行を追加し、以下のように機能を登録してください。
+			まず「基本パッケージ」にこのシステムを構築するパッケージ名を指定します。
+			このシステムを構築する各種クラスは、このパッケージ内に配置します。
+			次に「+」ボタンを押して行を追加し、以下のようにメニューを追加します。
+			この例では"テーブル編集"というメニューを追加し"/edittable"というパスに割り当てています。
+			このメニュー内のページクラスはパッケージjp.dataforms.sample.edittable内に配置します。		
 		</p>
 		<figure>
 			<figcaption>機能追加後の画面</figcaption>
 			<img src="menuedit002.png" style="width:50%; height:50%;"/>
 		</figure>
-		<p class="topic">
-			この画面では、編集可能テーブル(EditableHtmlTable)というコンポーネントを使用しています。
-			行の追加、削除、ドラッグによる順序変更をサポートしています。
-			順序を変更して保存すれば、メニューの表示順を変更することができます。
-		</p>
 		<p>
-			登録後WebContentの中を確認すると、sample/Function.propertiesというファイルが存在するはずです。
-			Function.propertiesには機能の名称が記録されています。
+			この内容を保存すると、jp.dataforms.sample.menu.AppFunctionMapというクラスが作成されます。
+			このクラスでシステムのメニューを定義します。
 		</p>
-		<figure>
-			<figcaption>機能追加の結果</figcaption>
-			<img src="menuedit003.png" style="width:50%; height:50%;"/>
-		</figure>
-		<p>
-			登録直後に再度機能管理画面を表示した場合、機能名が表示されません。
-			それは、今作成したFuntion.propertiesがTomcatにデプロイされていないためです。
-			Tomcatを再起動し、アプリケーションをデプロイしてください。
-		</p>
+		<div class="filecaption">機能追加の結果</div>
+		<div class="wrappre">
+			<pre>
+package jp.dataforms.sample.menu;
+
+import jp.dataforms.fw.annotation.ApplicationFunctionMap;
+import jp.dataforms.fw.menu.FunctionMap;
+
+/**
+ * &#12450;&#12503;&#12522;&#12465;&#12540;&#12471;&#12519;&#12531;&#12398;&#27231;&#33021;&#12510;&#12483;&#12503;&#12434;&#23450;&#32681;&#12377;&#12427;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
+ */
+@ApplicationFunctionMap
+public class AppFunctionMap extends FunctionMap {
+	/**
+	 * &#12450;&#12503;&#12522;&#12465;&#12540;&#12471;&#12519;&#12531;&#12398;&#12505;&#12540;&#12473;&#12497;&#12483;&#12465;&#12540;&#12472;&#12434;&#36820;&#12375;&#12414;&#12377;&#12290;
+	 */
+	@Override
+	public String getAppBasePackage() {
+		return &quot;jp.dataforms.sample&quot;;
+	}
+	
+	/**
+	 * &#12450;&#12503;&#12522;&#12465;&#12540;&#12471;&#12519;&#12531;&#12398;&#12497;&#12473;&#12392;&#12497;&#12483;&#12465;&#12540;&#12472;&#12398;&#23550;&#24540;&#34920;&#12434;&#20316;&#25104;&#12375;&#12414;&#12377;&#12290;
+	 */
+	@Override
+	protected void addAppPathPackage() {
+		this.addPathPackage(new PathPackage(&quot;/edittable&quot;, &quot;jp.dataforms.sample.edittable&quot;));
+
+	}
+	
+	/**
+	 * &#12450;&#12503;&#12522;&#12465;&#12540;&#12471;&#12519;&#12531;&#12398;&#12513;&#12491;&#12517;&#12540;&#12434;&#36861;&#21152;&#12375;&#12414;&#12377;&#12290;
+	 */
+	@Override
+	protected void addAppMenu() {
+		this.addMenu(new Menu(&quot;/edittable&quot;, &quot;Edit table&quot;, &quot;ja\t&#12486;&#12540;&#12502;&#12523;&#32232;&#38598;&quot;));
+
+	}
+	
+	/**
+	 * &#12506;&#12540;&#12472;&#36861;&#21152;&#12467;&#12540;&#12489;&#29983;&#25104;&#12501;&#12521;&#12464;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#12506;&#12540;&#12472;&#36861;&#21152;&#12467;&#12540;&#12489;&#29983;&#25104;&#12501;&#12521;&#12464;&#12290;
+	 */
+	@Override
+	public Boolean genAddPageCode() {
+		return false;	
+	}
+	
+	
+	/**
+	 * &#12450;&#12503;&#12522;&#12465;&#12540;&#12471;&#12519;&#12531;&#12398;&#12506;&#12540;&#12472;&#12434;&#36861;&#21152;&#12375;&#12414;&#12377;&#12290;
+	 */
+	public void addAppPage() {
+
+		this.readAppPageList(); // 
+	}
+}
+			</pre>
+		</div>		
 		<h3>テーブル定義</h3>
 		<p>
 			「テーブルJavaクラスの作成」を選択し、「新規登録」ボタンを押して、以下のように入力してください。
-			テーブルクラスはdataforms.dao.Tableから派生したクラスで、そのクラスに対しdataforms.field.base.Fieldから派生したフィールドクラスを配置します。
+			テーブルクラスはjp.dataforms.fw.dao.Tableから派生したクラスで、そのクラスに対しjp.dataforms.fw.field.base.Fieldから派生したフィールドクラスを配置します。
 		</p>
 		<figure>
 			<figcaption>SampleTableの定義</figcaption>
@@ -350,7 +385,7 @@
 			ソースをコンパイルした後、Tomcatを再起動しWebアプリケーションを再度デプロイしてください。
 		</p>
 		<p>
-			sample.daoパッケージにはSampleTable.javaとSampleTableRelation.javaの2つのソースファイルが作成されています。
+			jp.dataforms.sample.edittable.daoパッケージにはSampleTable.javaとSampleTableRelation.javaの2つのソースファイルが作成されています。
 			SampleTable.javaはテーブルにフィールドを配置する処理が記述され、テーブルの構造を定義します。
 			SampleTableRelation.javaはSampleTable.javaと他のテーブルを結合する際に使用する条件を定義するクラスです。
 			SampleTableRelation.javaは必用に応じて条件をEclipseのエディタでコーデインクしていく必要があります。
@@ -369,7 +404,7 @@
 			SampleTable.javaを上書きしてください。この処理でEntityクラスやフィールド取得メソッドも更新されます。
 		</p>
 		<p>
-			またテーブルに配置されたフィールドクラスのソースがsample.fieldパッケージに作成されます。
+			またテーブルに配置されたフィールドクラスのソースがjp.dataforms.sample.edittable.fieldパッケージに作成されます。
 			今回作成されたフィールドクラスをまとめると以下の様になります。
 		</p>
 		<table>
@@ -518,7 +553,7 @@
 			<li>一覧の中の1件を選択し、その内容を編集し保存(EditForm)</li>
 		</ol>
 		<p>
-			このリストの機能は括弧内のFormクラス名で実装されており、これらのFormクラスをページクラスに配置します。
+			各機能は括弧内のFormクラスで実装されています。
 			この3種類のフォームクラスを全てページに配置すると、データベース中のテーブルをメンテナンスするページを簡単に作成することができます。
 		</p>
 		<p>
@@ -548,20 +583,13 @@
 			これらの欄には基本的に問合せを指定するのですが、テーブルも指定可能です。
 			テーブルを指定した場合"select * from sample"に相当する問合せクラスを自動的に作成し登録します。
 			単一のテーブルを編集するだけのページの場合、「一覧取得問合せ」、「編集対象取得問合せ」に対象のテーブルクラスを指定してください。
-			この指定で以下のDaoクラスが作成されます。
-		</p>
-		<figure>
-			<figcaption>Dao Javaクラス作成結果</figcaption>
-			<img src="dao2.png" style="width:50%; height:50%;"/>
-		</figure>
-		<p>
-			この操作でページとそれに配置されるフォームクラスも同時に作成されます。
+			この操作でデータベースを操作するDAOクラスとページとそれに配置されるフォームクラスも同時に作成されます。
 			この操作で三種類のフォームクラスを配置したページクラスが作成され、
 			問い合わせフォーム→問い合わせ結果フォーム→データ編集フォームの流れでデータ編集するページクラスになります。
 		</p>
 		<table>
 			<caption>
-				作成されたページクラスとフォームクラス
+				作成された各種クラス
 			</caption>
 			<thead>
 				<tr>
@@ -577,6 +605,13 @@
 				</tr>
 			</thead>
 			<tbody>
+				<tr>
+					<td>SampleDao</td>
+					<td>QuerySetDao</td>
+					<td>
+						データベース操作クラス。
+					</td>
+				</tr>
 				<tr>
 					<td>SampleQueryForm</td>
 					<td>QueryForm</td>
@@ -681,34 +716,15 @@
 			<tbody>
 				<tr>
 					<td style="text-align: right;">1</td>
-					<td rowspan="3">機能管理</td>
-					<td>func_infoテーブル</td>
-					<td>/sample</td>
-					<td>DB中のfunc_infoテーブルにレコードを追加し、func_pathカラムに"/sample"という文字列を登録します。</td>
-				</tr>
-				<tr>
-					<td style="text-align: right;">2</td>
-					<td>/src/main/webapp</td>
-					<td>/sample</td>
-					<td>プロジェクト中のWebContentフォルダ中に/sampleというサブフォルダを作成します。</td>
-				</tr>
-				<tr>
-					<td style="text-align: right;">3</td>
-					<td>/src/main/webapp/sample</td>
-					<td>Function.properties</td>
-					<td>
-						機能の名称を以下の様な形式で登録します。
-						<div class="wrappre">
-							<pre style="overflow: hidden;">
-sample=サンプル
-							</pre>
-						</div>
-					</td>
+					<td>メニュー作成</td>
+					<td>/src/main/java/jp/dataforms/sample/menu</td>
+					<td>AppFunctionMap.java</td>
+					<td>メニューとJavaのパッケージの対応表を定義します。</td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">4</td>
 					<td rowspan="6">テーブルJavaクラス作成</td>
-					<td rowspan="2">/src/main/java/sample/dao</td>
+					<td rowspan="2">/src/main/java/jp/dataforms/sample/edittable/dao</td>
 					<td>SampleTable.java</td>
 					<td>sampleテーブルの構造を定義します。</td>
 				</tr>
@@ -719,7 +735,7 @@ sample=サンプル
 				</tr>
 				<tr>
 					<td style="text-align: right;">6</td>
-					<td rowspan="4">/src/main/java/sample/field</td>
+					<td rowspan="4">/src/main/java/jp/dataforms/sample/edittable/field</td>
 					<td>SampleIdField.java</td>
 					<td>レコードIDフィールドのクラスです。</td>
 				</tr>
@@ -740,15 +756,14 @@ sample=サンプル
 				</tr>
 				<tr>
 					<td style="text-align: right;">10</td>
-					<td>DAO Javaクラス作成</td>
-					<td>/src/main/java/sample/dao</td>
+					<td rowspan="5">DAO &amp; ページ Javaクラス作成</td>
+					<td>/src/main/java/jp/dataforms/sample/edittable/dao</td>
 					<td>SampleDao.java</td>
 					<td>smapleテーブルの検索編集を行うDAOクラスです。</td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">11</td>
-					<td rowspan="5">ページ Javaクラス作成</td>
-					<td rowspan="4">/src/main/java/sample/page</td>
+					<td rowspan="4">/src/main/java/jp/dataforms/sample/edittable/page</td>
 					<td>SamplePage.java</td>
 					<td>sampleテーブルを編集するページです。</td>
 				</tr>
@@ -768,24 +783,9 @@ sample=サンプル
 					<td>sampleテーブルのレコードを編集するフォームです。</td>
 				</tr>
 				<tr>
-					<td style="text-align: right;">15</td>
-					<td>/src/main/webapp/sample</td>
-					<td>Function.properties</td>
-					<td>
-						Function.propertiesにページの名称を追加します。
-						形式は以下の様になります。
-						<div class="wrappre">
-							<pre style="overflow: hidden;">
-sample=サンプル
-sample.page.SamplePage=サンプルページ
-							</pre>
-						</div>
-					</td>
-				</tr>
-				<tr>
 					<td style="text-align: right;">16</td>
 					<td>Webリソース作成</td>
-					<td>/src/main/webapp/sample/page</td>
+					<td>/src/main/webapp/edittable/page</td>
 					<td>SamplePage.html</td>
 					<td>ページの情報を表示するHTMLです。</td>
 				</tr>
@@ -981,8 +981,10 @@ sample.page.SamplePage=サンプルページ
 			</pre>
 		</div>
 		<p>
-			これだけでは何も動作しませんが、DataFormsServlet経由でページをアクセスすると、以下のようなスクリプトが自動的に生成されます。
-			このスクリプトがSamplePageクラスに設定された構造情報をサーバから取得し、その情報を元に各種コンポーネントにイベント処理を登録します。
+			このHTMLはonclick等のイベント関連のアトリビュートは一切技術されていません。
+			しかしブラウザから http://localhost:8080/sample/edittable/page/SamplePage.dfとアクセスすると、
+			dataforms3.jar中のDataFormsServletが動作し、以下のようなスクリプトが自動的に生成されます。
+			このスクリプトがSamplePageクラスに設定された構造情報をサーバから取得し、その情報を元に各HTML要則に適切なイベント処理を登録します。
 		</p>
 		<figure>
 			<figcaption>ブラウザに出力されたスクリプト</figcaption>
