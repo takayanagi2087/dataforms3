@@ -38,7 +38,7 @@ export class LoginForm extends Form {
 					this.parent.close();
 				}
 				if (result.result == "onetime") {
-					window.location.href = "OnetimePasswordPage.df";
+					window.location.href = "OnetimePasswordPage.html";
 				} else {
 					currentPage.toTopPage();
 				}

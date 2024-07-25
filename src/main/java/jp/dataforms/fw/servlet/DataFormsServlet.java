@@ -62,6 +62,7 @@ import jp.dataforms.fw.exception.AuthoricationException;
 import jp.dataforms.fw.mail.MailSender;
 import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.menu.SideMenu;
+import jp.dataforms.fw.response.HtmlResponse;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.AutoLoginCookie;
@@ -84,11 +85,11 @@ import jp.dataforms.fw.util.WebResourceUtil;
  * DataForms用サーブレットクラスです。
  * <pre>
  * *.dfにマッピングします。
- * /hoge/hogehoge/XxxPage.dfをアクセスすると、
+ * /hoge/hogehoge/XxxPage.htmlをアクセスすると、
  * ページクラスhoge.hogehoge.XxxPageクラスのインスタンスを作成し、getHtmlメソッドを呼び出します。
  * getHtmlは/hoge/hogehoge/XxxPage.htmlや/hoge/hogehoge/XxxPage.jsからページを構成し表示します。
  * 次のようにメソッドを指定してアクセスすると、
- * /hoge/hogehoge/XxxPage.df?dfMethod=compid.method
+ * /hoge/hogehoge/XxxPage.html?dfMethod=compid.method
  * hoge.hogehoge.XxxPageのインスタンスを作成した後、compidを持つコンポーネントを検索し、
  * そのmethodを呼び出します。
  * </pre>
@@ -253,7 +254,6 @@ public class DataFormsServlet extends HttpServlet {
 		this.getMessageProperties();
 		String topPage = DataFormsServlet.getConf().getApplication().getTopPage();
 		if (!StringUtil.isBlank(topPage)) {
-			topPage = topPage.replaceAll("\\.df$", "");
 			Page.setTopPage(topPage);
 		}
 		Boolean autoLogin = DataFormsServlet.getConf().getApplication().getAutoLogin();
@@ -701,7 +701,6 @@ public class DataFormsServlet extends HttpServlet {
 	 * @throws Exception 例外。
 	 */
 	private WebEntryPoint newWebEntryPointInstance(final String classname) throws Exception {
-		logger.debug("c=" + classname);
 		@SuppressWarnings("unchecked")
 		Class<? extends Page> clazz = (Class<? extends Page>) Class.forName(classname);
 		WebEntryPoint dataforms = clazz.getDeclaredConstructor().newInstance();
@@ -718,27 +717,34 @@ public class DataFormsServlet extends HttpServlet {
 	protected final WebEntryPoint getWebEntryPoint(final HttpServletRequest req) throws Exception {
 		String pageext = this.getPageExt();
 		if (DataFormsServlet.configStatus == null) {
-			String uri = req.getRequestURI();
-			String context = req.getContextPath();
-			logger.info(() -> "context=" + context + ", uri=" + uri);
-			String classname = DataFormsServlet.convertPageClassName(this.getTargetClassName(context, uri));
-			logger.info(() -> "classname=" + classname);
-			WebEntryPoint ep = this.newWebEntryPointInstance(classname);
-			if (ep instanceof Page) {
-				Page page = (Page) ep;
-				page.setPageExt(pageext);
+			try {
+				String uri = req.getRequestURI();
+				String context = req.getContextPath();
+				logger.info(() -> "context=" + context + ", uri=" + uri);
+				String classname = DataFormsServlet.convertPageClassName(this.getTargetClassName(context, uri));
+				logger.info(() -> "classname=" + classname);
+				if (!StringUtil.isBlank(classname)) {
+					WebEntryPoint ep = this.newWebEntryPointInstance(classname);
+					if (ep instanceof Page) {
+						Page page = (Page) ep;
+						page.setPageExt(pageext);
+					}
+					WebComponent wc = (WebComponent) ep;
+					wc.setWebEntryPoint(ep);
+					ep.setRequest(req);
+					return ep;
+				}
+			} catch (ClassNotFoundException ex) {
+				logger.error("ex=" + ex.getMessage(), ex);
 			}
-			WebComponent wc = (WebComponent) ep;
-			wc.setWebEntryPoint(ep);
-			ep.setRequest(req);
-			return ep;
-		} else {
+		} /*else {
 			ConfigErrorPage page = new ConfigErrorPage(DataFormsServlet.configStatus);
 			page.setWebEntryPoint(page);
 			page.setRequest(req);
 			page.setPageExt(pageext);
 			return page;
-		}
+		}*/
+		return null;
 	}
 
 
@@ -886,10 +892,34 @@ public class DataFormsServlet extends HttpServlet {
 		WebEntryPoint epoint = null;
 		try {
 			try {
+				// *.htmlに対応するJavaのクラスを取得する。
 				epoint = this.getWebEntryPoint(req);
+				if (epoint == null) {
+					// クラスが無い場合対応する*.htmlを取得する。
+					String url = req.getRequestURI().toString().substring(contextPath.length());
+					if (StringUtil.isBlank(url) || "/".equals(url)) {
+						url = "/index.html";
+					}
+					logger.debug("url=" + url);
+					String html = WebResourceUtil.getWebResource(url);
+					if (html != null) {
+						// 対応する*.htmlが存在する場合htmlを送信。
+						HtmlResponse htmlresp = new HtmlResponse(html);
+						htmlresp.send(resp);
+						return;
+					} else {
+						// *.htmlも存在しない場合、エラーページを送信。
+						String pageext = this.getPageExt();
+						ConfigErrorPage page = new ConfigErrorPage(DataFormsServlet.configStatus);
+						page.setWebEntryPoint(page);
+						page.setRequest(req);
+						page.setPageExt(pageext);
+						epoint = page;
+					}
+				}
 				try {
+					// ページの処理を行う。
 					Map<String, Object> param = this.getParameterMap(req);
-
 					String method = (String) param.get("dfMethod");
 					if (method == null) {
 						method = EXEC_METHOD;

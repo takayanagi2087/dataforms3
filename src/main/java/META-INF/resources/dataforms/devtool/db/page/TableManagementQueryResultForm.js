@@ -237,7 +237,7 @@ export class TableManagementQueryResultForm extends QueryResultForm {
 	showQueryForm(lnk) {
 		let table = lnk.text();
 		logger.log("tableName=" + table);
-		let url = currentPage.contextPath + "/dataforms/devtool/query/page/QueryExecutorPage.df?t=" + table;
+		let url = currentPage.contextPath + "/dataforms/devtool/query/page/QueryExecutorPage.html?t=" + table;
 		window.open(url, "_blank")
 	}
 

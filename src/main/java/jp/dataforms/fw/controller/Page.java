@@ -117,7 +117,7 @@ public class Page extends DataForms implements WebEntryPoint {
     /**
      * トップページ。
      */
-    private static String topPage = "/dataforms/app/top/page/TopPage.df";
+    private static String topPage = "/dataforms/app/top/page/TopPage.html";
 
 
 	/**
