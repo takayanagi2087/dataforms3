@@ -75,7 +75,7 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 				String abspath = PathUtil.getAbsolutePath(path, m.group(2));
 				Long t = this.getLastUpdate(abspath);
 				if (t == null) {
-					this.readWebResource(req, abspath);
+					this.readWebResource(abspath);
 					t = this.getLastUpdate(abspath);
 				}
 				String imp = "import { " + m.group(1).trim() + " } from '" + m.group(2) + "?t=" + t + "'";
@@ -104,7 +104,8 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 		if (js != null) {
 			return js;
 		}
-		String ret = this.readWebResource(req, path + "?skip=true");
+		logger.error("JsFilter");
+		String ret = this.readWebResource(path);
 		JsImportFilter.jsMap.put(path, ret);
 		return ret;
 	}
@@ -118,27 +119,26 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 			HttpServletRequest sreq = (HttpServletRequest) req;
 			HttpServletResponse sresp = (HttpServletResponse) resp;
 			try {
-				String fname = sreq.getRequestURI();
+				String context = sreq.getContextPath();
+				String fname = sreq.getRequestURI().substring(context.length());
 				logger.debug(() -> "doFilter filename=" + fname);
 				// queryStringにskip=trueが指定された場合、filterしない。
-				String skip = sreq.getParameter("skip");
-				if (!"true".equals(skip)) {
-					logger.debug("fname=" + fname);
-					if (fname.indexOf("/jslib/") < 0) {
-						String contents = this.readJs(sreq, fname);
-						if (contents != null) {
-							contents = this.rewriteImport(sreq, fname, contents);
-							// logger.debug("contents=" + contents);
-							sresp.setContentType("text/javascript; charset=utf-8");
-							Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
-							logger.debug("ts=" + ts);
-							sresp.setDateHeader("Last-Modified", ts);
-							try (PrintWriter out = resp.getWriter()) {
-								out.print(contents);
-							}
-						} else {
-							sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+				logger.debug("fname=" + fname);
+				if (fname.indexOf("/jslib/") < 0) {
+					String contents = this.readJs(sreq, fname);
+					if (contents != null) {
+						contents = this.rewriteImport(sreq, fname, contents);
+						// logger.debug("contents=" + contents);
+						sresp.setContentType("text/javascript; charset=utf-8");
+						Long ts = this.getLastUpdate(fname);
+						logger.error("JsFilter");
+						logger.debug("fname=" + fname + ", ts=" + ts);
+//							sresp.setDateHeader("Last-Modified", ts);
+						try (PrintWriter out = resp.getWriter()) {
+							out.print(contents);
 						}
+					} else {
+						sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 					}
 				}
 			} catch (Exception e) {

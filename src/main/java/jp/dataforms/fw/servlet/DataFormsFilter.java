@@ -1,7 +1,5 @@
 package jp.dataforms.fw.servlet;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
@@ -12,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 
 /**
  * dataforms2.jarで定義するフィールターのベースクラス。
@@ -70,32 +68,12 @@ public class DataFormsFilter {
 
 	/**
 	 * Webリソースを読み込みます。
-	 * @param req 要求情報。
 	 * @param path リソースのパス。
 	 * @return Webリソースの文字列。
 	 * @throws Exception 例外。
 	 */
-	protected String readWebResource(final HttpServletRequest req, final String path) throws Exception {
-		logger.debug("readWebResource path={}", path);
-		URI uri = new URI(getWebResourceUrl(req, path));
-		URL url = uri.toURL();
-		String ret = null;
-		logger.debug(() -> "webResourceUrl=" + url.toString());
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.connect();
-		try {
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				InputStream is = conn.getInputStream();
-				byte[] buf = FileUtil.readInputStream(is);
-				ret = new String(buf, DataFormsServlet.getEncoding());
-
-				long d = conn.getLastModified();
-				DataFormsFilter.webResourceTimestampCache.put(path.replaceAll("\\?skip=true$",""), d);
-			}
-		} finally {
-			conn.disconnect();
-		}
-		return ret;
+	protected String readWebResource(final String path) throws Exception {
+		return WebResourceUtil.getWebResource(path);
 	}
 
 	/**
@@ -103,8 +81,8 @@ public class DataFormsFilter {
 	 * @param path 取得するファイルのパス。
 	 * @return タイムスタンプ。
 	 */
-	protected Long getLastUpdate(final String path) {
-		Long ret = webResourceTimestampCache.get(path);
+	protected Long getLastUpdate(final String path) throws Exception {
+		Long ret =  WebResourceUtil.getLastUpdateLong(path);
 		return ret;
 	}
 

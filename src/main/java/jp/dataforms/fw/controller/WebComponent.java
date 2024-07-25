@@ -6,10 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +23,7 @@ import jp.dataforms.fw.menu.FunctionMap;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 import jp.dataforms.fw.validator.FieldValidator;
 import lombok.Getter;
 import lombok.Setter;
@@ -252,7 +250,7 @@ public class WebComponent implements JDBCConnectableObject {
 	private String getScriptPath(final Class<?> cls) throws Exception {
 		String jspath = this.getWebResourcePath(cls) + ".js";
 		logger.info("getScriptPath:jspath = " + jspath);
-		String script = this.getWebResource("/" + jspath);
+		String script = this.getWebResource(jspath);
 		if (StringUtil.isBlank(script)) {
 			jspath = this.getScriptPath(cls.getSuperclass());
 		}
@@ -563,29 +561,13 @@ public class WebComponent implements JDBCConnectableObject {
 	}
 
 	/**
-	 * Webリソースのキャッシュ。
-	 */
-	private static Map<String, String> webResourceCache = Collections.synchronizedMap(new HashMap<String, String>());
-
-	/**
-	 * Webリソースのタイムスタンプキャッシュ。
-	 */
-	private static Map<String, String> webResourceTimestampCache = Collections.synchronizedMap(new HashMap<String, String>());
-
-	/**
 	 * html,js,css等のWEBリソースを取得します。
 	 * @param path パス。
 	 * @return リソース。
 	 * @throws Exception 例外。
 	 */
 	public String getWebResource(final String path) throws Exception {
-		if (!WebComponent.webResourceCache.containsKey(path)) {
-			String ret = readWebResource(path);
-			WebComponent.webResourceCache.put(path, ret);
-			//log.debug("getWebResource:text=" + ret);
-		}
-		String ret = WebComponent.webResourceCache.get(path);
-		return ret;
+		return WebResourceUtil.getWebResource(path);
 	}
 
 
@@ -614,47 +596,13 @@ public class WebComponent implements JDBCConnectableObject {
 	}
 
 	/**
-	 * Webリソースを読み込みます。
-	 * @param path リソースのパス。
-	 * @return Webリソースの文字列。
-	 * @throws Exception 例外。
-	 */
-	private String readWebResource(final String path) throws Exception {
-		URI uri = new URI(getWebResourceUrl(path));
-		URL url = uri.toURL();
-		String ret = "";
-		logger.debug(() -> "webResourceUrl=" + url.toString());
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.connect();
-		try {
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				InputStream is = conn.getInputStream();
-				byte[] buf = FileUtil.readInputStream(is);
-				ret = new String(buf, DataFormsServlet.getEncoding());
-				long d = conn.getLastModified();
-				SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
-				//log.debug("timestamp:" + path + "=" + fmt.format(new Date(d)));
-				webResourceTimestampCache.put(path, fmt.format(new Date(d)));
-			}
-		} finally {
-			conn.disconnect();
-		}
-		return ret;
-	}
-
-	/**
 	 * 指定されたパスのWebリソースの更新日付を取得します。
 	 * @param path パス。
 	 * @return 更新日付(yyyyMMddHHmmss形式)。
 	 * @throws Exception 例外。
 	 */
 	protected String getLastUpdate(final String path) throws Exception {
-		String ret = webResourceTimestampCache.get(path);
-		if (ret == null) {
-			this.readWebResource(path);
-			ret = webResourceTimestampCache.get(path);
-		}
-		return ret;
+		return WebResourceUtil.getLastUpdate(path);
 	}
 
 	/**

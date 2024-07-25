@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -77,6 +78,7 @@ import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.MessagesUtil.ClientMessageTransfer;
 import jp.dataforms.fw.util.OnetimePasswordUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 
 /**
  * DataForms用サーブレットクラスです。
@@ -93,7 +95,7 @@ import jp.dataforms.fw.util.StringUtil;
  *
  */
 @MultipartConfig
-@WebServlet(name = "DataFormsServlet", displayName = "DataFormsServlet", urlPatterns = {"*.df" })
+@WebServlet(name = "DataFormsServlet", displayName = "DataFormsServlet", urlPatterns = { "*.html", "*.api", "*.bat", "*.df" })
 public class DataFormsServlet extends HttpServlet {
 	/**
 	 * Content-Type : FORM_URLENCODED。
@@ -283,6 +285,12 @@ public class DataFormsServlet extends HttpServlet {
 		// パスとパッケージの対応表を設定する。
 		try {
 			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
+			// CSSフィルターの初期化。
+			Set<String> cssList = WebResourceUtil.getFilesList("/frame", "Variables.css");
+			for (String css: cssList) {
+				logger.debug("Variables.css:" + css);
+				CssFilter.readVar(css);
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -303,6 +311,7 @@ public class DataFormsServlet extends HttpServlet {
 		} else {
 			CryptUtil.setCryptPassword(CryptUtil.DES_PASSWORD_OR_AES_KEY);
 		}
+		
 	}
 
 

@@ -231,7 +231,7 @@ public  class Form extends WebComponent {
 	 */
 	public String getHtmlPath() throws Exception {
 		String htmlpath = this.getWebResourcePath(this.getHtmlFormClass()) + ".html";
-		String html = this.getWebResource("/" + htmlpath);
+		String html = this.getWebResource(htmlpath);
 		if (StringUtil.isBlank(html)) {
 			htmlpath = null;
 		}

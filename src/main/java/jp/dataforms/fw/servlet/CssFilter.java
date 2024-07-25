@@ -14,12 +14,15 @@ import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jp.dataforms.fw.util.JsonUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 
 /**
  * CSSのフィルター。
@@ -56,19 +59,34 @@ public class CssFilter extends DataFormsFilter implements Filter {
 	}
 	
 	/**
+	 * 初期化処理。
+	 */
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+/*		logger.debug("CssFilter: init");
+		try {
+			this.readVar("/frame/flex/Variables.css");
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+		}*/
+		Filter.super.init(filterConfig);
+	}
+	
+	/**
 	 * スタイルシートを読み込みます。
 	 * @param req 要求情報。
 	 * @param path リソースのパス。
 	 * @return Webリソースの文字列。
 	 * @throws Exception 例外。
 	 */
-	private String readCss(final HttpServletRequest req, final String path) throws Exception {
+	private static String readCss(final HttpServletRequest req, final String path) throws Exception {
 		logger.debug("readWebResource path={}", path);
 		String css = CssFilter.cssMap.get(path);
 		if (css != null) {
 			return css;
 		}
-		String ret = this.readWebResource(req, path + "?skip=true");
+		logger.error("CssFilter");
+		String ret = WebResourceUtil.getWebResource(path);
 		CssFilter.cssMap.put(path, ret);
 		return ret;
 	}
@@ -78,7 +96,12 @@ public class CssFilter extends DataFormsFilter implements Filter {
 	 */
 	private static Map<String, Map<String, String>> varMap = new HashMap<String, Map<String, String>>();
 
-	private String getParentPath(final String path) {
+	/**
+	 * 親のパスを取得します。
+	 * @param path パス。
+	 * @return 親のパス。
+	 */
+	private static String getParentPath(final String path) {
 		int idx = path.lastIndexOf('/');
 		return path.substring(0, idx);
 	}
@@ -88,9 +111,9 @@ public class CssFilter extends DataFormsFilter implements Filter {
 	 * @param path CSSのファイル名。
 	 * @param css CSSの文字列。
 	 */
-	private void parseVar(final String path, final String css) {
-		String key = this.getParentPath(path);
-		logger.debug("parseVar=" + path + "," + key);
+	private static void parseVar(final String path, final String css) {
+		logger.debug("parseVar=" + path + "\n" + css);
+		String key = CssFilter.getParentPath(path);
 		if (CssFilter.varMap.get(key) != null) {
 			return;
 		}
@@ -107,7 +130,7 @@ public class CssFilter extends DataFormsFilter implements Filter {
 				Matcher vm = vp.matcher(line);
 				if (vm.find()) {
 					logger.debug(() -> "var=" + vm.group(1) + "," + vm.group(2));
-					varMap.put(vm.group(1), this.replaceVar(path, vm.group(2)));
+					varMap.put(vm.group(1), CssFilter.replaceVar(path, vm.group(2)));
 				}
 			}
 		}
@@ -119,8 +142,9 @@ public class CssFilter extends DataFormsFilter implements Filter {
 	 * @param css スタイルシートのテキスト。
 	 * @return 変数を置き換えたcss。
 	 */
-	private String replaceVar(final String path, final String css) {
-		String ppath = this.getParentPath(path);
+	private static String replaceVar(final String path, final String css) {
+		logger.debug("replaceVar:" + path);
+		String ppath = CssFilter.getParentPath(path);
 		Map<String, String> map = CssFilter.varMap.get(ppath);
 		if (map != null) {
 			String ret = css;
@@ -136,29 +160,49 @@ public class CssFilter extends DataFormsFilter implements Filter {
 
 	}
 
+	/**
+	 * cssの変数設定を読み込みます。
+	 * @param fname ファイル。
+	 * @throws Exception 例外。
+	 */
+	public static void readVar(final String fname) throws Exception {
+		String ppath = CssFilter.getParentPath(fname);
+		if (CssFilter.varMap.get(ppath) != null) {
+			return;
+		}
+		String vpath = ppath + "/Variables.css";
+		logger.debug("readVar=" + vpath);
+		String contents = WebResourceUtil.getWebResource(vpath);
+		if (contents != null) {
+			CssFilter.parseVar(vpath, contents);
+		}
+		String json = JsonUtil.encode(CssFilter.varMap, true);
+		logger.debug("CssFilter.varMap=" + json);
+	}
+	
 	@Override
 	public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
 		if (req instanceof HttpServletRequest) {
 			HttpServletRequest sreq = (HttpServletRequest) req;
 			HttpServletResponse sresp = (HttpServletResponse) resp;
 			try {
-				String fname = sreq.getRequestURI();
+				String context = sreq.getContextPath();
+				String fname = sreq.getRequestURI().substring(context.length());
 				logger.debug(() -> "filename=" + fname);
-				String skip = sreq.getParameter("skip");
-				if (!"true".equals(skip)) {
-					String contents = this.readCss(sreq, fname);
-					if (contents != null) {
-						this.parseVar(fname, contents);
-						contents = this.replaceVar(fname, contents);
-						sresp.setContentType("text/css; charset=utf-8");
-						Long ts = DataFormsFilter.getWebResourceTimestampCache().get(fname);
-						sresp.setDateHeader("Last-Modified", ts);
-						try (PrintWriter out = resp.getWriter()) {
-							out.print(contents);
-						}
-					} else {
-						sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+				CssFilter.readVar(fname);
+				String contents = CssFilter.readCss(sreq, fname);
+				if (contents != null) {
+					contents = CssFilter.replaceVar(fname, contents);
+					sresp.setContentType("text/css; charset=utf-8");
+					logger.error("CssFilter");
+					Long ts = this.getLastUpdate(fname);
+					logger.debug("fname=" + fname + ", ts=" + ts);
+					sresp.setDateHeader("Last-Modified", ts);
+					try (PrintWriter out = resp.getWriter()) {
+						out.print(contents);
 					}
+				} else {
+					sresp.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
 				}
 			} catch (Exception e) {
 				logger.error(() -> e.getMessage(), e);
