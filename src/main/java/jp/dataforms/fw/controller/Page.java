@@ -39,6 +39,7 @@ import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 import jp.dataforms.fw.validator.FieldValidator;
 
 
@@ -375,11 +376,12 @@ public class Page extends DataForms implements WebEntryPoint {
 	private void addImportScriptTag(final String context, final String js, final StringBuilder sb) throws Exception {
 		String jspath = this.getAppropriatePath(js, this.getRequest());
 		if (jspath != null) {
-//			String t = this.getLastUpdate(jspath);
 			String p = context + jspath;
 			String cls = this.getJsClass(p);
 			if (cls != null) {
-				sb.append("\t\timport { " + cls + " } from '" + p + "';\n");
+				String pp = p.substring(context.length());
+				String t = WebResourceUtil.getLastUpdate(pp);
+				sb.append("\t\timport { " + cls + " } from '" + p + "?t=" + t + "';\n");
 			}
 		}
 	}

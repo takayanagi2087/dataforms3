@@ -5,7 +5,7 @@
 		<link type="text/css" href="../css/document.css" rel="stylesheet" />
 		<title>3.ページの作成</title>
 	</head>
-	<body>
+	<p>
 		<h1><span>2.2.</span>開発ツールでページを作成</h1>
 		<p>
 			この章では、dataforms3.jarの持つ開発ツールを使用して、データベース上の1つのテーブルを操作するページを作成していきます。
@@ -985,6 +985,12 @@ public class AppFunctionMap extends FunctionMap {
 			しかしブラウザから http://localhost:8080/sample/edittable/page/SamplePage.htmlをアクセスすると、
 			dataforms3.jar中のDataFormsServletが動作し、以下のようなスクリプトが自動的に生成されます。
 			このスクリプトがSamplePageクラスに設定された構造情報をサーバから取得し、その情報を元に各HTML要則に適切なイベント処理を登録します。
+		</p>			
+		<p>	
+			dataforms3.jar中のDataFormsServletには*.htmlにマッピングされています。
+			DataFormsServletは、指定された*.htmlファイルが存在しそれに対応するPageクラスが存在する場合、
+			このようなスクリプトを追加した*.htmlファイルを送信します。
+			*.htmlに対応するPageクラスが存在しない場合、指定されたhtmlをそのまま送信します。
 		</p>
 		<figure>
 			<figcaption>ブラウザに出力されたスクリプト</figcaption>
