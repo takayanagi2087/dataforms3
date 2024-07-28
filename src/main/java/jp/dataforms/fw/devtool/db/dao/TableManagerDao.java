@@ -375,8 +375,6 @@ public class TableManagerDao extends Dao {
 	}
 
 	/**
-	 * TODO:Tableクラスに移動する。
-	 * 
 	 * テーブルのバックアップを取得します。
 	 * @param classname テーブルクラス名。
 	 * @param outdir 出力ディレクトリ。
@@ -431,17 +429,14 @@ public class TableManagerDao extends Dao {
 												}
 											}
 											writer.endObject();
-											//rec.put(id, TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m));
 										}
 									} else {
 										fld.setValueObject(value);
 										if (fld.getClientValue() != null) {
 											fld.setValueObject(value);
 											writer.name(id).value(fld.getClientValue().toString());
-//											rec.put(id, fld.getClientValue().toString());
 										} else {
 											writer.name(id).nullValue();
-											// rec.put(id, null);
 										}
 									}
 								}
@@ -577,7 +572,7 @@ public class TableManagerDao extends Dao {
 	 * @param path JSONのベースパス。
 	 * @throws Exception 例外。
 	 */
-	private void importJson(InputStream is, final Table tbl, final String path) throws Exception {
+	private void importJson(final InputStream is, final Table tbl, final String path) throws Exception {
 		// JSONReader を取得
 		JsonUtil.readBigArray(is, (rec) -> {
 			@SuppressWarnings("unchecked")
@@ -600,31 +595,6 @@ public class TableManagerDao extends Dao {
 				this.executeInsert0(tbl, data);
 			}
 		});
-/*		JSONReader reader = new JSON().getReader(is);
-		JSONEventType type = null;
-		while ((type = reader.next()) != null) {
-			if (type ==  JSONEventType.START_OBJECT) {
-				@SuppressWarnings("unchecked")
-				Map<String, Object> m = (Map<String, Object>) reader.getMap();
-				logger.debug(() -> "m=" + m.toString());
-				for (String key: m.keySet()) {
-					Object v = m.get(key);
-					if (v instanceof String) {
-						String str = (String) v;
-						logger.debug("unescape=" + str + "->" + StringEscapeUtils.unescapeHtml4(str));
-						m.put(key, StringEscapeUtils.unescapeHtml4(str));
-					}
-				}
-				this.convertImportData(m, path, tbl);
-				Map<String, Object> data = tbl.convertImportData(m);
-				this.setUserIdValue(data);
-				if (this.existRecord(tbl, data)) {
-					this.executeUpdate0(tbl, data);
-				} else {
-					this.executeInsert0(tbl, data);
-				}
-			}
-		}*/
 	}
 
 
