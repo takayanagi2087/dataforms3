@@ -82,7 +82,6 @@ public class WebResourceUtil {
 		if (url != null) {
 			JarURLConnection conn = (JarURLConnection) url.openConnection();
 			long d = conn.getLastModified();
-			logger.error("put path=" + path + ", d=" + d);
 			webResourceTimestampLongCache.put(path, d);
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
 			webResourceTimestampCache.put(path, fmt.format(new Date(d)));
@@ -109,7 +108,6 @@ public class WebResourceUtil {
 			File f = new File(rpath);
 			if (f.exists()) {
 				long d = f.lastModified();
-				logger.error("put path=" + path + ", d=" + d);
 				webResourceTimestampLongCache.put(path, d);
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
 				webResourceTimestampCache.put(path, fmt.format(new Date(d)));
@@ -184,7 +182,6 @@ public class WebResourceUtil {
 			WebResourceUtil.readWebResource(path);
 			ret = webResourceTimestampLongCache.get(path);
 		}
-		logger.error("get path=" + path + ", d=" + ret);
 		return ret;
 	}
 	
