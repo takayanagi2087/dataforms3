@@ -85,7 +85,6 @@ public class CssFilter extends DataFormsFilter implements Filter {
 		if (css != null) {
 			return css;
 		}
-		logger.error("CssFilter");
 		String ret = WebResourceUtil.getWebResource(path);
 		CssFilter.cssMap.put(path, ret);
 		return ret;
@@ -194,7 +193,6 @@ public class CssFilter extends DataFormsFilter implements Filter {
 				if (contents != null) {
 					contents = CssFilter.replaceVar(fname, contents);
 					sresp.setContentType("text/css; charset=utf-8");
-					logger.error("CssFilter");
 					Long ts = this.getLastUpdate(fname);
 					logger.debug("fname=" + fname + ", ts=" + ts);
 					sresp.setDateHeader("Last-Modified", ts);

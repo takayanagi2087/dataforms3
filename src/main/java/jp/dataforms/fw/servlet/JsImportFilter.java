@@ -104,7 +104,6 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 		if (js != null) {
 			return js;
 		}
-		logger.error("JsFilter");
 		String ret = this.readWebResource(path);
 		JsImportFilter.jsMap.put(path, ret);
 		return ret;
@@ -131,7 +130,6 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 						// logger.debug("contents=" + contents);
 						sresp.setContentType("text/javascript; charset=utf-8");
 						Long ts = this.getLastUpdate(fname);
-						logger.error("JsFilter");
 						logger.debug("fname=" + fname + ", ts=" + ts);
 //							sresp.setDateHeader("Last-Modified", ts);
 						try (PrintWriter out = resp.getWriter()) {

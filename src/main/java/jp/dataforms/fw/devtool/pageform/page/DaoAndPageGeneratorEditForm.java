@@ -406,7 +406,6 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 					String fid = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
 					Field<?> kf = keyList.get(fid);
 					if (kf != null) {
-						logger.error("keyfield=" + kf.getId() + ", disp=" + m.get(SelectFieldHtmlTable.ID_LIST_FIELD_DISPLAY));
 						Field.Display disp = (Field.Display) m.get(SelectFieldHtmlTable.ID_LIST_FIELD_DISPLAY);
 						if (disp != Field.Display.INPUT_HIDDEN) {
 							m.put(SelectFieldHtmlTable.ID_LIST_FIELD_DISPLAY, Field.Display.INPUT_READONLY);
