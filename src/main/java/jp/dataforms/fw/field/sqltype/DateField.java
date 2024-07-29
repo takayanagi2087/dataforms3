@@ -72,7 +72,7 @@ public class DateField extends DateTimeField<Date> implements SqlDate {
 	 */
 	@Override
 	public Object getClientValue() {
-		String dfmt = MessagesUtil.getMessage(this.getPage(), this.getDateFormat()); // , "format.datefield");
+		String dfmt = MessagesUtil.getMessage(this.getWebEntryPoint(), this.getDateFormat()); // , "format.datefield");
 		SimpleDateFormat fmt = new SimpleDateFormat(dfmt);
 		if (this.getValue() != null) {
 			return fmt.format(this.getValue());
