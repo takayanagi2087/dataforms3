@@ -415,7 +415,8 @@ public class TableManagerDao extends Dao {
 								for (Field<?> fld : flist) {
 									String id = fld.getId();
 									Object value = m.get(id);
-									if (fld instanceof FileField) 	{
+									logger.debug("id=" + id + ", value=" + value + ", class=" + fld.getClass().getName());
+									if (fld instanceof FileField) {
 										if (value != null) {
 											writer.name(id);
 											Map<String, Object> finfo = TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m);
