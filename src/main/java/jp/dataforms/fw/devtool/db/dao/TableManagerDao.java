@@ -411,37 +411,45 @@ public class TableManagerDao extends Dao {
 							public boolean process(final Map<String, Object> m) throws Exception {
 								logger.debug(() -> "m=" + m.toString());
 								writer.beginObject();
-								FieldList flist = tbl.getFieldList();
-								for (Field<?> fld : flist) {
-									String id = fld.getId();
-									Object value = m.get(id);
-									logger.debug("id=" + id + ", value=" + value + ", class=" + fld.getClass().getName());
-									if (fld instanceof FileField) {
-										if (value != null) {
-											writer.name(id);
-											Map<String, Object> finfo = TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m);
-											writer.beginObject();
-											Set<String> ks = finfo.keySet();
-											for (String k: ks) {
-												if (finfo.get(k) instanceof Long) {
-													writer.name(k).value((Long) finfo.get(k));
-												} else {
-													writer.name(k).value((String) finfo.get(k));
+								try {
+									FieldList flist = tbl.getFieldList();
+									for (Field<?> fld : flist) {
+										String id = fld.getId();
+										Object value = m.get(id);
+										logger.debug("id=" + id + ", value=" + value + ", class=" + fld.getClass().getName());
+										if (fld instanceof FileField) {
+											if (value != null) {
+												writer.name(id);
+												Map<String, Object> finfo = TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m);
+												writer.beginObject();
+												try {
+													Set<String> ks = finfo.keySet();
+													for (String k: ks) {
+														if (finfo.get(k) instanceof Long) {
+															writer.name(k).value((Long) finfo.get(k));
+														} else {
+															writer.name(k).value((String) finfo.get(k));
+														}
+													}
+												} finally {
+													writer.endObject();
 												}
 											}
-											writer.endObject();
-										}
-									} else {
-										fld.setValueObject(value);
-										if (fld.getClientValue() != null) {
-											fld.setValueObject(value);
-											writer.name(id).value(fld.getClientValue().toString());
 										} else {
-											writer.name(id).nullValue();
+											fld.setValueObject(value);
+											if (fld.getClientValue() != null) {
+												fld.setValueObject(value);
+												writer.name(id).value(fld.getClientValue().toString());
+											} else {
+												writer.name(id).nullValue();
+											}
 										}
 									}
+								} catch (Exception ex) {
+									logger.debug(ex.getMessage(), ex);
+								} finally {
+									writer.endObject();
 								}
-								writer.endObject();
 								return true;
 							}
 						});
