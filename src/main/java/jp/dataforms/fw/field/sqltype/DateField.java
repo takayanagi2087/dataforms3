@@ -53,7 +53,7 @@ public class DateField extends DateTimeField<Date> implements SqlDate {
 			this.setValue(null);
 			return;
 		}
-		String dfmt = MessagesUtil.getMessage(this.getPage(), this.getDateFormat());
+		String dfmt = MessagesUtil.getMessage(this.getWebEntryPoint(), this.getDateFormat());
 		SimpleDateFormat fmt = new SimpleDateFormat(dfmt);
 		try {
 			Date d = new Date(fmt.parse((String) v).getTime());
