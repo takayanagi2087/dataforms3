@@ -286,7 +286,7 @@ public class DataFormsServlet extends HttpServlet {
 		try {
 			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
 			// CSSフィルターの初期化。
-			Set<String> cssList = WebResourceUtil.getFilesList("/frame", "Variables.css");
+			Set<String> cssList = WebResourceUtil.getFileList("/frame", "Variables.css");
 			for (String css: cssList) {
 				logger.debug("Variables.css:" + css);
 				CssFilter.readVar(css);

@@ -194,12 +194,12 @@ public class WebResourceUtil {
 	 */
 	private static void getFileList(final String basePath, final String name, Set<String> set) throws IOException {
 		String rpath = Page.getServlet().getServletContext().getRealPath(basePath);
-		logger.debug("getFilesList rpath=" + rpath);
+		logger.debug("getFileList rpath=" + rpath);
 		Path p = Paths.get(rpath);
 		Files.walk(p).forEach((e) -> {
 			if (e.toFile().isFile()) {
 				if (name.equals(e.toFile().getName())) {
-					logger.debug("getFilesList path=" + e.toFile().getAbsolutePath() + ", isFile=" + e.toFile().isFile());
+					logger.debug("getFileList path=" + e.toFile().getAbsolutePath() + ", isFile=" + e.toFile().isFile());
 					String webpath = e.toFile().getAbsolutePath().substring(rpath.length());
 					webpath = basePath + webpath.replaceAll("\\\\", "/");
 					logger.debug("getFilesList webpath=" + webpath);
@@ -249,9 +249,13 @@ public class WebResourceUtil {
 	 * @return ファイルリスト。
 	 * @throws Exception 例外。
 	 */
-	public static Set<String> getFilesList(final String basePath, final String name) throws Exception {
+	public static Set<String> getFileList(final String basePath, final String name) throws Exception {
 		Set<String> set = new HashSet<String>();
-		WebResourceUtil.getFileList(basePath, name, set);
+		try {
+			WebResourceUtil.getFileList(basePath, name, set);
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
 		// 
 		WebResourceUtil.getFileListFormJar(basePath, name, set);
 		return set;
