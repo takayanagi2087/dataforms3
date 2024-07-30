@@ -1680,6 +1680,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 			if (am != null) {
 				am.adjust(ret);
 			}
+			ret = query.getFieldList().convertServerToClient(data);
 			return ret;
 		} else {
 			return blankMap;

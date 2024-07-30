@@ -546,6 +546,15 @@ error.requireddate = 数値が入力された場合、日付を入力してく�
 		<div class="filecaption">フォームバリデーションの実装(SampleEditForm.js)</div>
 		<div class="wrappre">
 			<pre>
+	// 必要なクラスをインポート
+	<b>import { MessagesUtil } from '../../dataforms/util/MessagesUtil.js';</b>
+	<b>import { ValidationError } from '../../dataforms/validator/ValidationError.js';</b>
+	<b>import { FieldValidator } from '../../dataforms/validator/FieldValidator.js';</b>
+	//
+	import { EditForm } from '../../dataforms/controller/EditForm.js';
+				
+				
+				
 	/**
 	 * &#12501;&#12457;&#12540;&#12512;&#12398;&#12496;&#12522;&#12487;&#12540;&#12471;&#12519;&#12531;&#12290;
 	 * &lt;pre&gt;
