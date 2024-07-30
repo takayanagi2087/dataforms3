@@ -36,17 +36,23 @@
 				<div class="fieldDiv" >
 					<div class="label">認証方式</div>
 					<div class="field" style="justify-content: left;">
-						<input type="checkbox" id="passwordRequiredFlag" value="1" />
-						<label for="passwordRequiredFlag">パスワードを必ずチェックする</label> 
-						<input type="checkbox" id="passkeyRequiredFlag" value="1" />
-						<label for="passkeyRequiredFlag">パスキーを必ずチェックする(パスキーでのログインができることを確認してからチェックしてください)</label>
+						<div>
+							<input type="checkbox" id="passwordRequiredFlag" value="1" />
+							<label for="passwordRequiredFlag">パスワードを必ずチェックする</label>
+						</div>
+						<div>
+							<input type="checkbox" id="passkeyRequiredFlag" value="1" />
+							<label for="passkeyRequiredFlag">パスキーを必ずチェックする(パスキーでのログインができることを確認してからチェックしてください)</label>
+						</div>
 					</div>
 				</div>
 				<div class="fieldDiv">
 					<div class="label">フラグ</div>
-					<div class="field">
+					<div class="field" style="justify-content: left;">
 						<div>
 							<input type="checkbox" id="externalUserFlag" value="1"/><label for="externalUserFlag">外部ユーザ</label>
+						</div>
+						<div>
 							<input type="checkbox" id="enabledFlag" value="1"/><label for="enabledFlag">有効</label>
 						</div>
 					</div>
