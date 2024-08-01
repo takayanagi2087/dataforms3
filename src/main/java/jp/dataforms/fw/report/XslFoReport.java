@@ -28,7 +28,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -169,9 +168,9 @@ public class XslFoReport extends Report {
 			} else {
 				field.setValueObject(obj);
 				cv = field.getClientValue();
-				if (cv instanceof String) {
+/*				if (cv instanceof String) {
 					cv = StringEscapeUtils.unescapeHtml4((String) cv);
-				}
+				}*/
 			}
 		}
 		logger.debug("id={}, value={}", field.getId(), cv.toString());
