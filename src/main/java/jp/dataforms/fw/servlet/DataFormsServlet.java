@@ -278,7 +278,7 @@ public class DataFormsServlet extends HttpServlet {
 		// DB存在チェック。
 		this.checkDbConnection();
 		// DBの存在チェック。
-		this.checkDBStructure();
+		// this.checkDBStructure();
 		// 制約マップを作成します。
 		this.makeConstraintMap();
 		this.setupServletInstanceBean();
