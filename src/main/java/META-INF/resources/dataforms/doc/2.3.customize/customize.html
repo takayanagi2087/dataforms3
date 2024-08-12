@@ -1032,6 +1032,154 @@ class SampleEditForm extends EditForm {
 			<figcaption>出力されたExcelファイルの内容</figcaption>
 			<img src="function5.png" style="width:50%; height:50%;"/>
 		</figure>
+		<h3>PDF出力</h3>
+		<p>
+			dataforms3.jarはApacheFOPを利用したPDF帳票の出力をサポートしています。
+			PDFを出力するにはXslFoReportクラスから派生したレポートクラスを作成します。
+			ExcelReportクラスとXslFoReportクラスはReportクラスから派生しており、
+			以下のSamplePdfReportクラスほ継承元のクラスが異なるだけで、
+			SampleExcelReportクラスと殆ど同じ構造になっています。
+		</p>
+		<div class="filecaption">SamplePdfReport.java</div>
+		<div class="wrappre">
+			<pre>
+package jp.dataforms.sample.edittable.report;
+
+import jp.dataforms.fw.report.XslFoReport;
+import jp.dataforms.sample.edittable.dao.SampleTable;
+
+/**
+ * Excel&#12524;&#12509;&#12540;&#12488;&#12463;&#12521;&#12473;&#12290;
+ *
+ */
+public class SamplePdfReport extends XslFoReport {
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+	 * @param template Excel&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12501;&#12449;&#12452;&#12523;&#12398;&#12497;&#12473;&#12290;
+	 */
+	public SamplePdfReport(final String template) {
+		this.setTemplatePath(template);
+		this.addTableFields(new SampleTable());
+	}
+}
+			</pre>
+		</div>
+		<p>
+			XslFoReportクラスのコンストラクタに与えるテンプレートファイルはXSL-FO形式で作成する必要があります。
+			XSL-FO形式のテンプレートを作成するには、その文法を理解し、1から作成しても良いのですが、
+			ExcelToXSLFOクラスを使用するとExcelで作成したテンプレートをXSL-FO形式に変換することができます。
+			以下の処理ではsample.xlsxからsample.foを作成し、そのファイルをSamplePdfReportのテンプレートにしています。
+		</p>
+		<div class="filecaption">PDFレポート出力処理</div>
+		<div class="wrappre">
+			<pre>
+	/**
+	 * &#21360;&#21047;&#12513;&#12477;&#12483;&#12489;&#12398;&#12469;&#12531;&#12503;&#12523;&#12290;
+	 * @param p &#12497;&#12521;&#12513;&#12540;&#12479;&#12290;
+	 * @return &#24540;&#31572;&#24773;&#22577;&#12290;
+	 * @throws Exception &#20363;&#22806;&#12290;
+	 */
+	@WebMethod
+	public Response print(final Map&lt;String, Object&gt; p) throws Exception {
+		Response ret = null;
+		// Form&#12363;&#12425;&#36865;&#20449;&#12373;&#12428;&#12383;&#12487;&#12540;&#12479;&#12434;&#30906;&#35469;&#12375;&#12414;&#12377;&#12290;
+		List&lt;ValidationError&gt; list = this.validate(p);
+		if (list.size() == 0) {
+			// Form&#12363;&#12425;&#36865;&#20449;&#12373;&#12428;&#12383;&#12487;&#12540;&#12479;&#12434;&#12469;&#12540;&#12496;&#12540;&#12469;&#12452;&#12489;&#12391;&#20966;&#29702;&#12375;&#12420;&#12377;&#12356;&#12487;&#12540;&#12479;&#22411;&#12395;&#22793;&#25563;&#12375;&#12414;&#12377;&#12290;
+			Map&lt;String, Object&gt; data = this.convertToServerData(p);
+			String template = SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/exceltemplate/sample.xlsx&quot;);
+//			SampleExcelReport rep = new SampleExcelReport(template);
+			String foTemplate = SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/exceltemplate/sample.fo&quot;);
+			// Excel&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12363;&#12425;XSL-FO&#12395;&#22793;&#25563;&#12290;
+			ExcelToXSLFO.convert(template, 0, foTemplate);
+			// XSL-FO&#12363;&#12425;PDF&#12434;&#20316;&#25104;&#12290;
+			SamplePdfReport pdfrep = new SamplePdfReport(foTemplate);
+			BinaryResponse bresp = new BinaryResponse(pdfrep.print(data));
+			bresp.setFileName(&quot;sample.pdf&quot;);
+			ret = bresp;
+		} else {
+			// &#30906;&#35469;&#12391;&#21839;&#38988;&#12364;&#12354;&#12387;&#12383;&#22580;&#21512;&#12381;&#12398;&#24773;&#22577;&#12434;&#36820;&#20449;&#12375;&#12414;&#12377;&#12290;
+			ret = new JsonResponse(JsonResponse.INVALID, list);
+		}
+		return ret;
+	}
+				
+			</pre>
+		</div>
+		<p>
+			ExcelToXSLFOクラスで変換したsample.foは以下のようになります。
+		</p>
+		<div class="filecaption">sample.foの内容</div>
+		<div class="wrappre">
+			<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;fo:root xmlns:fo=&quot;http://www.w3.org/1999/XSL/Format&quot; xml:lang=&quot;ja&quot;&gt;
+	&lt;fo:layout-master-set&gt;
+		&lt;fo:simple-page-master page-height=&quot;297mm&quot; page-width=&quot;210mm&quot; margin-top=&quot;0mm&quot; margin-left=&quot;0mm&quot; margin-right=&quot;0mm&quot; margin-bottom=&quot;0mm&quot; master-name=&quot;PageMaster&quot;&gt;
+			&lt;fo:region-body margin-top=&quot;54.0pt&quot; margin-left=&quot;50.4pt&quot; margin-right=&quot;50.4pt&quot; margin-bottom=&quot;54.0pt&quot;/&gt;
+		&lt;/fo:simple-page-master&gt;
+	&lt;/fo:layout-master-set&gt;
+	&lt;fo:page-sequence initial-page-number=&quot;1&quot; master-reference=&quot;PageMaster&quot; font-family=&quot;Yu Gothic&quot; font-size=&quot;11pt&quot;&gt;
+		&lt;fo:flow flow-name=&quot;xsl-region-body&quot;&gt;
+			&lt;fo:block  space-before=&quot;1em&quot; &gt;
+				&lt;fo:table inline-progression-dimension=&quot;263.34000000000003pt&quot; table-layout=&quot;fixed&quot;&gt;
+					&lt;fo:table-column column-number=&quot;1&quot; column-width=&quot;75.46000000000001pt&quot; /&gt;
+					&lt;fo:table-column column-number=&quot;2&quot; column-width=&quot;138.6pt&quot; /&gt;
+					&lt;fo:table-column column-number=&quot;3&quot; column-width=&quot;49.28pt&quot; /&gt;
+					&lt;fo:table-body&gt;
+						&lt;fo:table-row height=&quot;18.75pt&quot;&gt;
+							&lt;fo:table-cell  number-columns-spanned=&quot;2&quot;  display-align=&quot;after&quot; text-align=&quot;center&quot; font-family=&quot;Yu Gothic&quot; font-size=&quot;11pt&quot; color=&quot;#000000&quot; font-weight=&quot;bold&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&#12469;&#12531;&#12503;&#12523;&#12524;&#12509;&#12540;&#12488;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell &gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+						&lt;/fo:table-row&gt;
+						&lt;fo:table-row height=&quot;18.75pt&quot;&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; background-color=&quot;#bdd6ee&quot;  border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&#12486;&#12461;&#12473;&#12488;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;${sampleText}&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell &gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+						&lt;/fo:table-row&gt;
+						&lt;fo:table-row height=&quot;18.75pt&quot;&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; background-color=&quot;#bdd6ee&quot;  border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&#25968;&#20516;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;${sampleNumeric}&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell &gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+						&lt;/fo:table-row&gt;
+						&lt;fo:table-row height=&quot;18.75pt&quot;&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; background-color=&quot;#bdd6ee&quot;  border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&#26085;&#20184;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell  display-align=&quot;after&quot; border-top-style=&quot;solid&quot; border-top-width=&quot;thin&quot; border-left-style=&quot;solid&quot; border-left-width=&quot;thin&quot; border-bottom-style=&quot;solid&quot; border-bottom-width=&quot;thin&quot; border-right-style=&quot;solid&quot; border-right-width=&quot;thin&quot;&gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;${sampleDate}&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+							&lt;fo:table-cell &gt;
+								&lt;fo:block margin-left=&quot;1mm&quot;&gt;&lt;/fo:block&gt;
+							&lt;/fo:table-cell&gt;
+						&lt;/fo:table-row&gt;
+					&lt;/fo:table-body&gt;
+				&lt;/fo:table&gt;
+			&lt;/fo:block&gt;
+		&lt;/fo:flow&gt;
+	&lt;/fo:page-sequence&gt;
+&lt;/fo:root&gt;
+			</pre>
+		</div>
+		<p>
+			ExcelToXSLFOクラスはExcelのレイアウトを完璧に再現できるわけではないのですが、それなりにレイアウトを再現しています。
+			変換結果に問題がある場合、変換した*.foを編集してください。
+		</p>
 		<h3>プルダウンの選択肢の設定</h3>
 		<p>
 			&lt;select&gt;タグの選択肢をデータベースから取得し設定する手法は一般的なものです。

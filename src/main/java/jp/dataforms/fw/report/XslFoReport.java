@@ -7,10 +7,13 @@ import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,6 +31,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -48,20 +52,56 @@ import jp.dataforms.fw.util.MapUtil;
 
 /**
  * XSL-FOレポート。
- *
+ * (&,<>等を含む文字列を印刷しよとするとエラーが発生する問題を修正したバージョン。)
  */
 public class XslFoReport extends Report {
 
 	/**
 	 * Logger.
 	 */
-	private Logger logger = LogManager.getLogger(XslFoReport.class);
+	private static Logger logger = LogManager.getLogger(XslFoReport.class);
 
+	/**
+	 * JNDI PREFIX.
+	 */
+	private static final String JNDI_PREFIX = "java:/comp/env/";
+
+	/**
+	 * PDF用のフォント。
+	 */
+	private static String pdfFont = null;
+	
+	/**
+	 * PDFフォントが設定されている場合それを読み込む。
+	 */
+	static {
+		try {
+			Context initContext = new InitialContext();
+			XslFoReport.pdfFont = (String) initContext.lookup(JNDI_PREFIX + "pdfFont");
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+	}
+	
 	/**
 	 * テンプレートファイルのパス。
 	 */
 	private String templatePath = null;
 
+	/**
+	 * フィールド長のマップ。
+	 */
+	private Map<String, Integer> fieldLengthMap = new HashMap<String, Integer>();
+	
+	/**
+	 * 出力するフィールドの文字幅を指定する。
+	 * @param fieldId フィールドID。
+	 * @param len 半角ベースの文字数(全角文字は2)。
+	 */
+	public void setFieldLength(final String fieldId, final int len) {
+		this.fieldLengthMap.put(fieldId, len);
+	}
+	
 	/**
 	 * コンストラクタ。
 	 */
@@ -156,7 +196,46 @@ public class XslFoReport extends Report {
 		}
 	}
 
-
+	/**
+	 * テキストの幅を計算します。
+	 * @param txt テキスト。
+	 * @return テキストの幅。
+	 */
+	private int getTextWidth(final String txt) {
+		int ret = 0;
+		for (int i = 0; i < txt.length(); i++) {
+			if (txt.charAt(i) <= 0x7f) {
+				ret++;
+			} else {
+				ret += 2;
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * 指定した幅の文字列を切り出します。
+	 * @param txt テキスト。
+	 * @param len 長さ。
+	 * @return 切り出した文字列。
+	 */
+	private String cutText(final String txt, final int len) {
+		int w = 0;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < txt.length(); i++) {
+			if (txt.charAt(i) <= 0x7f) {
+				w++;
+			} else {
+				w += 2;
+			}
+			if (w > len) {
+				break;
+			}
+			sb.append(txt.charAt(i));
+		}
+		return sb.toString();
+	}
+	
 	@Override
 	protected void printField(final int page, final Field<?> field, final Map<String, Object> data) throws Exception {
 		Object cv = "";
@@ -168,9 +247,18 @@ public class XslFoReport extends Report {
 			} else {
 				field.setValueObject(obj);
 				cv = field.getClientValue();
-/*				if (cv instanceof String) {
-					cv = StringEscapeUtils.unescapeHtml4((String) cv);
-				}*/
+				if (cv instanceof String) {
+					String txt = StringEscapeUtils.unescapeHtml4((String) cv);
+					String id = field.getId().replaceAll("\\[[0-9]+\\]", "[0]");
+					logger.debug("print field id=" + field.getId() + " -> " + id);
+					Integer len = this.fieldLengthMap.get(id);
+					if (len != null) {
+						if (this.getTextWidth(txt) > len) {
+							txt = this.cutText(txt, len);
+						}
+					}
+					cv = StringEscapeUtils.escapeXml11(txt);
+				}
 			}
 		}
 		logger.debug("id={}, value={}", field.getId(), cv.toString());
@@ -346,14 +434,27 @@ public class XslFoReport extends Report {
 
 	@Override
 	public byte[] getReport() throws Exception {
+//		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + this.getXslFo();
 		String xml = this.getXslFo();
-		logger.debug(() -> "xslFo=" + xml);
+		// Windowsではない、つまりLinux。 "VL Gothic"のフォントをインストールしておくこと。
+		if (XslFoReport.pdfFont != null) {
+			xml = xml.replaceAll("font-family=\".+?\"", "font-family=\"" + XslFoReport.pdfFont + "\"");
+		}
+//		xml = xml.replaceAll("<fo:block", "<fo:block background-color=\"#ffffff\" ");
+		
+		logger.debug("xslFo=" + xml);
 		return this.createPdf(xml);
 	}
-
+/*
+	"Serif"
+	"SansSerif"
+	"Monospaced"
+	"Dialog"
+	"DialogInput"
+*/
 
 	/**
-	 * FOを指定したプリンターに印刷します。。
+	 * FOを指定したプリンターに印刷します。
 	 * @param foXml Fo形式の文字列。
 	 * @param printJob 印刷ジョブ。
 	 * @throws Exception 例外。
