@@ -52,7 +52,7 @@ import jp.dataforms.fw.util.MapUtil;
 
 /**
  * XSL-FOレポート。
- * (&,<>等を含む文字列を印刷しよとするとエラーが発生する問題を修正したバージョン。)
+ * (&amp;,&lt;&gt;等を含む文字列を印刷しよとするとエラーが発生する問題を修正したバージョン。)
  */
 public class XslFoReport extends Report {
 

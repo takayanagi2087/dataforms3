@@ -603,7 +603,7 @@ public class ConfUtil {
 		 * 設定ファイルを読み込みます。
 		 * @param confFile 設定ファイル。
 		 * @return 設定字情報。
-		 * @throws Exception
+		 * @throws Exception 例外。
 		 */
 		public static Conf read(final String confFile) throws Exception {
 			String jsonc = FileUtil.readTextFile(confFile, ENCODING);
