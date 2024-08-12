@@ -13,7 +13,7 @@
 		</p>
 		<h2>WebComponentクラス階層</h2>
 		<p>
-			dataforms2.jarではWebページを構成する部品クラス(WebComponentクラス)が定義されています。
+			dataforms3.jarではWebページを構成する部品クラス(WebComponentクラス)が定義されています。
 			WebComponentのサブクラスには、Page,Form,HtmlTable,Field,FieldValidator等が存在しています。
 			このWebComponentのクラス階層はJavaとJavascriptで全く同じ構造になっており、
 			Javaのクラスにはサーバの動作が、Javascriptのクラスにはブラウザ側の動作が記述され、
@@ -27,7 +27,7 @@
 		</p>
 		<p>
 			ユーザが作成したJavaクラスに対応するJavascriptクラスは必ずしも必要ではありません。
-			具体的な例を挙げると、dataforms2.jarで定義されたJavaクラス"dataforms.controller.EditForm"
+			具体的な例を挙げると、dataforms3.jarで定義されたJavaクラス"dataforms.controller.EditForm"
 			には、対応するJavasciptクラス"dataforms/controller/EditForm.js"が存在します。
 			dataforms.controller.EditFormから派生したXXXEditForm.javaを作成し、それを持つページを実行すると、
 			ページのロード時にEditForm.jsに記載された初期化処理が動作します。
@@ -80,28 +80,28 @@
 			<tbody>
 				<tr>
 					<td style="text-align: right;">1</td>
-					<td>dataforms.app.page.base.DeveloperPage</td>
+					<td>jp.dataforms.fw.app.page.base.DeveloperPage</td>
 					<td>
 						「開発者」のみ使用可能。
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">2</td>
-					<td>dataforms.app.page.base.AdminPage</td>
+					<td>jp.dataforms.fw.app.page.base.AdminPage</td>
 					<td>
 						「開発者」、「管理者」が使用可能。
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">3</td>
-					<td>dataforms.app.page.base.UserPage</td>
+					<td>jp.dataforms.fw.app.page.base.UserPage</td>
 					<td>
 						「開発者」、「管理者」、「ユーザ」が使用可能。
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">4</td>
-					<td>dataforms.app.page.base.GuestPage</td>
+					<td>jp.dataforms.fw.app.page.base.GuestPage</td>
 					<td>
 						「開発者」、「管理者」、「ユーザ」、「ゲスト」が使用可能。
 					</td>
@@ -114,7 +114,7 @@
 		<div class="filecaption">SamplePageを「ゲスト」用に修正</div>
 		<div class="wrappre">
 			<pre>
-<b>import dataforms.app.base.page.GuestPage;</b>
+<b>import jp.dataforms.fw.app.base.page.GuestPage;</b>
 import dataforms.dao.Dao;
 import sample.dao.SampleDao;
 
@@ -306,7 +306,7 @@ public class SampleQueryResultForm extends QueryResultForm {
 		</figure>
 		<h3>フィールドバリデーション</h3>
 		<p>
-			dataforms2.jarの各種フィールドクラスには、すでに適切なバリデータが設定されています。
+			dataforms3.jarの各種フィールドクラスには、すでに適切なバリデータが設定されています。
 			新規追加フォームの数値フィールドに英字を、日付フィールドに存在しない日付を入力し
 			「確認」ボタンを押下すると、以下のように適切なバリデータが動作します。
 		</p>
@@ -797,7 +797,6 @@ public class SampleEditForm extends EditForm {
 		&lt;/div&gt;
 		&lt;input type=&quot;button&quot; id=&quot;confirmButton&quot; class=&quot;largeButton&quot; value=&quot;&#30906;&#35469;&quot;/&gt;
 		&lt;input type=&quot;button&quot; id=&quot;saveButton&quot; class=&quot;largeButton&quot; value=&quot;&#30331;&#37682;&quot;/&gt;
-		&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;/&gt;
 		&lt;input type=&quot;button&quot; id=&quot;deleteButton&quot; class=&quot;largeButton&quot; value=&quot;&#21066;&#38500;&quot;/&gt;
 		&lt;input type=&quot;button&quot; id=&quot;backButton&quot; class=&quot;largeButton&quot; value=&quot;&#25147;&#12427;&quot;/&gt;
 		<b>&lt;input type=&quot;button&quot; id=&quot;printButton&quot; class=&quot;largeButton&quot; value=&quot;&#21360;&#21047;&quot;/&gt;</b>
@@ -1037,7 +1036,7 @@ class SampleEditForm extends EditForm {
 		<p>
 			&lt;select&gt;タグの選択肢をデータベースから取得し設定する手法は一般的なものです。
 			しかし、これをやろうとすると結構面倒なコーディングが必要になります。
-			dataforms2.jarではSelectFieldクラスが用意されており、これから派生したクラスを使用することにより、
+			dataforms3.jarではSelectFieldクラスが用意されており、これから派生したクラスを使用することにより、
 			簡単にテータベースから選択肢を取得することがてきます。
 		</p>
 		<p>
@@ -1065,7 +1064,7 @@ class SampleEditForm extends EditForm {
 
 		<p class="topic">
 			列挙型関連テーブルの言語指定は、デフォルト言語(default)と日本語(ja)が指定できるようになっています。
-			別の言語を追加したい場合、web.xmlのsupport-languageパラメータに言語コードを追加してください。
+			別の言語を追加したい場合、dataforms.conf.jsoncのapplication.languageListパラメータに言語コードを追加してください。
 		</p>
 		<h3>テーブル構造の更新</h3>
 		<p>
@@ -1093,9 +1092,9 @@ class SampleEditForm extends EditForm {
 		<div class="filecaption">SampleSelectFieldに列挙型コードを指定</div>
 		<div class="wrappre">
 			<pre>
-package sample.field;
+package jp.dataforms.sample.edittable.field;
 
-import dataforms.field.common.EnumOptionSingleSelectField;
+import jp.dataforms.fw.field.common.EnumOptionSingleSelectField;
 
 
 /**
