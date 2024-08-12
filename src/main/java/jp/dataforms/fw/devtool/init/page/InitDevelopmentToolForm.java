@@ -272,6 +272,8 @@ public class InitDevelopmentToolForm extends EditForm {
 	private void copyApacheFopXconf(final String webSrcPath) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String conf = util.getFopXconf();
+		File fopdir = new File(webSrcPath + "/WEB-INF/apachefop");
+		fopdir.mkdirs();
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/apachefop/fop.xconf", conf, "utf-8");
 	}
 	
