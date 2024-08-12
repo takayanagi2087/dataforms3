@@ -719,6 +719,20 @@ public class ConfUtil {
 	}
 	
 	/**
+	 * デフォルトのweb.xmlを取得します。
+	 * @return web.xmlの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getFopXconf() throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/fop.xconf");
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("*** デフォルトfop.xconf = \n" + ret);
+		return ret;
+	}
+	
+
+	/**
 	 * Confをコピーします。
 	 * @param src コピー元。
 	 * @param dst コピー先。

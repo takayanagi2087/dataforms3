@@ -263,6 +263,18 @@ public class InitDevelopmentToolForm extends EditForm {
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/dataforms.conf.jsonc", conf, "utf-8");
 	}
 	
+	
+	/**
+	 * ApacheFopの設定ファイルをコピーします。
+	 * @param webSrcPath Webソースのパス。
+	 * @throws Exception 例外。
+	 */
+	private void copyApacheFopXconf(final String webSrcPath) throws Exception {
+		ConfUtil util = new ConfUtil();
+		String conf = util.getFopXconf();
+		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/apachefop/fop.xconf", conf, "utf-8");
+	}
+	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 		String javaSrcPath = (String) data.get(ID_JAVA_SRC_PATH);
@@ -278,6 +290,9 @@ public class InitDevelopmentToolForm extends EditForm {
 		this.copyLog4j2XML(javaSrcPath);
 		this.copyContextXML(webSrcPath, dataSource, derbyDbPath);
 		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource);
+
+		this.copyApacheFopXconf(webSrcPath);
+
 	}
 	
 	@Override
