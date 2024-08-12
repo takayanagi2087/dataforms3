@@ -18,6 +18,12 @@
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
 	</properties>
+	<repositories>
+		<repository>
+			<id>jp.dataforms</id>
+			<url>https://www.dataforms.jp/mvn/repository</url>
+		</repository>
+	</repositories>
 	<!-- デプロイ先の設定 -->
 	<distributionManagement>
 		<repository>
@@ -150,8 +156,11 @@
 			<artifactId>webauthn4j-core</artifactId>
 			<version>0.24.0.RELEASE</version>
 		</dependency>
-
-
+		<dependency>
+		    <groupId>jp.dataforms</groupId>
+		    <artifactId>ExcelToXSLFO</artifactId>
+		    <version>1.03</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
