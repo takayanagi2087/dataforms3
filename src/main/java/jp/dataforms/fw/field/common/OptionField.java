@@ -21,6 +21,26 @@ public interface OptionField<T> {
 	 * @param value 値。
 	 * @return 名称。
 	 */
+	default String getOptionText(final Object value) {
+		String ret = null;
+		if (this.getOptionList() != null) {
+			if (value != null) {
+				for (Map<String, Object> m: this.getOptionList()) {
+					SelectField.OptionEntity e = new SelectField.OptionEntity(m);
+					if (value.equals(e.getValue())) {
+						ret = e.getName();
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * オプションの値から名称を取得します。
+	 * @param value 値。
+	 * @return 名称。
+	 */
 	default String getOptionName(final T value) {
 		String ret = null;
 		if (this.getOptionList() != null) {

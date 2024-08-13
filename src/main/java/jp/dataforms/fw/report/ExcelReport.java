@@ -43,6 +43,7 @@ import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.common.OptionField;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MapUtil;
@@ -944,6 +945,12 @@ public class ExcelReport extends Report {
 			Row r = sheet.getRow(baseRow + p.getRow());
 			Cell c = r.getCell(p.getCol());
 			Object obj = MapUtil.getValue(field.getId(), data);
+			if (obj != null) {
+				if (field instanceof OptionField) {
+					OptionField<?> sf = (OptionField<?>) field;
+					obj = sf.getOptionText(obj);
+				}
+			}
 			this.setCellValue(c, obj, p);
 		}
 	}
