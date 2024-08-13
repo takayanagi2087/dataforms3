@@ -55,7 +55,7 @@ public class UserDao extends Dao {
 		List<Map<String, Object>> list = dao.getTypeList("userAttribute", "default");
 		for (Map<String, Object> m: list) {
 			SelectField.OptionEntity e = new SelectField.OptionEntity(m);
-			ret.add(e.getValue());
+			ret.add((String) e.getValue());
 		}
 
 		return ret;

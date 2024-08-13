@@ -1,5 +1,7 @@
 package jp.dataforms.fw.field.common;
 
+import java.util.Map;
+
 import jp.dataforms.fw.field.base.Field;
 
 /**
@@ -72,6 +74,47 @@ public class SingleSelectField<TYPE> extends SelectField<TYPE> {
 	@Override
 	public void setClientValue(final Object v) {
 		this.setValue((TYPE) v);
+	}
+
+	/**
+	 * オプションの値から名称を取得します。
+	 * @param value 値。
+	 * @return 名称。
+	 */
+	public String getOptionName(final TYPE value) {
+		String ret = null;
+		if (this.getOptionList() != null) {
+			if (value != null) {
+				for (Map<String, Object> m: this.getOptionList()) {
+					SelectField.OptionEntity e = new SelectField.OptionEntity(m);
+					if (value.equals(e.getValue())) {
+						ret = e.getName();
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * オプションの名前から値を取得します。
+	 * @param name 名前。
+	 * @return 名称。
+	 */
+	@SuppressWarnings("unchecked")
+	public TYPE getOptionValue(final String name) {
+		TYPE ret = null;
+		if (this.getOptionList() != null) {
+			if (name != null) {
+				for (Map<String, Object> m: this.getOptionList()) {
+					SelectField.OptionEntity e = new SelectField.OptionEntity(m);
+					if (name.equals(e.getName())) {
+						ret = (TYPE) e.getValue();
+					}
+				}
+			}
+		}
+		return ret;
 	}
 
 }

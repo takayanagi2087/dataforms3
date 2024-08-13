@@ -50,8 +50,8 @@ public abstract class SelectField<TYPE> extends Field<TYPE> {
 		 * 値を取得します。
 		 * @return 値。
 		 */
-		public String getValue() {
-			return (String) this.getMap().get(ID_VALUE);
+		public Object getValue() {
+			return (Object) this.getMap().get(ID_VALUE);
 		}
 
 		/**
@@ -154,40 +154,5 @@ public abstract class SelectField<TYPE> extends Field<TYPE> {
 		return ret;
 	}
 
-	/**
-	 * オプションの値から名称を取得します。
-	 * @param value 値。
-	 * @return 名称。
-	 */
-	public String getOptionName(final String value) {
-		String ret = null;
-		if (this.optionList != null) {
-			for (Map<String, Object> m: this.optionList) {
-				SelectField.OptionEntity e = new SelectField.OptionEntity(m);
-				if (value.equals(e.getValue())) {
-					ret = e.getName();
-				}
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * オプションの名前から値を取得します。
-	 * @param name 名前。
-	 * @return 名称。
-	 */
-	public String getOptionValue(final String name) {
-		String ret = null;
-		if (this.optionList != null) {
-			for (Map<String, Object> m: this.optionList) {
-				SelectField.OptionEntity e = new SelectField.OptionEntity(m);
-				if (name.equals(e.getName())) {
-					ret = e.getValue();
-				}
-			}
-		}
-		return ret;
-	}
 
 }

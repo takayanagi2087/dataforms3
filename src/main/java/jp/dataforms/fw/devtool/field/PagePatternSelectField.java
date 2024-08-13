@@ -41,7 +41,7 @@ public class PagePatternSelectField extends PropertiesSingleSelectField {
 		List<Map<String, Object>> options = MessagesUtil.getSelectFieldOption(page, KEY);
 		for (Map<String, Object> m : options) {
 			SelectField.OptionEntity e = new SelectField.OptionEntity(m);
-			String v = e.getValue();
+			String v = (String) e.getValue();
 			if (v.length() == 5) {
 				if (qf.charAt(0) == v.charAt(2)
 					&& qrf.charAt(0) == v.charAt(3)
