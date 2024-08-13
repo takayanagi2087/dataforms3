@@ -5,9 +5,9 @@ import java.util.Map;
 
 /**
  * 選択オプションを持つフィールド。
- * @param <TYPE> フィールドのデータ型。
+ * @param <T> フィールドのデータ型。
  */
-public interface OptionField<TYPE> {
+public interface OptionField<T> {
 
 	/**
 	 * 選択肢のリストを取得します。
@@ -21,7 +21,7 @@ public interface OptionField<TYPE> {
 	 * @param value 値。
 	 * @return 名称。
 	 */
-	default String getOptionName(final TYPE value) {
+	default String getOptionName(final T value) {
 		String ret = null;
 		if (this.getOptionList() != null) {
 			if (value != null) {
@@ -42,14 +42,14 @@ public interface OptionField<TYPE> {
 	 * @return 名称。
 	 */
 	@SuppressWarnings("unchecked")
-	default TYPE getOptionValue(final String name) {
-		TYPE ret = null;
+	default T getOptionValue(final String name) {
+		T ret = null;
 		if (this.getOptionList() != null) {
 			if (name != null) {
 				for (Map<String, Object> m: this.getOptionList()) {
 					SelectField.OptionEntity e = new SelectField.OptionEntity(m);
 					if (name.equals(e.getName())) {
-						ret = (TYPE) e.getValue();
+						ret = (T) e.getValue();
 					}
 				}
 			}
