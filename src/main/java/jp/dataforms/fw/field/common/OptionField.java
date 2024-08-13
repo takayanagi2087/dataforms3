@@ -15,6 +15,11 @@ public interface OptionField<T> {
 	 */
 	List<Map<String, Object>> getOptionList();
 
+	/**
+	 * 初期化処理を行います。
+	 * @throws Exception 例外。
+	 */
+	void init() throws Exception;
 	
 	/**
 	 * オプションの値から名称を取得します。

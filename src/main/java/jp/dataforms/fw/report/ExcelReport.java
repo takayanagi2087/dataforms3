@@ -948,6 +948,7 @@ public class ExcelReport extends Report {
 			if (obj != null) {
 				if (field instanceof OptionField) {
 					OptionField<?> sf = (OptionField<?>) field;
+					sf.init();
 					obj = sf.getOptionText(obj);
 				}
 			}
