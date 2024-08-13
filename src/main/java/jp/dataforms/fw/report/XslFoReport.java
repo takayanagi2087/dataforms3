@@ -46,6 +46,7 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.common.ImageField;
+import jp.dataforms.fw.field.common.OptionField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.MapUtil;
 
@@ -245,8 +246,14 @@ public class XslFoReport extends Report {
 				ImageData img = (ImageData) obj;
 				cv = this.getImageTag(img);
 			} else {
-				field.setValueObject(obj);
-				cv = field.getClientValue();
+				if (field instanceof OptionField) {
+					OptionField<?> sf = (OptionField<?>) field;
+					sf.init();
+					cv = sf.getOptionText(obj);
+				} else {
+					field.setValueObject(obj);
+					cv = field.getClientValue();
+				}
 				if (cv instanceof String) {
 					String txt = StringEscapeUtils.unescapeHtml4((String) cv);
 					String id = field.getId().replaceAll("\\[[0-9]+\\]", "[0]");
