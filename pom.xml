@@ -94,8 +94,7 @@
 			<version>1.9.4</version>
 		</dependency>
 		<!-- LOG出力ライブラリ -->
-		<!--
-		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
