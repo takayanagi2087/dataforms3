@@ -67,13 +67,6 @@
 		// サーバ毎にアプリの設定を変更する場合、その設定ファイルのパスを指定します。
 		// , "serverConfigFile":"/etc/dataforms/dataformsConf.jsonc"
 		// ----------------------------------
-		// このライブラリはサーバ側の処理でdataforms3.jar中のWEBリソース(html,css,jsファイル)をアクセスしています。
-		// dataforms3.jarのMETA-INF/resources中のファイルはhttp経由で取得しているため、このパラメータで指定したURLを使用してアクセスします。
-		// 以下のURLが指定されていない場合、リクエストされたURLをそのまま使用してアクセスします。
-		// そのためApacheを経由しSSLを使用した場合等は、サーバー側のWEBリソースアクセスもApacheのSSL経由になってしまい効率は良くありません。
-		// SSLを使用する場合はアプリケーションサーバのhttpポートを指定したURLを指定してください。
-		// , "webResourceUrl": "http://localhost:8080"
-		// ----------------------------------
 		// クライアントログレベルを指定します。
 	 	// javascriptでのコンソール出力はconsoleではなくloggerを使用してください。
 	 	// loggerは基本的にconsoleをコピーしたものですが、以下の設定に応じて、
@@ -185,7 +178,7 @@
 		, "uploadDataFolder": "./uploadData"
 		// ----------------------------------
 		//	可逆パスワード:
-		//	cryptConfigで設定したdefaultPasswordを使用してパスワードを暗号化
+		//	REVERSIBLE_PASSWORD : 可逆パスワード、IRREVERSIBLE_PASSWORD : 不可逆パスワード 
 		, "passwordType": "REVERSIBLE_PASSWORD"
 		// ----------------------------------
 		//	ハッシュアルゴリズム
