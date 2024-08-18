@@ -123,7 +123,9 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 				logger.debug(() -> "doFilter filename=" + fname);
 				// queryStringにskip=trueが指定された場合、filterしない。
 				logger.debug("fname=" + fname);
-				if (fname.indexOf("/jslib/") < 0) {
+				if (fname.indexOf("/jslib/") < 0 
+					&& fname.indexOf("/doc/javadoc/") < 0
+					&& fname.indexOf("/doc/jsdoc/") < 0) {
 					String contents = this.readJs(sreq, fname);
 					if (contents != null) {
 						contents = this.rewriteImport(sreq, fname, contents);

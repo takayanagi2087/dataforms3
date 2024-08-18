@@ -217,7 +217,7 @@
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
 					<docencoding>UTF-8</docencoding>
-					<reportOutputDirectory>src/main/java/META-INF/resources/dataforms/doc</reportOutputDirectory>
+					<reportOutputDirectory>src/main/java/META-INF/resources/doc</reportOutputDirectory>
 					<destDir>javadoc</destDir>
 				</configuration>
 				<executions>
@@ -242,7 +242,7 @@
 							<executable>${env.JSDOC}</executable>
 							<arguments>
 								<argument>-d</argument>
-								<argument>src/main/java/META-INF/resources/dataforms/doc/jsdoc</argument>
+								<argument>src/main/java/META-INF/resources/doc/jsdoc</argument>
 								<argument>-r</argument>
 								<argument>src/main/java/META-INF/resources/dataforms</argument>
 							</arguments>
