@@ -80,6 +80,7 @@ public class DataFormsFilter {
 	 * 指定ファイルのタイムスタンプを取得します。
 	 * @param path 取得するファイルのパス。
 	 * @return タイムスタンプ。
+	 * @throws Exception 例外。
 	 */
 	protected Long getLastUpdate(final String path) throws Exception {
 		Long ret =  WebResourceUtil.getLastUpdateLong(path);

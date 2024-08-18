@@ -30,7 +30,7 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 /**
  * 各種Webリソース読み込みユーティリティ。
  */
-public class WebResourceUtil {
+public final class WebResourceUtil {
 	/**
 	 * Logger.
 	 */
@@ -51,6 +51,13 @@ public class WebResourceUtil {
 	 */
 	private static Map<String, Long> webResourceTimestampLongCache = Collections.synchronizedMap(new HashMap<String, Long>());
 
+	/**
+	 * コンストラクタ。
+	 */
+	private WebResourceUtil() {
+		
+	}
+	
 	/**
 	 * 実ファイルを読み込みます。
 	 * @param rpath 実ファイルのパス。

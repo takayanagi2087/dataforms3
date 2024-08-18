@@ -206,6 +206,8 @@
 				</executions>
 			</plugin>
 			<!-- javadocの作成 -->
+			<!-- 
+				
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -229,12 +231,14 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>3.1.0</version>
 				<executions>
 					<!-- Jsdoc作成 -->
+					<!--
 					<execution>
 						<id>generate jsdoc</id>
 						<phase>prepare-package</phase>
@@ -251,6 +255,8 @@
 							<goal>exec</goal>
 						</goals>
 					</execution>
+						
+					-->
 					<!-- バージョン情報ファイルの作成 -->
 					<execution>
 						<id>generate-dataforms-mf</id>
