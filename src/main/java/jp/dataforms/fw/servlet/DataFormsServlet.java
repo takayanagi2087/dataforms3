@@ -698,7 +698,6 @@ public class DataFormsServlet extends HttpServlet {
 	 * 指定したクラスのインスタンスを作成します。
 	 * @param classname クラス名。
 	 * @return クラスのインスタンス。
-	 * @throws Exception 例外。
 	 */
 	private WebEntryPoint newWebEntryPointInstance(final String classname) throws Exception {
 		@SuppressWarnings("unchecked")
@@ -735,15 +734,9 @@ public class DataFormsServlet extends HttpServlet {
 					return ep;
 				}
 			} catch (ClassNotFoundException ex) {
-				logger.error("ex=" + ex.getMessage(), ex);
+				logger.info("ClassNotFoundException:" + ex.getMessage());
 			}
-		} /*else {
-			ConfigErrorPage page = new ConfigErrorPage(DataFormsServlet.configStatus);
-			page.setWebEntryPoint(page);
-			page.setRequest(req);
-			page.setPageExt(pageext);
-			return page;
-		}*/
+		}
 		return null;
 	}
 

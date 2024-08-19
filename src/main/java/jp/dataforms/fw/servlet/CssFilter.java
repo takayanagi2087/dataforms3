@@ -195,7 +195,9 @@ public class CssFilter extends DataFormsFilter implements Filter {
 					sresp.setContentType("text/css; charset=utf-8");
 					Long ts = this.getLastUpdate(fname);
 					logger.debug("fname=" + fname + ", ts=" + ts);
-					sresp.setDateHeader("Last-Modified", ts);
+					if (ts != null) {
+						sresp.setDateHeader("Last-Modified", ts);
+					}
 					try (PrintWriter out = resp.getWriter()) {
 						out.print(contents);
 					}
