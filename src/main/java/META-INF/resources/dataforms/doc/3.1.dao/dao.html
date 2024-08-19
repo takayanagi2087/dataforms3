@@ -8,65 +8,68 @@
 	<body>
 		<h1><span>3.1.</span>Table,Query,Dao</h1>
 		<p>
-			この章ではdataforms.daoパッケージのTable,Query,Daoクラスについて解説していきます。
+			この章ではjp.dataforms.fw.daoパッケージのTable, Query, Daoクラスについて解説していきます。
 			Tableクラスはテータベース中のテーブルの構造を定義します。
 			QueryクラスはSQLのselect文に対応するクラスです。
 			複数のテーブルクラスを結合した問合せクラスを作成することができるようになっています。
 			DaoクラスはTableクラスのレコード追加・更新・削除、Queryクラスで定義した問合せを実行する機能を持っています。
-			dataforms.daoパッケージは複数のデータベースサーバ(Apache Derby,PostgreSQL,MySQL,Oracle)に対応しています。
+			jp.dataforms.fw.daoパッケージは複数のデータベースサーバ(Apache Derby, PostgreSQL, MySQL, Oracle, Microsoft SQL Server)に対応しています。
 			各データベースのサーバのSQLには方言があり、直接データベースをアクセスする場合その文法の違いを考慮してSQLを記述する必要がありました。
-			dataforms2.jarでは、これらのJavaクラスを使用することによって、データベースに依存するコードを排除することができます。
+			dataforms3.jarでは、これらのJavaクラスを使用することによって、データベースに依存するコードを排除することができます。
 			実際「単体テストまでは環境構築が簡単なApache Derbyで作業し、結合テスト以降はPostgreSQLサーバを用意して実行」という開発を問題なく進めた実績があります。
 		</p>
 		<h2>Tomcatのデータベース接続設定</h2>
 		<p>
-			テータベースの接続設定はTomcat等のアプリケーションサーバ側で行います。
-			Tomcat9を例に設定のポイントを説明します。
+			テータベースの接続設定はTomcatのJNDIデータソース設定で行います。
 		</p>
 		<h3>データベースの接続設定の記述場所</h3>
 		<p>
-			df2blank_xxx.warをインポートしたプロジェクトでは、WebContent/META-INF/content.xmlというファイルが存在しています。
-			このファイルにデータベースの接続設定が入っています。
-			WebContent/META-INF/content.xmlはwarファイルの中に含まれているファイルです。
-			そのためWebアプリケーションにDBへの接続設定を含めてリリースする場合に使用します。
-			runwar等を使用してスタンドアロンアプリケーションのように使用する場合、
-			WebContent/META-INF/content.xmlを使用します。
+			プロジェクトの初期化画面を実行すると、src/main/webapp/META-INF/content.xmlが作成されます。
+			このファイルにはTomcatのJNDIデータソース等の設定が記述されています。
+			このファイルは*.warファイル中に含まれる設定ファイルです。
+			Webアプリケーションがデータベースの接続先を固定する場合は、このファイルにJNDIデータソースの設定を記述します。
+			embsv.jarで処理した*.warファイルでWebアプリケーションを運用する場合はこの設定のまま開発します。
 		</p>
 		<p>
-			Tomcat9ではデータベースの接続設定を$CATALINA_HOME/conf/context.xmlにも記述することができます。
-			(Eclipse上のTomcatの場合"Servers/ローカルホスト の Tomcat9 (Java11)-config/context.xml"がこれに当たります。)
-			WebContent/META-INF/content.xmlデータベースの接続設定を削除し、$CATALINA_HOME/conf/context.xmlにデータベース接続設定を移動しても同様に動作します。
+			Tomcatではデータベースの接続設定を&lt;TOMCATのインストールディレクトリ&gt;/conf/context.xmlにも記述することができます。
+			(Eclipse上のTomcatの場合"Servers/localhost の Tomcat10 (Java21)-config/context.xml"がこれに当たります。)
+			src/main/webapp/META-INF/content.xmlデータベースの接続設定を削除し、&lt;TOMCATのインストールディレクトリ&gt;/conf/context.xmlにデータベース接続設定を移動しても同様に動作します。
 			この状態で*.warファイルを作成すると、*.warファイル中に接続設定は存在しないため、Tomcatのデータベース接続設定が使用されます。
 			Eclipse上のTomcatはテスト用のデータベースに接続し、本番用サーバ上のTomcatには本番用データベースに接続するように設定しておきます。
-			こうしておくと、Eclipseで*.warファイルを作成し本番用サーバの$CATALINA_HOME/webappsにコピーするだけで、本番環境へのデプロイが完了します。
+			こうしておくと、Eclipseで*.warファイルを作成し本番用サーバの&lt;TOMCATのインストールディレクトリ&gt;/webappsにコピーするだけで、本番環境へのデプロイが完了します。
 		</p>
 		<h3>データベース接続設定の記述内容</h3>
 		<p>
-			df2blank_xxx.war中のMETA-INF/context.xmlを以下に示します。
+			src/main/webapp/META-INF/content.xmlの内容を以下に示します。
 		</p>
 		<div class="filecaption">context.xmlの内容</div>
 		<div class="wrappre">
 			<pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE Context&gt;
-&lt;Context&gt;
-	&lt;!--
-		&#12513;&#12540;&#12523;&#36865;&#20449;&#27231;&#33021;&#12434;&#20351;&#29992;&#12377;&#12427;&#22580;&#21512;SMTP&#12469;&#12540;&#12496;&#12398;&#24773;&#22577;&#12434;&#36969;&#20999;&#12395;&#35373;&#23450;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
-	 --&gt;
-	&lt;!--
-	&lt;Resource name=&quot;mail/Session&quot; auth=&quot;Container&quot; type=&quot;javax.mail.Session&quot;
-		mail.smtp.host=&quot;localhost&quot; mail.smtp.port=&quot;25&quot; /&gt;
-	--&gt;
+&lt;!DOCTYPE Context&gt;&lt;Context addWebinfClassesResources=&quot;true&quot;&gt;
+	&lt;!-- &#12513;&#12540;&#12523;&#12475;&#12483;&#12471;&#12519;&#12531;&#35373;&#23450; --&gt;
+	&lt;Resource name=&quot;mail/Session&quot; auth=&quot;Container&quot;
+		type=&quot;jakarta.mail.Session&quot; mail.smtp.host=&quot;smtpserver&quot; /&gt;
+		
+	<b>&lt;!-- DB&#25509;&#32154;&#35373;&#23450; --&gt;
+	&lt;Resource auth=&quot;Container&quot;
+		driverClassName=&quot;org.apache.derby.jdbc.EmbeddedDriver&quot;
+		name=&quot;jdbc/sample&quot; type=&quot;javax.sql.DataSource&quot;
+		url=&quot;jdbc:derby:C:/eclipse/pleiades/workspace/sample/javadb;create=true&quot;
+		username=&quot;&quot; password=&quot;&quot; /&gt;</b>
+
 	&lt;!--
 		&#32068;&#12415;&#36796;&#12415;Apache derby&#29992;&#12398;&#25509;&#32154;&#35373;&#23450;
 		Apache derby&#12398;JDBC&#12489;&#12521;&#12452;&#12496;&#12399;&#21046;&#32004;&#21517;&#31216;&#12434;&#21462;&#24471;&#12377;&#12427;API&#12364;&#12354;&#12427;&#12383;&#12417;
 		duplicateErrorMessage&#12392;foreignKeyErrorMessage&#12398;&#35373;&#23450;&#12399;&#19981;&#35201;&#12290;
 	 --&gt;
+	 &lt;!--
 	&lt;Resource auth=&quot;Container&quot;
 		driverClassName=&quot;org.apache.derby.jdbc.EmbeddedDriver&quot;
 		name=&quot;jdbc/dfdb&quot; type=&quot;javax.sql.DataSource&quot;
-		url=&quot;jdbc:derby:./javadb/blankdb;create=true&quot;
+		url=&quot;jdbc:derby:/javadb/dfdbB;create=true&quot;
 		username=&quot;&quot; password=&quot;&quot; /&gt;
+	  --&gt;
 	&lt;!--
 		Apache derby&#12493;&#12483;&#12488;&#12527;&#12540;&#12463;&#12469;&#12540;&#12496;&#29992;&#12398;&#25509;&#32154;&#35373;&#23450;
 		Apache derby&#12398;JDBC&#12489;&#12521;&#12452;&#12496;&#12399;&#21046;&#32004;&#21517;&#31216;&#12434;&#21462;&#24471;&#12377;&#12427;API&#12364;&#12354;&#12427;&#12383;&#12417;
@@ -75,7 +78,7 @@
 	&lt;!--
 	&lt;Resource auth=&quot;Container&quot; driverClassName=&quot;org.apache.derby.jdbc.ClientDriver&quot;
 		maxActive=&quot;8&quot; maxIdle=&quot;4&quot; name=&quot;jdbc/dfdb&quot; type=&quot;javax.sql.DataSource&quot;
-		url=&quot;jdbc:derby://localhost:1527/javadb/blankdb;create=true&quot; username=&quot;APP&quot;
+		url=&quot;jdbc:derby://localhost:1527/javadb/blank;create=true&quot; username=&quot;APP&quot;
 		password=&quot;password&quot; /&gt;
 	--&gt;
 
@@ -88,12 +91,11 @@
 	&lt;!--
 	&lt;Resource name=&quot;jdbc/dfdb&quot; type=&quot;javax.sql.DataSource&quot;
 		auth=&quot;Container&quot; driverClassName=&quot;org.postgresql.Driver&quot;
-		url=&quot;jdbc:postgresql://192.168.56.102:5432/blankdb&quot; username=&quot;postgres&quot;
+		url=&quot;jdbc:postgresql://192.168.56.10:5432/dfdb&quot; username=&quot;postgres&quot;
 		password=&quot;&quot; /&gt;
 	&lt;Environment name=&quot;duplicateErrorMessage&quot; value=&quot;&#19968;&#24847;&#24615;&#21046;&#32004;&quot;(.+?)&quot;&#12395;&#36949;&#21453;&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
 	&lt;Environment name=&quot;foreignKeyErrorMessage&quot; value=&quot;&#22806;&#37096;&#12461;&#12540;&#21046;&#32004;&quot;(.+?)&quot;&#12395;&#36949;&#21453;&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
-	--&gt;
-
+	 --&gt;
 	&lt;!--
 		MariaDB&#29992;&#25509;&#32154;&#35373;&#23450;
 		MariaDB&#29992;&#12398;jdbc&#12489;&#12521;&#12452;&#12496;&#12540;&#12434;&#20351;&#29992;&#12377;&#12427;&#22580;&#21512;&#12398;&#35373;&#23450;&#12391;&#12377;&#12290;
@@ -103,12 +105,11 @@
 	 --&gt;
 	&lt;!--
 	&lt;Resource name=&quot;jdbc/dfdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot;
-		username=&quot;dfuser&quot; password=&quot;password&quot; driverClassName=&quot;org.mariadb.jdbc.Driver&quot;
-		url=&quot;jdbc:mysql://192.168.56.102/blankdb?useOldAliasMetadataBehavior=true&quot; /&gt;
+		username=&quot;dfuser&quot; password=&quot;&quot; driverClassName=&quot;org.mariadb.jdbc.Driver&quot;
+		url=&quot;jdbc:mariadb://192.168.56.10/dfdb?user=dfuser&quot; /&gt;
 	&lt;Environment name=&quot;duplicateErrorMessage&quot; value=&quot;for key '(.+?)'$&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
 	&lt;Environment name=&quot;foreignKeyErrorMessage&quot; value=&quot;CONSTRAINT `(.+?)` FOREIGN KEY&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
-	--&gt;
-
+	 --&gt;
 	&lt;!--
 		MySQL&#29992;&#25509;&#32154;&#35373;&#23450;
 		MySQL&#29992;&#12398;jdbc&#12489;&#12521;&#12452;&#12496;&#12540;&#12434;&#20351;&#29992;&#12377;&#12427;&#22580;&#21512;&#12398;&#35373;&#23450;&#12391;&#12377;&#12290;
@@ -118,12 +119,11 @@
 	--&gt;
 	&lt;!--
 	&lt;Resource name=&quot;jdbc/dfdb&quot; auth=&quot;Container&quot; type=&quot;javax.sql.DataSource&quot;
-		username=&quot;dfuser&quot; password=&quot;password&quot; driverClassName=&quot;com.mysql.jdbc.Driver&quot;
-		url=&quot;jdbc:mysql://192.168.56.102/blankdb?generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8&quot; /&gt;
+		username=&quot;dfuser&quot; password=&quot;&quot; driverClassName=&quot;com.mysql.jdbc.Driver&quot;
+		url=&quot;jdbc:mysql://192.168.56.10/dfdb?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8&quot; /&gt;
 	&lt;Environment name=&quot;duplicateErrorMessage&quot; value=&quot;for key '(.+?)'$&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
 	&lt;Environment name=&quot;foreignKeyErrorMessage&quot; value=&quot;CONSTRAINT `(.+?)` FOREIGN KEY&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
-	--&gt;
-
+	 --&gt;
 	&lt;!--
 		ORACLE&#29992;&#12398;&#25509;&#32154;&#35373;&#23450;
 		&#21046;&#32004;&#36949;&#21453;&#12398;&#22580;&#21512;&#12289;&#21046;&#32004;&#21517;&#12399;&#12456;&#12521;&#12540;&#12513;&#12483;&#12475;&#12540;&#12472;&#12363;&#12425;&#21462;&#24471;&#12377;&#12427;&#12398;&#12391;&#12289;
@@ -133,18 +133,34 @@
 	&lt;!--
 	&lt;Resource name=&quot;jdbc/dfdb&quot; auth=&quot;Container&quot;
 		type=&quot;javax.sql.DataSource&quot; driverClassName=&quot;oracle.jdbc.OracleDriver&quot;
-		url=&quot;jdbc:oracle:thin:@192.168.56.102:1521:xe&quot;
+		url=&quot;jdbc:oracle:thin:@192.168.56.10:1521/xepdb1&quot;
 		username=&quot;dfuser&quot; password=&quot;password&quot;/&gt;
 	&lt;Environment name=&quot;duplicateErrorMessage&quot; value=&quot;constraint \(.+?\.(.+?)\) violated&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
 	&lt;Environment name=&quot;foreignKeyErrorMessage&quot; value=&quot;constraint \(.+?\.(.+?)\) violated &quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
+	 --&gt;
+	&lt;!--
+		Microsoft SQL Server &#29992;&#12398;&#25509;&#32154;&#35373;&#23450;
+		&#21046;&#32004;&#36949;&#21453;&#12398;&#22580;&#21512;&#12289;&#21046;&#32004;&#21517;&#12399;&#12456;&#12521;&#12540;&#12513;&#12483;&#12475;&#12540;&#12472;&#12363;&#12425;&#21462;&#24471;&#12377;&#12427;&#12398;&#12391;&#12289;
+		&#19968;&#24847;&#21046;&#32004;&#21517;&#21462;&#24471;&#29992;&#12398;&#27491;&#35215;&#34920;&#29694;&#12434;duplicateErrorMessage&#12289;
+		&#22806;&#37096;&#12461;&#12540;&#21046;&#32004;&#29992;&#21517;&#21462;&#24471;&#29992;&#12398;&#27491;&#35215;&#34920;&#29694;&#12434;foreignKeyErrorMessage&#12395;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
 	--&gt;
+	&lt;!--
+	&lt;Resource name=&quot;jdbc/dfdb&quot; auth=&quot;Container&quot;
+		type=&quot;javax.sql.DataSource&quot;
+		driverClassName=&quot;com.microsoft.sqlserver.jdbc.SQLServerDriver&quot;
+		factory=&quot;org.apache.tomcat.jdbc.pool.DataSourceFactory&quot;
+		url=&quot;jdbc:sqlserver://192.168.56.10:1433;databaseName=dfdb;user=dfuser;password=P@sow0rd;encrypt=false;&quot;
+		maxActive=&quot;20&quot; maxIdle=&quot;10&quot; maxWait=&quot;-1&quot; /&gt;
+	&lt;Environment name=&quot;duplicateErrorMessage&quot; value=&quot;&#19968;&#24847;&#12452;&#12531;&#12487;&#12483;&#12463;&#12473; '(.+?)' &#12434;&#21547;&#12416;&#12458;&#12502;&#12472;&#12455;&#12463;&#12488;&quot;  type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
+	&lt;Environment name=&quot;foreignKeyErrorMessage&quot; value=&quot;&#21046;&#32004; &quot;(.+?)&quot; &#12392;&#31478;&#21512;&#12375;&#12390;&#12356;&#12414;&#12377;&#12290;&quot; type=&quot;java.lang.String&quot; override=&quot;false&quot;/&gt;
+	 --&gt;
 &lt;/Context&gt;
-			</pre>
+				</pre>
 		</div>
 		<p>
 			デフォルト設定ではApache derbyの組み込みドライバの設定が有効になっており、
-			PostgreSQL,MySQL(MariaDB),Oracleの設定例はコメントで記述されています。
-			接続するデータベースに対応する接続設定を有効にしてください。
+			PostgreSQL, MySQL(MariaDB), Oracle, Microsoft SQL Serverの設定例はコメントで記述されています。
+			Apache derby以外のデータベースを使用する場合は、使用したいデータベースの接続設定を有効にしてください。
 		</p>
 		<p>
 			Apache derbyのJDBCドライバは制約違反発生時の制約名称を取得するAPIを持っているため、追加設定は必要ありません。
@@ -154,28 +170,41 @@
 			このメッセージはOSの言語設定やDBサーバのバージョンによって異なる可能性があるため、
 			制約名が取得できない場合は適切に変更する必要があります。
 		</p>
-		<h3>web.xmlの設定</h3>
+		<h3>dataforms.conf.jsoncの設定</h3>
 		<p>
-			context.xmlに記述したJNDIデータソースの名称は"jdbc/dfdb"となっています。
-			これを変更した場合、WebContent/WEB-INF/web.xmlの以下の部分を修正する必要があります。
+			context.xmlに記述したJNDIデータソースの名称は"jdbc/sample"となっています。
+			この名称はプロジェクトの初期化画面で設定したものです。
+			このデータソースの名称は/WEB-INF/dataforms.conf.jsoncに記載されています。
 		</p>
-		<div class="filecaption">web.xmlの内容</div>
+		<div class="filecaption">/WEB-INF/dataforms.conf.jsonc</div>
 		<div class="wrappre">
 			<pre>
-	&lt;!--
-	JNDI&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#12398;lookup&#12395;&#12399;jndi-prefix&#12392;data-source&#12434;&#32080;&#21512;&#12375;&#12383;&#25991;&#23383;&#21015;&#12391;&#34892;&#12356;&#12414;&#12377;&#12290;
-	WebLogic&#12391;&#23455;&#34892;&#12377;&#12427;&#22580;&#21512;&#12399;jndi-prefix&#12395;&#12399;&#31354;&#30333;&#25991;&#23383;&#12434;&#25351;&#23450;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
-	 --&gt;
-	&lt;!-- JNDI&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#12398;&#21069;&#12395;&#12388;&#12369;&#12427;&#25991;&#23383;&#21015; --&gt;
-	&lt;context-param&gt;
-		&lt;param-name&gt;jndi-prefix&lt;/param-name&gt;
-		&lt;param-value&gt;java:/comp/env/&lt;/param-value&gt;
-	&lt;/context-param&gt;
-	&lt;!-- &#20351;&#29992;&#12377;&#12427;JNDI&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#12434;&#25351;&#23450;&#12377;&#12427; --&gt;
-	&lt;context-param&gt;
-		&lt;param-name&gt;data-source&lt;/param-name&gt;
-		&lt;param-value&gt;jdbc/dfdb&lt;/param-value&gt;
-	&lt;/context-param&gt;
+{
+	
+	・・・
+	
+	// アプリケーション設定
+	, "application": {
+
+		・・・
+		
+		// ----------------------------------
+		// JNDI Data Source設定
+		, "jndiDataSource": {
+			// JNDIデータソースの前につける文字列 
+			"jndiPrefix": "java:/comp/env/"
+			// 使用するJNDIデータソースを指定する
+			, "dataSource": "jdbc/sample"
+		}
+
+		・・・
+		
+	}
+
+	・・・
+
+}
+
 			</pre>
 		</div>
 		<h2>Tableクラス</h2>
@@ -186,15 +215,16 @@
 		<div class="filecaption">開発ツールで作成したテーブルクラス</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
 import java.util.Map;
-import dataforms.dao.Table;
-import sample.field.SampleIdField;
-import sample.field.SampleTextField;
-import sample.field.SampleNumericField;
-import sample.field.SampleDateField;
-import sample.field.SampleSelectField;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.sample.edittable.field.SampleSelectField;
+import jp.dataforms.fw.util.NumberUtil;
+import jp.dataforms.sample.edittable.field.SampleTextField;
+import jp.dataforms.sample.edittable.field.SampleIdField;
+import jp.dataforms.sample.edittable.field.SampleNumericField;
+import jp.dataforms.sample.edittable.field.SampleDateField;
 
 
 /**
@@ -208,9 +238,9 @@ public class SampleTable extends Table {
 	public SampleTable() {
 		this.setAutoIncrementId(true);
 		this.setComment(&quot;&#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&quot;);
-		this.addPkField(new SampleIdField()); //&#12524;&#12467;&#12540;&#12489;ID
-		this.addField(new SampleTextField()); //&#12486;&#12461;&#12473;&#12488;
-		this.addField(new SampleNumericField()); //&#25968;&#20516;
+		this.addPkField(new SampleIdField()).setNotNull(true); //&#12524;&#12467;&#12540;&#12489;ID
+		this.addField(new SampleTextField()); //&#25991;&#23383;&#21015;
+		this.addField(new SampleNumericField()); //&#25968;&#23383;
 		this.addField(new SampleDateField()); //&#26085;&#20184;
 		this.addField(new SampleSelectField()); //&#12469;&#12531;&#12503;&#12523;&#36984;&#25246;&#32930;
 		this.addUpdateInfoFields();
@@ -225,12 +255,12 @@ public class SampleTable extends Table {
 	/**
 	 * Entity&#25805;&#20316;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
 	 */
-	public static class Entity extends dataforms.dao.Entity {
+	public static class Entity extends jp.dataforms.fw.dao.Entity {
 		/** &#12524;&#12467;&#12540;&#12489;ID&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
 		public static final String ID_SAMPLE_ID = &quot;sampleId&quot;;
-		/** &#12486;&#12461;&#12473;&#12488;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		/** &#25991;&#23383;&#21015;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
 		public static final String ID_SAMPLE_TEXT = &quot;sampleText&quot;;
-		/** &#25968;&#20516;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
+		/** &#25968;&#23383;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
 		public static final String ID_SAMPLE_NUMERIC = &quot;sampleNumeric&quot;;
 		/** &#26085;&#20184;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;ID&#12290; */
 		public static final String ID_SAMPLE_DATE = &quot;sampleDate&quot;;
@@ -255,7 +285,7 @@ public class SampleTable extends Table {
 		 * @return &#12524;&#12467;&#12540;&#12489;ID&#12290;
 		 */
 		public java.lang.Long getSampleId() {
-			return (java.lang.Long) this.getMap().get(Entity.ID_SAMPLE_ID);
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_SAMPLE_ID));
 		}
 
 		/**
@@ -267,32 +297,32 @@ public class SampleTable extends Table {
 		}
 
 		/**
-		 * &#12486;&#12461;&#12473;&#12488;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-		 * @return &#12486;&#12461;&#12473;&#12488;&#12290;
+		 * &#25991;&#23383;&#21015;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#25991;&#23383;&#21015;&#12290;
 		 */
 		public java.lang.String getSampleText() {
 			return (java.lang.String) this.getMap().get(Entity.ID_SAMPLE_TEXT);
 		}
 
 		/**
-		 * &#12486;&#12461;&#12473;&#12488;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
-		 * @param sampleText &#12486;&#12461;&#12473;&#12488;&#12290;
+		 * &#25991;&#23383;&#21015;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param sampleText &#25991;&#23383;&#21015;&#12290;
 		 */
 		public void setSampleText(final java.lang.String sampleText) {
 			this.getMap().put(Entity.ID_SAMPLE_TEXT, sampleText);
 		}
 
 		/**
-		 * &#25968;&#20516;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-		 * @return &#25968;&#20516;&#12290;
+		 * &#25968;&#23383;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+		 * @return &#25968;&#23383;&#12290;
 		 */
 		public java.math.BigDecimal getSampleNumeric() {
 			return (java.math.BigDecimal) this.getMap().get(Entity.ID_SAMPLE_NUMERIC);
 		}
 
 		/**
-		 * &#25968;&#20516;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
-		 * @param sampleNumeric &#25968;&#20516;&#12290;
+		 * &#25968;&#23383;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * @param sampleNumeric &#25968;&#23383;&#12290;
 		 */
 		public void setSampleNumeric(final java.math.BigDecimal sampleNumeric) {
 			this.getMap().put(Entity.ID_SAMPLE_NUMERIC, sampleNumeric);
@@ -332,6 +362,7 @@ public class SampleTable extends Table {
 
 
 	}
+
 	/**
 	 * &#12524;&#12467;&#12540;&#12489;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
 	 * @return &#12524;&#12467;&#12540;&#12489;ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
@@ -341,16 +372,16 @@ public class SampleTable extends Table {
 	}
 
 	/**
-	 * &#12486;&#12461;&#12473;&#12488;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-	 * @return &#12486;&#12461;&#12473;&#12488;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 * &#25991;&#23383;&#21015;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#25991;&#23383;&#21015;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
 	 */
 	public SampleTextField getSampleTextField() {
 		return (SampleTextField) this.getField(Entity.ID_SAMPLE_TEXT);
 	}
 
 	/**
-	 * &#25968;&#20516;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-	 * @return &#25968;&#20516;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 * &#25968;&#23383;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#25968;&#23383;&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
 	 */
 	public SampleNumericField getSampleNumericField() {
 		return (SampleNumericField) this.getField(Entity.ID_SAMPLE_NUMERIC);
@@ -371,13 +402,15 @@ public class SampleTable extends Table {
 	public SampleSelectField getSampleSelectField() {
 		return (SampleSelectField) this.getField(Entity.ID_SAMPLE_SELECT);
 	}
-}
 
+
+
+}
 			</pre>
 		</div>
 		<p>
 			テーブルクラスのコンストラクタで、テーブルの構造を定義しています。
-			基本的にdataforms2.jarではRecordIdFieldから派生したクラスをaddPkFieldメソッドで主キーとして設定します。
+			基本的にdataforms3.jarではRecordIdFieldから派生したクラスをaddPkFieldメソッドで主キーとして設定します。
 			主キー自動生成を設定するとthis.setAutoIncrementId(true);というコードが生成され、
 			レコード追加する際にシーケンス等を使用して自動的に主キーが生成されます。
 			通常のフィールドはaddFieldメソッドを使用してフィールドクラスを追加します。
@@ -402,167 +435,6 @@ SampleTextField textField1 = table.getSampleTextField();
 SampleTextField textField2 = (SampleTextField) this.getField(Entity.ID_SAMPLE_TEXT);
 			</pre>
 		</div>
-		<p>
-			getJoinConditionメソッドは他のテーブルとの結合条件を生成するためのメソッドです。
-			この結合条件の生成処理はXxxTableRelationクラスで行っており、
-			テーブルの結合条件はXxxTableRelationクラスに記述する必要があります。
-			XxxTableRelationクラスはXxxTableクラスが作成されるタイミングで作成されます。
-			その後開発ツールでXxxTableクラスのソースを更新するときには更新されることはありません。
-		</p>
-		<p>
-			以下に開発ツールで生成したSampleTableRelation.javaを示します。
-			このクラスではSampleTableにHogeTableをjoinした場合の条件式を記述します。
-		</p>
-		<p>
-			joinの際の条件式の設定は外部キーを定義する方法と、
-			外部キーは設定せずに条件式のみ設定する方法があります。
-		</p>
-		<p>
-			static {}でForeignKeyのインスタンスを追加することにより、外部キーを追加することができます。
-			外部キーを追加することにより自動的にjoinの際の条件式も生成されるようになります。
-			外部キーを追加した後、テーブル管理で該当テープを表示すると、構造の差分有と表示されます。
-			テーブル構造の更新を行うと、データベースに外部キーを作成することができます。
-		</p>
-		<p>
-			外部キーを使用しない結合条件を生成したい場合、getJoinConditionメソッドに条件作成処理を記述します。
-			以下の例ではHogeTableとの結合条件を生成する処理がコメントアウトされた状態で入っています。
-			この記述を参考に結合条件式の生成処理を作成してください。
-		</p>
-		<div class="filecaption">テーブル関連定義クラス</div>
-		<div class="wrappre">
-			<pre>
-package sample.dao;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import dataforms.dao.ForeignKey;
-import dataforms.dao.Table;
-import dataforms.dao.TableRelation;
-
-/**
- * SampleTableの関係を定義するクラスです。
- *
- */
-public class SampleTableRelation extends TableRelation {
-
-	/**
-	 * 外部キーリスト。
-	 */
-	private static List&lt;ForeignKey&gt; foreignKeyList = null;
-
-	/**
-	 * 外部キーリストの定義。
-	 * &lt;pre&gt;
-	 * この初期化処理で外部キーを定義することにより、自動的に外部キーが設定されます。
-	 * &lt;/pre&gt;
-	 */
-	static {
-		foreignKeyList = new ArrayList&lt;ForeignKey&gt;();
-		/*
-		 * 以下の定義を有効にすると外部キーHogeTableに対する外部キーを設定します。
-		 * この設定だけでHogeTableとの結合条件も生成されるようになります。
-		 */
-		// foreignKeyList.add(new ForeignKey("fkSampleTable01", SampleTable.Entity.ID_HOGE_ID, HogeTable.class));
-	}
-
-	@Override
-	public List&lt;ForeignKey&gt; getForeignKeyList() {
-		return foreignKeyList;
-	}
-
-	/**
-	 * コンストラクタ。
-	 * @param table 対象テーブル。
-	 */
-	public SampleTableRelation(final Table table) {
-		super(table);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getJoinCondition(final Table joinTable, final String alias) {
-		/*
-		 * 外部キーを設定せずに結合条件を生成する場合は以下を有効にします。
-		 */
-/*
-		if (joinTable instanceof HogeTable) {
-			return this.getTable().getLinkFieldCondition(HogeTable.Entity.ID_HOGE_ID, joinTable, alias);
-		}
-*/
-		return super.getJoinCondition(joinTable, alias);
-	}
-}
-			</pre>
-		</div>
-		<h2>レコードの追加、更新、削除</h2>
-		<p>
-			テーブルにレコードを追加、更新、削除するにはDaoクラスを使用します。
-		</p>
-		<div class="filecaption">レコードの追加、更新、削除</div>
-		<div class="wrappre">
-			<pre>
-Dao dao = new Dao(this);
-SampleTable.Entity e = new SampleTable.Entity();
-e.setSampleText("sample-text");
-e.setSampleNumeric(BigDecimal.valueOf(1234.0));
-e.setSampleDate(DateTimeUtil.getCurrentDate());
-e.setSampleSelect("1");
-e.setCreateUserId(Long.valueOf(0));
-e.setUpdateUserId(Long.valueOf(0));
-dao.executeInsert(new SampleTable(), e.getMap()); // レコードの追加
-logger.debug(() -> "sampleId=" + e.getSampleId());// 自動生成されたIDを表示
-e.setSampleText("sample-text-update");
-dao.executeUpdate(new SampleTable(), e.getMap()); // レコードの更新
-dao.executeDelete(new SampleTable(), e.getMap()); // レコードの削除
-			</pre>
-		</div>
-		<p>
-			この処理を実行すると以下の様なSQLが生成されます。
-			executeInsertメソットではシーケンスで主キーを生成してからinsert文を実行しています。
-			executeInsertの実行で、map中に生成された主キーの値が設定されます。
-			このコードのexecuteUpdateは主キーで限定してレコードを更新します。
-			executeUpdateは更新対象フィールドを限定したり、更新条件を設定することができる引数構成も存在します。
-			このコードのexecuteDeleteも主キーで限定してレコードを削除します。
-			executeDeleteは更新条件を設定することができる引数構成も存在します。
-			Javadocを参照してください。
-		<p>
-		<div class="filecaption">実行されたSQL</div>
-		<div class="wrappre">
-			<pre>
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select seq from (values next value for sample_seq) t(seq)
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser sql=insert into sample (sample_id,sample_text,sample_numeric,sample_date,sample_select,create_user_id,create_timestamp,update_user_id,update_timestamp) values (:sample_id,:sample_text,:sample_numeric,:sample_date,:sample_select,:create_user_id,current_timestamp,:update_user_id,current_timestamp)
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_id=403
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 2 :sample_text=sample-text
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 3 :sample_numeric=1234.0
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 4 :sample_date=2021-11-05
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 5 :sample_select=1
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 6 :create_user_id=0
-2021/11/05 14:16:18.850 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 7 :update_user_id=0
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  sample.api.Api313 sampleId=403
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser sql=update sample set
-sample_text = :sample_text
-, sample_numeric = :sample_numeric
-, sample_date = :sample_date
-, sample_select = :sample_select
-, update_user_id = :update_user_id
-, update_timestamp = current_timestamp
-where
-sample_id = :sample_id
-
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_text=sample-text-update
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 2 :sample_numeric=1234.0
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 3 :sample_date=2021-11-05
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 4 :sample_select=1
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 5 :update_user_id=0
-2021/11/05 14:16:18.851 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 6 :sample_id=403
-2021/11/05 14:16:18.852 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser sql=delete from sample where sample_id = :sample_id
-
-2021/11/05 14:16:18.852 [http-nio-8080-exec-7] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_id=403
-			</pre>
-		</div>
 		<h2>問合せクラス</h2>
 		<h3>単純な問合せ</h3>
 		<p>
@@ -584,9 +456,9 @@ select * from sample
 		<div class="filecaption">シンプルなQueryクラス</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
-import dataforms.dao.Query;
+import jp.dataforms.fw.dao.Query;
 
 /**
  * &#21336;&#32020;&#12394;&#21839;&#12356;&#21512;&#12431;&#12379;&#12290;
@@ -619,21 +491,22 @@ public class SampleQuery extends Query {
 		<div class="filecaption">問合せクラスの実行</div>
 		<div class="wrappre">
 			<pre>
+Dao dao = new Dao(this);
 List&lt;Map&lt;String, Object&gt;&gt; result = dao.executeQuery(new SampleQuery());  // &#21839;&#21512;&#12379;&#12434;&#34892;&#12356;&#12289;&#12381;&#12398;&#32080;&#26524;&#12434;Map&#12398;List&#12391;&#36820;&#12375;&#12414;&#12377;&#12290;
-logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));		//  問合せ結果をJSON形式でlog出力します。
+logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));		//  &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
 for (Map&lt;String, Object&gt; m: result) {
 	SampleTable.Entity e = new SampleTable.Entity(m);
 	logger.debug(&quot;{},{},{},{}\n&quot;, e.getSampleId(), e.getSampleText(), e.getSampleNumeric(), e.getSampleDate());
-}
+}	
 			</pre>
 		</div>
 		<p>
 			上記の実行ログを以下に示します。
 		</p>
-		<div class="filecaption">問合せクラスの実行</div>
+		<div class="filecaption">問合せクラスの実行ログ</div>
 		<div class="wrappre">
 			<pre>
-2021/11/05 14:52:20.041 [http-nio-8080-exec-8] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select
+2024/08/19 13:46:07.012 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -645,46 +518,44 @@ m.sample_id as sample_id
 ,m.update_timestamp as update_timestamp
  from sample as  m
 
-2021/11/05 14:52:20.042 [http-nio-8080-exec-8] DEBUG  sample.api.Api3141 result=[
-	{
-		"createUserId": 1,
-		"sampleId": 201,
-		"sampleSelect": null,
-		"updateUserId": 1,
-		"sampleDate": 1635692400000,
-		"sampleNumeric": 10.00,
-		"updateTimestamp": 1635730742807,
-		"sampleText": "aaa",
-		"createTimestamp": 1635730742807
-	},
-	{
-		"createUserId": 1,
-		"sampleId": 202,
-		"sampleSelect": null,
-		"updateUserId": 1,
-		"sampleDate": 1635778800000,
-		"sampleNumeric": 20.00,
-		"updateTimestamp": 1635730759674,
-		"sampleText": "aab",
-		"createTimestamp": 1635730759674
-	},
-	{
-		"createUserId": 1,
-		"sampleId": 301,
-		"sampleSelect": "1",
-		"updateUserId": 1,
-		"sampleDate": 1635692400000,
-		"sampleNumeric": 123.00,
-		"updateTimestamp": 1635741538316,
-		"sampleText": "test",
-		"createTimestamp": 1635741538316
-	}
+2024/08/19 13:46:07.045 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm result=[
+  {
+    "createUserId": 1,
+    "sampleId": 1,
+    "updateUserId": 1,
+    "sampleDate": "7月 23, 2024",
+    "sampleNumeric": 1234.56,
+    "updateTimestamp": "Aug 19, 2024, 11:34:56 AM",
+    "sampleText": "aaa",
+    "createTimestamp": "Aug 19, 2024, 11:34:56 AM"
+  },
+  {
+    "createUserId": 3,
+    "sampleId": 2,
+    "updateUserId": 3,
+    "sampleDate": "7月 30, 2024",
+    "sampleNumeric": 1111.22,
+    "updateTimestamp": "Aug 19, 2024, 11:48:25 AM",
+    "sampleText": "aab",
+    "createTimestamp": "Aug 19, 2024, 11:48:25 AM"
+  },
+  {
+    "createUserId": 1,
+    "sampleId": 3,
+    "sampleSelect": "1",
+    "updateUserId": 1,
+    "sampleDate": "8月 11, 2024",
+    "sampleNumeric": 1111.11,
+    "updateTimestamp": "Aug 19, 2024, 11:55:45 AM",
+    "sampleText": "aac",
+    "createTimestamp": "Aug 19, 2024, 11:55:45 AM"
+  }
 ]
-2021/11/05 14:52:20.042 [http-nio-8080-exec-8] DEBUG  sample.api.Api3141 201,aaa,10.00,2021-11-01T00:00:00.000+0900
+2024/08/19 13:46:07.046 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm 1,aaa,1234.56,2024-07-23
 
-2021/11/05 14:52:20.042 [http-nio-8080-exec-8] DEBUG  sample.api.Api3141 202,aab,20.00,2021-11-02T00:00:00.000+0900
+2024/08/19 13:46:07.046 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm 2,aab,1111.22,2024-07-30
 
-2021/11/05 14:52:20.042 [http-nio-8080-exec-8] DEBUG  sample.api.Api3141 301,test,123.00,2021-11-01T00:00:00.000+0900
+2024/08/19 13:46:07.046 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm 3,aac,1111.11,2024-08-11
 			</pre>
 		</div>
 		<p>
@@ -694,7 +565,7 @@ m.sample_id as sample_id
 		<h3>条件の設定</h3>
 		<p>
 			where句を指定するには条件の対象になるフィールドリストを指定する方法と、SQLの条件式を直接指定する方法があります。
-			フィールドリストを指定例を以下に示します。
+			フィールドリストの指定例を以下に示します。
 			setConditionFieldListメソッドで検索条件の対象となるフィールドを指定し、setConditionDataメソッドでその条件の値マップを指定します。
 			この例ではフィールドID"sampleText"の部分一致と"sampleNumeric"の範囲指定を行っています。
 		</p>
@@ -709,14 +580,14 @@ flist.addField(new SampleNumericField(SampleTable.Entity.ID_SAMPLE_NUMERIC + &qu
 flist.addField(new SampleNumericField(SampleTable.Entity.ID_SAMPLE_NUMERIC + &quot;To&quot;)).setMatchType(MatchType.RANGE_TO);
 // &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#20516;&#12434;&#25351;&#23450;&#12375;&#12414;&#12377;&#12290;
 Map&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
-data.put(SampleTable.Entity.ID_SAMPLE_TEXT, &quot;te&quot;);
-data.put(SampleTable.Entity.ID_SAMPLE_NUMERIC + &quot;From&quot;, 100);
+data.put(SampleTable.Entity.ID_SAMPLE_TEXT, &quot;aaa&quot;);
+data.put(SampleTable.Entity.ID_SAMPLE_NUMERIC + &quot;From&quot;, 1111.0);
 // &#26465;&#20214;&#12434;&#25351;&#23450;&#12375;&#12383;&#21839;&#12356;&#21512;&#12431;&#12379;&#12434;&#23455;&#34892;&#12290;
 SampleQuery query = new SampleQuery();
 query.setConditionFieldList(flist);
 query.setConditionData(data);
 List&lt;Map&lt;String, Object&gt;&gt; result = dao.executeQuery(query);	// &#21839;&#21512;&#12379;&#12434;&#34892;&#12356;&#12289;&#12381;&#12398;&#32080;&#26524;&#12434;Map&#12398;List&#12391;&#36820;&#12375;&#12414;&#12377;&#12290;
-logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
+logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
 			</pre>
 		</div>
 		<p>
@@ -735,7 +606,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#218
 		<div class="filecaption">条件フィールドリストの実行ログ</div>
 		<div class="wrappre">
 			<pre>
-2021/11/05 15:01:38.922 [http-nio-8080-exec-3] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select
+2024/08/19 14:06:00.060 [http-nio-8080-exec-3] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -746,21 +617,20 @@ m.sample_id as sample_id
 ,m.update_user_id as update_user_id
 ,m.update_timestamp as update_timestamp
  from sample as  m
- where m.sample_text like :sample_text {escape '\'}  and m.sample_numeric &gt;= :sample_numeric_from
-2021/11/05 15:01:38.923 [http-nio-8080-exec-3] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_text=%te%
-2021/11/05 15:01:38.923 [http-nio-8080-exec-3] DEBUG  dataforms.dao.sqlgen.SqlParser 2 :sample_numeric_from=100
-2021/11/05 15:01:38.924 [http-nio-8080-exec-3] DEBUG  sample.api.Api3142 result=[
-	{
-		&quot;createUserId&quot;: 1,
-		&quot;sampleId&quot;: 301,
-		&quot;sampleSelect&quot;: &quot;1&quot;,
-		&quot;updateUserId&quot;: 1,
-		&quot;sampleDate&quot;: 1635692400000,
-		&quot;sampleNumeric&quot;: 123.00,
-		&quot;updateTimestamp&quot;: 1635741538316,
-		&quot;sampleText&quot;: &quot;test&quot;,
-		&quot;createTimestamp&quot;: 1635741538316
-	}
+ where m.sample_text like :sample_text {escape '\'}  and m.sample_numeric >= :sample_numeric_from
+2024/08/19 14:06:00.073 [http-nio-8080-exec-3] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_text=%aaa%
+2024/08/19 14:06:00.073 [http-nio-8080-exec-3] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 2 :sample_numeric_from=1111.0
+2024/08/19 14:06:00.078 [http-nio-8080-exec-3] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm result=[
+  {
+    "createUserId": 1,
+    "sampleId": 1,
+    "updateUserId": 1,
+    "sampleDate": "7月 23, 2024",
+    "sampleNumeric": 1234.56,
+    "updateTimestamp": "Aug 19, 2024, 11:34:56 AM",
+    "sampleText": "aaa",
+    "createTimestamp": "Aug 19, 2024, 11:34:56 AM"
+  }
 ]
 			</pre>
 		</div>
@@ -774,7 +644,7 @@ m.sample_id as sample_id
 			<pre>
 Dao dao = new Dao(this);
 SampleTable table = new SampleTable();
-// 条件式を生成するフィールドリストを作成します。
+// &#26465;&#20214;&#24335;&#12434;&#29983;&#25104;&#12377;&#12427;&#12501;&#12451;&#12540;&#12523;&#12489;&#12522;&#12473;&#12488;&#12434;&#20316;&#25104;&#12375;&#12414;&#12377;&#12290;
 FieldList flist = new FieldList();
 flist.addField(table.getSampleTextField()).setMatchType(MatchType.PART);
 flist.addField(table.getSampleSelectField());
@@ -784,16 +654,16 @@ cond2.addField(table.getSampleNumericField());
 ConditionExpressionList cond = new ConditionExpressionList(Operator.OR);
 cond.add(cond1);
 cond.add(cond2);
-// 条件を指定した問い合わせを実行。
+// &#26465;&#20214;&#12434;&#25351;&#23450;&#12375;&#12383;&#21839;&#12356;&#21512;&#12431;&#12379;&#12434;&#23455;&#34892;&#12290;
 SampleQuery query = new SampleQuery();
 query.setConditionExpression(cond);
 SampleTable.Entity e = new SampleTable.Entity();
-e.setSampleText("test");
-e.setSampleSelect("1");
+e.setSampleText(&quot;aac&quot;);
+e.setSampleSelect(&quot;1&quot;);
 e.setSampleNumeric(BigDecimal.valueOf(123));
 query.setConditionData(e.getMap());
 List&lt;Map&lt;String, Object&gt;&gt; result = dao.executeQuery(query);	// &#21839;&#21512;&#12379;&#12434;&#34892;&#12356;&#12289;&#12381;&#12398;&#32080;&#26524;&#12434;Map&#12398;List&#12391;&#36820;&#12375;&#12414;&#12377;&#12290;
-logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
+logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
 			</pre>
 		</div>
 		<p>
@@ -802,7 +672,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#218
 		<div class="filecaption">複雑な条件式の実行結果</div>
 		<div class="wrappre">
 			<pre>
-2021/11/05 16:15:17.690 [http-nio-8080-exec-4] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select
+2024/08/19 14:13:54.428 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -814,21 +684,21 @@ m.sample_id as sample_id
 ,m.update_timestamp as update_timestamp
  from sample as  m
  where ((m.sample_text like :sample_text {escape '\'}  and m.sample_select = :sample_select) or (m.sample_numeric = :sample_numeric))
-2021/11/05 16:15:17.690 [http-nio-8080-exec-4] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_text=%test%
-2021/11/05 16:15:17.690 [http-nio-8080-exec-4] DEBUG  dataforms.dao.sqlgen.SqlParser 2 :sample_select=1
-2021/11/05 16:15:17.691 [http-nio-8080-exec-4] DEBUG  dataforms.dao.sqlgen.SqlParser 3 :sample_numeric=123
-2021/11/05 16:15:17.691 [http-nio-8080-exec-4] DEBUG  sample.api.Api3143 result=[
-	{
-		"createUserId": 1,
-		"sampleId": 301,
-		"sampleSelect": "1",
-		"updateUserId": 1,
-		"sampleDate": 1635692400000,
-		"sampleNumeric": 123.00,
-		"updateTimestamp": 1635741538316,
-		"sampleText": "test",
-		"createTimestamp": 1635741538316
-	}
+2024/08/19 14:13:54.444 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_text=%aac%
+2024/08/19 14:13:54.444 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 2 :sample_select=1
+2024/08/19 14:13:54.444 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 3 :sample_numeric=123
+2024/08/19 14:13:54.451 [http-nio-8080-exec-8] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm result=[
+  {
+    "createUserId": 1,
+    "sampleId": 3,
+    "sampleSelect": "1",
+    "updateUserId": 1,
+    "sampleDate": "8月 11, 2024",
+    "sampleNumeric": 1111.11,
+    "updateTimestamp": "Aug 19, 2024, 11:55:45 AM",
+    "sampleText": "aac",
+    "createTimestamp": "Aug 19, 2024, 11:55:45 AM"
+  }
 ]
 			</pre>
 		</div>
@@ -849,8 +719,7 @@ SampleTable.Entity e = new SampleTable.Entity();		// &#26465;&#20214;&#12487;&#1
 e.setSampleText(&quot;aaa&quot;);
 query.setConditionData(e.getMap());
 List&lt;Map&lt;String, Object&gt;&gt; result = dao.executeQuery(query);	// &#21839;&#21512;&#12379;&#12434;&#34892;&#12356;&#12289;&#12381;&#12398;&#32080;&#26524;&#12434;Map&#12398;List&#12391;&#36820;&#12375;&#12414;&#12377;&#12290;
-logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
-			</pre>
+logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;		
 		</div>
 		<p>
 			この処理を実行すると以下のようなログが出力されます。
@@ -858,7 +727,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JSON.encode(result, true));	// &#218
 		<div class="filecaption">SQL条件式の直接指定</div>
 		<div class="wrappre">
 			<pre>
-2021/11/05 16:46:25.472 [http-nio-8080-exec-6] DEBUG  dataforms.dao.sqlgen.SqlParser sql=select
+2024/08/19 14:20:39.654 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -870,19 +739,18 @@ m.sample_id as sample_id
 ,m.update_timestamp as update_timestamp
  from sample as  m
  where m.sample_text = :sample_text
-2021/11/05 16:46:25.472 [http-nio-8080-exec-6] DEBUG  dataforms.dao.sqlgen.SqlParser 1 :sample_text=aaa
-2021/11/05 16:46:25.473 [http-nio-8080-exec-6] DEBUG  sample.api.Api3144 result=[
-	{
-		"createUserId": 1,
-		"sampleId": 201,
-		"sampleSelect": null,
-		"updateUserId": 1,
-		"sampleDate": 1635692400000,
-		"sampleNumeric": 10.00,
-		"updateTimestamp": 1635730742807,
-		"sampleText": "aaa",
-		"createTimestamp": 1635730742807
-	}
+2024/08/19 14:20:39.658 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_text=aaa
+2024/08/19 14:20:39.664 [http-nio-8080-exec-8] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm result=[
+  {
+    "createUserId": 1,
+    "sampleId": 1,
+    "updateUserId": 1,
+    "sampleDate": "7月 23, 2024",
+    "sampleNumeric": 1234.56,
+    "updateTimestamp": "Aug 19, 2024, 11:34:56 AM",
+    "sampleText": "aaa",
+    "createTimestamp": "Aug 19, 2024, 11:34:56 AM"
+  }
 ]
 			</pre>
 		</div>
@@ -891,7 +759,84 @@ m.sample_id as sample_id
 		</p>
 		<h3>テーブルの結合</h3>
 		<p>
-			すでに作成したSampleTableと結合する以下のJoinTestTableを作成し、テーブルの結合方法を説明していきます。
+			テーブルJavaクラス作成でXxxTableを作成すると、同時にXxxTableRelationというクラスが作成されます。
+			XxxTableRelationクラスはXxxTableと別のテーブルを結合する際の結合条件を記述するクラスです。
+			XxxTableRelationクラスは開発者が条件を追記する必要があるため、開発ツールでXxxTableクラスのソースを更新しても、
+			XxxTableRelationクラスは更新されないようになっています。	
+		</p>
+		<p>
+			以下に開発ツールで生成したSampleTableRelation.javaを示します。
+		</p>
+		<div class="filecaption">テーブル関連定義クラス</div>
+		<div class="wrappre">
+			<pre>
+package jp.dataforms.sample.edittable.dao;
+
+import java.util.List;
+import java.util.ArrayList;
+import jp.dataforms.fw.dao.ForeignKey;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.dao.TableRelation;
+
+/**
+ * SampleTable&#12398;&#38306;&#20418;&#12434;&#23450;&#32681;&#12377;&#12427;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
+ *
+ */
+public class SampleTableRelation extends TableRelation {
+
+	/**
+	 * &#22806;&#37096;&#12461;&#12540;&#12522;&#12473;&#12488;&#12290;
+	 */
+	private static List&lt;ForeignKey&gt; foreignKeyList = null;
+
+	/**
+	 * &#22806;&#37096;&#12461;&#12540;&#12522;&#12473;&#12488;&#12398;&#23450;&#32681;&#12290;
+	 * &lt;pre&gt;
+	 * &#12371;&#12398;&#21021;&#26399;&#21270;&#20966;&#29702;&#12391;&#22806;&#37096;&#12461;&#12540;&#12434;&#23450;&#32681;&#12377;&#12427;&#12371;&#12392;&#12395;&#12424;&#12426;&#12289;&#33258;&#21205;&#30340;&#12395;&#22806;&#37096;&#12461;&#12540;&#12364;&#35373;&#23450;&#12373;&#12428;&#12414;&#12377;&#12290;
+	 * &lt;/pre&gt;
+	 */
+	static {
+		foreignKeyList = new ArrayList&lt;ForeignKey&gt;();
+		/*
+		 * &#20197;&#19979;&#12398;&#23450;&#32681;&#12434;&#26377;&#21177;&#12395;&#12377;&#12427;&#12392;&#22806;&#37096;&#12461;&#12540;HogeTable&#12395;&#23550;&#12377;&#12427;&#22806;&#37096;&#12461;&#12540;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
+		 * &#12371;&#12398;&#35373;&#23450;&#12384;&#12369;&#12391;HogeTable&#12392;&#12398;&#32080;&#21512;&#26465;&#20214;&#12418;&#29983;&#25104;&#12373;&#12428;&#12427;&#12424;&#12358;&#12395;&#12394;&#12426;&#12414;&#12377;&#12290;
+		 */
+		// foreignKeyList.add(new ForeignKey(&quot;fkSampleTable01&quot;, SampleTable.Entity.ID_HOGE_ID, HogeTable.class));
+	}
+
+	@Override
+	public List&lt;ForeignKey&gt; getForeignKeyList() {
+		return foreignKeyList;
+	}
+
+	/**
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
+	 * @param table &#23550;&#35937;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 */
+	public SampleTableRelation(final Table table) {
+		super(table);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getJoinCondition(final Table joinTable, final String alias) {
+		/*
+		 * &#22806;&#37096;&#12461;&#12540;&#12434;&#35373;&#23450;&#12379;&#12378;&#12395;&#32080;&#21512;&#26465;&#20214;&#12434;&#29983;&#25104;&#12377;&#12427;&#22580;&#21512;&#12399;&#20197;&#19979;&#12434;&#26377;&#21177;&#12395;&#12375;&#12414;&#12377;&#12290;
+		 */
+/*
+		if (joinTable instanceof HogeTable) {
+			return this.getTable().getLinkFieldCondition(HogeTable.Entity.ID_HOGE_ID, joinTable, alias);
+		}
+*/
+		return super.getJoinCondition(joinTable, alias);
+	}
+}
+			</pre>
+		</div>
+		<p>
+			すでに作成したSampleTableに結合するJoinTestTableを作成し、テーブルの結合方法を説明していきます。
 		</p>
 		<div class="filecaption">JoinTestTable.javaの定義</div>
 		<div class="wrappre">
@@ -923,9 +868,8 @@ public class JoinTestTable extends Table {
 			このテーブルの2カラム目にはSampleIdFieldが配置されており、この項目でSampleTableに結合します。
 		</p>
 		<p>
-			複数のテーブルを結合して検索するには、あらかじめテーブル間の関係を定義する必要があります。
-			開発ツールでJoinTestTableを作成すると、JoinTestTableRelation.javaというソースファイルが同時に作成されます。
-			このJoinTestTableRelationクラスでJoinTestTableにJoinするテーブルの結合条件を定義します。
+			JoinTestTableクラスと同時にJoinTestTableRelationクラスが作成されます。
+			このJoinTestTableRelationクラスでJoinTestTableとSampleTableの結合条件を定義します。
 			JoinTestTableRelationクラスでテーブル間の関係を定義するには以下の2つの方法があります。
 		</p>
 		<ol>
@@ -945,7 +889,7 @@ public class JoinTestTable extends Table {
 		<div class="filecaption">JoinTestTableRelationでの外部キーの定義</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1016,13 +960,17 @@ public class JoinTestTableRelation extends TableRelation {
 		<p>
 			外部キーは問合せの性能を上げデータの一貫性を保つ効果がありますが、
 			外部キーの操作に関するSQLを作成する必要があり管理に手間がかかります。
-			これに対しdataforms2.jarではJavaのクラスで外部キーを定義するだけで、
+			これに対しdataforms3.jarではJavaのクラスで外部キーを定義するだけで、
 			外部キーを操作するSQLを記述する必要はありません。
 		</p>
 		<figure>
 			<figcaption>テーブル管理画面の外部キーの適用方法</figcaption>
 			<img src="fkey.png" style="width:50%; height:50%;"/>
 		</figure>
+		<p class="topic">
+			テーブル管理で外部キーの設定を行う場合、dataforms.conf.jsoncのinitialize.databasePackageList
+			に対象テーブルクラスが存在するパッケージを全て登録してください。
+		</p>
 		<p>
 			開発ツールの「問合せJavaクラス作成」を使用すると、JoinTestTableとSampleTableを結合した問合せを簡単に作成することができます。
 			定義された外部キーに対応した結合条件が生成されていることがわかります。
@@ -1037,82 +985,71 @@ public class JoinTestTableRelation extends TableRelation {
 		<div class="filecaption">生成された問合せクラス</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
-import dataforms.field.base.FieldList;
-import dataforms.dao.Query;
-import sample.field.SampleDateField;
-import sample.field.SampleTextField;
-import sample.field.SampleNumericField;
-import sample.field.SampleSelectField;
-import dataforms.field.common.CreateTimestampField;
-import dataforms.field.common.UpdateUserIdField;
-import dataforms.field.common.CreateUserIdField;
-import sample.field.SampleIdField;
-import sample.field.JoinTestIdField;
-import dataforms.util.NumberUtil;
+import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.dao.Query;
+import jp.dataforms.fw.field.common.UpdateTimestampField;
+import jp.dataforms.sample.edittable.field.SampleSelectField;
+import jp.dataforms.sample.edittable.field.SampleNumericField;
+import jp.dataforms.sample.edittable.field.JoinTestIdField;
+import jp.dataforms.sample.edittable.field.JoinTestTextField;
+import jp.dataforms.fw.util.NumberUtil;
+import jp.dataforms.sample.edittable.field.SampleTextField;
+import jp.dataforms.sample.edittable.field.SampleIdField;
+import jp.dataforms.fw.field.common.CreateUserIdField;
+import jp.dataforms.sample.edittable.field.SampleDateField;
+import jp.dataforms.fw.field.common.CreateTimestampField;
 import java.util.Map;
-import dataforms.field.common.UpdateTimestampField;
-import sample.field.JoinTestTextField;
-
+import jp.dataforms.fw.field.common.UpdateUserIdField;
 
 
 
 /**
- * 問い合わせクラスです。
+ * Join&#12486;&#12473;&#12488;&#21839;&#21512;&#12379;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
  *
  */
 public class JoinTestQuery extends Query {
 	/**
-	 * Joinテストテーブル。
-	 */
-	private JoinTestTable joinTestTable = null;
-
-	/**
-	 * Joinテストテーブルを取得します。
-	 * @return Joinテストテーブル。
+	 * &#32080;&#21512;&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#32080;&#21512;&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12290;
 	 */
 	public JoinTestTable getJoinTestTable() {
-		return this.joinTestTable;
+		return (JoinTestTable) this.getTable(JoinTestTable.class, &quot;m&quot;);
 	}
 
 	/**
-	 * サンプルテーブル。
-	 */
-	private SampleTable sampleTable = null;
-
-	/**
-	 * サンプルテーブルを取得します。
-	 * @return サンプルテーブル。
+	 * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12290;
 	 */
 	public SampleTable getSampleTable() {
-		return this.sampleTable;
+		return (SampleTable) this.getTable(SampleTable.class, &quot;j0&quot;);
 	}
 
 
 	/**
-	 * コンストラクタ.
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;.
 	 */
-	public JoinTestQuery() {
-		this.setComment("Joinのテスト");
+	public JoinTestQuery() 	{
+		this.setComment(&quot;Join&#12486;&#12473;&#12488;&#21839;&#21512;&#12379;&quot;);
 		this.setDistinct(false);
-		this.joinTestTable = new JoinTestTable();
-		this.joinTestTable.setAlias("m");
-		this.sampleTable = new SampleTable();
-		this.sampleTable.setAlias("s");
+		JoinTestTable joinTestTable = new JoinTestTable();
+		joinTestTable.setAlias(&quot;m&quot;);
+		SampleTable sampleTable = new SampleTable();
+		sampleTable.setAlias(&quot;j0&quot;);
 
 		this.setFieldList(new FieldList(
-			this.joinTestTable.getJoinTestIdField()
-			, this.joinTestTable.getSampleIdField()
-			, this.joinTestTable.getJoinTestTextField()
-			, this.joinTestTable.getCreateUserIdField()
-			, this.joinTestTable.getCreateTimestampField()
-			, this.joinTestTable.getUpdateUserIdField()
-			, this.joinTestTable.getUpdateTimestampField()
-			, this.sampleTable.getSampleTextField()
-			, this.sampleTable.getSampleNumericField()
-			, this.sampleTable.getSampleDateField()
-			, this.sampleTable.getSampleSelectField()
+			joinTestTable.getJoinTestIdField()
+			, joinTestTable.getSampleIdField()
+			, joinTestTable.getJoinTestTextField()
+			, joinTestTable.getCreateUserIdField()
+			, joinTestTable.getCreateTimestampField()
+			, joinTestTable.getUpdateUserIdField()
+			, joinTestTable.getUpdateTimestampField()
+			, sampleTable.getSampleTextField()
+			, sampleTable.getSampleNumericField()
+			, sampleTable.getSampleDateField()
+			, sampleTable.getSampleSelectField()
 		));
 		this.setMainTable(joinTestTable);
 		this.addInnerJoin(sampleTable);
@@ -1120,27 +1057,23 @@ public class JoinTestQuery extends Query {
 	}
 
 	/**
-	 * Entity操作クラスです。
+	 * Entity&#25805;&#20316;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
 	 */
-	public static class Entity extends dataforms.dao.Entity {
+	public static class Entity extends jp.dataforms.fw.dao.Entity {
 
-			・
-			・
-			・
+		&#12539;&#12539;&#12539;
 
 	}
 
 	/**
-	 * join test ID.フィールドを取得します。
-	 * @return join test ID.フィールド。
+	 * join test ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return join test ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
 	 */
 	public JoinTestIdField getJoinTestIdField() {
 		return (JoinTestIdField) this.getField(Entity.ID_JOIN_TEST_ID);
 	}
 
-			・
-			・
-			・
+	&#12539;&#12539;&#12539;
 
 }
 			</pre>
@@ -1151,7 +1084,7 @@ public class JoinTestQuery extends Query {
 		<div class="filecaption">JoinTestQueryに対応するSQL</div>
 		<div class="wrappre">
 			<pre>
-select
+select 
 m.join_test_id as join_test_id
 ,m.sample_id as sample_id
 ,m.join_test_text as join_test_text
@@ -1159,12 +1092,12 @@ m.join_test_id as join_test_id
 ,m.create_timestamp as create_timestamp
 ,m.update_user_id as update_user_id
 ,m.update_timestamp as update_timestamp
-,s.sample_text as sample_text
-,s.sample_numeric as sample_numeric
-,s.sample_date as sample_date
-,s.sample_select as sample_select
+,j0.sample_text as sample_text
+,j0.sample_numeric as sample_numeric
+,j0.sample_date as sample_date
+,j0.sample_select as sample_select
  from join_test as  m
-  inner join  sample as s on m.sample_id=s.sample_id
+ inner join sample as j0 on m.sample_id=j0.sample_id
   			</pre>
 		</div>
 		<p>
@@ -1174,14 +1107,14 @@ m.join_test_id as join_test_id
 		<div class="filecaption">外部キーを使用しない結合条件の定義</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import dataforms.dao.ForeignKey;
-import dataforms.dao.Table;
-import dataforms.dao.TableRelation;
+import jp.dataforms.fw.dao.ForeignKey;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.dao.TableRelation;
 
 /**
  * JoinTestTable&#12398;&#38306;&#20418;&#12434;&#23450;&#32681;&#12377;&#12427;&#12463;&#12521;&#12473;&#12391;&#12377;&#12290;
@@ -1206,7 +1139,7 @@ public class JoinTestTableRelation extends TableRelation {
 		 * &#20197;&#19979;&#12398;&#23450;&#32681;&#12434;&#26377;&#21177;&#12395;&#12377;&#12427;&#12392;&#22806;&#37096;&#12461;&#12540;HogeTable&#12395;&#23550;&#12377;&#12427;&#22806;&#37096;&#12461;&#12540;&#12434;&#35373;&#23450;&#12375;&#12414;&#12377;&#12290;
 		 * &#12371;&#12398;&#35373;&#23450;&#12384;&#12369;&#12391;HogeTable&#12392;&#12398;&#32080;&#21512;&#26465;&#20214;&#12418;&#29983;&#25104;&#12373;&#12428;&#12427;&#12424;&#12358;&#12395;&#12394;&#12426;&#12414;&#12377;&#12290;
 		 */
-		// foreignKeyList.add(new ForeignKey(&quot;fkJoinTestTable01&quot;, JoinTestTable.Entity.ID_HOGE_ID, HogeTable.class));
+//		foreignKeyList.add(new ForeignKey(&quot;fkJoinTestTable01&quot;, JoinTestTable.Entity.ID_SAMPLE_ID, SampleTable.class));
 	}
 
 	@Override
@@ -1227,9 +1160,16 @@ public class JoinTestTableRelation extends TableRelation {
 	 */
 	@Override
 	public String getJoinCondition(final Table joinTable, final String alias) {
-		<b>if (joinTable instanceof SampleTable) {</b>
-			<b>return this.getTable().getLinkFieldCondition(JoinTestTable.Entity.ID_SAMPLE_ID, joinTable, alias);</b>
-		<b>}</b>
+		/*
+		 * &#22806;&#37096;&#12461;&#12540;&#12434;&#35373;&#23450;&#12379;&#12378;&#12395;&#32080;&#21512;&#26465;&#20214;&#12434;&#29983;&#25104;&#12377;&#12427;&#22580;&#21512;&#12399;&#20197;&#19979;&#12434;&#26377;&#21177;&#12395;&#12375;&#12414;&#12377;&#12290;
+		 */
+		<b>
+		if (joinTable instanceof SampleTable) {
+			return this.getTable().getLinkFieldCondition(JoinTestTable.Entity.ID_SAMPLE_ID, joinTable, alias);
+		}
+			
+		</b>
+
 		return super.getJoinCondition(joinTable, alias);
 	}
 }
@@ -1246,37 +1186,41 @@ public class JoinTestTableRelation extends TableRelation {
 		<div class="wrappre">
 			<pre>
 	/**
-	 * コンストラクタ.
+	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;.
 	 */
-	public JoinTestQuery() {
-		this.setComment("Joinのテスト");
+	public JoinTestQuery() 	{
+		this.setComment(&quot;Join&#12486;&#12473;&#12488;&#21839;&#21512;&#12379;&quot;);
 		this.setDistinct(false);
-		this.joinTestTable = new JoinTestTable();
-		this.sampleTable = new SampleTable();
+		JoinTestTable joinTestTable = new JoinTestTable();
+		joinTestTable.setAlias(&quot;m&quot;);
+		SampleTable sampleTable = new SampleTable();
+		sampleTable.setAlias(&quot;j0&quot;);
 
 		this.setFieldList(new FieldList(
-			this.joinTestTable.getJoinTestIdField()
-			, this.joinTestTable.getSampleIdField()
-			, this.joinTestTable.getJoinTestTextField()
-			, this.joinTestTable.getCreateUserIdField()
-			, this.joinTestTable.getCreateTimestampField()
-			, this.joinTestTable.getUpdateUserIdField()
-			, this.joinTestTable.getUpdateTimestampField()
-			, this.sampleTable.getSampleTextField()
-			, this.sampleTable.getSampleNumericField()
-			, this.sampleTable.getSampleDateField()
-			, this.sampleTable.getSampleSelectField()
+			joinTestTable.getJoinTestIdField()
+			, joinTestTable.getSampleIdField()
+			, joinTestTable.getJoinTestTextField()
+			, joinTestTable.getCreateUserIdField()
+			, joinTestTable.getCreateTimestampField()
+			, joinTestTable.getUpdateUserIdField()
+			, joinTestTable.getUpdateTimestampField()
+			, sampleTable.getSampleTextField()
+			, sampleTable.getSampleNumericField()
+			, sampleTable.getSampleDateField()
+			, sampleTable.getSampleSelectField()
 		));
 		this.setMainTable(joinTestTable);
-		<b>this.addInnerJoin(sampleTable, (Table joinTable) -> {</b>
-			<b>return this.joinTestTable.getLinkFieldCondition(JoinTestTable.Entity.ID_SAMPLE_ID, joinTable);</b>
-		<b>});</b>
+		<b>this.addInnerJoin(sampleTable, (Table joinTable) -&gt; {
+			return this.getJoinTestTable().getLinkFieldCondition(JoinTestTable.Entity.ID_SAMPLE_ID, joinTable);
+		});</b>
+
 	}
+
 			</pre>
 		</div>
 		<h3>副問合せ</h3>
 		<p>
-			dataforms2.jarで副問合せを実現するにはSubQueryクラスを使用します。
+			dataforms3.jarで副問合せを実現するにはSubQueryクラスを使用します。
 			SubQueryクラスはTableクラスからは派生しているため、QueryクラスでJoinする対象になります。
 			SQLのselect文を()で囲むだけの副問合せに比べてSubQueryクラスのコード量は多くなります。
 			そのため「問合せJavaクラス作成」にSubQueryクラスの生成機能も装備してあります。
@@ -1292,21 +1236,21 @@ public class JoinTestTableRelation extends TableRelation {
 		<div class="filecaption">副問合せクラスの生成結果</div>
 		<div class="wrappre">
 			<pre>
-package sample.dao;
+package jp.dataforms.sample.edittable.dao;
 
-import dataforms.dao.Table;
-import dataforms.dao.SubQuery;
-import sample.field.JoinTestIdField;
-import sample.field.SampleDateField;
-import sample.field.SampleTextField;
-import sample.field.SampleNumericField;
-import sample.field.SampleSelectField;
-import dataforms.field.common.CreateTimestampField;
-import dataforms.field.common.UpdateUserIdField;
-import dataforms.field.common.CreateUserIdField;
-import dataforms.field.common.UpdateTimestampField;
-import sample.field.JoinTestTextField;
-import sample.field.SampleIdField;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.dao.SubQuery;
+import jp.dataforms.fw.field.common.UpdateTimestampField;
+import jp.dataforms.sample.edittable.field.SampleSelectField;
+import jp.dataforms.sample.edittable.field.SampleTextField;
+import jp.dataforms.sample.edittable.field.SampleIdField;
+import jp.dataforms.fw.field.common.CreateUserIdField;
+import jp.dataforms.sample.edittable.field.SampleNumericField;
+import jp.dataforms.sample.edittable.field.SampleDateField;
+import jp.dataforms.sample.edittable.field.JoinTestIdField;
+import jp.dataforms.fw.field.common.CreateTimestampField;
+import jp.dataforms.fw.field.common.UpdateUserIdField;
+import jp.dataforms.sample.edittable.field.JoinTestTextField;
 
 
 /**
@@ -1348,16 +1292,14 @@ public class JoinTestSubQuery extends SubQuery {
 		return super.getJoinCondition(joinTable, alias);
 	}
 	/**
-	 * join test ID.&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-	 * @return join test ID.&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
+	 * join test ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
+	 * @return join test ID&#12501;&#12451;&#12540;&#12523;&#12489;&#12290;
 	 */
 	public JoinTestIdField getJoinTestIdField() {
 		return (JoinTestIdField) this.getField(JoinTestQuery.Entity.ID_JOIN_TEST_ID);
 	}
 
-	・
-	・
-	・
+	&#12539;&#12539;&#12539;
 
 }
 
@@ -1502,5 +1444,71 @@ m.sample_id as sample_id
  from sample as  m
 			</pre>
 		</div>
+		<h2>レコードの追加、更新、削除</h2>
+		<p>
+			テーブルにレコードを追加、更新、削除するにはDaoクラスを使用します。
+		</p>
+		<div class="filecaption">レコードの追加、更新、削除</div>
+		<div class="wrappre">
+			<pre>
+Dao dao = new Dao(this);
+SampleTable.Entity e = new SampleTable.Entity();
+e.setSampleText("sample-text");
+e.setSampleNumeric(BigDecimal.valueOf(1234.0));
+e.setSampleDate(DateTimeUtil.getCurrentDate());
+e.setSampleSelect("1");
+e.setCreateUserId(Long.valueOf(0));
+e.setUpdateUserId(Long.valueOf(0));
+dao.executeInsert(new SampleTable(), e.getMap()); // レコードの追加
+logger.debug(() -> "sampleId=" + e.getSampleId());// 自動生成されたIDを表示
+e.setSampleText("sample-text-update");
+dao.executeUpdate(new SampleTable(), e.getMap()); // レコードの更新
+dao.executeDelete(new SampleTable(), e.getMap()); // レコードの削除
+			</pre>
+		</div>
+		<p>
+			この処理を実行すると以下の様なSQLが生成されます。
+			executeInsertメソットではシーケンスで主キーを生成してからinsert文を実行しています。
+			executeInsertの実行で、map中に生成された主キーの値が設定されます。
+			このコードのexecuteUpdateは主キーで限定してレコードを更新します。
+			executeUpdateは更新対象フィールドを限定したり、更新条件を設定することができる引数構成も存在します。
+			このコードのexecuteDeleteも主キーで限定してレコードを削除します。
+			executeDeleteは更新条件を設定することができる引数構成も存在します。
+			Javadocを参照してください。
+		<p>
+		<div class="filecaption">実行されたSQL</div>
+		<div class="wrappre">
+			<pre>
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>select seq from (values next value for sample_seq) t(seq)</b>
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>insert into sample (sample_id,sample_text,sample_numeric,sample_date,sample_select,create_user_id,create_timestamp,update_user_id,update_timestamp) values (:sample_id,:sample_text,:sample_numeric,:sample_date,:sample_select,:create_user_id,current_timestamp,:update_user_id,current_timestamp)</b>
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_id=104
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 2 :sample_text=sample-text
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 3 :sample_numeric=1234.0
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 4 :sample_date=2024-08-19
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 5 :sample_select=1
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 6 :create_user_id=0
+2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 7 :update_user_id=0
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm sampleId=104
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>update sample set 
+sample_text = :sample_text
+, sample_numeric = :sample_numeric
+, sample_date = :sample_date
+, sample_select = :sample_select
+, update_user_id = :update_user_id
+, update_timestamp = current_timestamp
+where
+sample_id = :sample_id</b>
+
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_text=sample-text-update
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 2 :sample_numeric=1234.0
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 3 :sample_date=2024-08-19
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 4 :sample_select=1
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 5 :update_user_id=0
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 6 :sample_id=104
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>delete from sample where sample_id = :sample_id</b>
+
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_id=104
+			</pre>
+		</div>	
 	</body>
 </html>
