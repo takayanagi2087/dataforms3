@@ -1,7 +1,6 @@
 package jp.dataforms.fw.devtool.expwebres.page;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.StringUtil;
+import jp.dataforms.fw.util.WebResourceUtil;
 
 /**
  *
@@ -141,20 +141,15 @@ public class ExportWebResourceQueryResultForm extends QueryResultForm {
 	 * @throws Exception 例外。
 	 */
 	private void exportResourceFile(final String webResourcePath, final String path) throws Exception {
-		byte[] res = this.getBinaryWebResource(path);
+		// byte[] res = this.getBinaryWebResource(path);
+		String text = WebResourceUtil.getWebResource(path);
 		File file = new File(webResourcePath + "/" + path);
 		logger.debug("outpath=" + file.getAbsolutePath());
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
 		FileUtil.backup(webResourcePath + "/" + path);
-		FileOutputStream os = new FileOutputStream(webResourcePath + "/" + path);
-		try {
-			FileUtil.writeOutputStream(res, os);
-		} finally {
-			os.close();
-		}
+		FileUtil.writeTextFile(webResourcePath + "/" + path, text, "utf-8");
 	}
-
 }
 
