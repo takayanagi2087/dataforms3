@@ -852,11 +852,16 @@ export class HtmlTable extends WebComponent {
 
 	/**
 	 * 指定された要素の行インデックスを取得します。
-	 * @param {jQuery} el 要素。
+	 * @param {Object} f フィールドを示す情報。jQuery or Field or String(フィールドID)。
 	 * @returns {Integer} 行インデックス。
 	 */
-	getRowIndex(el) {
-		let id = el.attr(this.getIdAttribute());
+	getRowIndex(f) {
+		let id = f;
+		if (f instanceof jQuery) {
+			id = f.attr(this.getIdAttribute());
+		} else if (f instanceof Field) {
+			id = f.id;
+		}
 		let sp = id.split(/[\[\]]/);
 		return parseInt(sp[1]);
 	}

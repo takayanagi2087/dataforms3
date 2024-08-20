@@ -279,11 +279,25 @@ export class DaoAndPageGeneratorEditForm extends EditForm {
 	}
 
 	/**
+	 * 複数レコード問合せテーブルのフィールド情報取得処理。
+	 * @param {String} cls クラス名。
+	 * @param {EditableHtmlTable} mtbl 複数レコード問合せテーブル。
+	 * @param {Number} idx 行インデックス。
+	 * @param {String} cfgid 設定情報フィールドID。
+	 */
+	async getFieldInfo2(cls, mtbl, idx, cfgid) {
+		let m = this.getWebMethod("getFieldConfig");
+		let r = await m.execute("c=" + cls);
+		if (r.status == JsonResponse.SUCCESS) {
+			mtbl.getRowField(idx, cfgid).setValue(JSON.stringify(r.result));
+		}
+	}
+
+		/**
 	 * フィールドのデフォルト設定を取得する。
 	 * @param {String} id フィールドID。
 	 */
 	getFieldConfig(id) {
-		logger.log("field id=" + id);
 		if ("listQueryClassName" == id) {
 			let pkg = this.get("listQueryPackageName").val();
 			let cls = this.get("listQueryClassName").val();
@@ -292,6 +306,13 @@ export class DaoAndPageGeneratorEditForm extends EditForm {
 			let pkg = this.get("editQueryPackageName").val();
 			let cls = this.get("editQueryClassName").val();
 			this.getFieldInfo(pkg + "." + cls, "editQueryConfig");
+		} else {
+			// テーブルの場合
+			let mtbl = this.getComponent("multiRecordQueryList");
+			let idx = mtbl.getRowIndex(id);
+			let pkg = mtbl.getRowField(idx, "packageName").getValue();
+			let cls = mtbl.getRowField(idx, "queryClassName").getValue();
+			this.getFieldInfo2(pkg + "." + cls, mtbl, idx, "queryConfig");
 		}
 	}
 
