@@ -50,7 +50,6 @@ import jp.dataforms.fw.field.base.Field.MatchType;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.SingleSelectField.HtmlFieldType;
-import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
@@ -269,18 +268,7 @@ public class DaoAndPageGeneratorEditForm extends EditForm {
 			.setRelationDataAcquisition(true)
 			.setCalcEventField(true);
 		this.addField(new TextField(ID_EDIT_QUERY_CONFIG));	// 編集対象取得問合せの設定情報
-		//
-		{
-			FieldList flist = new FieldList();
-			flist.addField(new FunctionSelectField());
-			flist.addField(new PackageNameField());
-			flist.addField(new QueryOrTableClassNameField(ID_QUERY_CLASS_NAME))
-				.setAutocomplete(true)
-				.setRelationDataAcquisition(true);
-			flist.addField(new TextField(ID_QUERY_CONFIG));
-			EditableHtmlTable list = new EditableHtmlTable(ID_MULTI_RECORD_QUERY_LIST, flist);
-			this.addHtmlTable(list);
-		}
+		this.addHtmlTable(new MultiRecordQueryHtmlTable(ID_MULTI_RECORD_QUERY_LIST));
 	}
 
 	@Override
