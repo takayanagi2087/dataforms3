@@ -60,6 +60,12 @@ public class UserSelfEditForm extends EditForm {
 			ValidationError err = new ValidationError(UserInfoTable.Entity.ID_LOGIN_ID, msg);
 			list.add(err);
 		}
+		UserInfoTable.Entity e = new UserInfoTable.Entity(param);
+		if (!dao.isMfaEnabled(this.getPage().getUserId()) && "1".equals(e.getMfaRequiredFlag())) {
+			String msg = this.getPage().getMessage("error.mfanotsetup");
+			ValidationError err = new ValidationError(UserInfoTable.Entity.ID_LOGIN_ID, msg);
+			list.add(err);
+		}
 		return list;
 	}
 	/**

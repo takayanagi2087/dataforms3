@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>User information update</title>
-		<meta name="description" content="I change the registration information of the login user.">
+		<title>MFA settings</title>
+		<meta name="description" content="Setup the passkey or TOTP.">
 	</head>
 	<body>
 		<div id="mainDiv">
@@ -24,10 +24,14 @@
 					<div class="fieldDiv" >
 						<div class="label">Authentication Method</div>
 						<div class="field" style="justify-content: left;">
-							<input type="checkbox" id="passwordRequiredFlag" value="1" />
-							<label for="passwordRequiredFlag">Always check your passwords</label> 
-							<input type="checkbox" id="mfaRequiredFlag" value="1" />
-							<label for="mfaRequiredFlag">Require multi-factor authentication (check this only after you have confirmed that you can log in with a passkey or TOTP)</label>
+							<div>
+								<input type="checkbox" id="passwordRequiredFlag" value="1" />
+								<label for="passwordRequiredFlag">Always check your passwords</label> 
+							</div>
+							<div>
+								<input type="checkbox" id="mfaRequiredFlag" value="1" />
+								<label for="mfaRequiredFlag">Require multi-factor authentication (check this only after you have confirmed that you can log in with a passkey or TOTP)</label>
+							</div>
 						</div>
 					</div>
 				</div>

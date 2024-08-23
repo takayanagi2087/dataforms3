@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.StringUtil;
 
 import jp.dataforms.fw.app.enumtype.dao.EnumDao;
 import jp.dataforms.fw.dao.Dao;
@@ -293,6 +294,7 @@ public class UserDao extends Dao {
 		}
 		SqlGenerator gen = this.getSqlGenerator();
 		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable(); //new UserInfoTable();
+		tbl.getFieldList().remove(UserInfoTable.Entity.ID_TOTP_SECRET);	// TOTP SECRETは更新しない
 		String sql = gen.generateUpdateSql(tbl);
 		logger.info("sql=" + sql);
 		this.executeUpdate(sql, data);
@@ -372,6 +374,7 @@ public class UserDao extends Dao {
 		flist.remove(UserInfoTable.Entity.ID_PASSWORD);
 		flist.remove(UserInfoTable.Entity.ID_EXTERNAL_USER_FLAG);
 		flist.remove(UserInfoTable.Entity.ID_ENABLED_FLAG);
+		flist.remove(UserInfoTable.Entity.ID_TOTP_SECRET);
 		flist.remove(UserInfoTable.Entity.ID_DELETE_FLAG);
 		flist.remove(UserInfoTable.Entity.ID_CREATE_USER_ID);
 		flist.remove(UserInfoTable.Entity.ID_CREATE_TIMESTAMP);
@@ -586,5 +589,29 @@ public class UserDao extends Dao {
 		Map<String, Object> u = this.executeRecordQuery(q);
 		UserInfoTable.Entity ue = new UserInfoTable.Entity(u);
 		return ue.getTotpSecret();
+	}
+	
+	
+	/**
+	 * 指定されたユーザが多要素認証を有効にしているかを判定します。
+	 * @param userId ユーザID。
+	 * @return 多要素認証が有効な場合true。
+	 * @throws Exception 例外。
+	 */
+	public Boolean isMfaEnabled(final Long userId) throws Exception {
+		Boolean ret = Boolean.FALSE;
+		Map<String, Object> userInfo = this.queryUserInfo(userId);
+		if (userInfo != null) {
+			UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+			if (!StringUtil.isBlank(ue.getTotpSecret())) {
+				ret = Boolean.TRUE;
+			}
+			WebAuthnDao dao = new WebAuthnDao(this);
+			List<Map<String, Object>> passkeyList = dao.query(userId);
+			if (passkeyList.size() > 0) {
+				ret = Boolean.TRUE;
+			}
+		}
+		return ret;
 	}
 }
