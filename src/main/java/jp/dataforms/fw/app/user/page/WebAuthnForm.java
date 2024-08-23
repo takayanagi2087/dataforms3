@@ -12,8 +12,11 @@ import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 
+import dev.samstevens.totp.secret.DefaultSecretGenerator;
+import dev.samstevens.totp.secret.SecretGenerator;
 import jakarta.servlet.http.HttpSession;
 import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
@@ -184,4 +187,37 @@ public class WebAuthnForm extends Form {
 	    Response resp = new JsonResponse(JsonResponse.SUCCESS, list);
 	    return resp;
 	}
+
+	/**
+	 * TOTP QRコードの剪定。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response generateTotpQr(final Map<String, Object> p) throws Exception {
+		SecretGenerator secretGenerator = new DefaultSecretGenerator();
+		String secret = secretGenerator.generate();
+		logger.debug("TOPT secret=" + secret);
+		UserDao udao = new UserDao(this);
+		udao.updateTotpSecret(this.getPage().getUserId(), secret);
+		
+/*		QrData data = new QrData.Builder()
+				   .label("developer@localhost")
+				   .secret(secret)
+				   .issuer("dataforms3app")
+				   .algorithm(HashingAlgorithm.SHA1) // More on this below
+				   .digits(6)
+				   .period(30)
+				   .build();
+		logger.debug("qrdata=" + JsonUtil.encode(data));
+*/		
+/*		QrGenerator generator = new ZxingPngQrGenerator();
+		byte[] imageData = generator.generate(data);
+		String mimeType = generator.getImageMimeType();
+*/		
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
+	    return resp;
+	}
+
 }

@@ -42,9 +42,31 @@ export class WebAuthnForm extends Form {
 		this.get("passkeyDescButton").click(() => {
 			this.get("passkeyDesc").toggle();
 		});
+		this.get("totpButton").click(() => {
+			this.generateTotpQr();
+		});
+
 //		this.get("authenticatorName").val(currentPage.getPlatform());
 	}
 
+	/**
+	 * TOTP QRコードの生成。
+	 */
+	async generateTotpQr() {
+		try {
+			let r = await this.submit("generateTotpQr");
+			logger.log("r=", r);
+			if (r.status == JsonResponse.SUCCESS) {
+				let img = this.get("totpQr").attr("src");
+				logger.log("img=" + img);
+				this.get("totpQr").attr("src", img + "?t=" + (new Date().getTime()));
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+	
+	
 	/**
 	 * 認証機の名前をチェックします。
 	 */

@@ -549,4 +549,42 @@ public class UserDao extends Dao {
 			this.executeUpdate(table, uflist, table.getPkFieldList(), e.getMap(), true);
 		}
 	}
+	
+	/**
+	 * TOTPのSecretをユーザに登録します。
+	 * @param userId ユーザID。
+	 * @param secret TOTPのSecret。
+	 * @throws Exception 例外。
+	 */
+	public void updateTotpSecret(final Long userId, final String secret) throws Exception {
+		UserInfoTable table = new UserInfoTable();
+		FieldList uflist = new FieldList(
+			table.getTotpSecretField(),
+			table.getUpdateUserIdField(),
+			table.getUpdateTimestampField()
+		);
+		FieldList cflist = new FieldList(table.getUserIdField());
+		UserInfoTable.Entity e = new UserInfoTable.Entity();
+		e.setUserId(userId);
+		e.setUpdateUserId(userId);
+		e.setTotpSecret(secret);
+		this.executeUpdate(table, uflist, cflist, e.getMap(), true);
+	}
+	
+	/**
+	 * TOTP Secretを取得します。
+	 * @param userId ユーザID。
+	 * @return TOTP Secret。
+	 * @throws Exception 例外。
+	 */
+	public String queryTotpSecret(final Long userId) throws Exception {
+		SingleTableQuery q = new SingleTableQuery(new UserInfoTable());
+		q.setCondition("user_id = :user_id");
+		UserInfoTable.Entity e = new UserInfoTable.Entity();
+		e.setUserId(userId);
+		q.setConditionData(e.getMap());
+		Map<String, Object> u = this.executeRecordQuery(q);
+		UserInfoTable.Entity ue = new UserInfoTable.Entity(u);
+		return ue.getTotpSecret();
+	}
 }

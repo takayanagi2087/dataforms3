@@ -100,22 +100,6 @@ export class LoginForm extends Form {
 
 
 	/**
-	 * パスキーの一覧を取得します。
-	 */
-	async getPasskeyList() {
-		try {
-			if (this.validate()) {
-				let loginId = this.get("loginId").val();
-				logger.log("loginId=" + loginId);
-				let sel = this.getComponent("authenticatorName");
-				await sel.getPasskeyList(loginId);
-			}
-		} catch (e) {
-			currentPage.reportError(e);
-		}
-	}
-	
-	/**
 	 * 最後のログイン情報を保存します。
 	 */
 	saveLastLoginInfo() {
@@ -162,6 +146,34 @@ export class LoginForm extends Form {
 	}
 
 	/**
+	 * パスキーの一覧を取得します。
+	 */
+	async getPasskeyList() {
+		try {
+			if (this.validate()) {
+				let loginId = this.get("loginId").val();
+				logger.log("loginId=" + loginId);
+				let sel = this.getComponent("authenticatorName");
+				await sel.getPasskeyList(loginId);
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+
+	/**
+	 * 認証オプションを取得する。
+	 */
+	async getAuthOption() {
+		logger.log("getAuthOption");
+		let opt = await this.submit("getAuthOption");
+		if (r.status == JsonResponse.SUCCESS) {
+			logger.log("opt=", opt);
+			this.getPasskeyList();
+		}
+	}
+	
+	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
 	 * 以下のイベント処理を登録します。
@@ -176,6 +188,10 @@ export class LoginForm extends Form {
 		});
 		this.get("loginButton").click(() => {
 			this.login();
+			return false;
+		});
+		this.get("loginId").change(() => {
+			this.getAuthOption();
 			return false;
 		});
 		if (this.passwordResetMailPage != null) {

@@ -1,13 +1,13 @@
 package jp.dataforms.fw.app.user.page;
 
-import jp.dataforms.fw.app.base.page.GuestPage;
+import jp.dataforms.fw.app.base.page.UserPage;
 import jp.dataforms.fw.dao.Dao;
 
 
 /**
  * 生体認証ページ ページクラス。
  */
-public class WebAuthnPage extends GuestPage {
+public class WebAuthnPage extends UserPage {
 	/**
 	 * コンストラクタ。
 	 */

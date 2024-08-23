@@ -126,8 +126,8 @@ public class LoginForm extends Form {
 					// PassKeyの情報を取得。
 					WebAuthnDao pdao = new WebAuthnDao(this);
 					List<Map<String, Object>> plist = pdao.query(loginId);
-					if ("1".equals(ue.getPasskeyRequiredFlag()) && plist.size() > 0) {
-						// Passkeyが必須でかつPasskeyが登録されている場合
+					if ("1".equals(ue.getMfaRequiredFlag()) && plist.size() > 0) {
+						// MFAが必須でかつPasskeyが登録されている場合
 						if (StringUtil.isBlank(passkey)) {
 							logger.debug("passkey=" + passkey);
 							elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
@@ -369,6 +369,43 @@ public class LoginForm extends Form {
 		}
 		return resp;
 	}
-	
+
+	/**
+	 * 使用できる認証オプションを取得します。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response getAuthOption(final Map<String, Object> p) throws Exception {
+		String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
+		Map<String, Object> opt = new HashMap<String, Object>();
+		UserDao dao = new UserDao(this);
+		Map<String, Object> userInfo = dao.queryUserInfo(loginId);
+		if (userInfo != null) {
+			UserInfoTable.Entity ui = new UserInfoTable.Entity(userInfo);
+			if (StringUtil.isBlank(ui.getTotpSecret())) {
+				opt.put("useTotp", Boolean.FALSE);
+			} else {
+				opt.put("useTotp", Boolean.TRUE);
+			}
+			String passwordRequired = ui.getPasswordRequiredFlag();
+			if ("1".equals(passwordRequired)) {
+				opt.put("passwordRequired", Boolean.TRUE);
+			} else {
+				opt.put("passwordRequired", Boolean.FALSE);
+			}
+			String mfaRequired = ui.getMfaRequiredFlag();
+			if ("1".equals(mfaRequired)) {
+				opt.put("mfaRequired", Boolean.TRUE);
+			} else {
+				opt.put("mfaRequired", Boolean.FALSE);
+			}
+		}
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, opt);
+		return resp;
+
+	}
+
 }
 

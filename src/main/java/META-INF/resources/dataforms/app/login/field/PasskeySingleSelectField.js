@@ -40,8 +40,6 @@ export class PasskeySingleSelectField extends SingleSelectField {
 				this.setOptionList(r.result);
 				if (r.result.length > 0) {
 					this.get().val(r.result[0].value);
-				} else {
-					currentPage.alert(null, MessagesUtil.getMessage("messge.passkeynotexists"));
 				}
 			}
 			logger.dir(r);

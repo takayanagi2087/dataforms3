@@ -3,12 +3,13 @@ package jp.dataforms.fw.app.user.dao;
 import java.util.Map;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.field.common.DeleteFlagField;
+import jp.dataforms.fw.app.user.field.MfaRequiredFlagField;
+import jp.dataforms.fw.app.user.field.TotpSecretField;
 import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.app.user.field.LoginIdField;
 import jp.dataforms.fw.app.user.field.UserIdField;
 import jp.dataforms.fw.app.user.field.UserNameField;
 import jp.dataforms.fw.app.user.field.PasswordRequiredFlagField;
-import jp.dataforms.fw.app.user.field.PasskeyRequiredFlagField;
 import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.app.user.field.MailAddressField;
 import jp.dataforms.fw.app.user.field.ExternalUserFlagField;
@@ -26,15 +27,16 @@ public class UserInfoTable extends Table {
 	public UserInfoTable() {
 		this.setAutoIncrementId(true);
 		this.setComment("ユーザ情報テーブル");
-		this.addPkField(new UserIdField()).setNotNull(true); //ユーザを示すID。
-		this.addField(new LoginIdField()); //ログインID.
+		this.addPkField(new UserIdField()).setNotNull(true); //ユーザを示すID
+		this.addField(new LoginIdField()); //ログインID
 		this.addField(new PasswordField()); //パスワード
 		this.addField(new UserNameField()); //氏名
 		this.addField(new MailAddressField()); //メールアドレス
 		this.addField(new ExternalUserFlagField()); //外部ユーザフラグ
 		this.addField(new EnabledFlagField()); //ユーザ有効フラグ
 		this.addField(new PasswordRequiredFlagField()); //パスワード必須フラグ
-		this.addField(new PasskeyRequiredFlagField()); //PassKey必須フラグ
+		this.addField(new MfaRequiredFlagField()); //PassKey必須フラグ
+		this.addField(new TotpSecretField()); //TOTPのSecret
 		this.addField(new DeleteFlagField()); //削除フラグ
 		this.addUpdateInfoFields();
 	}
@@ -49,9 +51,9 @@ public class UserInfoTable extends Table {
 	 * Entity操作クラスです。
 	 */
 	public static class Entity extends jp.dataforms.fw.dao.Entity {
-		/** ユーザを示すID。のフィールドID。 */
+		/** ユーザを示すIDのフィールドID。 */
 		public static final String ID_USER_ID = "userId";
-		/** ログインID.のフィールドID。 */
+		/** ログインIDのフィールドID。 */
 		public static final String ID_LOGIN_ID = "loginId";
 		/** パスワードのフィールドID。 */
 		public static final String ID_PASSWORD = "password";
@@ -66,7 +68,9 @@ public class UserInfoTable extends Table {
 		/** パスワード必須フラグのフィールドID。 */
 		public static final String ID_PASSWORD_REQUIRED_FLAG = "passwordRequiredFlag";
 		/** PassKey必須フラグのフィールドID。 */
-		public static final String ID_PASSKEY_REQUIRED_FLAG = "passkeyRequiredFlag";
+		public static final String ID_MFA_REQUIRED_FLAG = "mfaRequiredFlag";
+		/** TOTPのSecretのフィールドID。 */
+		public static final String ID_TOTP_SECRET = "totpSecret";
 		/** 削除フラグのフィールドID。 */
 		public static final String ID_DELETE_FLAG = "deleteFlag";
 
@@ -84,32 +88,32 @@ public class UserInfoTable extends Table {
 			super(map);
 		}
 		/**
-		 * ユーザを示すID。を取得します。
-		 * @return ユーザを示すID。。
+		 * ユーザを示すIDを取得します。
+		 * @return ユーザを示すID。
 		 */
 		public java.lang.Long getUserId() {
 			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_USER_ID));
 		}
 
 		/**
-		 * ユーザを示すID。を設定します。
-		 * @param userId ユーザを示すID。。
+		 * ユーザを示すIDを設定します。
+		 * @param userId ユーザを示すID。
 		 */
 		public void setUserId(final java.lang.Long userId) {
 			this.getMap().put(Entity.ID_USER_ID, userId);
 		}
 
 		/**
-		 * ログインID.を取得します。
-		 * @return ログインID.。
+		 * ログインIDを取得します。
+		 * @return ログインID。
 		 */
 		public java.lang.String getLoginId() {
 			return (java.lang.String) this.getMap().get(Entity.ID_LOGIN_ID);
 		}
 
 		/**
-		 * ログインID.を設定します。
-		 * @param loginId ログインID.。
+		 * ログインIDを設定します。
+		 * @param loginId ログインID。
 		 */
 		public void setLoginId(final java.lang.String loginId) {
 			this.getMap().put(Entity.ID_LOGIN_ID, loginId);
@@ -215,16 +219,32 @@ public class UserInfoTable extends Table {
 		 * PassKey必須フラグを取得します。
 		 * @return PassKey必須フラグ。
 		 */
-		public java.lang.String getPasskeyRequiredFlag() {
-			return (java.lang.String) this.getMap().get(Entity.ID_PASSKEY_REQUIRED_FLAG);
+		public java.lang.String getMfaRequiredFlag() {
+			return (java.lang.String) this.getMap().get(Entity.ID_MFA_REQUIRED_FLAG);
 		}
 
 		/**
 		 * PassKey必須フラグを設定します。
-		 * @param passkeyRequiredFlag PassKey必須フラグ。
+		 * @param mfaRequiredFlag PassKey必須フラグ。
 		 */
-		public void setPasskeyRequiredFlag(final java.lang.String passkeyRequiredFlag) {
-			this.getMap().put(Entity.ID_PASSKEY_REQUIRED_FLAG, passkeyRequiredFlag);
+		public void setMfaRequiredFlag(final java.lang.String mfaRequiredFlag) {
+			this.getMap().put(Entity.ID_MFA_REQUIRED_FLAG, mfaRequiredFlag);
+		}
+
+		/**
+		 * TOTPのSecretを取得します。
+		 * @return TOTPのSecret。
+		 */
+		public java.lang.String getTotpSecret() {
+			return (java.lang.String) this.getMap().get(Entity.ID_TOTP_SECRET);
+		}
+
+		/**
+		 * TOTPのSecretを設定します。
+		 * @param totpSecret TOTPのSecret。
+		 */
+		public void setTotpSecret(final java.lang.String totpSecret) {
+			this.getMap().put(Entity.ID_TOTP_SECRET, totpSecret);
 		}
 
 		/**
@@ -247,16 +267,16 @@ public class UserInfoTable extends Table {
 	}
 
 	/**
-	 * ユーザを示すID。フィールドを取得します。
-	 * @return ユーザを示すID。フィールド。
+	 * ユーザを示すIDフィールドを取得します。
+	 * @return ユーザを示すIDフィールド。
 	 */
 	public UserIdField getUserIdField() {
 		return (UserIdField) this.getField(Entity.ID_USER_ID);
 	}
 
 	/**
-	 * ログインID.フィールドを取得します。
-	 * @return ログインID.フィールド。
+	 * ログインIDフィールドを取得します。
+	 * @return ログインIDフィールド。
 	 */
 	public LoginIdField getLoginIdField() {
 		return (LoginIdField) this.getField(Entity.ID_LOGIN_ID);
@@ -314,8 +334,16 @@ public class UserInfoTable extends Table {
 	 * PassKey必須フラグフィールドを取得します。
 	 * @return PassKey必須フラグフィールド。
 	 */
-	public PasskeyRequiredFlagField getPasskeyRequiredFlagField() {
-		return (PasskeyRequiredFlagField) this.getField(Entity.ID_PASSKEY_REQUIRED_FLAG);
+	public MfaRequiredFlagField getMfaRequiredFlagField() {
+		return (MfaRequiredFlagField) this.getField(Entity.ID_MFA_REQUIRED_FLAG);
+	}
+
+	/**
+	 * TOTPのSecretフィールドを取得します。
+	 * @return TOTPのSecretフィールド。
+	 */
+	public TotpSecretField getTotpSecretField() {
+		return (TotpSecretField) this.getField(Entity.ID_TOTP_SECRET);
 	}
 
 	/**
