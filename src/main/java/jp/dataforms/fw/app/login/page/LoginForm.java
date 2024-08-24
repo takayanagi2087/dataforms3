@@ -54,6 +54,7 @@ import jp.dataforms.fw.validator.ValidationError;
  */
 public class LoginForm extends Form {
 
+
 	/**
 	 * Logger.
 	 */
@@ -65,10 +66,19 @@ public class LoginForm extends Form {
 	private static final String WEB_AUTHN_GET_OPTION = "webAuthnGetOption";
 
 	/**
+	 * 認証情報。
+	 */
+	private static final String ID_AUTH_METHOD = "authMethod";
+
+	/**
 	 * WebAuthn情報用セッションキー。
 	 */
 	private static final String WEB_AUTHN_INFO = "webAuthnInfo";
 
+	/**
+	 * TOTPフィールドID。
+	 */
+	private static final String ID_TOTP = "totp";
 	/**
 	 * 最後最終ログイン情報を保存フラグのID。
 	 */
@@ -89,10 +99,10 @@ public class LoginForm extends Form {
 		this.addField(new LoginIdField()).addValidator(new RequiredValidator());
 
 		
-		this.addField(new AuthMethodSelectField("authMethod"));
+		this.addField(new AuthMethodSelectField(ID_AUTH_METHOD));
 		PasswordField pw = new PasswordField();
 		this.addField(pw);
-		this.addField(new TextField("totp")).addValidator(new DisplayedRequiredValidator());
+		this.addField(new TextField(ID_TOTP)).addValidator(new DisplayedRequiredValidator());
 		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME)).addValidator(new DisplayedRequiredValidator());
 		this.addField(new FlagField(AutoLoginCookie.ID_KEEP_LOGIN));
 		this.addField(new FlagField(ID_SAVE_LAST_LOGIN));
@@ -119,28 +129,55 @@ public class LoginForm extends Form {
 			String loginId = (String) data.get(UserInfoTable.Entity.ID_LOGIN_ID);
 			String password = (String) data.get(UserInfoTable.Entity.ID_PASSWORD);
 			String passkey = (String) data.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
-			if (StringUtil.isBlank(password) && StringUtil.isBlank(passkey)) {
+			String totp = (String) data.get(ID_TOTP);
+			String method = (String) data.get(ID_AUTH_METHOD);
+/*			if (StringUtil.isBlank(password) && StringUtil.isBlank(passkey)) {
 				// Passkey Passwordの両方が入力されなかった場合
 				elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
 				elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
-			}
+			}*/
 			if (elist.size() == 0) {
 				// ユーザ情報を取得。
 				UserDao udao = new UserDao(this);
 				Map<String, Object> userInfo = udao.queryUserInfo(loginId);
 				if (userInfo != null) {
 					UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
-					if ("1".equals(ue.getPasswordRequiredFlag())) {
-						// パスワード必須の場合
+					if ("0".equals(method)) {
+						// パスワードのみの認証
+						if ("1".equals(ue.getMfaRequiredFlag())) {
+							throw new ApplicationException(this.getPage(), "error.invalidauth");
+						}
+						// パスワードを必須
 						if (StringUtil.isBlank(password)) {
 							elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
 						}
-					}
-					// PassKeyの情報を取得。
-					WebAuthnDao pdao = new WebAuthnDao(this);
-					List<Map<String, Object>> plist = pdao.query(loginId);
-					if ("1".equals(ue.getMfaRequiredFlag()) && plist.size() > 0) {
-						// MFAが必須でかつPasskeyが登録されている場合
+					} else if ("1".equals(method)) {
+						// パスワード + TOTPの認証
+						if (StringUtil.isBlank(ue.getTotpSecret())) {
+							throw new ApplicationException(this.getPage(), "error.invalidauth");
+						}
+						// パスワードを必須
+						if (StringUtil.isBlank(password)) {
+							elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+						}
+						// TOTP必須
+						if (StringUtil.isBlank(totp)) {
+							elist.add(new ValidationError(ID_TOTP, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+						}
+					} else if ("2".equals(method)) {
+						// パスキーの認証
+						// PassKeyの情報を取得。
+						WebAuthnDao pdao = new WebAuthnDao(this);
+						List<Map<String, Object>> plist = pdao.query(loginId);
+						if (plist.size() == 0) {
+							throw new ApplicationException(this.getPage(), "error.invalidauth");
+						}
+						if ("1".equals(ue.getPasswordRequiredFlag())) {
+							// パスワード必須の場合
+							if (StringUtil.isBlank(password)) {
+								elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+							}
+						}
 						if (StringUtil.isBlank(passkey)) {
 							logger.debug("passkey=" + passkey);
 							elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
@@ -213,16 +250,16 @@ public class LoginForm extends Form {
 				HttpSession session = this.getPage().getRequest().getSession();
 				logger.info(() -> "login success=" + userInfo.get("loginId") + "(" + userInfo.get("userId") + ")");
 				UserInfoTable.Entity e = new UserInfoTable.Entity(userInfo);
-				String authMethod = (String) params.get("authMethod");
+				String authMethod = (String) params.get(ID_AUTH_METHOD);
 				if ("1".equals(authMethod)) {
-					if (this.checkTotp(e.getTotpSecret(), (String) params.get("totp"))) {
+					if (this.checkTotp(e.getTotpSecret(), (String) params.get(ID_TOTP))) {
 						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 						ret = new JsonResponse(JsonResponse.SUCCESS, "");
 						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
 						logger.info(ui + "Authenticated with password.");
 					} else {
-						elist.add(new ValidationError("totp", "正しいワンタイムパスワードを入力してください。"));
+						elist.add(new ValidationError(ID_TOTP, "正しいワンタイムパスワードを入力してください。"));
 						ret = new JsonResponse(JsonResponse.INVALID, elist);
 					}
 				} else {

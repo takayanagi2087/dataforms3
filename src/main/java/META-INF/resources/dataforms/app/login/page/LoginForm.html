@@ -11,25 +11,43 @@
 					<div class="label">Login ID.</div>
 					<div class="field"><input type="text" id="loginId" value=""/></div>
 				</div>
-				<div class="fieldDiv">
+				<div id="methodDiv" class="fieldDiv" style="display: none;">
+					<div class="label">Authentication Method</div>
+					<div class="field" style="justify-content: flex-start;">
+						<input type="radio" id="authMethod[0]" name="authMethod"/>
+					</div>
+				</div>
+				<div id="passwordDiv" class="fieldDiv" style="display: none;">
 					<div class="label">Password</div>
 					<div class="field"><input type="password" id="password" value=""/></div>
 				</div>
-				<div class="fieldDiv">
+				<div id="passkeyDiv" class="fieldDiv" style="display: none;">
 					<div class="label">Passkey</div>
-					<div class="field"><select id="authenticatorName" style="width: calc(100% - 190px);"></select><button type="button" id="passkeyListButton">登録されているパスキーを取得</button></div>
+					<div class="field">
+						<select id="authenticatorName"></select>
+					</div>
 				</div>
-				<div class="fieldDiv" style="justify-content: space-between;">
+				<div id="totpDiv" class="fieldDiv" style="display: none;">
+					<div class="label">TOTP</div>
+					<div class="field"><input type="text" id="totp"></div>
+				</div>
+				<div id="flagDiv" class="fieldDiv" style="justify-content: space-between; display: none;">
 					<div>
-						<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">Save the last logged-in user ID and passkey.&nbsp;</label>
-						<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">Keep login</label>
+						<div>
+							<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">Save authentication method&nbsp;</label>
+						</div>
+						<div>
+							<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">Keep login</label>
+						</div>
 					</div>
 					<div>
 						<a id="passwordResetLink" href="javascript:void(0);">If you can't log in, click here</a>
 					</div>
 				</div>
 			</div>
-			<button type="submit" id="loginButton" class="largeButton">Login</button>
+			<button type="button" id="nextButton" class="largeButton" >Next</button>
+			<button type="button" id="loginButton" class="largeButton" style="display: none;">Login</button>
+			<button type="button" id="backButton" class="largeButton" style="display: none;">Change login ID</button>
 		</form>
 	</body>
 </html>
