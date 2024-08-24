@@ -5,6 +5,7 @@
 'use strict';
 
 import { ValidationError } from '../../validator/ValidationError.js';
+import { RequiredValidator } from '../../validator/RequiredValidator.js';
 import { WebComponent } from '../../controller/WebComponent.js';
 import { JsonResponse } from '../../response/JsonResponse.js';
 import { Form } from '../../controller/Form.js';
@@ -514,12 +515,47 @@ export class Field extends WebComponent {
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			for (let i = 0; i < this.validatorList.length; i++) {
 				let v = this.newInstance(this.validatorList[i]);
-				if (v.constructor.name == "RequiredValidator") {
+				if (v.constructor.name == "RequiredValidator" 
+				   || v.constructor.name == "DisplayedRequiredValidator") {
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 必須設定を切り替えます。
+	 * @param {Boolean} required 必須フラグ。 
+	 */
+	setRequired(required) {
+		if (!required) {
+			let vlist = [];
+			for (let i = 0; i < this.validators.length; i++) {
+				if (!(this.validators[i] instanceof RequiredValidator)) { 
+					vlist.push(this.validators[i]);
+				}
+			}
+			this.validators = vlist;
+		} else {
+			let req = false;
+			for (let i = 0; i < this.validators.length; i++) {
+				if (this.validators[i] instanceof RequiredValidator) { 
+					req = true;
+				}
+			}
+			if (!req) {
+				let v = new RequiredValidator();
+				this.validators.push(v);
+			}
+		}
+		if (required) {
+			let e = this.getLabelElement();
+			e.addClass("requiredFieldLabel");
+		} else {
+			let e = this.getLabelElement();
+			e.removeClass("requiredFieldLabel");
+		}
 	}
 
 	/**

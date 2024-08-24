@@ -16,6 +16,14 @@ import { FieldValidator } from './FieldValidator.js';
  */
 export class RequiredValidator extends FieldValidator {
 	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+		this.messageKey = "error.required";
+	}
+
+	/**
 	 * バリデーションを行ないます。
 	 * @param {String} v 値。
 	 * @returns {Boolean} バリデーション結果。

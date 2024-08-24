@@ -15,8 +15,15 @@ import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 
+import dev.samstevens.totp.code.CodeGenerator;
+import dev.samstevens.totp.code.CodeVerifier;
+import dev.samstevens.totp.code.DefaultCodeGenerator;
+import dev.samstevens.totp.code.DefaultCodeVerifier;
+import dev.samstevens.totp.time.SystemTimeProvider;
+import dev.samstevens.totp.time.TimeProvider;
 import jakarta.servlet.http.HttpSession;
 import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.app.login.field.AuthMethodSelectField;
 import jp.dataforms.fw.app.login.field.PasskeySingleSelectField;
 import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
@@ -27,6 +34,7 @@ import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.controller.WebEntryPoint;
 import jp.dataforms.fw.exception.ApplicationException;
+import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
@@ -36,6 +44,7 @@ import jp.dataforms.fw.util.OnetimePasswordUtil;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.util.UserLogUtil;
 import jp.dataforms.fw.util.WebAuthnUtil;
+import jp.dataforms.fw.validator.DisplayedRequiredValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
 
@@ -78,9 +87,13 @@ public class LoginForm extends Form {
 	public LoginForm() {
 		super("loginForm");
 		this.addField(new LoginIdField()).addValidator(new RequiredValidator());
+
+		
+		this.addField(new AuthMethodSelectField("authMethod"));
 		PasswordField pw = new PasswordField();
 		this.addField(pw);
-		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME));
+		this.addField(new TextField("totp")).addValidator(new DisplayedRequiredValidator());
+		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME)).addValidator(new DisplayedRequiredValidator());
 		this.addField(new FlagField(AutoLoginCookie.ID_KEEP_LOGIN));
 		this.addField(new FlagField(ID_SAVE_LAST_LOGIN));
 	}
@@ -151,6 +164,24 @@ public class LoginForm extends Form {
 	}
 	
 	/**
+	 * TOTPの確認を行います。
+	 * @param secret TOTP secret。
+	 * @param totp 入力されたTOTP
+	 * @return チェックOKであれはtrue。
+	 * @throws Exception 例外。
+	 */
+	private Boolean checkTotp(final String secret, final String totp) throws Exception {
+		logger.debug("totp=" + totp);
+		TimeProvider timeProvider = new SystemTimeProvider();
+		CodeGenerator codeGenerator = new DefaultCodeGenerator();
+		CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
+		Boolean ret = verifier.isValidCode(secret, totp);
+		logger.debug("totp check=" + ret);
+		return ret;
+	}
+	
+	
+	/**
 	 * パスワードログインの処理を行います。
 	 * @param params パラメータ。
 	 * @return ログイン結果。
@@ -170,7 +201,7 @@ public class LoginForm extends Form {
 			UserDao dao = new UserDao(this);
 			Map<String, Object> userInfo = dao.login(params);
 			if (OnetimePasswordUtil.needConfirmation(this.getPage(), userInfo)) {
-				// ワンタイムパスワード確認モード。
+				// ワンタイムパスワード確認モード(Not TOTP)。
 				String keepLogin = (String) params.get(AutoLoginCookie.ID_KEEP_LOGIN);
 				userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, keepLogin);
 				HttpSession session = this.getPage().getRequest().getSession();
@@ -180,12 +211,25 @@ public class LoginForm extends Form {
 				logger.info(ui + "Authenticated with password.");
 			} else {
 				HttpSession session = this.getPage().getRequest().getSession();
-				session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 				logger.info(() -> "login success=" + userInfo.get("loginId") + "(" + userInfo.get("userId") + ")");
-				AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
-				ret = new JsonResponse(JsonResponse.SUCCESS, "");
-				String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
-				logger.info(ui + "Authenticated with password.");
+				UserInfoTable.Entity e = new UserInfoTable.Entity(userInfo);
+				String authMethod = (String) params.get("authMethod");
+				if ("1".equals(authMethod)) {
+					if (this.checkTotp(e.getTotpSecret(), (String) params.get("totp"))) {
+						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
+						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+						ret = new JsonResponse(JsonResponse.SUCCESS, "");
+						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+						logger.info(ui + "Authenticated with password.");
+					} else {
+						elist.add(new ValidationError("totp", "正しいワンタイムパスワードを入力してください。"));
+						ret = new JsonResponse(JsonResponse.INVALID, elist);
+					}
+				} else {
+					AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
+					session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+					ret = new JsonResponse(JsonResponse.SUCCESS, "");
+				}
 			}
 		}
 		return ret;

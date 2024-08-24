@@ -11,15 +11,27 @@
 					<div class="label">ログインID.</div>
 					<div class="field"><input type="text" id="loginId" value=""/></div>
 				</div>
-				<div class="fieldDiv">
+				<div id="methodDiv" class="fieldDiv" style="display: none;">
+					<div class="label">認証方法</div>
+					<div class="field" style="justify-content: flex-start;">
+						<input type="radio" id="authMethod[0]" name="authMethod"/>
+					</div>
+				</div>
+				<div id="passwordDiv" class="fieldDiv" style="display: none;">
 					<div class="label">パスワード</div>
 					<div class="field"><input type="password" id="password" value=""/></div>
 				</div>
-				<div class="fieldDiv">
+				<div id="passkeyDiv" class="fieldDiv" style="display: none;">
 					<div class="label">パスキー</div>
-					<div class="field"><select id="authenticatorName" style="width: calc(100% - 190px);"></select><button type="button" id="passkeyListButton">登録されているパスキーを取得</button></div>
+					<div class="field">
+						<select id="authenticatorName"></select>
+					</div>
 				</div>
-				<div class="fieldDiv" style="justify-content: space-between;">
+				<div id="totpDiv" class="fieldDiv" style="display: none;">
+					<div class="label">ワンタイムパスワード(TOTP)</div>
+					<div class="field"><input type="text" id="totp"></div>
+				</div>
+				<div id="flagDiv" class="fieldDiv" style="justify-content: space-between; display: none;">
 					<div>
 						<div>
 							<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">最後にログインしたユーザIDとパスキーを保存する。&nbsp;</label>
@@ -33,7 +45,9 @@
 					</div>
 				</div>
 			</div>
-			<button type="submit" id="loginButton" class="largeButton">ログイン</button>
+			<button type="submit" id="nextButton" class="largeButton" >次へ</button>
+			<button type="submit" id="loginButton" class="largeButton" style="display: none;">ログイン</button>
+			<button type="button" id="backButton" class="largeButton" style="display: none;">ログインIDを変更</button>
 		</form>
 	</body>
 </html>

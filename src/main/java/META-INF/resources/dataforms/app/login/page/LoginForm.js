@@ -19,6 +19,12 @@ import { JsonResponse } from '../../../response/JsonResponse.js';
  * @extends Form
  */
 export class LoginForm extends Form {
+	
+	/**
+	 * 認証オプション。
+	 */
+	#authOption = null;
+	
 	/**
 	 * 最終ログイン情報のローカルストレージキー。
 	 */
@@ -88,9 +94,8 @@ export class LoginForm extends Form {
 	 */
 	async login() {
 		if (this.validate()) {
-			let passkey = this.get("authenticatorName").val();
-			logger.log("passkey:", passkey);
-			if (passkey != null && passkey.length > 0) {
+			let method = this.find("[name='authMethod']:checked").val();
+			if (method == "2") {
 				this.passKeyAuth();
 			} else {
 				this.passwordAuth();
@@ -150,8 +155,8 @@ export class LoginForm extends Form {
 	 */
 	async getPasskeyList() {
 		try {
-			if (this.validate()) {
-				let loginId = this.get("loginId").val();
+			let loginId = this.get("loginId").val();
+			if (loginId.length > 0) {
 				logger.log("loginId=" + loginId);
 				let sel = this.getComponent("authenticatorName");
 				await sel.getPasskeyList(loginId);
@@ -162,16 +167,135 @@ export class LoginForm extends Form {
 	}
 
 	/**
+	 * ラジオボタンの表示設定を行います。
+	 * @param {Number} idx インデックス。
+	 * @param {Boolean} visible 表示フラグ。
+	 */
+	setRadioVisible(idx, visible) {
+		let id = this.selectorEscape("authMethod[" + idx + "]");
+		if (!visible) {
+			this.find("input[id='" + id  +"']").hide();
+			this.find("label[for$='" + id +"']").hide();
+		} else {
+			this.find("input[id='" + id  +"']").show();
+			this.find("label[for$='" + id +"']").show();
+			this.find("input[id='" + id  +"']").prop("checked", true);
+		}
+	}
+	
+	/**
+	 * 認証方法のラジオボタンの設定を行います。
+	 * @param {Object} 認証オプション。
+	 */
+	setAuthMethodRadio(opt) {
+		logger.log("opt=", opt);
+		// MTA必須によって、パスワードのみの表示設定。
+		if (opt.result.mfaRequired) {
+			this.setRadioVisible(0, false);
+		} else {
+			this.setRadioVisible(0, true);
+		}
+		if (opt.result.useTotp) {
+			this.setRadioVisible(1, true);
+		} else {
+			this.setRadioVisible(1, false);
+		}
+		if (this.find("#authenticatorName").find("option").length > 1) {
+			this.setRadioVisible(2, true);
+		} else {
+			this.setRadioVisible(2, false);
+		}
+	}
+		
+	/** 
+	 * 認証方法指定モードに移行。
+	 * @param {Object} opt 選択できる認証オプション。
+	 */
+	toAuthMethodMode(opt) {
+		this.get("methodDiv").show();
+		this.get("passwordDiv").show();
+		logger.log("passkeyCount=" + this.find("#authenticatorName").find("option").length);
+		if (this.find("#authenticatorName").find("option").length > 1) {
+			this.get("passkeyDiv").show();
+		}
+		if (opt.result.useTotp) {
+			this.get("totpDiv").show();
+		}
+		this.get("flagDiv").show();
+		this.get("loginButton").show();
+		this.get("backButton").show();
+		this.get("nextButton").hide();
+		this.getComponent("loginId").lock(true);
+		this.setAuthMethodRadio(opt);
+		this.changeAuthMethod();
+		
+	}
+
+	/**
+	 * LoginIdの変更モードに移行する。
+	 */
+	toLoginIdMode() {
+		this.get("methodDiv").hide();
+		this.get("passwordDiv").hide();
+		this.get("totpDiv").hide();
+		this.get("passkeyDiv").hide();
+		this.get("flagDiv").hide();
+		this.get("loginButton").hide();
+		this.get("backButton").hide();
+		this.get("nextButton").show();
+		this.getComponent("loginId").lock(false);
+	}
+	
+	/**
 	 * 認証オプションを取得する。
 	 */
 	async getAuthOption() {
-		logger.log("getAuthOption");
-		let opt = await this.submit("getAuthOption");
-		if (r.status == JsonResponse.SUCCESS) {
-			logger.log("opt=", opt);
-			this.getPasskeyList();
+		try {
+			logger.log("getAuthOption loginId=" + this.get("loginId").val());
+			let opt = await this.submit("getAuthOption");
+			if (opt.status == JsonResponse.SUCCESS) {
+				this.#authOption = opt;
+				logger.log("opt=", opt);
+				await this.getPasskeyList();
+				this.toAuthMethodMode(opt);
+			}
+		} catch (e) {
+			currentPage.reportError(e);
 		}
 	}
+	
+	/**
+	 * 認証メソッドの変更処理。
+	 */
+	changeAuthMethod() {
+		let method = this.find("[name='authMethod']:checked").val();
+		logger.log("authMethod=" + method);
+		if (method == "0") {
+			this.get("passwordDiv").show();
+			this.get("totpDiv").hide();
+			this.get("passkeyDiv").hide();
+		} else if (method == "1") {
+			this.get("passwordDiv").show();
+			this.get("totpDiv").show();
+			this.get("passkeyDiv").hide();
+		} else if (method == "2") {
+			this.get("passwordDiv").show();
+			this.get("totpDiv").hide();
+			this.get("passkeyDiv").show();
+		}
+		let pf = this.getComponent("password");
+		if (method == "0" || method == "1") {
+			pf.setRequired(true);
+		} else {
+			pf.setRequired(false);
+			if (this.#authOption.result.passwordRequired) {
+				pf.setRequired(true);
+			} else {
+				pf.setRequired(false);
+			}
+		}
+	}
+	
 	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
@@ -182,16 +306,19 @@ export class LoginForm extends Form {
 	 */
 	attach() {
 		super.attach();
-		this.get("passkeyListButton").click(() => {
-			this.getPasskeyList();
+		this.find("[name='authMethod']").click(() => {
+			this.changeAuthMethod();
+		});
+		this.get("nextButton").click(() => {
+			this.getAuthOption();
+			return false;
+		});
+		this.get("backButton").click(() => {
+			this.toLoginIdMode();
 			return false;
 		});
 		this.get("loginButton").click(() => {
 			this.login();
-			return false;
-		});
-		this.get("loginId").change(() => {
-			this.getAuthOption();
 			return false;
 		});
 		if (this.passwordResetMailPage != null) {
@@ -207,6 +334,7 @@ export class LoginForm extends Form {
 			this.find("label[for='" + this.get("keepLogin").attr("id") + "']").hide();
 		}
 		this.loadLastLoginInfo();
+		this.get("loginId").focus();
 	}
 
 }

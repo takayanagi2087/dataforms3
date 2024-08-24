@@ -16,6 +16,13 @@ import { WebComponent } from '../controller/WebComponent.js';
  */
 export class FieldValidator extends WebComponent {
 	/**
+	 * コンストラクタ。
+	 */
+	constructor() {
+		super();
+	}
+	
+	/**
 	 * 初期化を行います。
 	 */
 	init() {
