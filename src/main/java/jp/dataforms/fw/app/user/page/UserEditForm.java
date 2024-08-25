@@ -145,6 +145,24 @@ public class UserEditForm extends EditForm {
 				ValidationError err = new ValidationError(UserInfoTable.Entity.ID_LOGIN_ID, msg);
 				list.add(err);
 			}
+			// 多要素認証関連チェック
+			UserInfoTable.Entity e = new UserInfoTable.Entity(data);
+			if ("1".equals(e.getMfaRequiredFlag())) {
+				Long userId = e.getUserId();
+				if (userId == null) {
+					// 新規ユーザは多要素認証は必須にできない。
+					String msg = this.getPage().getMessage("error.mfanotsetup");
+					ValidationError err = new ValidationError(UserInfoTable.Entity.ID_LOGIN_ID, msg);
+					list.add(err);
+				} else {
+					if (!dao.isMfaEnabled(userId)) {
+						// 多要素認証が設定されていない場合、多要素認証を必須にできない。
+						String msg = this.getPage().getMessage("error.mfanotsetup");
+						ValidationError err = new ValidationError(UserInfoTable.Entity.ID_LOGIN_ID, msg);
+						list.add(err);
+					}
+				}
+			}
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> attList = (List<Map<String, Object>>) data.get("attTable");
 			if (attList.size() != 0) {
