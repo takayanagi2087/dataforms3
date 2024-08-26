@@ -142,6 +142,7 @@ export class LoginForm extends Form {
 				this.get("saveLastLogin").prop("checked", true);
 			} else {
 				this.get("saveLastLogin").prop("checked", false);
+				this.get("loginId").focus();
 			}
 		} catch (e) {
 			logger.error("error:", e);
@@ -258,6 +259,7 @@ export class LoginForm extends Form {
 				logger.log("opt=", opt);
 				await this.getPasskeyList();
 				this.toAuthMethodMode(opt);
+				this.get("password").focus();
 			}
 		} catch (e) {
 			currentPage.reportError(e);
@@ -295,7 +297,17 @@ export class LoginForm extends Form {
 			}
 		}
 	}
-	
+
+	/**
+	 * エンターキー押下時の動作。
+	 */	
+	onEnter() {
+		if (this.get("nextButton").is(":visible")) {
+			this.getAuthOption();
+		} else {
+			this.login();
+		}
+	}
 	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
@@ -312,6 +324,11 @@ export class LoginForm extends Form {
 		this.get("nextButton").click(() => {
 			this.getAuthOption();
 			return false;
+		});
+		this.get().on("keydown", (ev) => {
+			if(ev.key === "Enter") {
+				this.onEnter();
+			}
 		});
 		this.get("backButton").click(() => {
 			this.toLoginIdMode();
