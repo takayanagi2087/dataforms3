@@ -21,6 +21,7 @@ import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
 import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
+import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.app.user.field.PlatformField;
 import jp.dataforms.fw.app.user.field.SharedPasskeyField;
 import jp.dataforms.fw.app.user.field.WebAuthnIdField;
@@ -35,9 +36,9 @@ import jp.dataforms.fw.util.WebAuthnUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 
 /**
- * 生体認証ページ 用フォームクラス。
+ * 多要素認証設定フォームクラス。
  */
-public class WebAuthnForm extends Form {
+public class MfaForm extends Form {
 
 
 	/**
@@ -58,13 +59,14 @@ public class WebAuthnForm extends Form {
 	/**
 	 * logger.
 	 */
-	private static Logger logger = LogManager.getLogger(WebAuthnForm.class);
+	private static Logger logger = LogManager.getLogger(MfaForm.class);
 	
 	/**
 	 * コンストラクタ。
 	 */
-	public WebAuthnForm() {
+	public MfaForm() {
 		super(null);
+		this.addField(new PasswordField()).addValidator(new RequiredValidator());
 		this.addField(new AuthenticatorNameField()).addValidator(new RequiredValidator());
 		this.addField(new FlagField(ID_REQUIRE_RESIDENT_KEY));
 		FieldList flist = new FieldList();
@@ -78,7 +80,8 @@ public class WebAuthnForm extends Form {
 		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
 		this.addHtmlTable(authenticatorList);
 	}
-
+	
+	
 	@Override
 	public void init() throws Exception {
 		super.init();

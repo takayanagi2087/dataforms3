@@ -5,14 +5,15 @@ import jp.dataforms.fw.dao.Dao;
 
 
 /**
- * 生体認証ページ ページクラス。
+ * 多要素認証設定ページクラス。
  */
-public class WebAuthnPage extends UserPage {
+public class MfaPage extends UserPage {
 	/**
 	 * コンストラクタ。
 	 */
-	public WebAuthnPage() {
-		this.addForm(new WebAuthnForm());
+	public MfaPage() {
+		this.addForm(new PasswordCheckForm());
+		this.addForm(new MfaForm());
 	}
 
 	/**

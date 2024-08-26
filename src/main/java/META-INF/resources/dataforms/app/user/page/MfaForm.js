@@ -1,5 +1,5 @@
 /**
- * @fileOverview {@link WebAuthnForm}クラスを記述したファイルです。
+ * @fileOverview {@link MfaForm}クラスを記述したファイルです。
  */
 
 'use strict';
@@ -10,11 +10,11 @@ import { JsonResponse } from '../../../response/JsonResponse.js';
 import { MessagesUtil } from '../../../util/MessagesUtil.js';
 
 /**
- * @class WebAuthnForm
+ * @class MfaForm
  *
  * @extends Form
  */
-export class WebAuthnForm extends Form {
+export class MfaForm extends Form {
 	/**
 	 * コンストラクタ。
 	 */
@@ -27,6 +27,7 @@ export class WebAuthnForm extends Form {
 	 */
 	attach() {
 		super.attach();
+		
 		this.get("registButton").click(() => {
 			this.regist();
 			return false;
@@ -45,10 +46,9 @@ export class WebAuthnForm extends Form {
 		this.get("totpButton").click(() => {
 			this.generateTotpQr();
 		});
-
-//		this.get("authenticatorName").val(currentPage.getPlatform());
 	}
 
+	
 	/**
 	 * TOTP QRコードの生成。
 	 */
@@ -123,6 +123,7 @@ export class WebAuthnForm extends Form {
 	 *
 	 */
 	setFormData(data) {
+		logger.log("formData=", data);
 		super.setFormData(data);
 		this.find("[id$='\.deleteButton']").click((ev) => {
 			this.deleteAuthenticator(ev);
