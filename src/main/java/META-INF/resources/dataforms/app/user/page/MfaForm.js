@@ -46,6 +46,9 @@ export class MfaForm extends Form {
 		this.get("totpButton").click(() => {
 			this.generateTotpQr();
 		});
+		this.get("removeTotpButton").click(() => {
+			this.removeTotpQr();
+		});
 	}
 
 	/**
@@ -58,7 +61,11 @@ export class MfaForm extends Form {
 			if (r.status == JsonResponse.SUCCESS) {
 				let alist = this.getComponent("authenticatorList");
 				alist.setTableData(r.result.authenticatorList);
-				this.get("totpQr").attr("src", r.result.totpQrImage);
+				if (r.result.totpQrImage.length > 0) {
+					this.get("totpQr").attr("src", r.result.totpQrImage);
+				} else {
+					this.get("totpQr").attr("src", null);
+				}
 			}
 		} catch (e) {
 			currentPage.reportError(e);
@@ -66,14 +73,50 @@ export class MfaForm extends Form {
 	}
 	
 	/**
+	 * TOTP QRコードの確認処理。
+	 * @return {Boolean} 確認を行う場合true。
+	 */
+	async conformTotpQrUpdate() {
+		let totpQr = this.get("totpQr").attr("src");
+		if (totpQr == null) {
+			return true;
+		} else {
+			return await currentPage.confirm(null, MessagesUtil.getMessage("message.updatetotp"));
+		}
+	}
+	
+	/**
+	 * TOTP QRコードの削除。
+	 */
+	async removeTotpQr() {
+		try {
+			let c = await currentPage.confirm(null, MessagesUtil.getMessage("message.removeTotp"));
+			if (c) {
+				let r = await this.submit("removeTotpQr");
+				logger.log("r=", r);
+				if (r.status == JsonResponse.SUCCESS) {
+					this.get("totpQr").remove();
+					this.get("totpQrDiv").append("<img id='totpQ' width='128' height='128'/>")
+				}
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+
+	
+	/**
 	 * TOTP QRコードの生成。
 	 */
 	async generateTotpQr() {
 		try {
-			let r = await this.submit("generateTotpQr");
-			logger.log("r=", r);
-			if (r.status == JsonResponse.SUCCESS) {
-				this.get("totpQr").attr("src", r.result);
+			let c = await this.conformTotpQrUpdate();
+			if (c) {
+				let r = await this.submit("generateTotpQr");
+				logger.log("r=", r);
+				if (r.status == JsonResponse.SUCCESS) {
+					this.get("totpQr").attr("src", r.result);
+				}
 			}
 		} catch (e) {
 			currentPage.reportError(e);

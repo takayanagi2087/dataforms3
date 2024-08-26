@@ -4,12 +4,6 @@
 		<meta charset="UTF-8">
 		<title>多要素認証設定</title>
 		<meta name="description" content="パスキーまたはTOTPの設定を行います。">
-		<style>
-			div.totpDiv {
-				display: flex;
-				flex-flow: row;
-			}
-		</style>
 	</head>
 	<body>
 		<div id="mainDiv">
@@ -98,12 +92,15 @@
 						</tbody>
 					</table>
 					<hr/>
-					<button id="totpButton" type="button">TOTP QR生成</button><br/>
-					<div id="totpQrDiv" class="totpDiv">
-						<img id="totpQr" width="128" height="128"/>
+					<button id="totpButton" type="button">TOTP QR生成 / 更新</button>&nbsp;<button id="removeTotpButton" type="button">TOTP QR削除</button><br/>
+					<div style="display: flex; flex-flow: row;">
+						<div id="totpQrDiv">
+							<img id="totpQr" width="128" height="128"/>
+						</div>
 						<div>
 							TOTPとはTime-based One-Time Passwordの略で、時間を基準にワンタイムパスワードを生成する規格です。<br/>
-							表示されたQRコードをスマートフォンのTOTPアプリであるGoogle Authenticator、Microsoft Authenticator等で読み取るとこのアプリでTOTPが表示されます。<br/>
+							表示されたQRコードをスマートフォンのアプリGoogle Authenticator、Microsoft Authenticator等で読み取ると、
+							アプリにワンタイムパスワードが表示されます。<br/>
 						</div>
 					</div>
 				</div>

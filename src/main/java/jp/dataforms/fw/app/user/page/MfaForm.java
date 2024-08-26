@@ -1,6 +1,5 @@
 package jp.dataforms.fw.app.user.page;
 
-import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +37,6 @@ import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
-import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.WebAuthnUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
@@ -129,11 +127,12 @@ public class MfaForm extends Form {
 			String mimeType = generator.getImageMimeType();
 			ret = this.getBase64(imageData, mimeType);
 		} else {
-			byte[] imageData = null;
+/*			byte[] imageData = null;
 			try (InputStream is = this.getClass().getResourceAsStream("img/noqrcode.png")) {
 				imageData = FileUtil.readInputStream(is);
 			}
-			ret = this.getBase64(imageData, "image/png");
+			ret = this.getBase64(imageData, "image/png");*/
+			return "";
 		}
 		return ret;
 	}
@@ -263,7 +262,7 @@ public class MfaForm extends Form {
 	}
 
 	/**
-	 * TOTP QRコードの剪定。
+	 * TOTP QRコードを作成します。
 	 * @param p パラメータ。
 	 * @return 応答情報。
 	 * @throws Exception 例外。
@@ -277,6 +276,21 @@ public class MfaForm extends Form {
 		udao.updateTotpSecret(this.getPage().getUserId(), secret);
 		String totpQr = this.getTotpQrImage();
 		Response resp = new JsonResponse(JsonResponse.SUCCESS, totpQr);
+	    return resp;
+	}
+
+
+	/**
+	 * TOTP QRコードを削除します。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response removeTotpQr(final Map<String, Object> p) throws Exception {
+		UserDao udao = new UserDao(this);
+		udao.updateTotpSecret(this.getPage().getUserId(), null);
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, null);
 	    return resp;
 	}
 
