@@ -79,8 +79,6 @@ public class MfaForm extends Form {
 		flist.addField(new AuthenticatorNameField());
 		flist.addField(new PlatformField());
 		flist.addField(new SharedPasskeyField());
-//		flist.addField(new TextField("beFlag"));
-//		flist.addField(new TextField("bsFlag"));
 		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
 		this.addHtmlTable(authenticatorList);
 	}
@@ -125,11 +123,6 @@ public class MfaForm extends Form {
 			String mimeType = generator.getImageMimeType();
 			ret = this.getBase64(imageData, mimeType);
 		} else {
-/*			byte[] imageData = null;
-			try (InputStream is = this.getClass().getResourceAsStream("img/noqrcode.png")) {
-				imageData = FileUtil.readInputStream(is);
-			}
-			ret = this.getBase64(imageData, "image/png");*/
 			return "";
 		}
 		return ret;
