@@ -61,6 +61,11 @@ export class MfaForm extends Form {
 			if (r.status == JsonResponse.SUCCESS) {
 				let alist = this.getComponent("authenticatorList");
 				alist.setTableData(r.result.authenticatorList);
+				
+				this.find("[id$='\.deleteButton']").click((ev) => {
+					this.deleteAuthenticator(ev);
+				});
+				
 				if (r.result.totpQrImage.length > 0) {
 					this.get("totpQr").attr("src", r.result.totpQrImage);
 				} else {

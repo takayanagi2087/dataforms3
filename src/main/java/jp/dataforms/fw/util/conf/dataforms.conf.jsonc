@@ -217,8 +217,8 @@
 			"csrfSessionidCryptPassword": "CSRFpassword"
 		}
 		// ----------------------------------
-		// この設定を有効にすると、認証時にユーザのメールアドレスにワンタイムパスワードを送信し
-		// その確認を行います。
+		// この設定を有効にすると、認証時にユーザのメールアドレスにワンタイムパスワードを送信しその確認を行います。
+		// dataforms3.jarではTOTPとPasskeyをサポートしたので、この機能は非推奨です。
 		, "onetimePasswordConfig": {
 				// ワンタイムパスワードを使用するかどうか。
 				"useOnetimePassword": false,

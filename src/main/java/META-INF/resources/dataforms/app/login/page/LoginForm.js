@@ -47,6 +47,7 @@ export class LoginForm extends Form {
 					window.location.href = "OnetimePasswordPage.html";
 				} else {
 					currentPage.toTopPage();
+					this.saveLastLoginInfo();
 				}
 			} else {
 				this.parent.setErrorInfo(this.getValidationResult(result), this);
@@ -110,12 +111,12 @@ export class LoginForm extends Form {
 	saveLastLoginInfo() {
 		if (this.get("saveLastLogin").prop("checked")) {
 			let loginId = this.get("loginId").val();
+			let authMethod = this.find("[name='authMethod']:checked").val();
 			let passkey = this.get("authenticatorName").val();
-			let passkeyName = this.get("authenticatorName").find("option:selected").text();
 			let lastLoginInfo = {};
 			lastLoginInfo.loginId = loginId;
+			lastLoginInfo.authMethod = authMethod;
 			lastLoginInfo.passkey = passkey;
-			lastLoginInfo.passkeyName = passkeyName;
 			let json = JSON.stringify(lastLoginInfo);
 			localStorage.setItem(LoginForm.LAST_LOGIN_INFO, json);
 		} else {
@@ -126,19 +127,18 @@ export class LoginForm extends Form {
 	/**
 	 * 最後のログイン情報を取得します。
 	 */
-	loadLastLoginInfo() {
+	async loadLastLoginInfo() {
 		try {
-			let lastLoginInfo = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
-			if (lastLoginInfo != null) {
-				let json = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+			let json = localStorage.getItem(LoginForm.LAST_LOGIN_INFO);
+			if (json != null) {
 				let lastLoginInfo = JSON.parse(json);
 				this.get("loginId").val(lastLoginInfo.loginId);
-				let optlist = [
-					{"value": lastLoginInfo.passkey, "name": lastLoginInfo.passkeyName}
-				];
-				let sel = this.getComponent("authenticatorName");
-				sel.setOptionList(optlist);
-				sel.setValue(lastLoginInfo.passkey);
+				await this.getAuthOption();
+				let passkeySel = this.getComponent("authenticatorName");
+				passkeySel.setValue(lastLoginInfo.passkey);
+				let rm = this.getComponent("authMethod");
+				rm.setValue(lastLoginInfo.authMethod);
+				this.changeAuthMethod();
 				this.get("saveLastLogin").prop("checked", true);
 			} else {
 				this.get("saveLastLogin").prop("checked", false);
@@ -334,7 +334,6 @@ export class LoginForm extends Form {
 			this.find("label[for='" + this.get("keepLogin").attr("id") + "']").hide();
 		}
 		this.loadLastLoginInfo();
-		this.get("loginId").focus();
 	}
 
 }

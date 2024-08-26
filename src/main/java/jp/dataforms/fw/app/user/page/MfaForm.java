@@ -26,7 +26,6 @@ import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
 import jp.dataforms.fw.app.user.dao.WebAuthnTable;
 import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
-import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.app.user.field.PlatformField;
 import jp.dataforms.fw.app.user.field.SharedPasskeyField;
 import jp.dataforms.fw.app.user.field.WebAuthnIdField;
@@ -72,7 +71,6 @@ public class MfaForm extends Form {
 	 */
 	public MfaForm() {
 		super(null);
-		this.addField(new PasswordField()).addValidator(new RequiredValidator());
 		this.addField(new AuthenticatorNameField()).addValidator(new RequiredValidator());
 		this.addField(new FlagField(ID_REQUIRE_RESIDENT_KEY));
 		FieldList flist = new FieldList();

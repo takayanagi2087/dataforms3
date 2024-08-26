@@ -144,8 +144,11 @@ public class LoginForm extends Form {
 					UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
 					if ("0".equals(method)) {
 						// パスワードのみの認証
-						if ("1".equals(ue.getMfaRequiredFlag())) {
-							throw new ApplicationException(this.getPage(), "error.invalidauth");
+						if (this.isMfaEnabled(ue)) {
+							if ("1".equals(ue.getMfaRequiredFlag())) {
+								// 多要素認証が有効でかつ多要素認証が必須に設定された場合、パスワードのみの認証は許可されない。
+								throw new ApplicationException(this.getPage(), "error.invalidauth");
+							}
 						}
 						// パスワードを必須
 						if (StringUtil.isBlank(password)) {
@@ -452,6 +455,24 @@ public class LoginForm extends Form {
 	}
 
 	/**
+	 * 多要素認証が有効かどうかをチェックします。
+	 * @param ui ユーザ情報。
+	 * @return 多要素認証が有効な場合true。
+	 * @throws Exception 例外。
+	 */
+	private Boolean isMfaEnabled(UserInfoTable.Entity ui) throws Exception {
+		String secret = ui.getTotpSecret();
+		WebAuthnDao wdao = new WebAuthnDao(this);
+		Long userId = ui.getUserId();
+		List<Map<String, Object>> list = wdao.query(userId);
+		if (secret != null || list.size() > 0) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+	
+	/**
 	 * 使用できる認証オプションを取得します。
 	 * @param p パラメータ。
 	 * @return 応答情報。
@@ -478,7 +499,16 @@ public class LoginForm extends Form {
 			}
 			String mfaRequired = ui.getMfaRequiredFlag();
 			if ("1".equals(mfaRequired)) {
-				opt.put("mfaRequired", Boolean.TRUE);
+				opt.put("mfaRequired", this.isMfaEnabled(ui));
+/*				String secret = ui.getTotpSecret();
+				WebAuthnDao wdao = new WebAuthnDao(this);
+				Long userId = ui.getUserId();
+				List<Map<String, Object>> list = wdao.query(userId);
+				if (secret != null || list.size() > 0) {
+					opt.put("mfaRequired", Boolean.TRUE);
+				} else {
+					opt.put("mfaRequired", Boolean.FALSE);
+				}*/
 			} else {
 				opt.put("mfaRequired", Boolean.FALSE);
 			}
