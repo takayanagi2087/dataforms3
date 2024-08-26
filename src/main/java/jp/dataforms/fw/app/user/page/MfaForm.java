@@ -1,5 +1,7 @@
 package jp.dataforms.fw.app.user.page;
 
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,10 @@ import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 
+import dev.samstevens.totp.code.HashingAlgorithm;
+import dev.samstevens.totp.qr.QrData;
+import dev.samstevens.totp.qr.QrGenerator;
+import dev.samstevens.totp.qr.ZxingPngQrGenerator;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +38,8 @@ import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
+import jp.dataforms.fw.util.FileUtil;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.WebAuthnUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
 
@@ -81,15 +89,78 @@ public class MfaForm extends Form {
 		this.addHtmlTable(authenticatorList);
 	}
 	
+	/**
+	 * 画像をBase64形式に変換します。
+	 * @param imageData 画像データ。
+	 * @param contentType コンテントタイプ。
+	 * @return Base64形式の画像データ。
+	 */
+	public String getBase64(final byte[] imageData, final String contentType) {
+		String encoded = Base64.getEncoder().encodeToString(imageData);
+		String ret = "data:" + contentType + ";base64, " + encoded;
+		return ret;
+	}
+	
+	/**
+	 * TotpQR画像を作成します。
+	 * @return Base64形式のQR画像。
+	 * @throws Exception 例外。
+	 */
+	public String getTotpQrImage() throws Exception {
+		String serverName = this.getPage().getRequest().getServerName();
+		UserInfoTable.Entity ue = new UserInfoTable.Entity(this.getPage().getUserInfo());
+		String label = ue.getLoginId() + "@" + serverName;
+		String context = this.getPage().getRequest().getContextPath().substring(1);
+		UserDao dao = new UserDao(this);
+		String secret = dao.queryTotpSecret(this.getPage().getUserId());
+		String ret = null;
+		if (secret != null) {
+			QrData data = new QrData.Builder()
+					   .label(label)
+					   .secret(secret)
+					   .issuer(context)
+					   .algorithm(HashingAlgorithm.SHA1) // More on this below
+					   .digits(6)
+					   .period(30)
+					   .build();
+					logger.debug("qrdata=" + JsonUtil.encode(data));	
+			QrGenerator generator = new ZxingPngQrGenerator();
+			byte[] imageData = generator.generate(data);
+			String mimeType = generator.getImageMimeType();
+			ret = this.getBase64(imageData, mimeType);
+		} else {
+			byte[] imageData = null;
+			try (InputStream is = this.getClass().getResourceAsStream("img/noqrcode.png")) {
+				imageData = FileUtil.readInputStream(is);
+			}
+			ret = this.getBase64(imageData, "image/png");
+		}
+		return ret;
+	}
+	
+	
 	
 	@Override
 	public void init() throws Exception {
 		super.init();
-		WebAuthnDao dao = new WebAuthnDao(this);
-		List<Map<String, Object>> authenticatorList = dao.query(this.getPage().getUserId());
-		this.setFormData(ID_AUTHENTICATOR_LIST, authenticatorList);
 	}
 	
+	/**
+	 * 多要素認証の設定情報を取得します。
+	 * @param p パラメータ。
+	 * @return 多要素認証の設定情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response getMfaInfo(final Map<String, Object> p) throws Exception {
+		WebAuthnDao dao = new WebAuthnDao(this);
+		List<Map<String, Object>> authenticatorList = dao.query(this.getPage().getUserId());
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(ID_AUTHENTICATOR_LIST, authenticatorList);
+		data.put("totpQrImage", this.getTotpQrImage());
+		Response r = new JsonResponse(JsonResponse.SUCCESS, data);
+		return r;
+	}
 	
 	
 	/**
@@ -204,22 +275,8 @@ public class MfaForm extends Form {
 		logger.debug("TOPT secret=" + secret);
 		UserDao udao = new UserDao(this);
 		udao.updateTotpSecret(this.getPage().getUserId(), secret);
-		
-/*		QrData data = new QrData.Builder()
-				   .label("developer@localhost")
-				   .secret(secret)
-				   .issuer("dataforms3app")
-				   .algorithm(HashingAlgorithm.SHA1) // More on this below
-				   .digits(6)
-				   .period(30)
-				   .build();
-		logger.debug("qrdata=" + JsonUtil.encode(data));
-*/		
-/*		QrGenerator generator = new ZxingPngQrGenerator();
-		byte[] imageData = generator.generate(data);
-		String mimeType = generator.getImageMimeType();
-*/		
-		Response resp = new JsonResponse(JsonResponse.SUCCESS, "");
+		String totpQr = this.getTotpQrImage();
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, totpQr);
 	    return resp;
 	}
 

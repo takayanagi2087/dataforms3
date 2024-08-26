@@ -42,6 +42,8 @@ export class PasswordCheckForm extends Form {
 				logger.log("r=", r);
 				if (r.status == JsonResponse.SUCCESS) {
 					this.parent.get("mfaForm").show();
+					let mfaForm = this.parent.getComponent("mfaForm");
+					mfaForm.getMfaInfo();
 				} else {
 					this.parent.setErrorInfo(this.getValidationResult(r), this);
 				}

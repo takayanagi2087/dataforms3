@@ -48,6 +48,22 @@ export class MfaForm extends Form {
 		});
 	}
 
+	/**
+	 * 多要素認証設定情報を取得します。
+	 */
+	async getMfaInfo() {
+		try {
+			let r = await this.submit("getMfaInfo");
+			logger.log("r=", r);
+			if (r.status == JsonResponse.SUCCESS) {
+				let alist = this.getComponent("authenticatorList");
+				alist.setTableData(r.result.authenticatorList);
+				this.get("totpQr").attr("src", r.result.totpQrImage);
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
 	
 	/**
 	 * TOTP QRコードの生成。
@@ -57,9 +73,7 @@ export class MfaForm extends Form {
 			let r = await this.submit("generateTotpQr");
 			logger.log("r=", r);
 			if (r.status == JsonResponse.SUCCESS) {
-				let img = this.get("totpQr").attr("src");
-				logger.log("img=" + img);
-				this.get("totpQr").attr("src", img + "?t=" + (new Date().getTime()));
+				this.get("totpQr").attr("src", r.result);
 			}
 		} catch (e) {
 			currentPage.reportError(e);
