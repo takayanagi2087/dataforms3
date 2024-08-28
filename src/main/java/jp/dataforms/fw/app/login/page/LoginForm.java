@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.webauthn4j.converter.exception.DataConversionException;
 import com.webauthn4j.credential.CredentialRecord;
 import com.webauthn4j.data.AuthenticationData;
 import com.webauthn4j.data.client.Origin;
@@ -413,8 +414,13 @@ public class LoginForm extends Form {
 		} else {
 			CredentialRecord credentialRecord = this.getCredentialRecord(); 
 			ServerProperty serverProperty = this.getServerProperty();
-			AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
-			logger.debug("authenticationData=" + authenticationData.toString());
+			try {
+				AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
+				logger.debug("authenticationData=" + authenticationData.toString());
+			} catch (DataConversionException e) {
+				throw new ApplicationException(getPage(), "error.badpasskey");
+			}
+
 			// ここまで来たらPassKeyの確認OK
 			UserDao dao = new UserDao(this);
 //			String loginId = (String) p.get("loginId");

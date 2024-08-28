@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import com.webauthn4j.WebAuthnManager;
 import com.webauthn4j.converter.AttestationObjectConverter;
 import com.webauthn4j.converter.CollectedClientDataConverter;
-import com.webauthn4j.converter.exception.DataConversionException;
 import com.webauthn4j.converter.util.ObjectConverter;
 import com.webauthn4j.credential.CredentialRecord;
 import com.webauthn4j.credential.CredentialRecordImpl;
@@ -195,11 +194,7 @@ public final class WebAuthnUtil {
 	
 		WebAuthnManager webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
 		AuthenticationData authenticationData = null;
-		try {
-			authenticationData = webAuthnManager.parse(authenticationRequest);
-		} catch (DataConversionException e) {
-			throw e;
-		}
+		authenticationData = webAuthnManager.parse(authenticationRequest);
 		authenticationData = webAuthnManager.validate(authenticationData, authenticationParameters);
 		long count = authenticationData.getAuthenticatorData().getSignCount();
 		logger.debug("signCount=" + count);
