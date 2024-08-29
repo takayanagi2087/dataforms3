@@ -43,14 +43,95 @@ export class MfaForm extends Form {
 		this.get("passkeyDescButton").click(() => {
 			this.get("passkeyDesc").toggle();
 		});
+		// TOTP関連のボタン
 		this.get("totpButton").click(() => {
 			this.generateTotpQr();
 		});
 		this.get("removeTotpButton").click(() => {
 			this.removeTotpQr();
 		});
+		// リカバリーコード関連のボタン
+		this.get("createRecoveryCodesButton").click(() => {
+			this.createRecoveryCode();
+		});
+		this.get("removeRecoveryCodesButton").click(() => {
+			this.removeRecoveryCode();
+		});
+		this.get("downloadRecoveryCodesButton").click(() => {
+			this.downloadRecoveryCode();
+		});
 	}
 
+	/**
+	 * リカバリーコード操作ボタンの状態設定。
+	 */
+	setRecoveryCodeButton() {
+		let list = this.getComponent("recoveryCodeList");
+		if (list.getRowCount() > 0) {
+			this.get("removeRecoveryCodesButton").prop("disabled", false);
+			this.get("downloadRecoveryCodesButton").prop("disabled", false);
+		} else {
+			this.get("removeRecoveryCodesButton").prop("disabled", true);
+			this.get("downloadRecoveryCodesButton").prop("disabled", true);
+		}
+	}
+	
+	/**
+	 * リカバリコードのダウンロードを行います。
+	 */
+	async downloadRecoveryCode() {
+		try {
+			await this.submit("downloadRecoveryCode");
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+	
+	/**
+	 * リカバリーコードを生成します。
+	 */
+	async createRecoveryCode() {
+		try {
+			let list = this.getComponent("recoveryCodeList");
+			let flg = true;
+			if (list.getRowCount() > 0) {
+				flg = await currentPage.confirm(null, MessagesUtil.getMessage("message.regeneraterecoverycode"));
+			}
+			if (flg) {
+				let r = await this.submit("createRecoveryCode");
+				logger.log("r=", r);
+				if (r.status == JsonResponse.SUCCESS) {
+					let table = this.getComponent("recoveryCodeList");
+					table.setTableData(r.result);
+				}
+			}
+			this.setRecoveryCodeButton();
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+	
+	/**
+	 * リカバリーコードを削除します。
+	 */
+	async removeRecoveryCode() {
+		try {
+			let flg = await currentPage.confirm(null, MessagesUtil.getMessage("message.removerecoverycode"));
+			if (flg) {
+				let r = await this.submit("removeRecoveryCode");
+				logger.log("r=", r);
+				if (r.status == JsonResponse.SUCCESS) {
+					let table = this.getComponent("recoveryCodeList");
+					table.setTableData(r.result);
+				}
+				this.setRecoveryCodeButton();
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+	
+	
 	/**
 	 * 多要素認証設定情報を取得します。
 	 */
@@ -61,17 +142,18 @@ export class MfaForm extends Form {
 			if (r.status == JsonResponse.SUCCESS) {
 				let alist = this.getComponent("authenticatorList");
 				alist.setTableData(r.result.authenticatorList);
-				
 				this.find("[id$='\.deleteButton']").click((ev) => {
 					this.deleteAuthenticator(ev);
 				});
-				
 				if (r.result.totpQrImage.length > 0) {
 					this.get("totpQr").attr("src", r.result.totpQrImage);
 				} else {
 					this.get("totpQr").attr("src", null);
 				}
+				let rclist = this.getComponent("recoveryCodeList");
+				rclist.setTableData(r.result.recoveryCodeList);				
 			}
+			this.setRecoveryCodeButton();
 		} catch (e) {
 			currentPage.reportError(e);
 		}

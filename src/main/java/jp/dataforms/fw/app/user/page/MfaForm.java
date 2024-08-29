@@ -1,5 +1,6 @@
 package jp.dataforms.fw.app.user.page;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +18,12 @@ import dev.samstevens.totp.code.HashingAlgorithm;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.qr.ZxingPngQrGenerator;
+import dev.samstevens.totp.recovery.RecoveryCodeGenerator;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import jakarta.servlet.http.HttpSession;
 import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.app.user.dao.RecoveryCodeTable;
 import jp.dataforms.fw.app.user.dao.UserDao;
 import jp.dataforms.fw.app.user.dao.UserInfoTable;
 import jp.dataforms.fw.app.user.dao.WebAuthnDao;
@@ -33,7 +36,9 @@ import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RowNoField;
+import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.htmltable.HtmlTable;
+import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.util.JsonUtil;
@@ -81,6 +86,15 @@ public class MfaForm extends Form {
 		flist.addField(new SharedPasskeyField());
 		HtmlTable authenticatorList = new HtmlTable(ID_AUTHENTICATOR_LIST, flist);
 		this.addHtmlTable(authenticatorList);
+		// 
+		RecoveryCodeTable table = new RecoveryCodeTable();
+		FieldList rlist = new FieldList();
+		rlist.addField(new IntegerField("no"));	
+		rlist.addField(table.getUserIdField());	
+		rlist.addField(table.getRecoveryCodeField());
+		HtmlTable rtable = new HtmlTable("recoveryCodeList", rlist);
+		rtable.setFixedColumns(0);
+		this.addHtmlTable(rtable);
 	}
 	
 	/**
@@ -148,6 +162,12 @@ public class MfaForm extends Form {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(ID_AUTHENTICATOR_LIST, authenticatorList);
 		data.put("totpQrImage", this.getTotpQrImage());
+		UserDao udao = new UserDao(this);
+		List<Map<String, Object>> rclist = udao.queryRecoveryCode(this.getPage().getUserId());
+		for (int i = 0; i < rclist.size(); i++) {
+			rclist.get(i).put("no", i + 1);
+		}
+		data.put("recoveryCodeList", rclist);
 		Response r = new JsonResponse(JsonResponse.SUCCESS, data);
 		return r;
 	}
@@ -285,4 +305,69 @@ public class MfaForm extends Form {
 	    return resp;
 	}
 
+
+	/**
+	 * リカバリーコードを生成します。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response createRecoveryCode(final Map<String, Object> p) throws Exception {
+		// Generate 16 random recovery codes
+		RecoveryCodeGenerator recoveryCodes = new RecoveryCodeGenerator();
+		String[] codes = recoveryCodes.generateCodes(16);
+		UserDao dao = new UserDao(this);
+		dao.saveRecoveryCode(this.getPage().getUserId(), codes);
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		int no = 0;
+		for (String code: codes) {
+			RecoveryCodeTable.Entity r = new RecoveryCodeTable.Entity();
+			r.setUserId(this.getPage().getUserId());
+			r.setRecoveryCode(code);
+			r.getMap().put("no", Integer.valueOf(++no));
+			list.add(r.getMap());
+		}
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, list);
+	    return resp;
+	}
+
+	/**
+	 * リカバリーコードを削除します。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response removeRecoveryCode(final Map<String, Object> p) throws Exception {
+		UserDao dao = new UserDao(this);
+		dao.removeRecoveryCode(this.getPage().getUserId());
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Response resp = new JsonResponse(JsonResponse.SUCCESS, list);
+	    return resp;
+	}
+
+	/**
+	 * リカバリーコードをダウンロードします。
+	 * @param p パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public Response downloadRecoveryCode(final Map<String, Object> p) throws Exception {
+		UserDao dao = new UserDao(this);
+		List<Map<String, Object>> list = dao.queryRecoveryCode(this.getPage().getUserId());
+		StringBuilder sb = new StringBuilder();
+		for (Map<String, Object> m: list) {
+			RecoveryCodeTable.Entity e = new RecoveryCodeTable.Entity(m);
+			sb.append(e.getRecoveryCode());
+			sb.append("\n");
+		}
+		logger.debug(sb.toString());
+		String server = this.getPage().getRequest().getServerName();
+		BinaryResponse resp = new BinaryResponse(sb.toString().getBytes());
+		resp.setFileName(server + "RecoveryCodes.txt");
+		return resp;
+	}
+	
 }

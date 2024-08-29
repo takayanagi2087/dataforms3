@@ -27,7 +27,7 @@
 					<span style="color:red; font-weight: bold;">
 						このアカウントの利用権限のない人に見られないようにしてください。<br/>
 						多要素認証に使用するPCやスマートフォンが故障するとログイン出来なくなるため、
-						複数の認証方法を登録することを推奨します。
+						複数の認証方法を登録するか、リカバリーコードを保存しておくことを推奨します。
 					</span>
 				</div>
 				<hr/>
@@ -106,6 +106,42 @@
 							表示されたQRコードをスマートフォンのアプリGoogle Authenticator、Microsoft Authenticator等で読み取ると、
 							アプリにワンタイムパスワードが表示されます。<br/>
 						</div>
+					</div>
+					<hr/>
+					<div>
+						<button id="createRecoveryCodesButton" type="button" class="largeButton">リカバリーコードの生成</button>&nbsp;
+						<button id="removeRecoveryCodesButton" type="button" class="largeButton">リカバリーコードの削除</button>&nbsp;
+						<div style="display: flex; flex-flow: row; margin-top: 8px;">
+							<table id="recoveryCodeList" style="height: 200px; width: 330px; ">
+								<thead>
+									<tr>
+										<th>
+											No.
+										</th>
+										<th>
+											リカバリーコード
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="width: 64px; text-align: right;">
+											<span id="recoveryCodeList[0].no"></span>
+											<input type="hidden" id="userId" />
+										</td>
+										<td style="width: 240px; text-align: center;">
+											<span id="recoveryCodeList[0].recoveryCode"></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div style="margin-left: 8px;">
+								リカバリーコードはハードウエアの故障等で多要素認証が使用できない場合にログインすることができるコードです。<br/>
+								ダウンロードして大切に保存し、他人と共有しないでください。<br/>
+								各リカバリコードは1度だけ使用することができます。
+							</div>
+						</div>
+						<button id="downloadRecoveryCodesButton" type="button" class="largeButton">リカバリーコードをダウンロード</button>&nbsp;
 					</div>
 				</div>
 			</form>

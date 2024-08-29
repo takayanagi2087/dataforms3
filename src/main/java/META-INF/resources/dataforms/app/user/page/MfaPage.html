@@ -107,6 +107,42 @@
 							the one-time password will be displayed in the app. <br/>
 						</div>
 					</div>
+					<hr/>
+					<div>
+						<button id="createRecoveryCodesButton" type="button" class="largeButton">Generate a recovery code</button>&nbsp;
+						<button id="removeRecoveryCodesButton" type="button" class="largeButton">Remove recovery codes</button>&nbsp;
+						<div style="display: flex; flex-flow: row; margin-top: 8px;">
+							<table id="recoveryCodeList" style="height: 200px; width: 330px; ">
+								<thead>
+									<tr>
+										<th>
+											No.
+										</th>
+										<th>
+											Recovery Code
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="width: 64px; text-align: right;">
+											<span id="recoveryCodeList[0].no"></span>
+											<input type="hidden" id="userId" />
+										</td>
+										<td style="width: 240px; text-align: center;">
+											<span id="recoveryCodeList[0].recoveryCode"></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div style="margin-left: 8px;">
+								A recovery code is a code that allows you to log in if multi-factor authentication cannot be used due to hardware failure or other reasons.<br/>
+								Please download and keep it safe and do not share it with anyone else.<br/>
+								Each recovery code can only be used once.
+							</div>
+						</div>
+						<button id="downloadRecoveryCodesButton" type="button" class="largeButton">Download Recovery Codes</button>&nbsp;
+					</div>
 				</div>
 			</form>
 		</div>

@@ -614,4 +614,51 @@ public class UserDao extends Dao {
 		}
 		return ret;
 	}
+
+	/**
+	 * 指定したユーザのリカバリーコードを削除します。
+	 * @param userId ユーザID。
+	 * @throws Exception 例外。
+	 */
+	public void removeRecoveryCode(final Long userId) throws Exception {
+		String delSql = "delete from recovery_code where user_id = :user_id";
+		RecoveryCodeTable.Entity p = new RecoveryCodeTable.Entity();
+		p.setUserId(userId);
+		this.executeUpdate(delSql, p.getMap());
+	}
+	
+	/**
+	 * 指定されたユーザにリカバリコードを設定します。
+	 * @param userId ユーザID。
+	 * @param codes リカバリーコードリスト。
+	 * @throws Exception 例外。
+	 */
+	public void saveRecoveryCode(final Long userId, final String[] codes) throws Exception {
+		RecoveryCodeTable table = new RecoveryCodeTable();
+		this.removeRecoveryCode(userId);
+		for (String code: codes) {
+			RecoveryCodeTable.Entity p = new RecoveryCodeTable.Entity();
+			p.setUserId(userId);
+			p.setRecoveryCode(code);
+			p.setCreateUserId(userId);
+			p.setUpdateUserId(userId);
+			this.executeInsert(table, p.getMap());
+		}
+	}
+	
+	/**
+	 * 指定したユーザのリカバリーコードリストを取得します。
+	 * @param userId ユーザID。
+	 * @return 指定したユーザのリカバリーコードリスト。
+	 * @throws Exception 例外。
+	 */
+	public List<Map<String, Object>> queryRecoveryCode(final Long userId) throws Exception {
+		RecoveryCodeTable table = new RecoveryCodeTable();
+		SingleTableQuery query = new SingleTableQuery(table);
+		query.setCondition("m.user_id = :user_id");
+		RecoveryCodeTable.Entity p = new RecoveryCodeTable.Entity();
+		p.setUserId(userId);
+		query.setConditionData(p.getMap());
+		return this.executeQuery(query);
+	}
 }
