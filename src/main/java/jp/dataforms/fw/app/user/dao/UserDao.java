@@ -439,7 +439,7 @@ public class UserDao extends Dao {
 			List<Map<String, Object>> attTable = this.executeQuery(new GetUserAttributeQuery(data));
 			rec.put("attTable", attTable);
 		} else {
-			String ui = UserLogUtil.getClientInfo(getWebEntryPoint(), data);
+			String ui = UserLogUtil.getClientInfo(getWebEntryPoint(), data, "", "");
 			logger.error(ui + MessagesUtil.getMessage(getWebEntryPoint(), "error.invaliduserid"));
 			throw new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
 		}

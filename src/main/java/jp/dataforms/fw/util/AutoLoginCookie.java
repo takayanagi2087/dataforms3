@@ -126,7 +126,7 @@ public final class AutoLoginCookie {
 									Map<String, Object> userInfo = dao.login(pe.getMap(), false);
 									HttpSession session = page.getRequest().getSession();
 									session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
-									String clientInfo = UserLogUtil.getClientInfo(page, userInfo);
+									String clientInfo = UserLogUtil.getClientInfo(page, userInfo, "cookie", "");
 									logger.info(clientInfo + "Automatically logged in");
 								} catch (ApplicationException ex) {
 									;

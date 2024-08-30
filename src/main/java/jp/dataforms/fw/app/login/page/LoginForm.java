@@ -206,7 +206,7 @@ public class LoginForm extends Form {
 						}
 					}
 				} else {
-					String ui = UserLogUtil.getClientInfo(this.getPage(), data);
+					String ui = UserLogUtil.getClientInfo(this.getPage(), data, "", "");
 					ApplicationException ex = new ApplicationException(this.getWebEntryPoint(), "error.invaliduserid");
 					logger.error(ui + ex.getMessage(), ex);
 					throw ex;
@@ -214,7 +214,7 @@ public class LoginForm extends Form {
 			}
 		}
 		if (elist.size() > 0) {
-			String ui = UserLogUtil.getClientInfo(this.getPage(), data);
+			String ui = UserLogUtil.getClientInfo(this.getPage(), data, "", "");
 			for (ValidationError e: elist) {
 				logger.warn(ui + "ValidationError " + e.getFieldId() + " / " + e.getMessage());
 			}
@@ -266,7 +266,7 @@ public class LoginForm extends Form {
 				HttpSession session = this.getPage().getRequest().getSession();
 				session.setAttribute(OnetimePasswordUtil.USERINFO, userInfo);
 				ret = new JsonResponse(JsonResponse.SUCCESS, "onetime");
-				String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+				String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "OTP", "******");
 				logger.info(ui + "Authenticated with password.");
 			} else {
 				// TOTPのチェック
@@ -280,8 +280,8 @@ public class LoginForm extends Form {
 						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 						ret = new JsonResponse(JsonResponse.SUCCESS, "");
-						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
-						logger.info(ui + "Authenticated with password.");
+						String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "TOTP", "******");
+						logger.info(ui + "Authenticated with password + TOTP.");
 					} else {
 						elist.add(new ValidationError(ID_TOTP, MessagesUtil.getMessage(getWebEntryPoint(), "error.badonetimepassword")));
 						ret = new JsonResponse(JsonResponse.INVALID, elist);
@@ -292,14 +292,16 @@ public class LoginForm extends Form {
 						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 						ret = new JsonResponse(JsonResponse.SUCCESS, "");
-						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
-						logger.info(ui + "Authenticated with password.");
+						String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "Recovery code", "");
+						logger.info(ui + "Authenticated with password + recovery code");
 					} else {
 						elist.add(new ValidationError(ID_RECOVERY_CODE, MessagesUtil.getMessage(getWebEntryPoint(), "error.badrecoverycode")));
 						ret = new JsonResponse(JsonResponse.INVALID, elist);
 					}
 				} else {
 					// パスワードのみの認証OKとなりユーザ情報をセッションに保存
+					String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "Password", "******");
+					logger.info(ui + "Authenticated with password only.");
 					AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 					session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 					ret = new JsonResponse(JsonResponse.SUCCESS, "");
@@ -483,7 +485,7 @@ public class LoginForm extends Form {
 			String passkey = this.getAuthenticatorName();
 			userInfo.put(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, passkey);
 			userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, p.get(AutoLoginCookie.ID_KEEP_LOGIN));
-			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+			String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "Passkey", passkey);
 			logger.info(ui + logmsg);
 			// セッションにユーザ情報を保存する。
 			HttpSession session = this.getPage().getRequest().getSession();
