@@ -118,15 +118,19 @@ public final class AutoLoginCookie {
 							UserDao dao = new UserDao(page);
 							@SuppressWarnings("unchecked")
 							Map<String, Object> p = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
-							UserInfoTable.Entity pe = new UserInfoTable.Entity(p);
-							try {
-								Map<String, Object> userInfo = dao.login(pe.getMap(), false);
-								HttpSession session = page.getRequest().getSession();
-								session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
-								String clientInfo = UserLogUtil.getClientInfo(page, userInfo);
-								logger.info(clientInfo + "Automatically logged in");
-							} catch (ApplicationException ex) {
-								;
+							String ip = (String) p.get("ip");
+							String rh = (String) page.getRequest().getRemoteAddr();
+							if (rh.equals(ip)) {
+								UserInfoTable.Entity pe = new UserInfoTable.Entity(p);
+								try {
+									Map<String, Object> userInfo = dao.login(pe.getMap(), false);
+									HttpSession session = page.getRequest().getSession();
+									session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+									String clientInfo = UserLogUtil.getClientInfo(page, userInfo);
+									logger.info(clientInfo + "Automatically logged in");
+								} catch (ApplicationException ex) {
+									;
+								}
 							}
 						}
 					}
@@ -148,12 +152,15 @@ public final class AutoLoginCookie {
 		if (AutoLoginCookie.autoLogin) {
 			String keepLogin = (String) p.get(ID_KEEP_LOGIN);
 			if ("1".equals(keepLogin)) {
+				String ipaddr = page.getRequest().getRemoteAddr();
+				logger.debug("ipaddr=" + ipaddr);
 				keepLoginFlag = "1";
 				String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
 				String password = (String) p.get(UserInfoTable.Entity.ID_PASSWORD);
 				Map<String, String> loginInfo = new HashMap<String, String>();
 				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
 				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
+				loginInfo.put("ip", ipaddr);
 				String json = JsonUtil.encode(loginInfo);
 				String userInfo = CryptUtil.encrypt(json, DataFormsServlet.getQueryStringCryptPassword());
 				logger.debug(() -> "json=" + json + ",userInfo=" + userInfo);
