@@ -80,6 +80,17 @@ public class LoginForm extends Form {
 	 * TOTPフィールドID。
 	 */
 	private static final String ID_TOTP = "totp";
+	
+	/**
+	 * リカバリーコードの入力フィールド。
+	 */
+	private static final String ID_RECOVERY_CODE = "recoveryCode";
+
+	/**
+	 * リカバリーコード使用するチェックボックスのフィールドID。
+	 */
+	private static final String ID_RECOVERY_CODE_CHECK = "recoveryCodeCheck";
+
 	/**
 	 * 最後最終ログイン情報を保存フラグのID。
 	 */
@@ -104,7 +115,9 @@ public class LoginForm extends Form {
 		PasswordField pw = new PasswordField();
 		this.addField(pw);
 		this.addField(new TextField(ID_TOTP)).addValidator(new DisplayedRequiredValidator());
+		this.addField(new TextField(ID_RECOVERY_CODE)).addValidator(new DisplayedRequiredValidator());
 		this.addField(new PasskeySingleSelectField(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME)).addValidator(new DisplayedRequiredValidator());
+		this.addField(new FlagField(ID_RECOVERY_CODE_CHECK));
 		this.addField(new FlagField(AutoLoginCookie.ID_KEEP_LOGIN));
 		this.addField(new FlagField(ID_SAVE_LAST_LOGIN));
 	}
@@ -131,12 +144,8 @@ public class LoginForm extends Form {
 			String password = (String) data.get(UserInfoTable.Entity.ID_PASSWORD);
 			String passkey = (String) data.get(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME);
 			String totp = (String) data.get(ID_TOTP);
+			String recoveryCode = (String) data.get(ID_RECOVERY_CODE);
 			String method = (String) data.get(ID_AUTH_METHOD);
-/*			if (StringUtil.isBlank(password) && StringUtil.isBlank(passkey)) {
-				// Passkey Passwordの両方が入力されなかった場合
-				elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
-				elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
-			}*/
 			if (elist.size() == 0) {
 				// ユーザ情報を取得。
 				UserDao udao = new UserDao(this);
@@ -185,6 +194,15 @@ public class LoginForm extends Form {
 						if (StringUtil.isBlank(passkey)) {
 							logger.debug("passkey=" + passkey);
 							elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
+						}
+					} else if ("3".equals(method)) {
+						// リカバリーコート認証モード
+						List<Map<String, Object>> rclist = udao.queryRecoveryCode(ue.getUserId());
+						if (rclist.size() == 0) {
+							throw new ApplicationException(this.getPage(), "error.invalidauth");
+						}
+						if (StringUtil.isBlank(recoveryCode)) {
+							elist.add(new ValidationError(ID_RECOVERY_CODE, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
 						}
 					}
 				} else {
@@ -240,9 +258,9 @@ public class LoginForm extends Form {
 			ret = new JsonResponse(JsonResponse.INVALID, elist);
 		} else {
 			UserDao dao = new UserDao(this);
-			Map<String, Object> userInfo = dao.login(params);
+			Map<String, Object> userInfo = dao.login(params); // パスワードの認証
 			if (OnetimePasswordUtil.needConfirmation(this.getPage(), userInfo)) {
-				// ワンタイムパスワード確認モード(Not TOTP)。
+				// 旧 ワンタイムパスワード確認モード(Not TOTP)。
 				String keepLogin = (String) params.get(AutoLoginCookie.ID_KEEP_LOGIN);
 				userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, keepLogin);
 				HttpSession session = this.getPage().getRequest().getSession();
@@ -251,22 +269,37 @@ public class LoginForm extends Form {
 				String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
 				logger.info(ui + "Authenticated with password.");
 			} else {
+				// TOTPのチェック
 				HttpSession session = this.getPage().getRequest().getSession();
 				logger.info(() -> "login success=" + userInfo.get("loginId") + "(" + userInfo.get("userId") + ")");
 				UserInfoTable.Entity e = new UserInfoTable.Entity(userInfo);
 				String authMethod = (String) params.get(ID_AUTH_METHOD);
 				if ("1".equals(authMethod)) {
 					if (this.checkTotp(e.getTotpSecret(), (String) params.get(ID_TOTP))) {
+						// TOTPのチェックOKとなりユーザ情報をセッションに保存
 						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 						ret = new JsonResponse(JsonResponse.SUCCESS, "");
 						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
 						logger.info(ui + "Authenticated with password.");
 					} else {
-						elist.add(new ValidationError(ID_TOTP, "正しいワンタイムパスワードを入力してください。"));
+						elist.add(new ValidationError(ID_TOTP, MessagesUtil.getMessage(getWebEntryPoint(), "error.badonetimepassword")));
+						ret = new JsonResponse(JsonResponse.INVALID, elist);
+					}
+				} else if ("3".equals(authMethod)) {
+					if (dao.checkRecoveryCode(e.getUserId(), (String) params.get(ID_RECOVERY_CODE))) {
+						// リカバリーコードチェックOkとなりユーザ情報をセッションに保存
+						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
+						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
+						ret = new JsonResponse(JsonResponse.SUCCESS, "");
+						String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
+						logger.info(ui + "Authenticated with password.");
+					} else {
+						elist.add(new ValidationError(ID_RECOVERY_CODE, MessagesUtil.getMessage(getWebEntryPoint(), "error.badrecoverycode")));
 						ret = new JsonResponse(JsonResponse.INVALID, elist);
 					}
 				} else {
+					// パスワードのみの認証OKとなりユーザ情報をセッションに保存
 					AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 					session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 					ret = new JsonResponse(JsonResponse.SUCCESS, "");
@@ -452,6 +485,7 @@ public class LoginForm extends Form {
 			userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, p.get(AutoLoginCookie.ID_KEEP_LOGIN));
 			String ui = UserLogUtil.getClientInfo(getPage(), userInfo);
 			logger.info(ui + logmsg);
+			// セッションにユーザ情報を保存する。
 			HttpSession session = this.getPage().getRequest().getSession();
 			session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
 			AutoLoginCookie.setAutoLoginCookie(this.getPage(), userInfo);
@@ -506,17 +540,14 @@ public class LoginForm extends Form {
 			String mfaRequired = ui.getMfaRequiredFlag();
 			if ("1".equals(mfaRequired)) {
 				opt.put("mfaRequired", this.isMfaEnabled(ui));
-/*				String secret = ui.getTotpSecret();
-				WebAuthnDao wdao = new WebAuthnDao(this);
-				Long userId = ui.getUserId();
-				List<Map<String, Object>> list = wdao.query(userId);
-				if (secret != null || list.size() > 0) {
-					opt.put("mfaRequired", Boolean.TRUE);
-				} else {
-					opt.put("mfaRequired", Boolean.FALSE);
-				}*/
 			} else {
 				opt.put("mfaRequired", Boolean.FALSE);
+			}
+			List<Map<String, Object>> list = dao.queryRecoveryCode(ui.getUserId());
+			if (list.size() > 0) {
+				opt.put("recoveryCode", Boolean.TRUE);
+			} else {
+				opt.put("recoveryCode", Boolean.FALSE);
 			}
 		}
 		Response resp = new JsonResponse(JsonResponse.SUCCESS, opt);

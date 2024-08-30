@@ -366,7 +366,7 @@ public class MfaForm extends Form {
 		logger.debug(sb.toString());
 		String server = this.getPage().getRequest().getServerName();
 		BinaryResponse resp = new BinaryResponse(sb.toString().getBytes());
-		resp.setFileName(server + "RecoveryCodes.txt");
+		resp.setFileName(server + "_recovery_codes.txt");
 		return resp;
 	}
 	

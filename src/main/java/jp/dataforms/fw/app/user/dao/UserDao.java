@@ -661,4 +661,31 @@ public class UserDao extends Dao {
 		query.setConditionData(p.getMap());
 		return this.executeQuery(query);
 	}
+	
+	/**
+	 * リカバリーコードをチェックします。
+	 * @param userId ユーザID。
+	 * @param recoveryCode リカバリーコード。
+	 * @return チェックOKの場合true。
+	 * @throws Exception 例外。
+	 */
+	public Boolean checkRecoveryCode(final Long userId, final String recoveryCode) throws Exception {
+		RecoveryCodeTable table = new RecoveryCodeTable();
+		SingleTableQuery q = new SingleTableQuery(table);
+		q.setCondition("m.user_id = :user_id and m.recovery_code = :recovery_code");
+		RecoveryCodeTable.Entity p = new RecoveryCodeTable.Entity();
+		p.setUserId(userId);
+		p.setRecoveryCode(recoveryCode);
+		q.setConditionData(p.getMap());
+		List<Map<String, Object>> list = this.executeQuery(q);
+		if (list.size() > 0) {
+			String sql = "delete from recovery_code where user_id = :user_id and recovery_code = :recovery_code";
+			this.executeUpdate(sql, p.getMap());
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+		
+		
+	}
 }

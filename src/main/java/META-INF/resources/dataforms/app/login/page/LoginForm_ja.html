@@ -29,7 +29,13 @@
 				</div>
 				<div id="totpDiv" class="fieldDiv" style="display: none;">
 					<div class="label">ワンタイムパスワード(TOTP)</div>
-					<div class="field"><input type="text" id="totp"></div>
+					<div class="field"><input type="text" id="totp" placeholder="Google Authenticator、Microsoft Authenticator等に表示されるワンタイムパスワードを入力してください。"></div>
+				</div>
+				<div id="recoveryCodeDiv" class="fieldDiv" style="display: none;">
+					<div class="label">リカバリーコード</div>
+					<div class="field">
+						<input type="text" id="recoveryCode" placeholder="多要素認証設定で作成したリカバーリーコートを入力してください。同じリカバリーコードは1度しか使用できません。" >
+					</div>
 				</div>
 				<div id="flagDiv" class="fieldDiv" style="justify-content: space-between; display: none;">
 					<div>
@@ -37,11 +43,14 @@
 							<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">認証方法を保存する&nbsp;</label>
 						</div>
 						<div>
+							<input id="recoveryCodeCheck" type="checkbox" value="1" class="recoveryCodeCheck"/><label for="recoveryCodeCheck" class="recoveryCodeCheck">リカバリーコードを使用する&nbsp;</label>
+						</div>
+						<div>
 							<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">ログインしたままにする</label>
 						</div>
 					</div>
 					<div>
-						<a id="passwordResetLink" href="javascript:void(0);">ログインできない方はこちら</a>
+						<a id="passwordResetLink" href="javascript:void(0);">パスワードを忘れた方はこちら</a>
 					</div>
 				</div>
 			</div>

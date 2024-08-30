@@ -29,13 +29,7 @@
 				</div>
 				<div id="totpDiv" class="fieldDiv" style="display: none;">
 					<div class="label">TOTP</div>
-					<div class="field"><input type="text" id="totp" placeholder="Please enter the one-time password displayed on Google Authenticator, Microsoft Authenticator, etc.""></div>
-				</div>
-				<div id="recoveryCodeDiv" class="fieldDiv" style="display: none;">
-					<div class="label">Recovery code</div>
-					<div class="field">
-						<input type="text" id="recoveryCode" placeholder="Please enter the recovery code you created in the multi-factor authentication settings. The same recovery code can only be used once." >
-					</div>
+					<div class="field"><input type="text" id="totp" placeholder="Please enter the one-time password displayed on Google Authenticator, Microsoft Authenticator, etc."></div>
 				</div>
 				<div id="flagDiv" class="fieldDiv" style="justify-content: space-between; display: none;">
 					<div>
@@ -43,14 +37,11 @@
 							<input id="saveLastLogin" type="checkbox" value="1"/><label for="saveLastLogin">Save authentication method&nbsp;</label>
 						</div>
 						<div>
-							<input id="recoveryCodeCheck" type="checkbox" value="1" class="recoveryCodeCheck"/><label for="recoveryCodeCheck" class="recoveryCodeCheck">Using a recovery code&nbsp;</label>
-						</div>
-						<div>
 							<input id="keepLogin" type="checkbox" value="1"/><label for="keepLogin">Keep login</label>
 						</div>
 					</div>
 					<div>
-						<a id="passwordResetLink" href="javascript:void(0);">Forgot your password?</a>
+						<a id="passwordResetLink" href="javascript:void(0);">If you can't log in, click here</a>
 					</div>
 				</div>
 			</div>

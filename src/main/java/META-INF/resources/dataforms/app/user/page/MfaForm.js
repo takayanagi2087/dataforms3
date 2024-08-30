@@ -57,9 +57,9 @@ export class MfaForm extends Form {
 		this.get("removeRecoveryCodesButton").click(() => {
 			this.removeRecoveryCode();
 		});
-		this.get("downloadRecoveryCodesButton").click(() => {
+/*		this.get("downloadRecoveryCodesButton").click(() => {
 			this.downloadRecoveryCode();
-		});
+		});*/
 	}
 
 	/**
@@ -103,6 +103,10 @@ export class MfaForm extends Form {
 				if (r.status == JsonResponse.SUCCESS) {
 					let table = this.getComponent("recoveryCodeList");
 					table.setTableData(r.result);
+					await this.downloadRecoveryCode();
+					let fname = location.hostname + "_recovery_codes*.txt";
+					let msg = MessagesUtil.getMessage("message.downlodedrcoverycode", fname);
+					currentPage.alert(null, msg);
 				}
 			}
 			this.setRecoveryCodeButton();

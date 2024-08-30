@@ -112,13 +112,15 @@ export class LoginForm extends Form {
 		if (this.get("saveLastLogin").prop("checked")) {
 			let loginId = this.get("loginId").val();
 			let authMethod = this.find("[name='authMethod']:checked").val();
-			let passkey = this.get("authenticatorName").val();
-			let lastLoginInfo = {};
-			lastLoginInfo.loginId = loginId;
-			lastLoginInfo.authMethod = authMethod;
-			lastLoginInfo.passkey = passkey;
-			let json = JSON.stringify(lastLoginInfo);
-			localStorage.setItem(LoginForm.LAST_LOGIN_INFO, json);
+			if (authMethod != "3") { // Recovery codeの場合は保存しない。
+				let passkey = this.get("authenticatorName").val();
+				let lastLoginInfo = {};
+				lastLoginInfo.loginId = loginId;
+				lastLoginInfo.authMethod = authMethod;
+				lastLoginInfo.passkey = passkey;
+				let json = JSON.stringify(lastLoginInfo);
+				localStorage.setItem(LoginForm.LAST_LOGIN_INFO, json);
+			}
 		} else {
 			localStorage.removeItem(LoginForm.LAST_LOGIN_INFO);
 		}
@@ -206,6 +208,12 @@ export class LoginForm extends Form {
 		} else {
 			this.setRadioVisible(2, false);
 		}
+		this.setRadioVisible(3, false);
+		if (opt.result.recoveryCode) {
+			this.find(".recoveryCodeCheck").show();
+		} else {
+			this.find(".recoveryCodeCheck").hide();
+		}
 	}
 		
 	/** 
@@ -276,17 +284,25 @@ export class LoginForm extends Form {
 			this.get("passwordDiv").show();
 			this.get("totpDiv").hide();
 			this.get("passkeyDiv").hide();
+			this.get("recoveryCodeDiv").hide();
 		} else if (method == "1") {
 			this.get("passwordDiv").show();
 			this.get("totpDiv").show();
 			this.get("passkeyDiv").hide();
+			this.get("recoveryCodeDiv").hide();
 		} else if (method == "2") {
 			this.get("passwordDiv").show();
 			this.get("totpDiv").hide();
 			this.get("passkeyDiv").show();
+			this.get("recoveryCodeDiv").hide();
+		} else if (method == "3") {
+			this.get("passwordDiv").show();
+			this.get("totpDiv").hide();
+			this.get("passkeyDiv").hide();
+			this.get("recoveryCodeDiv").show();
 		}
 		let pf = this.getComponent("password");
-		if (method == "0" || method == "1") {
+		if (method == "0" || method == "1" || method == "3") {
 			pf.setRequired(true);
 		} else {
 			pf.setRequired(false);
@@ -308,7 +324,19 @@ export class LoginForm extends Form {
 			this.login();
 		}
 	}
-	
+
+	/**
+	 * リカバリーコードモードを有効にする。
+	 */
+	enableRecoveryCode() {
+		if (this.get("recoveryCodeCheck").prop("checked")) {
+			this.setRadioVisible(3, true);
+		} else {
+			this.setAuthMethodRadio(this.#authOption);
+		}
+		this.changeAuthMethod();
+	}
+		
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
@@ -350,8 +378,13 @@ export class LoginForm extends Form {
 			this.get("keepLogin").hide();
 			this.find("label[for='" + this.get("keepLogin").attr("id") + "']").hide();
 		}
+		this.find(".recoveryCodeCheck").click(() => {
+			this.enableRecoveryCode();
+		});
 		this.loadLastLoginInfo();
 	}
 
 }
+
+
 
