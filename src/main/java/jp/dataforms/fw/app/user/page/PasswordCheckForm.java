@@ -29,18 +29,26 @@ public class PasswordCheckForm extends Form {
 	private static Logger logger = LogManager.getLogger(PasswordCheckForm.class);
 	
 	/**
-	 * コンストラクタ。
+	 * チェックOKの場合に実行するスクリプト。
 	 */
-	public PasswordCheckForm() {
-		this(null);
+	private String onOkScript = null;
+	
+	/**
+	 * コンストラクタ。
+	 * @param onOkScript チェックOKの場合に実行するスクリプト。
+	 */
+	public PasswordCheckForm(final String onOkScript) {
+		this(null, onOkScript);
 	}
 	
 	/**
 	 * コンストラクタ。
 	 * @param id フォームID。	 
+	 * @param onOkScript チェックOKの場合に実行するスクリプト。
 	 */
-	public PasswordCheckForm(final String id) {
+	public PasswordCheckForm(final String id, final String onOkScript) {
 		super(id);
+		this.onOkScript = onOkScript;
 		this.addField(new PasswordField()).addValidator(new RequiredValidator());
 	}
 	
@@ -69,4 +77,10 @@ public class PasswordCheckForm extends Form {
 		}
 	}
 	
+	@Override
+	public Map<String, Object> getProperties() throws Exception {
+		Map<String, Object> prop = super.getProperties();
+		prop.put("onOkScript", this.onOkScript);
+		return prop;
+	}
 }

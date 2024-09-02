@@ -54,12 +54,12 @@ export class MfaForm extends Form {
 		this.get("createRecoveryCodesButton").click(() => {
 			this.createRecoveryCode();
 		});
+		this.get("downloadRecoveryCodesButton").click(() => {
+			this.downloadRecoveryCode();
+		});
 		this.get("removeRecoveryCodesButton").click(() => {
 			this.removeRecoveryCode();
 		});
-/*		this.get("downloadRecoveryCodesButton").click(() => {
-			this.downloadRecoveryCode();
-		});*/
 	}
 
 	/**
@@ -114,7 +114,7 @@ export class MfaForm extends Form {
 			currentPage.reportError(e);
 		}
 	}
-	
+
 	/**
 	 * リカバリーコードを削除します。
 	 */

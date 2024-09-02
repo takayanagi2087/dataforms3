@@ -8,11 +8,22 @@ import jp.dataforms.fw.dao.Dao;
  * 多要素認証設定ページクラス。
  */
 public class MfaPage extends UserPage {
+
+	/**
+	 * パスワードチェックOKの時に実行するスクリプト。
+	 */
+	private static final String ON_OK_SCRIPT = """
+		this.parent.get("mfaForm").show();
+		let mfaForm = this.parent.getComponent("mfaForm");
+		mfaForm.getMfaInfo();
+		this.get().hide();
+	""";
+	
 	/**
 	 * コンストラクタ。
 	 */
 	public MfaPage() {
-		this.addForm(new PasswordCheckForm());
+		this.addForm(new PasswordCheckForm(ON_OK_SCRIPT));
 		this.addForm(new MfaForm());
 	}
 
