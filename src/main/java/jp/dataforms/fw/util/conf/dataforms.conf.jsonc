@@ -182,7 +182,7 @@
 		// ----------------------------------
 		//	可逆パスワード:
 		//	REVERSIBLE_PASSWORD : 可逆パスワード、IRREVERSIBLE_PASSWORD : 不可逆パスワード 
-		, "passwordType": "REVERSIBLE_PASSWORD"
+		, "passwordType": "IRREVERSIBLE_PASSWORD"
 		// ----------------------------------
 		//	ハッシュアルゴリズム
 		// SHA-1 or SHA-256 or SHA-384 or SHA-512
@@ -197,7 +197,6 @@
 			// AESの初期化ベクトルを指定します。
 			// AES初期化ベクトルは16Byteである必要があるため、自動的に保管して使用します。
 			"aesInitialVector": "Initi@lVect0r",
-			//
 			// ===================================================================================
 			// 以下項目はDESパスワードまたはAESキーを指定します。
 			// AESキーは16Byteである必要があるため、自動的に保管して使用します。
@@ -205,18 +204,15 @@
 			// CryptUtilで使用するデフォルトのDESパスワードまたはAESキーを指定します。
 			// UserInfoTableのパスワードの暗号化で使用するので、
 			// 変更する場合は事前にUserInfoTableのパスワードの再構築を行う必要があります。
-			// nullを指定するとライブラリにハードコーディングされたものを使用します。
-			"defaultPassword": null,
+			"defaultPassword": "d@d@f0ms",
 			// QueryStringを暗号化する場合に使用するDESパスワードまたはAESキーを指定します。
 			// BLOBデータ等のダウンロードパラメータの暗号化に使用しています。
 			// 運用時に変更しても問題ありません。
-			// nullを指定するとライブラリにハードコーディングされたものを使用します。
 			"queryStringCryptPassword": "QueryStringPassword",
 			// CSRF対策に使用するDESパスワードまたはAESキーを指定します。
 			// 指定されたDESパスワードまたはAESキーでセッションIDを暗号化し、
 			// CSRFトークンとしてブラウザに送信します。
 			// 運用時に変更しても問題ありません。
-			// nullを指定するとCSRF対策を行いません。
 			"csrfSessionidCryptPassword": "CSRFpassword"
 		}
 		// ----------------------------------

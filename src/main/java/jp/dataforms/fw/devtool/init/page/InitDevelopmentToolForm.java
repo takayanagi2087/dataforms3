@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -260,6 +261,27 @@ public class InitDevelopmentToolForm extends EditForm {
 		conf = conf.replaceAll("\"webSourcePath\": null", "\"webSourcePath\": \"" + webSrcPath + "\"");
 		conf = conf.replaceAll("\"jndiPrefix\": \"java:/comp/env/\"", "\"jndiPrefix\": \"" + jndiPrefix + "\"");
 		conf = conf.replaceAll("\"dataSource\": null", "\"dataSource\": \"" + dataSource + "\"");
+		// 
+		{
+			String aesInitialVector = RandomStringUtils.randomAlphanumeric(16);
+			logger.debug("aesInitialVector=" + aesInitialVector);
+			conf = conf.replaceAll("\"aesInitialVector\": \".+\"", "\"aesInitialVector\": \"" + aesInitialVector + "\"");
+		}
+		{
+			String defaultPassword = RandomStringUtils.randomAlphanumeric(16);
+			logger.debug("defaultPassword=" + defaultPassword);
+			conf = conf.replaceAll("\"defaultPassword\": \".+\"", "\"defaultPassword\": \"" + defaultPassword + "\"");
+		}
+		{
+			String queryStringCryptPassword = RandomStringUtils.randomAlphanumeric(16);
+			logger.debug("queryStringCryptPassword=" + queryStringCryptPassword);
+			conf = conf.replaceAll("\"queryStringCryptPassword\": \".+\"", "\"queryStringCryptPassword\": \"" + queryStringCryptPassword + "\"");
+		}
+		{
+			String csrfSessionidCryptPassword = RandomStringUtils.randomAlphanumeric(16);
+			logger.debug("csrfSessionidCryptPassword=" + csrfSessionidCryptPassword);
+			conf = conf.replaceAll("\"csrfSessionidCryptPassword\": \".+\"", "\"csrfSessionidCryptPassword\": \"" + csrfSessionidCryptPassword + "\"");
+		}
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/dataforms.conf.jsonc", conf, "utf-8");
 	}
 	
