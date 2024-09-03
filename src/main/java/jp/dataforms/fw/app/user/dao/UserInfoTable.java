@@ -7,9 +7,9 @@ import jp.dataforms.fw.app.user.field.MfaRequiredFlagField;
 import jp.dataforms.fw.app.user.field.TotpSecretField;
 import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.app.user.field.LoginIdField;
+import jp.dataforms.fw.app.user.field.MfaLoginCountField;
 import jp.dataforms.fw.app.user.field.UserIdField;
 import jp.dataforms.fw.app.user.field.UserNameField;
-import jp.dataforms.fw.app.user.field.PasswordRequiredFlagField;
 import jp.dataforms.fw.app.user.field.PasswordField;
 import jp.dataforms.fw.app.user.field.MailAddressField;
 import jp.dataforms.fw.app.user.field.ExternalUserFlagField;
@@ -34,9 +34,9 @@ public class UserInfoTable extends Table {
 		this.addField(new MailAddressField()); //メールアドレス
 		this.addField(new ExternalUserFlagField()); //外部ユーザフラグ
 		this.addField(new EnabledFlagField()); //ユーザ有効フラグ
-		this.addField(new PasswordRequiredFlagField()); //パスワード必須フラグ
-		this.addField(new MfaRequiredFlagField()); //PassKey必須フラグ
+		this.addField(new MfaRequiredFlagField()); //多要素認証必須フラグ
 		this.addField(new TotpSecretField()); //TOTPのSecret
+		this.addField(new MfaLoginCountField()); //多要素認証回数
 		this.addField(new DeleteFlagField()); //削除フラグ
 		this.addUpdateInfoFields();
 	}
@@ -65,12 +65,12 @@ public class UserInfoTable extends Table {
 		public static final String ID_EXTERNAL_USER_FLAG = "externalUserFlag";
 		/** ユーザ有効フラグのフィールドID。 */
 		public static final String ID_ENABLED_FLAG = "enabledFlag";
-		/** パスワード必須フラグのフィールドID。 */
-		public static final String ID_PASSWORD_REQUIRED_FLAG = "passwordRequiredFlag";
-		/** PassKey必須フラグのフィールドID。 */
+		/** 多要素認証必須フラグのフィールドID。 */
 		public static final String ID_MFA_REQUIRED_FLAG = "mfaRequiredFlag";
 		/** TOTPのSecretのフィールドID。 */
 		public static final String ID_TOTP_SECRET = "totpSecret";
+		/** 多要素認証回数のフィールドID。 */
+		public static final String ID_MFA_LOGIN_COUNT = "mfaLoginCount";
 		/** 削除フラグのフィールドID。 */
 		public static final String ID_DELETE_FLAG = "deleteFlag";
 
@@ -200,32 +200,16 @@ public class UserInfoTable extends Table {
 		}
 
 		/**
-		 * パスワード必須フラグを取得します。
-		 * @return パスワード必須フラグ。
-		 */
-		public java.lang.String getPasswordRequiredFlag() {
-			return (java.lang.String) this.getMap().get(Entity.ID_PASSWORD_REQUIRED_FLAG);
-		}
-
-		/**
-		 * パスワード必須フラグを設定します。
-		 * @param passwordRequiredFlag パスワード必須フラグ。
-		 */
-		public void setPasswordRequiredFlag(final java.lang.String passwordRequiredFlag) {
-			this.getMap().put(Entity.ID_PASSWORD_REQUIRED_FLAG, passwordRequiredFlag);
-		}
-
-		/**
-		 * PassKey必須フラグを取得します。
-		 * @return PassKey必須フラグ。
+		 * 多要素認証必須フラグを取得します。
+		 * @return 多要素認証必須フラグ。
 		 */
 		public java.lang.String getMfaRequiredFlag() {
 			return (java.lang.String) this.getMap().get(Entity.ID_MFA_REQUIRED_FLAG);
 		}
 
 		/**
-		 * PassKey必須フラグを設定します。
-		 * @param mfaRequiredFlag PassKey必須フラグ。
+		 * 多要素認証必須フラグを設定します。
+		 * @param mfaRequiredFlag 多要素認証必須フラグ。
 		 */
 		public void setMfaRequiredFlag(final java.lang.String mfaRequiredFlag) {
 			this.getMap().put(Entity.ID_MFA_REQUIRED_FLAG, mfaRequiredFlag);
@@ -245,6 +229,22 @@ public class UserInfoTable extends Table {
 		 */
 		public void setTotpSecret(final java.lang.String totpSecret) {
 			this.getMap().put(Entity.ID_TOTP_SECRET, totpSecret);
+		}
+
+		/**
+		 * 多要素認証回数を取得します。
+		 * @return 多要素認証回数。
+		 */
+		public java.lang.Integer getMfaLoginCount() {
+			return NumberUtil.integerValueObject(this.getMap().get(Entity.ID_MFA_LOGIN_COUNT));
+		}
+
+		/**
+		 * 多要素認証回数を設定します。
+		 * @param mfaLoginCount 多要素認証回数。
+		 */
+		public void setMfaLoginCount(final java.lang.Integer mfaLoginCount) {
+			this.getMap().put(Entity.ID_MFA_LOGIN_COUNT, mfaLoginCount);
 		}
 
 		/**
@@ -323,16 +323,8 @@ public class UserInfoTable extends Table {
 	}
 
 	/**
-	 * パスワード必須フラグフィールドを取得します。
-	 * @return パスワード必須フラグフィールド。
-	 */
-	public PasswordRequiredFlagField getPasswordRequiredFlagField() {
-		return (PasswordRequiredFlagField) this.getField(Entity.ID_PASSWORD_REQUIRED_FLAG);
-	}
-
-	/**
-	 * PassKey必須フラグフィールドを取得します。
-	 * @return PassKey必須フラグフィールド。
+	 * 多要素認証必須フラグフィールドを取得します。
+	 * @return 多要素認証必須フラグフィールド。
 	 */
 	public MfaRequiredFlagField getMfaRequiredFlagField() {
 		return (MfaRequiredFlagField) this.getField(Entity.ID_MFA_REQUIRED_FLAG);
@@ -344,6 +336,14 @@ public class UserInfoTable extends Table {
 	 */
 	public TotpSecretField getTotpSecretField() {
 		return (TotpSecretField) this.getField(Entity.ID_TOTP_SECRET);
+	}
+
+	/**
+	 * 多要素認証回数フィールドを取得します。
+	 * @return 多要素認証回数フィールド。
+	 */
+	public MfaLoginCountField getMfaLoginCountField() {
+		return (MfaLoginCountField) this.getField(Entity.ID_MFA_LOGIN_COUNT);
 	}
 
 	/**

@@ -399,6 +399,10 @@ public class ConfUtil {
 	@Data
 	public static class Application implements ConfClass {
 		/**
+		 * 多要素認証を必須にするログイン回数。
+		 */
+		private Integer mfaRequiredCount = null;
+		/**
 		 * サポート言語リスト。
 		 */
 		private List<String> languageList = null;

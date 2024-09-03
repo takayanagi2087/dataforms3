@@ -291,7 +291,7 @@ export class LoginForm extends Form {
 			this.get("passkeyDiv").hide();
 			this.get("recoveryCodeDiv").hide();
 		} else if (method == "2") {
-			this.get("passwordDiv").show();
+			this.get("passwordDiv").hide();
 			this.get("totpDiv").hide();
 			this.get("passkeyDiv").show();
 			this.get("recoveryCodeDiv").hide();

@@ -101,7 +101,18 @@ public class LoginForm extends Form {
 	 */
 	private static String passwordResetMailPage = null;
 
+	/**
+	 * 多要素認証必須に切り替える回数。
+	 */
+	private static int mfaRequiredCount = 0;
 
+	/**
+	 * 多要素認証必須に切り替える回数を設定します。
+	 * @param mfaRequiredCount 多要素認証必須に切り替える回数。
+	 */
+	public static void setMfaRequiredCount(int mfaRequiredCount) {
+		LoginForm.mfaRequiredCount = mfaRequiredCount;
+	}
 
 	/**
 	 * コンストラクタ。
@@ -185,12 +196,6 @@ public class LoginForm extends Form {
 						if (plist.size() == 0) {
 							throw new ApplicationException(this.getPage(), "error.invalidauth");
 						}
-						if ("1".equals(ue.getPasswordRequiredFlag())) {
-							// パスワード必須の場合
-							if (StringUtil.isBlank(password)) {
-								elist.add(new ValidationError(UserInfoTable.Entity.ID_PASSWORD, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
-							}
-						}
 						if (StringUtil.isBlank(passkey)) {
 							logger.debug("passkey=" + passkey);
 							elist.add(new ValidationError(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, MessagesUtil.getMessage(getWebEntryPoint(), "error.required")));
@@ -239,6 +244,32 @@ public class LoginForm extends Form {
 		return ret;
 	}
 	
+	/**
+	 * 多要素認証をONに設定する。
+	 * @param userInfo ユーザ情報。
+	 * @throws Exception 例外。
+	 */
+	private void setMfaRequired(final Map<String, Object> userInfo) throws Exception {
+		UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+		int c = LoginForm.mfaRequiredCount;
+		Integer mfaSuccess = ue.getMfaLoginCount();
+		if (mfaSuccess == null) {
+			mfaSuccess = 0;
+		}
+		mfaSuccess++;
+		if (c > 0) {
+			// 自動的に多要素認証をONに設定する。
+			if (mfaSuccess >= c) {
+				ue.setMfaRequiredFlag("1");
+			}
+		} else {
+			// 自動的に多要素認証はONにしない。
+		}
+		ue.setMfaLoginCount(mfaSuccess);
+		ue.setUpdateUserId(ue.getUserId());
+		UserDao dao = new UserDao(this);
+		dao.updateMfaInfo(userInfo);
+	}
 	
 	/**
 	 * パスワードログインの処理を行います。
@@ -276,6 +307,7 @@ public class LoginForm extends Form {
 				String authMethod = (String) params.get(ID_AUTH_METHOD);
 				if ("1".equals(authMethod)) {
 					if (this.checkTotp(e.getTotpSecret(), (String) params.get(ID_TOTP))) {
+						this.setMfaRequired(userInfo);	// 多要素認証必須設定
 						// TOTPのチェックOKとなりユーザ情報をセッションに保存
 						AutoLoginCookie.setAutoLoginCookie(this.getPage(), params);
 						session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
@@ -461,32 +493,22 @@ public class LoginForm extends Form {
 //			String loginId = (String) p.get("loginId");
 			String loginId = (String) p.get(UserInfoTable.Entity.ID_LOGIN_ID);
 			Map<String, Object> userInfo = dao.queryUserInfo(loginId);
-			UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
+//			UserInfoTable.Entity ue = new UserInfoTable.Entity(userInfo);
 			String logmsg = null;
-			if ("1".equals(ue.getPasswordRequiredFlag())) {
-				// パスワードチェックが必須の場合、POSTされたパスワードでもチェックする。
-				String password = (String) p.get(UserInfoTable.Entity.ID_PASSWORD);
-				Map<String, Object> loginInfo = new HashMap<String, Object>();
-				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
-				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
-				logger.debug("loginId=" + loginId);
-				userInfo = dao.login(loginInfo, true);
-				logmsg = "Authenticated with password and passkey.";
-			} else {
-				// パスワードチェックが不要の場合DB中のパスワードを使用して認証。
-				String password = (String) dao.queryPassword(loginId);
-				Map<String, Object> loginInfo = new HashMap<String, Object>();
-				loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
-				loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
-				logger.debug("loginId=" + loginId);
-				userInfo = dao.login(loginInfo, false);
-				logmsg = "Authenticated with passkey.";
-			}
+			// パスワードチェックが不要の場合DB中のパスワードを使用して認証。
+			String password = (String) dao.queryPassword(loginId);
+			Map<String, Object> loginInfo = new HashMap<String, Object>();
+			loginInfo.put(UserInfoTable.Entity.ID_LOGIN_ID, loginId);
+			loginInfo.put(UserInfoTable.Entity.ID_PASSWORD, password);
+			logger.debug("loginId=" + loginId);
+			userInfo = dao.login(loginInfo, false);
+			logmsg = "Authenticated with passkey.";
 			String passkey = this.getAuthenticatorName();
 			userInfo.put(WebAuthnTable.Entity.ID_AUTHENTICATOR_NAME, passkey);
 			userInfo.put(AutoLoginCookie.ID_KEEP_LOGIN, p.get(AutoLoginCookie.ID_KEEP_LOGIN));
 			String ui = UserLogUtil.getClientInfo(getPage(), userInfo, "Passkey", passkey);
 			logger.info(ui + logmsg);
+			this.setMfaRequired(userInfo);	// 多要素認証必須設定
 			// セッションにユーザ情報を保存する。
 			HttpSession session = this.getPage().getRequest().getSession();
 			session.setAttribute(WebEntryPoint.USER_INFO, userInfo);
@@ -532,12 +554,6 @@ public class LoginForm extends Form {
 				opt.put("useTotp", Boolean.FALSE);
 			} else {
 				opt.put("useTotp", Boolean.TRUE);
-			}
-			String passwordRequired = ui.getPasswordRequiredFlag();
-			if ("1".equals(passwordRequired)) {
-				opt.put("passwordRequired", Boolean.TRUE);
-			} else {
-				opt.put("passwordRequired", Boolean.FALSE);
 			}
 			String mfaRequired = ui.getMfaRequiredFlag();
 			if ("1".equals(mfaRequired)) {

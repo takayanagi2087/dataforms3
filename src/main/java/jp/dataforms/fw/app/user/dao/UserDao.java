@@ -295,6 +295,7 @@ public class UserDao extends Dao {
 		SqlGenerator gen = this.getSqlGenerator();
 		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable(); //new UserInfoTable();
 		tbl.getFieldList().remove(UserInfoTable.Entity.ID_TOTP_SECRET);	// TOTP SECRETは更新しない
+		tbl.getFieldList().remove(UserInfoTable.Entity.ID_MFA_LOGIN_COUNT);
 		String sql = gen.generateUpdateSql(tbl);
 		logger.info("sql=" + sql);
 		this.executeUpdate(sql, data);
@@ -375,6 +376,7 @@ public class UserDao extends Dao {
 		flist.remove(UserInfoTable.Entity.ID_EXTERNAL_USER_FLAG);
 		flist.remove(UserInfoTable.Entity.ID_ENABLED_FLAG);
 		flist.remove(UserInfoTable.Entity.ID_TOTP_SECRET);
+		flist.remove(UserInfoTable.Entity.ID_MFA_LOGIN_COUNT);
 		flist.remove(UserInfoTable.Entity.ID_DELETE_FLAG);
 		flist.remove(UserInfoTable.Entity.ID_CREATE_USER_ID);
 		flist.remove(UserInfoTable.Entity.ID_CREATE_TIMESTAMP);
@@ -387,9 +389,6 @@ public class UserDao extends Dao {
 	 * @throws Exception 例外。
 	 */
 	public void updateSelfUser(final Map<String, Object> data) throws Exception {
-//		UserInfoTable.Entity e = new UserInfoTable.Entity(data);
-//		data.put("password", CryptUtil.encrypt((String) data.get("password")));
-//		e.setPassword(CryptUtil.encrypt(e.getPassword()));
 		UserInfoTable tbl = UserInfoTableUtil.newUserInfoTable(); //new UserInfoTable();
 		FieldList flist = UserDao.getSelfUpdateFieldList(tbl);
 		this.executeUpdate(tbl,
@@ -685,7 +684,20 @@ public class UserDao extends Dao {
 		} else {
 			return Boolean.FALSE;
 		}
+	}
+	
+	/**
+	 * 多要素認証関係の設定情報を更新します。
+	 * @param userInfo ユーザ情報。
+	 * @throws Exception 例外。
+	 */
+	public void updateMfaInfo(final Map<String, Object> userInfo) throws Exception {
+		UserInfoTable table = new UserInfoTable();
+		FieldList flist = new FieldList();
+		flist.addField(table.getMfaLoginCountField());
+		flist.addField(table.getMfaRequiredFlagField());
+		flist.addField(table.getUpdateUserIdField());
 		
-		
+		this.executeUpdate(table, flist, table.getPkFieldList(), userInfo, true);
 	}
 }

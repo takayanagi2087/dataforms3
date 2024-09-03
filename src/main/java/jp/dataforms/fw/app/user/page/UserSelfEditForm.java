@@ -42,11 +42,6 @@ public class UserSelfEditForm extends EditForm {
 	@Override
 	public void init() throws Exception {
 		super.init();
-		// 自分自身のユーザ情報を取得.
-/*		Map<String, Object> userInfo = this.getPage().getUserInfo();
-		UserDao dao = new UserDao(this);
-		Map<String, Object> data = dao.getSelectedData(userInfo);
-		this.setFormDataMap(data);*/
 	}
 
 
