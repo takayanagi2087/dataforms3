@@ -29,12 +29,12 @@ export class UserEditForm extends EditForm {
 	toEditMode() {
 		super.toEditMode();
 		if (this.saveMode == "new") {
-			this.find("tr.passwordTr").show();
+			this.find(".passwordTr").show();
 		} else {
 			if (this.userPasswordType == "IRREVERSIBLE_PASSWORD") {
-				this.find("tr.passwordTr").hide();
+				this.find(".passwordTr").hide();
 			} else {
-				this.find("tr.passwordTr").show();
+				this.find(".passwordTr").show();
 			}
 		}
 	}
