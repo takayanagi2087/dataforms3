@@ -9,7 +9,7 @@ import jp.dataforms.fw.field.base.Field;
  * </pre>
  * @param <TYPE> データ型。
  */
-public abstract class GroupSummaryField<TYPE> extends Field<TYPE> {
+public abstract class GroupSummaryField<TYPE> extends Field<TYPE>  implements FunctionField {
     /**
      * Logger.
      */
@@ -40,6 +40,14 @@ public abstract class GroupSummaryField<TYPE> extends Field<TYPE> {
 		return targetField;
 	}
 
+	@Override
+	public Field<?> getFormField() {
+		Field<?> field = this.getTargetField();
+		field.setId(this.getId());
+		return field;
+	}
+	
+	
 	/**
 	 * 対象フィールドを設定します。
 	 * @param targetField 対象フィールド。

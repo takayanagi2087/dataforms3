@@ -9,7 +9,7 @@ import jp.dataforms.fw.field.base.Field;
  * select m.xxx as yyy ...
  * </pre>
  */
-public class AliasField extends Field<Object> {
+public class AliasField extends Field<Object> implements FunctionField {
 	/**
 	 * 対象フィールド。
 	 */
@@ -32,6 +32,14 @@ public class AliasField extends Field<Object> {
 	 */
 	public Field<?> getTargetField() {
 		return targetField;
+	}
+
+	
+	@Override
+	public Field<?> getFormField() {
+		Field<?> field = this.getTargetField();
+		field.setId(this.getId());
+		return field;
 	}
 
 	/**

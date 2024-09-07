@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
 import jp.dataforms.fw.field.base.Field.SortOrder;
+import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.util.StringUtil;
 
 /**
@@ -134,7 +135,12 @@ public class FieldList extends ArrayList<Field<?>> {
 	public List<Map<String, Object>> getFieldListClassInfo() throws Exception {
 		List<Map<String, Object>> fieldList = new ArrayList<Map<String, Object>>();
 		for (Field<?> f : this) {
-			fieldList.add(f.getProperties());
+			if (f instanceof FunctionField) {
+				FunctionField ff = (FunctionField) f;
+				fieldList.add(ff.getFormField().getProperties());
+			} else {
+				fieldList.add(f.getProperties());
+			}
 		}
 		return fieldList;
 	}

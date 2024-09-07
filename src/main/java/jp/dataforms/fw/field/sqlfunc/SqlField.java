@@ -10,7 +10,7 @@ import jp.dataforms.fw.field.base.Field;
  * 任意の関数やサブクエリでフィールド値を取得するときに使用します。
  * </pre>
  */
-public class SqlField extends Field<Object> {
+public class SqlField extends Field<Object>  implements FunctionField {
 	/**
 	 * SQL。
 	 */
@@ -40,6 +40,15 @@ public class SqlField extends Field<Object> {
 		return targetField;
 	}
 
+	@Override
+	public Field<?> getFormField() {
+		Field<?> field = this.getTargetField();
+		field.setId(this.getId());
+		return field;
+	}
+
+	
+	
 	/**
 	 * SQLを取得します。
 	 * @return SQL。
