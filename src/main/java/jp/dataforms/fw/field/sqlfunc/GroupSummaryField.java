@@ -44,6 +44,7 @@ public abstract class GroupSummaryField<TYPE> extends Field<TYPE>  implements Fu
 	public Field<?> getFormField() {
 		Field<?> field = this.getTargetField();
 		field.setId(this.getId());
+		field.setRealId(this.getRealId());
 		return field;
 	}
 	

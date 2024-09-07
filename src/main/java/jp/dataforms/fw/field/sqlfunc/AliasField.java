@@ -39,6 +39,7 @@ public class AliasField extends Field<Object> implements FunctionField {
 	public Field<?> getFormField() {
 		Field<?> field = this.getTargetField();
 		field.setId(this.getId());
+		field.setRealId(this.getRealId());
 		return field;
 	}
 
