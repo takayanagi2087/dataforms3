@@ -563,6 +563,14 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	}
 
 	/**
+	 * バリデータリストを設定する。
+	 * @param validatorList バリデータリスト。
+	 */
+	public final void setValidatorList(final List<FieldValidator> validatorList) {
+		this.validatorList = validatorList;
+	}
+	
+	/**
 	 * 必須バリデータを削除します。
 	 * @return 必須パリデータが削除されたフィールド。
 	 */

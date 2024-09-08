@@ -35,14 +35,6 @@ public class AliasField extends Field<Object> implements FunctionField {
 	}
 
 	
-	@Override
-	public Field<?> getFormField() {
-		Field<?> field = this.getTargetField();
-		field.setId(this.getId());
-		field.setRealId(this.getRealId());
-		return field;
-	}
-
 	/**
 	 * 対象フィールドを設定します。
 	 * @param targetField 対象フィールド。

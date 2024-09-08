@@ -40,16 +40,6 @@ public class SqlField extends Field<Object>  implements FunctionField {
 		return targetField;
 	}
 
-	@Override
-	public Field<?> getFormField() {
-		Field<?> field = this.getTargetField();
-		field.setId(this.getId());
-		field.setRealId(this.getRealId());
-		return field;
-	}
-
-	
-	
 	/**
 	 * SQLを取得します。
 	 * @return SQL。

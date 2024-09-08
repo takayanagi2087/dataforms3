@@ -40,14 +40,6 @@ public abstract class GroupSummaryField<TYPE> extends Field<TYPE>  implements Fu
 		return targetField;
 	}
 
-	@Override
-	public Field<?> getFormField() {
-		Field<?> field = this.getTargetField();
-		field.setId(this.getId());
-		field.setRealId(this.getRealId());
-		return field;
-	}
-	
 	
 	/**
 	 * 対象フィールドを設定します。
