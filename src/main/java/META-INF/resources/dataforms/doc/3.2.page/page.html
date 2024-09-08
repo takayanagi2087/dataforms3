@@ -9,7 +9,7 @@
 		<h1><span>3.2.</span>Page,Form,HtmlTable</h1>
 		<h2>ページ内のフォームの連携</h2>
 		<p>
-			dataforms2.jarではページの標準的な構成とその動作が決まっています。
+			dataforms3.jarではページの標準的な構成とその動作が決まっています。
 			ページには通常以下の3種類のフォームが配置されます。
 		</p>
 		<table>
@@ -59,7 +59,7 @@
 			EditFormはキー情報をもとに編集対象データを取得し、その内容を編集した後データを更新します。
 		</p>
 		<p>
-			大抵のアプリケーションはこの流れの全部または一部に当てはまると思います。
+			大抵のページはこの流れの全部または一部に当てはまると思います。
 			EditFormの配置を省略すると、問合せ条件の入力から問合せ結果の表示するページになります。
 			QueryResultFormの配置を省略すると、問合せ条件を直接EditFormに渡しその条件に合った
 			データを更新するページになります。
@@ -68,7 +68,7 @@
 		<p>
 			この流れに沿わないページを作る場合、この3種類のFormをすべて配置せずに、
 			Formクラスから派生した独自のクラスを作成して配置することになります。
-			しかし、このようなページを作ることはほとんどないと思います。
+			しかし、このようなページを作るケースは少ないと思います。
 		</p>
 		<h2>QuerySetDaoの機能</h2>
 		<p>
@@ -97,7 +97,7 @@
 			なお「複数レコード問合せ」は「編集対象取得問合せ」の主キーのフィールドを含んだものである必要があります。
 		</p>
 		<p>
-			「6.Table,Query,Dao」で作成したJoinTestTableはSampleIdFielを持っているので、SampleFieldの関連するテーブルといえます。
+			「3.1.Table,Query,Dao」で作成したJoinTestTableはSampleIdFielを持っているので、SampleTableに関連したテーブルです。
 			SampleTableとJoinTestTableを同時に編集するページを作る場合、以下のような設定でDaoを作成します。
 		</p>
 		<figure>
@@ -124,26 +124,26 @@ public class Sample2Dao extends QuerySetDao {
 	・
 
 	/**
-	 * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 * サンプルテーブル。
 	 */
 	private SampleTable sampleTable = null;
 
 	/**
-	 * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-	 * @return &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 * サンプルテーブルを取得します。
+	 * @return サンプルテーブル。
 	 */
 	public SampleTable getSampleTable() {
 		return this.sampleTable;
 	}
 
 	/**
-	 * Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 * 結合テストテーブル。
 	 */
 	private JoinTestTable joinTestTable = null;
 
 	/**
-	 * Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12434;&#21462;&#24471;&#12375;&#12414;&#12377;&#12290;
-	 * @return Join&#12486;&#12473;&#12488;&#12486;&#12540;&#12502;&#12523;&#12290;
+	 * 結合テストテーブルを取得します。
+	 * @return 結合テストテーブル。
 	 */
 	public JoinTestTable getJoinTestTable() {
 		return this.joinTestTable;
@@ -151,11 +151,11 @@ public class Sample2Dao extends QuerySetDao {
 
 
 	/**
-	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
-	 * @throws Exception &#20363;&#22806;&#12290;
+	 * コンストラクタ。
+	 * @throws Exception 例外。
 	 */
 	public Sample2Dao() {
-		this.setComment(&quot;&#12469;&#12531;&#12503;&#12523;2&quot;);
+		this.setComment("サンプルページ2用DAOクラス");
 		this.setListQuery(this.sampleTable = new SampleTable());
 		this.setSingleRecordQuery(this.sampleTable);
 		this.addMultiRecordQueryList(this.joinTestTable = new JoinTestTable());
@@ -298,7 +298,7 @@ group by
 			Pageは複数のFormを持つことができます。
 			また、Formは複数のフィールドとHtmlTableを持つことができます。
 			Fieldは複数のFieldValidatorを持つことができます。
-			dataforms2.jarではJavaのページクラスでこれらのWebComponentの関係を定義します。
+			dataforms3.jarではJavaのページクラスでこれらのWebComponentの関係を定義します。
 			開発ツールの「Webリソース作成」はこのページクラスをもとにHTMLとJavascriptを作成するツールです。
 		</p>
 		<p>
@@ -326,7 +326,8 @@ group by
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;meta charset=&quot;UTF-8&quot;&gt;
-		&lt;title&gt;&lt;/title&gt;
+		&lt;title&gt;&#12469;&#12531;&#12503;&#12523;&#12506;&#12540;&#12472;2&lt;/title&gt;
+		&lt;meta name=&quot;description&quot; content=&quot;1&#12524;&#12467;&#12540;&#12489;&#12395;&#32016;&#12389;&#12367;&#35079;&#25968;&#12524;&#12467;&#12540;&#12489;&#32232;&#38598;&quot;&gt;
 	&lt;/head&gt;
 	&lt;body&gt;
 		&lt;div id=&quot;mainDiv&quot;&gt;
@@ -360,7 +361,7 @@ group by
 				&lt;/div&gt;
 				&lt;input type=&quot;submit&quot; id=&quot;queryButton&quot; class=&quot;largeButton&quot; value=&quot;&#26908;&#32034;&quot;&gt;
 				&lt;input type=&quot;button&quot; id=&quot;exportButton&quot; class=&quot;largeButton&quot; value=&quot;&#12456;&#12463;&#12473;&#12509;&#12540;&#12488;&quot;&gt;
-				&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;&gt;
+				&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;&gt; 
 				&lt;input type=&quot;button&quot; id=&quot;newButton&quot; class=&quot;largeButton&quot; value=&quot;&#26032;&#35215;&#30331;&#37682;&quot;&gt;
 			&lt;/form&gt;
 			&lt;form id=&quot;queryResultForm&quot;&gt;
@@ -393,7 +394,7 @@ group by
 						&lt;/thead&gt;
 						&lt;tbody&gt;
 							&lt;tr&gt;
-								&lt;td&gt;
+								&lt;td class=&quot;rowno&quot;&gt;
 									&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
 									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].sampleId&quot; /&gt;
 									&lt;input type=&quot;hidden&quot; id=&quot;queryResult[0].createUserId&quot; /&gt;
@@ -454,7 +455,7 @@ group by
 						&lt;thead&gt;
 							&lt;tr&gt;
 								&lt;th colspan=&quot;2&quot; nowrap&gt;
-
+									
 								&lt;/th&gt;
 								&lt;th nowrap&gt;
 									No.
@@ -533,7 +534,8 @@ group by
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;meta charset=&quot;UTF-8&quot;&gt;
-		&lt;title&gt;&lt;/title&gt;
+		&lt;title&gt;&#12469;&#12531;&#12503;&#12523;&#12506;&#12540;&#12472;2&lt;/title&gt;
+		&lt;meta name=&quot;description&quot; content=&quot;1&#12524;&#12467;&#12540;&#12489;&#12395;&#32016;&#12389;&#12367;&#35079;&#25968;&#12524;&#12467;&#12540;&#12489;&#32232;&#38598;&quot;&gt;
 	&lt;/head&gt;
 	&lt;body&gt;
 		&lt;div id=&quot;mainDiv&quot;&gt;
@@ -547,7 +549,7 @@ group by
 		&lt;/div&gt;
 	&lt;/body&gt;
 &lt;/html&gt;
-		</pre>
+			</pre>
 		</div>
 		<div class="filecaption">Sample2EditForm.htmlの内容</div>
 		<div class="wrappre">
@@ -590,7 +592,7 @@ group by
 					&lt;thead&gt;
 						&lt;tr&gt;
 							&lt;th colspan=&quot;2&quot; nowrap&gt;
-
+								
 							&lt;/th&gt;
 							&lt;th nowrap&gt;
 								No.
@@ -635,7 +637,6 @@ group by
 			&lt;/div&gt;
 			&lt;input type=&quot;button&quot; id=&quot;confirmButton&quot; class=&quot;largeButton&quot; value=&quot;&#30906;&#35469;&quot;/&gt;
 			&lt;input type=&quot;button&quot; id=&quot;saveButton&quot; class=&quot;largeButton&quot; value=&quot;&#30331;&#37682;&quot;/&gt;
-			&lt;input type=&quot;button&quot; id=&quot;resetButton&quot; class=&quot;largeButton&quot; value=&quot;&#12522;&#12475;&#12483;&#12488;&quot;/&gt;
 			&lt;input type=&quot;button&quot; id=&quot;deleteButton&quot; class=&quot;largeButton&quot; value=&quot;&#21066;&#38500;&quot;/&gt;
 			&lt;input type=&quot;button&quot; id=&quot;backButton&quot; class=&quot;largeButton&quot; value=&quot;&#25147;&#12427;&quot;/&gt;
 		&lt;/form&gt;
@@ -738,12 +739,14 @@ group by
 
 'use strict';
 
+import { EditForm } from '../../dataforms/controller/EditForm.js';
+
 /**
  * @class Sample2EditForm
  *
  * @extends EditForm
  */
-class Sample2EditForm extends EditForm {
+export class Sample2EditForm extends EditForm {
 	/**
 	 * &#12467;&#12531;&#12473;&#12488;&#12521;&#12463;&#12479;&#12290;
 	 */
@@ -771,19 +774,18 @@ class Sample2EditForm extends EditForm {
 	 *
 	 */
 /*
-	callWebMethod() {
+	async callWebMethod() {
 		try {
 			if (this.validate()) {
-				this.submit(&quot;webMethod&quot;, (r) =&gt; {
-					this.parent.resetErrorStatus();
-					if (r.status == JsonResponse.SUCCESS) {
-						// TODO:&#25104;&#21151;&#26178;&#12398;&#20966;&#29702;&#12434;&#35352;&#36848;&#12375;&#12414;&#12377;&#12290;
-						// &#24540;&#31572;&#24773;&#22577;&#12434;&#12525;&#12464;&#34920;&#31034;
-						logger.dir(r);
-					} else {
-						this.parent.setErrorInfo(this.getValidationResult(r), this);
-					}
-				});
+				let r = await this.submit(&quot;webMethod&quot;);
+				this.parent.resetErrorStatus();
+				if (r.status == JsonResponse.SUCCESS) {
+					// TODO:&#25104;&#21151;&#26178;&#12398;&#20966;&#29702;&#12434;&#35352;&#36848;&#12375;&#12414;&#12377;&#12290;
+					// &#24540;&#31572;&#24773;&#22577;&#12434;&#12525;&#12464;&#34920;&#31034;
+					logger.dir(r);
+				} else {
+					this.parent.setErrorInfo(this.getValidationResult(r), this);
+				}
 			}
 		} catch (e) {
 			currentPage.reportError(e);
@@ -967,6 +969,7 @@ class Sample2EditForm extends EditForm {
 }
 
 
+
 			</pre>
 		</div>
 		<h3>Form中のフィールドの取得</h3>
@@ -1057,53 +1060,53 @@ S:jq.val()=1234.00,string
 		<div class="filecaption">MultiTestQueryResultFormのフォームのHTML</div>
 		<div class="wrappre">
 			<pre>
-			&lt;form id=&quot;queryResultForm&quot;&gt;
-				&lt;div class=&quot;formHeader&quot;&gt;&#26908;&#32034;&#32080;&#26524;&lt;/div&gt;
-				&lt;table class=&quot;responsive&quot;&gt;
-					&lt;tbody&gt;
-					&lt;/tbody&gt;
-				&lt;/table&gt;
-				&lt;div class=&quot;hScrollDiv&quot;&gt;
-					<b>
-					&lt;table id=&quot;queryResult&quot;&gt;
-						&lt;thead&gt;
-							&lt;tr&gt;
-								&lt;th&gt;
-									No.
-								&lt;/th&gt;
-								&lt;th&gt;
-									&#12467;&#12540;&#12489;1
-								&lt;/th&gt;
-								&lt;th&gt;
-									&#12524;&#12467;&#12540;&#12489;&#25968;
-								&lt;/th&gt;
-								&lt;th&gt;
-									&#25805;&#20316;
-								&lt;/th&gt;
-							&lt;/tr&gt;
-						&lt;/thead&gt;
-						&lt;tbody&gt;
-							&lt;tr&gt;
-								&lt;td&gt;
-									&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
-								&lt;/td&gt;
-								&lt;td&gt;
-									&lt;a id=&quot;queryResult[0].updateButton&quot; href=&quot;javascript:void(0);&quot;&gt;&lt;span id=&quot;queryResult[0].code1&quot;&gt;&lt;/span&gt;&lt;/a&gt;
-								&lt;/td&gt;
-								&lt;td&gt;
-									&lt;span id=&quot;queryResult[0].multiTestId&quot;&gt;&lt;/span&gt;
-								&lt;/td&gt;
-								&lt;td&gt;
-									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].viewButton&quot; value=&quot;&#34920;&#31034;&quot;&gt;
-									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].referButton&quot; value=&quot;&#21442;&#29031;&#30331;&#37682;&quot;&gt;
-									&lt;input type=&quot;button&quot; id=&quot;queryResult[0].deleteButton&quot; value=&quot;&#21066;&#38500;&quot;&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-						&lt;/tbody&gt;
-					&lt;/table&gt;
-					</b>
-				&lt;/div&gt;
-			&lt;/form&gt;
+	&lt;form id=&quot;queryResultForm&quot;&gt;
+		&lt;div class=&quot;formHeader&quot;&gt;&#26908;&#32034;&#32080;&#26524;&lt;/div&gt;
+		&lt;table class=&quot;responsive&quot;&gt;
+			&lt;tbody&gt;
+			&lt;/tbody&gt;
+		&lt;/table&gt;
+		&lt;div class=&quot;hScrollDiv&quot;&gt;
+			<b>
+			&lt;table id=&quot;queryResult&quot;&gt;
+				&lt;thead&gt;
+					&lt;tr&gt;
+						&lt;th&gt;
+							No.
+						&lt;/th&gt;
+						&lt;th&gt;
+							&#12467;&#12540;&#12489;1
+						&lt;/th&gt;
+						&lt;th&gt;
+							&#12524;&#12467;&#12540;&#12489;&#25968;
+						&lt;/th&gt;
+						&lt;th&gt;
+							&#25805;&#20316;
+						&lt;/th&gt;
+					&lt;/tr&gt;
+				&lt;/thead&gt;
+				&lt;tbody&gt;
+					&lt;tr&gt;
+						&lt;td&gt;
+							&lt;span id=&quot;queryResult[0].rowNo&quot;&gt;&lt;/span&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;a id=&quot;queryResult[0].updateButton&quot; href=&quot;javascript:void(0);&quot;&gt;&lt;span id=&quot;queryResult[0].code1&quot;&gt;&lt;/span&gt;&lt;/a&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;span id=&quot;queryResult[0].multiTestId&quot;&gt;&lt;/span&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;input type=&quot;button&quot; id=&quot;queryResult[0].viewButton&quot; value=&quot;&#34920;&#31034;&quot;&gt;
+							&lt;input type=&quot;button&quot; id=&quot;queryResult[0].referButton&quot; value=&quot;&#21442;&#29031;&#30331;&#37682;&quot;&gt;
+							&lt;input type=&quot;button&quot; id=&quot;queryResult[0].deleteButton&quot; value=&quot;&#21066;&#38500;&quot;&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/tbody&gt;
+			&lt;/table&gt;
+			</b>
+		&lt;/div&gt;
+	&lt;/form&gt;
 
 			</pre>
 		</div>
