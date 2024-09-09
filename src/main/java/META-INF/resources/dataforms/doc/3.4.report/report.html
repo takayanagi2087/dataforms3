@@ -8,9 +8,9 @@
 	<body>
 		<h1><span>3.4.</span>Report</h1>
 		<p>
-			dataforms2.jarで帳票を出力する場合は、サーバサイドでExcelファイルまたはPDFファイルを作成しダウンロードすることになります。
+			dataforms3.jarで帳票を出力する場合は、サーバサイドでExcelファイルまたはPDFファイルを作成しダウンロードすることになります。
 			Excelファイルの作成はApache POIを使用し、PDFの作成はApache FOPを使用しています。
-			帳票を作成するにはdataforms.report.Reportクラスを使用します。
+			帳票を作成するにはjp.dataforms.fw.report.Reportクラスを使用します。
 			Excelファイルを作成するにはReportクラスから派生したExcelReportクラスを使用します。
 			PDFファイルを作成するにはXslFoReportクラスを使用します。
 			これらのレポートクラスから派生したクラスのコンストラクタで、帳票のフィールドやテーブルを配置し、
@@ -24,7 +24,7 @@
 		</p>
 		<figure>
 			<figcaption>MultiTestTableテープのデータ</figcaption>
-			<img src="data.png" style="width:50%; height:50%;"/>
+			<img src="../3.2.page/mdata.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
 			このデータをリスト表示しcode1が変わったタイミングで、改ページするような帳票を作成します。
@@ -140,7 +140,7 @@ public Response print(final Map&lt;String, Object&gt; p) throws Exception {
 		</figure>
 		<h2>PDFレポートの作成</h2>
 		<p>
-			dataforms2.jarではApache FOPを使用してPDFを作成します。
+			dataforms3.jarではApache FOPを使用してPDFを作成します。
 			Apache FOPはXSL-FOという形式でレポートのフォーマットを定義します。
 			XSL-FOはXMLでレポートのレイアウトを定義するのですが、この構造を理解して記述するのは困難です。
 			そこで、ExcelテンプレートをXSL-FO形式に変換するツールを作成しました。
@@ -309,7 +309,7 @@ public Response print(final Map&lt;String, Object&gt; p) throws Exception {
 		</p>
 		<figure>
 			<figcaption>出力したPDF</figcaption>
-			<embed src="sample.pdf" type="application/pdf" width="100%" height="400px">
+			<img src="pdf.png" style="width:50%; height:50%;" />
 		</figure>
 	</body>
 </html>
