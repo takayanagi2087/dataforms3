@@ -13,26 +13,25 @@
 		</p>
 		<div class="wrappre">
 			<pre>
-package sample.api;
+package jp.dataforms.sample.edittable.api;
 
 import java.util.List;
 import java.util.Map;
 
-import dataforms.annotation.WebMethod;
-import dataforms.controller.WebApi;
-import dataforms.dao.Dao;
-import dataforms.response.JsonResponse;
-import dataforms.response.Response;
-import sample.dao.Enum01Query;
+import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.controller.WebApi;
+import jp.dataforms.fw.dao.Dao;
+import jp.dataforms.fw.response.JsonResponse;
+import jp.dataforms.fw.response.Response;
+import jp.dataforms.sample.edittable.dao.MultiTestCode1Query;
 
 /**
- * Test API.
- *
+ * &#12486;&#12473;&#12488;API&#12290;
  */
 public class TestApi extends WebApi {
 
 	/**
-	 * 認証処理。
+	 * &#35469;&#35388;&#20966;&#29702;&#12290;
 	 */
 	@Override
 	public boolean isAuthenticated(Map&lt;String, Object&gt; params) throws Exception {
@@ -40,26 +39,20 @@ public class TestApi extends WebApi {
 	}
 
 	/**
-	 * APIの処理。
+	 * API&#12398;&#20966;&#29702;&#12290;
 	 */
 	@WebMethod
 	@Override
 	public Response exec(Map&lt;String, Object&gt; p) throws Exception {
-		// DAOのインスタンスを作成
+		// DAO&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
 		Dao dao = new Dao(this);
-		// 問合せのインスタンスを作成
-		Enum01Query query = new Enum01Query();
-		// where句の条件になりうるフィールドリストを設定
-		query.setConditionFieldList(query.getFieldList());
-		// where句の条件データのマップを設定
-		Enum01Query.Entity cd = new Enum01Query.Entity();
-		cd.setEnumCode("userLevel");
-		cd.setLangCode("ja");
-		query.setConditionData(cd.getMap());
-		// 問合せを実行
+		// &#21839;&#21512;&#12379;&#12398;&#12452;&#12531;&#12473;&#12479;&#12531;&#12473;&#12434;&#20316;&#25104;
+		MultiTestCode1Query query = new MultiTestCode1Query();
+		// &#21839;&#21512;&#12379;&#12434;&#23455;&#34892;
 		List&lt;Map&lt;String, Object&gt;&gt; result = (List&lt;Map&lt;String, Object&gt;&gt;) dao.executeQuery(query);
 		return new JsonResponse(result);
 	}
+
 }
 			</pre>
 		</div>
@@ -68,7 +61,7 @@ public class TestApi extends WebApi {
 		</p>
 		<div class="wrappre">
 			<pre>
-http://localhost:8080/sample/sample/api/TestApi.df
+http://localhost:8080/sample/edittable/api/TestApi.api
 			</pre>
 		</div>
 		<p>
@@ -84,20 +77,14 @@ http://localhost:8080/sample/sample/api/TestApi.df
 		<div class="wrappre">
 			<pre>
 [
-	{
-		"enumId":415,
-		"createUserId":0,
-		"enumCode":"userLevel",
-		"updateUserId":0,
-		"langCode":"ja",
-		"memo":"ユーザの権限レベル",
-		"parentId":null,
-		"updateTimestamp":1589788957349,
-		"createTimestamp":1589788957349,
-		"sortOrder":null,
-		"enumGroupCode":"userAttribute_001",
-		"enumName":"ユーザレベル"
-	}
+    {
+        "multiTestId":3
+        ,"code1":"aaa"
+    }
+    ,{
+        "multiTestId":2
+        ,"code1":"bbb"
+    }
 ]
 			</pre>
 		</div>

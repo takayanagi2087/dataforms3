@@ -1258,12 +1258,14 @@ class SampleEditForm extends EditForm {
 		if (this.validate()) {
 			let r = await this.submit("print");
 			this.parent.resetErrorStatus();
-			if (r.status == JsonResponse.SUCCESS) {
-				// TODO:成功時の処理を記述します。
-				// 応答情報をログ表示
-				logger.dir(r);
-			} else {
-				this.parent.setErrorInfo(this.getValidationResult(r), this);
+			if (r != null) { // downloadが正常に行われた場合nullになっている
+				if (r.status == JsonResponse.SUCCESS) {
+					// TODO:成功時の処理を記述します。
+					// 応答情報をログ表示
+					logger.dir(r);
+				} else {
+					this.parent.setErrorInfo(this.getValidationResult(r), this);
+				}
 			}
 		}
 	}

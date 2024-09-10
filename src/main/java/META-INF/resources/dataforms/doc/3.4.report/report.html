@@ -45,17 +45,17 @@
 		<div class="filecaption">Excelレポートクラス</div>
 		<div class="wrappre">
 			<pre>
-package sample.report;
+package jp.dataforms.sample.edittable.report;
 
-import dataforms.report.ExcelReport;
-import dataforms.report.ReportTable;
-import sample.dao.MultiTestTable;
+import jp.dataforms.fw.report.ExcelReport;
+import jp.dataforms.fw.report.ReportTable;
+import jp.dataforms.sample.edittable.dao.MultiTestTable;
 
 /**
- *
- * Excelレポートクラス。
- *
- */
+*
+* Excelレポートクラス。
+*
+*/
 public class MultiExcelReport extends ExcelReport {
 	/**
 	 * テーブルのID。
@@ -143,88 +143,16 @@ public Response print(final Map&lt;String, Object&gt; p) throws Exception {
 			dataforms3.jarではApache FOPを使用してPDFを作成します。
 			Apache FOPはXSL-FOという形式でレポートのフォーマットを定義します。
 			XSL-FOはXMLでレポートのレイアウトを定義するのですが、この構造を理解して記述するのは困難です。
-			そこで、ExcelテンプレートをXSL-FO形式に変換するツールを作成しました。
-			<a href="https://github.com/takayanagi2087/ExcelToXSLFO" target="_blank">GitHub</a>のReleasesからExcelToXSLFOXXXX.zipをダウロードしてください。
-		</p>
-		<p>
-			ダウンロードしたzipファイルをC:\ExcelToXSLFOに展開し、C:\ExcelToXSLFO\libにPOIのjarを展開します。
-			ディレクトリ構成は以下のようになります。
-		</p>
-		<div class="filecaption">C:\ExcelToXSLFOのディレクトリ構成</div>
-		<div class="wrappre">
-			<pre>
-C:\ExcelToXSLFO>tree /f
-フォルダー パスの一覧
-ボリューム シリアル番号は 92E1-9CA5 です
-C:.
-│  excel2xslfo.bat
-│  excel2xslfo.jar
-│  excel2xslfo.sh
-│  sample.fo
-│  sample.xlsx
-│
-└─lib
-        commons-codec-1.10.jar
-        commons-collections4-4.1.jar
-        commons-logging-1.2.jar
-        curvesapi-1.04.jar
-        junit-4.12.jar
-        log4j-1.2.17.jar
-        poi-3.17.jar
-        poi-examples-3.17.jar
-        poi-excelant-3.17.jar
-        poi-ooxml-3.17.jar
-        poi-ooxml-schemas-3.17.jar
-        poi-scratchpad-3.17.jar
-        xmlbeans-2.6.0.jar
-			</pre>
-		</div>
-		<p>
-			C:\ExcelToXSLFOに作成したExcelテンプレート(multi.xlsx)をコピーし以下のコマンドを実行します。
-		</p>
-		<div class="filecaption">ExcelテンプレートからXSL-FOファイルの作成</div>
-		<div class="wrappre">
-			<pre>
-C:\ExcelToXSLFO&gt;<b>excel2xslfo multi.xlsx multi.fo</b>
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by org.apache.poi.openxml4j.util.ZipSecureFile$1 (file:/C:/ExcelToXSLFO/lib/poi-ooxml-3.17.jar) to field java.io.FilterInputStream.in
-WARNING: Please consider reporting this to the maintainers of org.apache.poi.openxml4j.util.ZipSecureFile$1
-WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied in a future release
-
-C:\ExcelToXSLFO&gt;dir
- &#12489;&#12521;&#12452;&#12502; C &#12398;&#12508;&#12522;&#12517;&#12540;&#12512; &#12521;&#12505;&#12523;&#12364;&#12354;&#12426;&#12414;&#12379;&#12435;&#12290;
- &#12508;&#12522;&#12517;&#12540;&#12512; &#12471;&#12522;&#12450;&#12523;&#30058;&#21495;&#12399; 92E1-9CA5 &#12391;&#12377;
-
- C:\ExcelToXSLFO &#12398;&#12487;&#12451;&#12524;&#12463;&#12488;&#12522;
-
-2021/11/19  10:59    &lt;DIR&gt;          .
-2018/05/21  14:25               361 excel2xslfo.bat
-2018/06/08  22:32            20,382 excel2xslfo.jar
-2018/05/21  15:45               226 excel2xslfo.sh
-2021/11/19  10:27    &lt;DIR&gt;          lib
-2021/11/19  10:59             9,072 <b>multi.fo</b>
-2021/11/18  17:16            10,177 multi.xlsx
-2021/11/19  10:28            26,987 sample.fo
-2018/05/21  16:19            12,526 sample.xlsx
-               7 &#20491;&#12398;&#12501;&#12449;&#12452;&#12523;              79,731 &#12496;&#12452;&#12488;
-               2 &#20491;&#12398;&#12487;&#12451;&#12524;&#12463;&#12488;&#12522;  571,530,108,928 &#12496;&#12452;&#12488;&#12398;&#31354;&#12365;&#38936;&#22495;
-			</pre>
-		</div>
-		<p>
-			この操作でmulti.xlsxからmulti.foというファイルが作成されます。
-			このmulti.foをC:\eclipse\workspace\sample\src\main\webapp\fotemplateにコピーします。
-			multi.foを出力するテンプレートクラスは以下のようになります。
-			MultiExcelReportとの違いはXslFoReportクラスから派生しているだけで、内容はほとんど変わりません。
+			そこで、ExcelテンプレートをXSL-FO形式に変換するクラスを作成しました。
 		</p>
 		<div class="filecaption">PDFレポートクラス</div>
 		<div class="wrappre">
 			<pre>
-package sample.report;
+package jp.dataforms.sample.edittable.report;
 
-import dataforms.report.ReportTable;
-import dataforms.report.XslFoReport;
-import sample.dao.MultiTestTable;
+import jp.dataforms.fw.report.ReportTable;
+import jp.dataforms.fw.report.XslFoReport;
+import jp.dataforms.sample.edittable.dao.MultiTestTable;
 
 /**
  * PDFレポートクラス。
@@ -260,7 +188,8 @@ public class MultiPdfReport extends XslFoReport {
 		</div>
 		<p>
 			このレポートを出力する処理は以下のようになります。
-			この処理もExcelの場合とほとんど同じです。
+			ExcelテンプレートからXSL-FOに変換する処理が追加されているだけで、
+			Excelの場合とほとんど同じ処理になります。
 		</p>
 		<div class="filecaption">PDFの出力処理</div>
 		<div class="wrappre">
@@ -272,7 +201,7 @@ public class MultiPdfReport extends XslFoReport {
  * @throws Exception &#20363;&#22806;&#12290;
  */
 @WebMethod
-public Response print(final Map&lt;String, Object&gt; p) throws Exception {
+public Response printPdf(final Map&lt;String, Object&gt; p) throws Exception {
 	Response ret = null;
 	// Form&#12363;&#12425;&#36865;&#20449;&#12373;&#12428;&#12383;&#12487;&#12540;&#12479;&#12434;&#30906;&#35469;&#12375;&#12414;&#12377;&#12290;
 	List&lt;ValidationError&gt; list = this.validate(p);
@@ -288,10 +217,20 @@ public Response print(final Map&lt;String, Object&gt; p) throws Exception {
 		// &#21360;&#21047;&#29992;&#12487;&#12540;&#12479;&#12510;&#12483;&#12503;&#12398;&#20316;&#35069;
 		Map&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
 		data.put(MultiExcelReport.ID_LIST, mlist);
-		// &#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12501;&#12449;&#12452;&#12523;&#12497;&#12473;&#12434;&#21462;&#24471;
-		String template = SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/fotemplate/multi.fo&quot;);
+		
+		// Excel&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12501;&#12449;&#12452;&#12523;&#12497;&#12473;&#12434;&#21462;&#24471;
+		File excelTemplate = new File(SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/exceltemplate/multi.xlsx&quot;));
+		// Excel&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;&#12363;&#12425;Fo&#28857;&#12502;&#12524;&#12540;&#12489;&#12398;&#20316;&#25104;
+		File template = new File(SampleEditForm.getServlet().getServletContext().getRealPath(&quot;/exceltemplate/multi.fo&quot;));
+		if ((!template.exists()) || excelTemplate.lastModified() &gt; template.lastModified()) {
+			// *.xlsx&#12501;&#12449;&#12452;&#12523;&#12434;*.fo&#12395;&#22793;&#25563;&#12377;&#12427;&#12290;
+			ExcelToXSLFO conv = new ExcelToXSLFO();
+			conv.setExcelFile(excelTemplate.getAbsolutePath());
+			conv.setXslFoFile(template.getAbsolutePath());
+			conv.convert();
+		}
 		// &#12524;&#12509;&#12540;&#12488;&#12398;&#12463;&#12521;&#12473;&#12434;&#20316;&#25104;&#12290;
-		MultiPdfReport rep = new MultiPdfReport(template);
+		MultiPdfReport rep = new MultiPdfReport(template.getAbsolutePath());
 		// Excel&#12501;&#12449;&#12452;&#12523;&#12434;&#24540;&#31572;&#12377;&#12427;&#12290;
 		BinaryResponse bresp = new BinaryResponse(rep.print(data));
 		bresp.setFileName(&quot;sample.pdf&quot;);
@@ -301,11 +240,12 @@ public Response print(final Map&lt;String, Object&gt; p) throws Exception {
 		ret = new JsonResponse(JsonResponse.INVALID, list);
 	}
 	return ret;
+
 }
 			</pre>
 		</div>
 		<p>
-			この処理で出力したPDF配下のようになります。
+			この処理で出力したPDFは以下のようになります。
 		</p>
 		<figure>
 			<figcaption>出力したPDF</figcaption>
