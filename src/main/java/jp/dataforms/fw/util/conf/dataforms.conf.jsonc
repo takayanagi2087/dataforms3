@@ -68,7 +68,8 @@
 		// ----------------------------------
 		// サーバー設定ファイル
 		// サーバ毎にアプリの設定を変更する場合、その設定ファイルのパスを指定します。
-		// , "serverConfigFile":"/etc/dataforms/dataformsConf.jsonc"
+		// サーバにこのファイルが存在しない場合、この設定は無視されます。
+		, "serverConfigFile":"/etc/dataforms/dataformsConf.jsonc"
 		// ----------------------------------
 		// クライアントログレベルを指定します。
 	 	// javascriptでのコンソール出力はconsoleではなくloggerを使用してください。

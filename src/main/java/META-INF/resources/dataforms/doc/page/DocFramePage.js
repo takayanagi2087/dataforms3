@@ -48,10 +48,8 @@ export class DocFramePage extends BasePage {
 			}, 500);
 		});
 		this.onResize();
-		$('.dropdwn li').hover((ev) =>{
-			$("ul:not(:animated)", ev.currentTarget).slideDown();
-		}, (ev) => {
-			$("ul.dropdwn_menu", ev.currentTarget).slideUp();
+		$('.dropdwn li').click((ev) =>{
+			$(ev.currentTarget).find("ul.dropdwn_menu").toggle();
 		});
 	}
 

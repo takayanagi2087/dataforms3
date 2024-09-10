@@ -19,81 +19,71 @@
 	</head>
 	<body>
 		<h1 id="top"><span>4.1.</span>設定</h1>
-		<h2>web.xmlの主な設定項目</h2>
+		<h2>dataforms.conf.jsoncの主な設定項目</h2>
 		<p>
-			dataforms2.jarの各種設定はWEB-INF/web.xmlにまとまっています。
+			dataforms2.jarの各種設定はWEB-INF/web.xmlに記述していましたが、
+			dataforms3.jar日の設定はWEB-INF/dataforms.conf.jsoncに移動しました。
 			各種設定項目のコメントを参照し、適切に設定してください。
 		</p>
 		<p>
-			以下に変更する機会の多い項目を解説します。
+			以下に重要な設定項目を説明します。
 		</p>
-		<h3>開発ツール関係</h3>
+		<h3>開発ツール関係(developmentTool)</h3>
+		<h4>開発ツールが出力するソースのパス</h4>
 		<p>
-			<a href="#java-source-path">java-source-path</a>,<a href="#web-source-path">web-source-path</a>パラメータは開発ツールのJavaソースとHTMLやJavascriptソースを出力するパスを指定します。
-			Eclipseのプロジェクトを作成したタイミングで、適切に設定してください。
+			javaSourcePath,webSourcePathは開発ツールのJavaソースとHTMLやJavascriptソースを出力するパスを指定します。
+			プロジェクト初期化画面で設定することができます。
+			プロジェクト初期化画面ばEclipseの動的Webプロジェクトのフォルダー構成に従ったパスがデフォルト表示されます。
+			他の開発ツールを使用する場合は適切に修正してください。
 		</p>
+		<h4>開発ツールの無効化</h4>
 		<p>
 			開発が完了したら開発ツールは不要になります。
-			<a href="#disable-developer-tools">disable-developer-tools</a>をtrueに設定すれば、開発ツールを無効にすることができます。
+			disableCodeGenerationToolをtrueに設定すれば、ソースを生成する開発ツールを無効にすることができます。
+			disableDatabaseToolをtrueに設定すれば、データベースを操作する開発ツールを無効にすることができます。
 			開発が完了しインターネットにシステムを公開する場合、開発ツールを無効にしておくことをお勧めします。
 		</p>
-		<h3>ブラウザのコンソールログ出力レベル</h3>
+
+		<h3>アプリケーションの初期化時の設定(initialize)</h3>
+		<h4>データベースの初期化時に作成するユーザのレベル</h4>
 		<p>
-			Javascriptのデバッグ時にconsole.log等を使用しデバック情報をブラウザのコンソールに出力するケースがあります。
-			dataforms2.jarではこのconsoleの代わりにloggerを使用します。
-			loggerの使い方はconsoleと同じですが、<a href="#client-log-level">client-log-level</a>パラメータでログレベルを指定することができます。
-			logger.logを大量に記述したコードでも、<a href="#client-log-level">client-log-level</a>をinfo以上にすることによって、
-			ログの出力を抑制することができます。
+			開発が終了したWebアプリケーションを公開する場合、最初に登録するユーザは管理者レベルになります。
+			userLevelをadminに設定すると、データベース初期化時に登録するユーザは管理者レベルになります。
 		</p>
+		<h4>データベース初期化を行うパッケージリスト</h4>
 		<p>
-			サーバサイドのログ出力はlog4j2を使用しています。そのの設定はlog4j2.xmlで行います。
-		</p>
-		<h3>dataforms2.jar内のWebリソースアクセス</h3>
-		<p>
-			dataforms2.jarの中にはあらかじめ定義されたページのHTMLやJavascriptが等のWebリソースが含まれています。
-			Servlet 3.0以降ではjar中の/META-INF/resources以下のファイルがWebに公開されるようになっています。
-			dataforms2.jarの内部処理はhttpを使用してdataforms2.jar内のWebリソースファイルをアクセスしています。
-			つまり、https://hoge.jp/hoge/XXXPage.dfをアクセスすると、
-			サーバ側の処理でhttps://hoge.jp/hoge/XXXPage.htmlというアクセスが発生します。
-			この状態だと、内部のリソース取得でもhttpsが使用されるため暗号化処理が発生します。
-			そのため、効率が良いとは言えません。
-		</p>
-		<p>
-			Tomcat等のWebアプリケーションサーバではテスト用のhttpサービスが公開されています。
-			Webリソースファイルの取得でこのhttpサービスを使用すれば効率化が図れます。
-			Tomcatの場合<a href="#web-resource-url">web-resource-url</a>の設定を有効にします。
-			この設定で、サーバーサイドの処理ではhttp://localhost:8080/hoge/XXXPage.htmlをアクセスするようになります。
-		</p>
-		<h3>データベース初期化時のユーザレベル</h3>
-		<p>
-			dfblank_xxx.warをプロジェクトにインポートし、データベースを初期化する場合、
-			開発者レベルのユーザが登録されます。
-			開発が終了したWebアプリケーションを公開する場合、最初に登録するユーザは管理者レベルでよくなります。
-		</p>
-		<p>
-			<a href="#initialize-user-level">initialize-user-level</a>にadminを指定すると、初期化時に管理者レベルのユーザが登録されるようになります。
-		</p>
-		<h3>データベース初期化を行うパッケージリスト</h3>
-		<p>
-			データベースの初期化のタイミングでdataforms.appパッケージ以下のTableクラスを見つけ出し、
+			データベースの初期化のタイミングでjp.dataforms.fw.appパッケージ以下のTableクラスを見つけ出し、
 			それに対応したテーブルを接続したデータベースに作成します。
 			システムの開発作業では新規にパッケージが作成され、その中にテーブルクラスができてきます。
 			完成したシステムを実行環境にデプロイするとき、
 			その初期化処理で新たに追加されたテーブルを初期化するようにする必要があります。
 		</p>
 		<p>
-			<a href="#initialize-package-list">initialize-package-list</a>パラメータにはTableクラスを含むパッケージのリストを","区切りで指定します。
+			databasePackageListにはTableクラスを含むパッケージのリストを指定します。
 			データベースの初期化処理は、このリストに指定されたパッケージ中のテーブルクラスに対応したテーブルを作成します。
 		</p>
 		<p>
 			テーブルを含むパッケージを作成したら、必ずこのパラメータにパッケージを追加してください。
 		</p>
-		<h3>複数言語対応</h3>
+
+		<h3>アプリケーション設定</h3>
+		<h4>ブラウザのコンソールログ設定</h4>
 		<p>
-			ブラウザの言語設定が日本語(ja)の状態でHogePage.dfをアクセスすると、
+			Javascriptのデバッグ時にconsole.log等を使用しデバック情報をブラウザのコンソールに出力するケースがあります。
+			dataforms3.jarではこのconsoleの代わりにloggerを使用します。
+			loggerの使い方はconsoleと同じですが、clientLogLevelでログレベルを指定することができます。
+			logger.logを大量に記述したコードでも、clientLogLevelをinfo以上にすることによって、
+			ログの出力を抑制することができます。
+		</p>
+		<p>
+			サーバサイドのログ出力はlog4j2を使用しています。そのの設定はlog4j2.xmlで行います。
+		</p>
+		<h4>複数言語対応</h4>
+		<p>
+			ブラウザの言語設定が日本語(ja)の状態でHogePage.htmlをアクセスすると、
 			PageクラスはHogePage_ja.html(日本語用)をアクセスし、
 			存在しなければHogePage.html(デフォルト言語用)をアクセスするようになっています。
-			dataforms2.jar中に定義されているページのhtmlはデフォルト言語用と日本語用のページが用意されており、
+			dataforms3.jar中に定義されているページのhtmlはデフォルト言語用と日本語用のページが用意されており、
 			デフォルト言語用HTMLは英語のHTMLになっています。
 		</p>
 		<p>
@@ -106,765 +96,64 @@
 			この機能で選択肢も英語と日本語の登録が可能になっています。
 		</p>
 		<p>
-			英語と日本語以外の言語に対応する場合、<a href="#support-language">support-language</a>パラメータに言語コードを","区切りて追加します。
+			英語と日本語以外の言語に対応する場合、languageListに言語コードを追加します。
 			この設定を行うと列挙型管理に追加された言語の設定欄が表示されます。
 		</p>
 		<p>
-			全て英語のシステムを作成しても、日本語設定のブラウザでアクセスするとdataforms2.jar内のページは日本語で表示されてしまいます。
-			このようなページも英語表示させたい場合は、<a href="#fixed-language">fixed-language</a>パラメータにenを設定します。
+			全て英語のシステムを作成しても、日本語設定のブラウザでアクセスするとdataforms3.jar内のページは日本語で表示されてしまいます。
+			このようなページも英語表示させたい場合は、fixedLanguageパラメータにenを設定します。
 			この設定を行うと、すべて英語ページが表示されます。
 		</p>
-		<h3>自動ログイン機能</h3>
+		<h4>多要素認証設定</h4>
 		<p>
-			<a href="#auto-login">auto-login</a>にenableを設定するとログイン画面に「ログインしたままにする。」というチェックボックスが表示されます。
-			これをチェックした状態でログインすると、ログイン状態が維持されます。
+			dataforms3.jarは多要素認証に対応しており、TOTP, Passkeyをサポートしています。
+			mfaRequiredCountに0(デフォルト)が設定されていると、PasskeyやTOTPを設定しても、パスワードのみの認証が可能になっており、
+			各ユーザの設定変更でパスワードのみのログインを禁止することができます。
+			mfaRequiredCountに1以上を設定した場合、この回数以上多要素認証でのログインに成功すると、
+			自動的にパスワードのみのログインが禁止されます。
 		</p>
-		<h3>IE11対応</h3>
+		<h4>データベース接続設定</h4>
 		<p>
-			dataforms2.jarではJavascriptを全てES6で記述しています。
-			そのため基本的にIE11では動作しないものになっています。
+			dataforms3.jarはtomat10のcontex.xmlに設定されたJNDIデータソースを使用してデータベースをアクセスします。
+			jndiDataSourceのjndiPrefixとdataSourceでJDNIデータソースの名称をしています。
+			プロジェクト初期化画面はプロジェクト名に応じた、JNDIデータソースの設定ファイルを生成します。
 		</p>
-		<p>
-			どうしてもIE11で動作させたい場合は、Balelを使用して自動的にES6のスクリプトをES5に変換して実行させます。
-			TomcatをインストールしたサーバにBabelをインストールし、<a href="#ie-support">ie-support</a>パラメータを適切に設定してください。
-		</p>
-		<p>
-			この設定でIEの初回アクセスで、ES6のスクリプトをES5に変換します。
-			そのため初回のアクセスは非常に時間がかかりますが、二回目以降のアクセスは保存された変換結果を使用するため高速です。
-		</p>
-		<h3>データベース接続設定</h3>
-		<p>
-			context.xmlに設定されたデータソースの名前は"jdbc/dfdb"になっています。
-			この名前が競合する環境では、この名前を変更する必要ができます。
-			data-sourceパラメータを修正してください。
-			<a href="#jndi-prefix">jndi-prefix</a>と<a href="#data-source">data-source</a>パラメータの値を結合した文字列でJNDIデータソースを検索します。
-		</p>
-		<h3>メール送信設定</h3>
+		<h4>メール送信設定</h4>
 		<p>
 			メールセッションの名称は"mail/Session"となっています。
-			この名前が競合する場合<a href="#mail-session">mail-session</a>パラメータで変更することができます。
+			この名前が競合する場合mailのmailSessionで変更することができます。
 		</p>
 		<p>
 			外部ユーザ登録等でメールを送信する場合があります。
-			そのメールのfromは<a href="#mail-from">mail-from</a>パラメータで指定することができます。
+			そのメールのfromはmailのmailFromで指定することができます。
 		</p>
-		<h3>デザイン切替</h3>
+		<h4>デザイン切替</h4>
 		<p>
 			ページのフレームデザインは"/frame/flex"中の*.htmlと*.cssで指定しています。
-			このパスは<a href="#frame-path">frame-path</a>パラメータに設定されています。
+			このパスはframe-Pathパラメータに設定されています。
 			フレームのデザインを複数用意すると、サーバによってシステムのデザインを切り替えることができます。
 		</p>
-		<h3>既存ページの置き換え</h3>
+		<h4>既存ページの置き換え</h4>
 		<p>
-			dataforms2.jarではユーザ管理などの基本機能があらかじめ実装されています。
+			dataforms3.jarではユーザ管理などの基本機能があらかじめ実装されています。
 			これらの機能が非常にシンプルな機能であるため、別途高機能なページを作る必要が出てくる場合も存在します。
 			この場合、既存の機能と新たに作ったページを置き換える必要が出てきます。
 		</p>
 		<p>
-			<a href="#page-override">page-override</a>パラメータにページクラスの置き換えルールをJSON形式で指定することができます。
+			pageOverrideにページクラスの置き換えルールを指定することができます。
 			この機能を使用して既存のページをdataforms.app.base.page.HiddenPageに置き換えると、
 			対象のページを隠すことができます。
 		</p>
 		<p>
 			外部ユーザ登録機能などを使用しない場合、この機能を使用して該当するページを隠してください。
 		</p>
-		<h2>web.xmlの設定項目一覧</h2>
+		<h3>その他の設定項目</h3>
 		<p>
-			<table class="webxmlTable">
-				<thead>
-					<tr>
-						<th style="width: 70px;">コメント<br/>アウト</th>
-						<th style="width: 120px;">項目名</th>
-						<th style="width: 250px;">デフォルト値</th>
-						<th style="width: 560px;">内容</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="commentOut">*</td>
-						<td><a id="java-source-path">java-source-path</a></td>
-						<td>/eclipse/workspace/project/src</td>
-						<td>開発ツールのjavaソース出力フォルダを指定します。</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td><a id="web-source-path">web-source-path</a></td>
-						<td>/eclipse/workspace/project/WebContent</td>
-						<td>開発ツールのhtml,javascript等のWEBリソース出力フォルダを指定します。</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="disable-developer-tools">disable-developer-tools</a></td>
-						<td>false</td>
-						<td>
-							開発ツールの無効フラグを設定します。
-							開発ツールには危険な機能が含まれています。
-							システムの開発が終了し、運用に入った場合無効に設定した方が安全です。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="client-log-level">client-log-level</a></td>
-						<td>debug</td>
-						<td>
-							 クライアントログレベルを指定します。
-							 javascriptでのコンソール出力はconsoleではなくloggerを使用してください。
-							 loggerは基本的にconsoleをコピーしたものですが、以下の設定に応じて、
-							 log,info,warn,errorメソットが何もしないメソッドになります。
-							 <table style="margin-left: 2px; margin-bottom: 2px;">
-							 	<tbody>
-							 		<tr>
-							 			<td>debug</td>
-							 			<td>log,info,warn,errorメソットの全てがコンソールに出力します。</td>
-							 		</tr>
-							 		<tr>
-							 			<td>info</td>
-							 			<td>logメソットがコンソール出力されないメソッドになります。</td>
-							 		</tr>
-							 		<tr>
-							 			<td>warn</td>
-							 			<td>log,infoメソットがコンソール出力されないメソッドになります。</td>
-							 		</tr>
-							 		<tr>
-							 			<td>error</td>
-							 			<td>log,info,warnメソットがコンソール出力されないメソッドになります。</td>
-							 		</tr>
-							 		<tr>
-							 			<td>none</td>
-							 			<td>log,info,warn,errorメソットがコンソール出力されないメソッドになります。</td>
-							 		</tr>
-							 	</tbody>
-							 </table>
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td><a id="web-resource-url">web-resource-url</a></td>
-						<td>http://localhost:8080</td>
-						<td>
-							このライブラリはサーバ側の処理でdataforms2.jar中のWEBリソース(html,css,jsファイル)をアクセスしています。
-							dataforms2.jarのMETA-INF/resources中のファイルはhttp経由で取得しているため、このパラメータで指定したURLを使用してアクセスします。
-							以下のURLが指定されていない場合、リクエストされたURLをそのまま使用してアクセスします。
-							そのためApacheを経由しSSLを使用した場合等は、サーバー側のWEBリソースアクセスもApacheのSSL経由になってしまい効率は良くありません。
-							SSLを使用する場合はアプリケーションサーバのhttpポートを指定したURLを指定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="initialize-user-level">initialize-user-level</a></td>
-						<td>developer</td>
-						<td>
-							データベース初期化時に作成するユーザのレベル(developerまたはadmin)を指定します。
-							開発環境ではdeveloperを指定してください。
-							システムの完成後一般ユーザに配布するwarファイルを作成する場合はadminを指定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="initialize-package-list">initialize-package-list</a></td>
-						<td>dataforms.app</td>
-						<td>
-							データベースの作成時に、初期化するパッケージリストを指定します。
-							パッケージ名は,区切りで複数設定することができます。
-							データベースを作成するときに、このパッケージリストを参照し、
-							このパッケージ中のテーブルクラスに対応するテーブルを作成します。
-							なおdataforms.appパッケージは必ず指定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="support-language">support-language</a></td>
-						<td>ja</td>
-						<td>
-							サポートする言語コードを指定します。
-							default以外の言語コードを","区切りで指定します。
-							EnumOptionNameTable等、言語ごとに名称を登録するテーブルで使用します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td><a id="fixed-language">fixed-language</a></td>
-						<td>en</td>
-						<td>
-							ブラウザの言語設定を無視し、言語を固定する場合はこの設定を有効にします。
-							dataforms2.jar中のHTMLは基本的にHogaPage.html(英語版)とHogePage_ja.html(日本語版)が作成されており、日本語に設定されたブラウザでアクセスするとHogePage_ja.htmlを送信します。
-							英語版のhtmlのみのアプリケーションを作成しても、日本語設定のブラウザではdataforms2.jar中のhtmlは日本語版が送信されていしまいます。
-							このパラメータを有効にすると、dataforms2.jar中の英語版htmlのみを送信します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="auto-login">auto-login</a></td>
-						<td>enabled</td>
-						<td>
-							自動ログインの有効/無効を設定します。
-							このパラメータにenabledを設定すると、ログイン画面に「ログインしたままにする」チェックボックスが表示され、
-							disabledを設定すると表示されません。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>secure-auto-login-cookie</td>
-						<td>false</td>
-						<td>
-							trueを設定すると、自動ログインクッキーにSecureを設定します。
-							SSLを使用する場合、trueに設定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="ie-support">ie-support</a></td>
-						<td style="width: 200px;">
-							<div style="width:100%;">
-								<code>
-{<br/>
-	// IEの許可設定。<br/>
-	// true:babelを使用してIEをサポート,false:IEはエラー。<br/>
-	"allowIE": false<br/>
-	// BabelがES5のソースを展開するフォルダ<br/>
-	, "babelWork": "/tmp/babel"<br/>
-	// サーバーサイドでES6->ES5変換を行うコマンドを記述します。<br/>
-	, "babelCommand": "C:/Users/takay/AppData/Roaming/npm/babel.cmd --presets C:/Users/takay/AppData/Roaming/npm/node_modules/babel-preset-es2015"<br/>
-	// , "babelCommand": "standalone"<br/>
-}<br/>
-								</code>
-							</div>
-						</td>
-						<td>
-							IE11はES6に対応しないため基本的にサポート対象外とします。
-							どうしてもIEをサポートする必要がある場合、サーバーサイドにBabelをインストールしallowIEをtrueにしてください。
-							さらに、babelCommandパラメータにES6->ES5変換を行うコマンドを指定してください。
-							この設定でIEの初回アクセス時にES6->ES5変換を行います。
-							そのためIEの初回アクセスは遅くなりますが、二回目以降は変換結果をbabelWork保存しているため、	ES6->ES5変換は動作しません。
-							babelCommandに"standalone"を指定すると、babel-standaloneを使用してIE側でES6->ES5変換を行うようになります。
-							この場合サーバーサイドにbabelをインストールしなくても動作しますが、実用的なものではありません。
-							babelをインストールしていない開発環境で、IEのテストが必要な場合に使用してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="jndi-prefix">jndi-prefix</a></td>
-						<td>java:/comp/env/</td>
-						<td>
-							JNDIデータソースの前につける文字列を指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="data-source">data-source</a></td>
-						<td>jdbc/dfdb</td>
-						<td>
-							context.xmlに設定したJNDIデータソースを指定します。
-							この例では以下のコードでデータソースを取得します。<br/>
-							<code>
-Context initContext = new InitialContext();<br/>
-dataSource = initContext.lookup("java:/comp/env/jdbc/dfdb");<br/>
-							</code>
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="mail-session">mail-session</a></td>
-						<td>mail/Session</td>
-						<td>
-							context.xmlに設定したメールセッション名を指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="mail-from">mail-from</a></td>
-						<td>hoge@hogehoge.jp</td>
-						<td>
-							システムがメールを送信際に使用するFromを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="frame-path">frame-path</a></td>
-						<td>/frame/flex</td>
-						<td>
-							フレームレイアウトのパスを指定します。
-							現在はCSSのdisplay: flexを使用したフレームを指定してあります。
-							tableタグを指定した、以前のバージョンのフレームは"/frame/default"を指定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td><a id="page-override">page-override</a></td>
-						<td>
-							<code>
-[<br/>
-	// ダミー<br/>
-	["", ""]<br/>
-	// パスワード変更ページを隠す場合は以下を有効にしてください<br/>
-	// , ["dataforms.app.user.page.ChangePasswordPage", "dataforms.app.base.page.HiddenPage"]<br/>
-	// ユーザ情報変更ページを隠す場合は以下を有効にしてください。<br/>
-	// , ["dataforms.app.user.page.UserSelfEditPage", "dataforms.app.base.page.HiddenPage"]<br/>
-	//<br/>
-	// 外部ユーザ登録関連(外部ユーザ登録機能を無効にするには以下の2ページを無効にしてください)<br/>
-	//<br/>
-	// ユーザ登録ページを隠す場合は以下を有効にしてください。<br/>
-	// , ["dataforms.app.user.page.UserRegistPage", "dataforms.app.base.page.HiddenPage"]<br/>
-	// ユーザ有効化ページを隠す場合は以下を有効にしてください。<br/>
-	// , ["dataforms.app.user.page.UserEnablePage", "dataforms.app.base.page.HiddenPage"]<br/>
-	//<br/>
-	// パスワードリセット機能(パスワードリセット機能を無効にするには以下の2ページを無効にしてください)<br/>
-	//<br/>
-	// パスワードリセットメール送信ページを隠す場合は以下を有効にしてください。<br/>
-	// , ["dataforms.app.user.page.PasswordResetMailPage", "dataforms.app.base.page.HiddenPage"]<br/>
-	// パスワードリセットページを隠す場合は以下を有効にしてください。<br/>
-	// , ["dataforms.app.user.page.PasswordResetPage", "dataforms.app.base.page.HiddenPage"]<br/>
-]<br/>
-							</code>
-						</td>
-						<td>
-							dataforms2.jar中には基本機能のページクラスが存在します。
-							このようなページをカスタマイズしたい場合、新たにページクラスを作成しそのページを差し替えることができます。
-							またdataforms.app.base.page.HiddenPageに置き換えれば
-							メニューにも表示されず、アクセスできないページになります。
-							つまり既存ページを隠すことができます。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>export-import-dir</td>
-						<td>/tmp/data</td>
-						<td>
-							開発ツールのテーブル管理ページでデータをエクスポート/インポートする際に使用するフォルダを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>top-page</td>
-						<td>/dataforms/app/top/page/TopPage</td>
-						<td>
-							トップページのパスを指定します。
-							このページはシステムやユーザの状態に応じて、ログイン画面やサイトマップに遷移します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>user-regist-page</td>
-						<td>/dataforms/app/user/page/UserRegistPage</td>
-						<td>
-							外部ユーザ登録ページのパスを指定します。
-							デフォルトのパスはdataforms2.jar中のページ"dataforms.app.user.page.UserRegistPage"のパスになっています。
-							インターネットからのユーザ登録を許可しない場合は、
-							page-overrideパラメータで、"dataforms.app.user.page.UserRegistPage"を無効にしてください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>user-edit-form-config</td>
-						<td>
-							<code>
-{<br/>
-	"requiredMailAddress": false // メールアドレスを必須とする。<br/>
-}<br/>
-							</code>
-						</td>
-						<td>
-							ユーザ情報編集フォームの動作を設定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>user-regist-page-config</td>
-						<td>
-							<code>
-{<br/>
-	"loginIdIsMail": true, // メールアドレスをログインIDとする。<br/>
-	"mailCheck": true, // メールアドレスのチェックを行う。<br/>
-	"sendUserEnableMail": true // ユーザ有効化ページのURLをメールする。<br/>
-}<br/>
-							</code>
-						</td>
-						<td>
-							外部ユーザ登録ページの動作を設定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>user-enable-page</td>
-						<td>/dataforms/app/user/page/UserEnablePage</td>
-						<td>
-							外部ユーザ有効化ページのパスを指定します。
-							外部ユーザ登録ページ設定でユーザ有効化ページのURLをメールするように設定した場合、このページのURLをメールで送信します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>password-reset-mail-page</td>
-						<td>/dataforms/app/user/page/PasswordResetMailPage</td>
-						<td>
-							パスワードリセットメール送信ページのパスを指定します。
-							この設定をコメントアウトするとパスワードリセットリンクが表示されません。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>password-reset-page</td>
-						<td>/dataforms/app/user/page/PasswordResetPage</td>
-						<td>
-							パスワードリセットページのパスを指定します。
-							パスワードリセットメールで、このページのURLを通知します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>temp-dir</td>
-						<td>/tmp</td>
-						<td>
-							一時ファイルを置くパスを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>css-and-scripts</td>
-						<td>/frame/jslib.html</td>
-						<td>
-							jQueryなどの標準ライブラリなどを読み込むhtmlを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>error-page</td>
-						<td>/dataforms/app/errorpage/ErrorPage</td>
-						<td>
-							エラーページのパスを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>client-validation</td>
-						<td>true</td>
-						<td>
-							 クライアントバリデーションの有無を指定します。
-							 これをfalseに設定するとJavascriptでのバリデーションが停止します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>upload-data-folder</td>
-						<td>/uploadData</td>
-						<td>
-							アップロードデータを保存するフォルダを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>password-type</td>
-						<td>REVERSIBLE_PASSWORD</td>
-						<td>
-							REVERSIBLE_PASSWORD(可逆パスワード)またはIRREVERSIBLE_PASSWORD(不可逆パスワード)を指定します。
-							<b>この設定はシステムの運用開始前に設定してください。
-							(変更する際にはユーザテーブルを初期化する必要があります。)</b>
-							不可逆パスワードを指定した場合、パスワードの複合化は困難ですが、
-							管理者が各ユーザのパスワードを変更することはできません。
-							可逆パスワードを指定した場合、管理者側でユーザのパスワードを修正することができますが、
-							パスワードが複合化される可能性は不可逆パスワードより高くなります。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>hash-algorithm</td>
-						<td>SHA-512</td>
-						<td>
-							password-type不可逆パスワードを設定した場合、パスワードのハッシュを計算するアルゴリズムを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>crypt-config</td>
-						<td>
-							<code>
-{<br/>
-	//
-	// 暗号化アルゴリズムを選択します。("des" or "aes")<br/>
-	"algorithm": "aes",<br/>
-	//
-	// AESの初期化ベクトルを指定します。<br/>
-	// AES初期化ベクトルは16Byteである必要があるため、自動的に保管して使用します。<br/>
-	"aesInitialVector": "*****",<br/>
-	//<br/>
-	// ==============================================================<br/>
-	// 以下項目はDESパスワードまたはAESキーを指定します。<br/>
-	// AESキーは16Byteである必要があるため、自動的に保管して使用します。<br/>
-	// ==============================================================<br/>
-	// CryptUtilで使用するデフォルトのDESパスワードまたはAESキーを指定します。<br/>
-	// UserInfoTableのパスワードの暗号化で使用するので、<br/>
-	// 変更する場合は事前にUserInfoTableのパスワードの再構築を行う必要があります。<br/>
-	// nullを指定するとライブラリにハードコーディングされたものを使用します。<br/>
-	"defaultPassword": null,<br/>
-	// QueryStringを暗号化する場合に使用するDESパスワードまたはAESキーを指定します。<br/>
-	// BLOBデータ等のダウンロードパラメータの暗号化に使用しています。<br/>
-	// 運用時に変更しても問題ありません。<br/>
-	// nullを指定するとライブラリにハードコーディングされたものを使用します。<br/>
-	"queryStringCryptPassword": null,<br/>
-	// CSRF対策に使用するDESパスワードまたはAESキーを指定します。<br/>
-	// 指定されたDESパスワードまたはAESキーでセッションIDを暗号化し、<br/>
-	// CSRFトークンとしてブラウザに送信します。<br/>
-	// 運用時に変更しても問題ありません。<br/>
-	// nullを指定するとCSRF対策を行いません。<br/>
-	"csrfSessionidCryptPassword": null<br/>
-}<br/>
-							</code>
-						</td>
-						<td>
-							暗号化に必要な設定情報をjson形式で指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>onetime-password-config</td>
-						<td>
-							<code>
-{<br/>
-	// ワンタイムパスワードを使用するかどうか。<br/>
-	"useOnetimePassword": false,<br/>
-	// ワンタイムパスワード文字数。<br/>
-	"length": 6,<br/>
-	// ワンタイムパスワードキャンセルクッキーの有効日数<br/>
-	// 0を指定すると毎回ワンタイムパスワードを確認します。<br/>
-	// それ以外の場合場クッキーが存在するブラウザの場合、ワンタイムパスワードのチェックは行われません。<br/>
-	"cookieExpiration": 20<br/>
-}<br/>
-							</code>
-						</td>
-						<td>
-							ワンタイムパスワードの利用をjson形式で指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>cookie-check</td>
-						<td>false</td>
-						<td>
-							ブラウザがクッキーを許可していることを確認する場合、trueを指定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>client-messages</td>
-						<td>/frame/messages/ClientMessages</td>
-						<td>
-							クライアントに送信して使用するメッセージリソースの名称を指定します。
-							このファイルはdataforms2.jar内に存在します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>messages</td>
-						<td>/frame/messages/Messages</td>
-						<td>
-							サーバ側で使用するメッセージリソースの名称を指定します。
-							このファイルはdataforms2.jar内に存在します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>app-client-messages</td>
-						<td>/frame/messages/AppClientMessages</td>
-						<td>
-							クライアントに送信して使用するアプリケーション用メッセージリソースの名称を指定します。
-							このファイルはアプリケーション側で用意します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>app-messages</td>
-						<td>/frame/messages/AppMessages</td>
-						<td>
-							サーバ側で使用するアプリケーション用メッセージリソースの名称を指定します。
-							このファイルはアプリケーション側で用意します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>client-message-transfer</td>
-						<td>CLIENT_ONLY</td>
-						<td>
-							メッセージリソースのブラウザ送信条件を設定します。<br/>
-							CLIENT_ONLY:(default)<br/>
-								client-message,app-client-messageとXXXPage.propertiesのみ送信します。
-								message, app-messageはJavascriptで使用不可となります。<br/>
-							ALL:<br/>
-								ページに関する全メッセージリソースをクライアントに送信します。<br/>
-								Javascriptで全てのメッセージを使えますが、メッセージを全て送信するので初期転送のサイズが大きくなります。<br/>
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>browser-back-button</td>
-						<td>enabled</td>
-						<td>
-							ブラウザの戻るボタンの動作を設定します。
-							disabledを指定した場合、戻るボタンが機能しなくなります。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td>servlet-instance-bean</td>
-						<td>dataforms.servlet.ServletInstanceBean</td>
-						<td>
-							DataFormsServlet#init,destoryで何らかの処理が必要な場合、ServletInstanceBeanから派生したクラスを作成し
-							そのクラスを設定してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td>streaming-block-size</td>
-						<td>
-							<code>
-[<br/>
-	{"uaPattern": ".*Firefox.*", "blockSize": -1},<br/>
-	{"uaPattern": ".+", "blockSize": 16777216}<br/>
-]<br/>
-							</code>
-						</td>
-						<td>
-							ストリーミングのブラウザ毎の送信パターンを指定します。
-							html5のvideo,audioタグからの部分リクエストは大抵 "Range:bytes=0-"のように転送開始位置のみが指定されてきます。
-							この場合適切なサイズに区切って転送しないと、シーク機能が利用できません。
-							しかしFirefoxの場合、先頭のブロックのみを再生したところで止まってしまうので、指定された位置から最後まで転送するようにしないとうまく動作しないようです。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>content-type-list</td>
-						<td>
-							<code>
-[<br/>
-	{"fnPattern": "(?i).*\\.txt$", "contentType": "text/plain"},<br/>
-	{"fnPattern": "(?i).*\\.html$", "contentType": "text/html"},<br/>
-	{"fnPattern": "(?i).*\\.htm$", "contentType": "text/html"},<br/>
-	{"fnPattern": "(?i).*\\.xhtml$", "contentType": "text/xhtml+xml"},<br/>
-	{"fnPattern": "(?i).*\\.rss$", "contentType": "application/rss+xml"},<br/>
-<br/>
-	{"fnPattern": "(?i).*\\.zip$", "contentType": "application/zip"},<br/>
-	{"fnPattern": "(?i).*\\.pdf$", "contentType": "application/pdf"},<br/>
-	{"fnPattern": "(?i).*\\.xlsx$", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},<br/>
-<br/>
-	{"fnPattern": "(?i).*\\.png$", "contentType": "image/png"},<br/>
-	{"fnPattern": "(?i).*\\.jpg$", "contentType": "image/jpeg"},<br/>
-	{"fnPattern": "(?i).*\\.jpeg$", "contentType": "image/jpeg"},<br/>
-	{"fnPattern": "(?i).*\\.gif$", "contentType": "image/gif"},<br/>
-	{"fnPattern": "(?i).*\\.svg$", "contentType": "image/svg+xml"},<br/>
-<br/>
-	{"fnPattern": "(?i).*\\.swf$", "contentType": "application/x-shockwave-flash"},<br/>
-	{"fnPattern": "(?i).*\\.mpg$", "contentType": "video/mpeg"},<br/>
-	{"fnPattern": "(?i).*\\.mpeg$", "contentType": "video/mpeg"},<br/>
-	{"fnPattern": "(?i).*\\.mp4$", "contentType": "video/mp4"},<br/>
-	{"fnPattern": "(?i).*\\.mov$", "contentType": "video/quicktime"}<br/>,
-	{"fnPattern": "(?i).*\\.qt$", "contentType": "video/quicktime"},<br/>
-	{"fnPattern": "(?i).*\\.mov$", "contentType": "video/x-msvideo"},<br/>
-<br/>
-	{"fnPattern": "(?i).*\\.mp3$", "contentType": "audio/mpeg"},<br/>
-	{"fnPattern": "(?i).*\\.wav$", "contentType": "audio/wav"},<br/>
-<br/>
-	{"fnPattern": ".+", "contentType": "application/octet-stream"}<br/>
-]<br/>
-							</code>
-						</td>
-						<td>
-							FileFieldの中に保存されたファイルをダウンロードする際に出力するcontent-typeを設定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>backup-file-name</td>
-						<td>backup</td>
-						<td>
-							データベースのバックアップファイル名を指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>apache-fop-config</td>
-						<td>/WEB-INF/apachefop/fop.xconf</td>
-						<td>
-							apache-fopの設定ファイルのパスを指定します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>multi-open-menu</td>
-						<td>true</td>
-						<td>
-							trueを設定すると複数のメニューを開いた状態にすることができ、
-							falseを設定すると、開いたメニュー以外は自動的に閉じるようになります。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut">*</td>
-						<td>user-additional-info-table</td>
-						<td>
-							dataforms.debug.user.dao.UserAdditionalInfoTable
-						</td>
-						<td>
-							ユーザの追加情報を記録するテーブルクラスを指定します。
-							このテーブルはUserIdFieldクラスが主キーとなるテーブルクラスである必要があります。
-							このクラスを指定するとUserEditForm.java,UserSelfEditForm.java,
-							UserRegistForm.javaに指定されたテーブルのフィールドが配置されます。
-							UserEditForm.html,UserSelfEditPage.html,UserRegistPage.htmlを
-							jarファイルからプロジェクトにエクスポートし、フィールドを追加
-							することにより追加情報を入力することが可能になります。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>use-unique-id</td>
-						<td>true</td>
-						<td>
-							同じテーブルに対応したqueryFormとeditFormを1つのページに展開した場合、
-							同一ページ中に同じidのタグが複数存在することになります。
-							dataforms ver 1.xxのWebComponentのfindメソットは各コンポーネントの階層
-							を限定するセレクタを自動生成し、idが競合しても問題なく各HTML要素を取得
-							できるようにしていました。
-							しかしこの状態はエラーにはならないもののHTMLの規約違反状態でした。
-							そこでver 2.xxではhtmlのidアトリビュートを全てdata-idに設定し、
-							idアトリビュートにはページにユニークなIDを生成するようにする
-							オプションを用意しました。このオプションをtrueに設定すると、
-							htmlタグにidアトリビュートが設定されていた場合、すべてdata-idに
-							に変更します。その後javascriptでページにユニークなIDを生成して
-							idアトリビュートにセットします。
-
-							さらに、互換性を維持するために、WebComponentのfindメソッドに指定する、
-							jQueryセレクターは自動的に以下の様に書き換えられます。
-							<pre>
-#hoge -> [data-id='hoge']
-[id='hoge'] -> [data-id='hoge']
-[id$='hoge'] -> [data-id$='hoge']
-[id^='hoge'] -> [data-id^='hoge']
-[id!='hoge'] -> [data-id!='hoge']
-[id*='hoge'] -> [data-id*='hoge']
-							</pre>
-							このオプションを指定すると、idアトリビュートの値は書き換えられるため、
-							jQueryを直接使用する場合は注意してください。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>json-debug</td>
-						<td>true</td>
-						<td>
-							debugログに出力するjsonを整形するかどうかを指定します。
-							trueの場合成形されたjsonをログ出力に出力します。
-						</td>
-					</tr>
-					<tr>
-						<td class="commentOut"></td>
-						<td>encoding</td>
-						<td>utf-8</td>
-						<td>
-							使用する文字コードを指定します。
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			dataforms.conf.jsoncにはこの他にも多くの項目が存在します。
+			設定ファイル中の解説にしたがって適切に修正してください。
 		<h2>context.xml</h2>
 		<p>
-			dfblank_xxx.warにはMETA-INF/context.xmlが存在しています。
+			プロジェクト初期化画面はMETA-INF/context.xmlファイルを作成します。
 			このファイルにはメールセッションの設定例とデータベースへの接続設定例が記述されています。
 		</p>
 		<h3>メール設定</h3>
@@ -921,8 +210,8 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/dfdb");<br/>
 		<h3>context.xmlの場所</h3>
 		<p>
 			META-INF/context.xmlはWebアプリケーション中の設定ファイルとなります。
-			開発時やrunwarでスタンドアロン運用する場合はこのままで良いのですが、
-			別途運用するTomcatを用意する場合、$CATALINA_HOME/conf/context.xmlにこれらの設定を移動します。
+			開発時やembsvでスタンドアロン運用する場合はこのままで良いのですが、
+			別途運用するTomcatを用意する場合、&lt;TOMCATのインストールディレクトリ&gt;/conf/context.xmlにこれらの設定を移動します。
 			Eclipseから起動する開発用Tomcatにはテスト用のデータベース接続設定をおこない、
 			運用環境のTomcatには本番用のデータベース接続設定を行っておきます。
 			こうしておくと、開発環境で作成したwarファイルを運用環境のCATALINA_HOME/webapps/にコピーするだけでデプロイが完了します。
