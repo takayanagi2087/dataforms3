@@ -45,8 +45,8 @@ td {border:0px;}
 /* 番号付きリストのタイトルに使用 */
 h4 {
 	max-width: 1024px;
-	font-weight: normal;
-	margin-left: 40px;
+	font-weight: bold;
+	margin-left: 4px;
 	margin-bottom: 2px;
 }
 

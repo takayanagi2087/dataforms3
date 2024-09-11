@@ -15,6 +15,13 @@
 			table.webxmlTable td.commentOut {
 				text-align: center;
 			}
+			td.group {
+				text-align: center;
+				font-weight: bold;	
+			}
+			td div {
+				font-weight: bold;	
+			}
 		</style>
 	</head>
 	<body>
@@ -50,22 +57,6 @@
 			開発が終了したWebアプリケーションを公開する場合、最初に登録するユーザは管理者レベルになります。
 			userLevelをadminに設定すると、データベース初期化時に登録するユーザは管理者レベルになります。
 		</p>
-		<h4>データベース初期化を行うパッケージリスト</h4>
-		<p>
-			データベースの初期化のタイミングでjp.dataforms.fw.appパッケージ以下のTableクラスを見つけ出し、
-			それに対応したテーブルを接続したデータベースに作成します。
-			システムの開発作業では新規にパッケージが作成され、その中にテーブルクラスができてきます。
-			完成したシステムを実行環境にデプロイするとき、
-			その初期化処理で新たに追加されたテーブルを初期化するようにする必要があります。
-		</p>
-		<p>
-			databasePackageListにはTableクラスを含むパッケージのリストを指定します。
-			データベースの初期化処理は、このリストに指定されたパッケージ中のテーブルクラスに対応したテーブルを作成します。
-		</p>
-		<p>
-			テーブルを含むパッケージを作成したら、必ずこのパラメータにパッケージを追加してください。
-		</p>
-
 		<h3>アプリケーション設定</h3>
 		<h4>ブラウザのコンソールログ設定</h4>
 		<p>
@@ -151,6 +142,664 @@
 		<p>
 			dataforms.conf.jsoncにはこの他にも多くの項目が存在します。
 			設定ファイル中の解説にしたがって適切に修正してください。
+		</p>
+		<table class="webxmlTable">
+			<thead>
+				<tr>
+					<th style="width: 120px; font-weight: bold;">項目名</th>
+					<th style="max-width: 200px; font-weight: bold;">デフォルト値</th>
+					<th style="width: 600px; font-weight: bold;">内容</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="3" class="group">
+						developmentTool(開発ツール関連の設定)
+					</td>
+				</tr>
+				<tr>
+					<td>initialized</td>
+					<td>true</td>
+					<td>
+						<div>初期化済フラグ</div>
+						プロジェクト初期化画面がtrueに設定します。
+						falseに設定しないでください。
+					</td>
+				</tr>
+				<tr>
+					<td>javaSourcePath</td>
+					<td>&lt;eclipse_workspace&gt;/&lt;project&gt;/src/main/java</td>
+					<td>
+						<div>javaのソースパス</div>
+						開発ツールがJavaソースファイルを出力するフォルダを指定します。
+						プロジェクト初期化画面が適切に設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>webSourcePath</td>
+					<td>&lt;eclipse_workspace&gt;/&lt;project&gt;/src/main/webapp</td>
+					<td>
+						<div>HTML,jsのソースパス</div>
+						開発ツールがhtml,javascript等のWEBリソースを出力するフォルダを指定します。
+						プロジェクト初期化画面が適切に設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>disableCodeGenerationTool</td>
+					<td>false</td>
+					<td>
+						<div>ソースファイル生成ツール無効</div>
+						開発ツールのうちソースファイルを生成するツールを無効にします。
+						運用環境ではtrueに設定してください。
+					</td>
+				</tr>
+				<tr>
+					<td>disableDatabaseTool</td>
+					<td>false</td>
+					<td>
+						<div>DB関連ツール無効</div>
+						開発ツールのうちDB関連ツールの無効フラグを設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>fieldLayout</td>
+					<td>GRID</td>
+					<td>
+						<div>フォームのレイアウトパターン</div>
+						GRID: GRIDレイアウト<br/>
+						FLEX: FLEXレイアウト<br/>
+						TABLE: TABLEレイアウト<br/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="group">
+						initialize(アプリケーションの初期化時の設定)
+					</th>
+				</tr>
+				<tr>
+					<td>userLevel</td>
+					<td>developer</td>
+					<td>
+						<div>初期化時のユーザレベル</div>
+						データベース初期化時に作成するユーザのレベル(developerまたはadmin)を指定します。
+						開発環境ではdeveloperを指定してください。
+						システムの完成後一般ユーザに配布するwarファイルを作成する場合はadminを指定してください。
+					</td>
+				</tr>
+				<tr>
+					<td>checkUserImport</td>
+					<td>false</td>
+					<td>
+						<div>ユーザインポート優先</div>
+						trueかつユーザの初期化データが存在した場合、ユーザのインポートを優先します。
+					</td>
+				</tr>
+				<tr>
+					<td>abstractTableList</td>
+					<td>[]</td>
+					<td>
+						<div>仮想テーブルクラス</div>
+						このリストに記載されたテーブルはデータベースに実体が作成されません。
+						複数のテーブルクラスの基底クラスとして定義し、
+						テーブルの実体を作成する必要がないテーブルクラスを指定します。
+						dataforms3.jarに含まれたUserInfoTableに項目を追加する場合、
+						このコメントを有効にしてUserInfoTableから派生したテーブルクラスに項目を追加します。
+					</td>
+				</tr>
+				<tr>
+					<td>userInfoTableClass</td>
+					<td>コメントアウト</td>
+					<td>
+						<div>拡張ユーザテーブル</div>
+						UserInfoTableに項目を追加したExtendedUserInfoTableを作成した場合、
+						以下の設定を有効にするとExtendedUserInfoTableクラスがユーザテーブルとなります。
+						このクラスを指定するとUserEditForm.java,UserSelfEditForm.java,UserRegistForm.javaに指定されたテーブルのフィールドが配置されます。
+						UserEditForm.html,UserSelfEditPage.html,UserRegistPage.htmlをjarファイルからプロジェクトにエクスポートし、
+						フィールドを追加することにより追加情報を入力することが可能になります。
+						, "userInfoTableClass": "jp.dataforms.df3app.test.dao.ExtendedUserInfoTable"
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="group">
+						application(アプリケーション設定)
+					</th>
+				</tr>
+				<tr>
+					<td>mfaRequiredCount</td>
+					<td>0</td>
+					<td>
+						<div>ユーザインポート優先</div>
+						0: ユーザの判断で多要素認証を必須にする、 1以上:多要素認証に指定回数以上成功した場合、自動的に多要素認証を必須に設定する。					</td>
+				</tr>
+				<tr>
+					<td>languageList</td>
+					<td>["ja"]</td>
+					<td>
+						<div>サポート言語リスト</div>
+						英語(デフォルト言語)と日本語以外の言語をサポートする場合、言語コードを追加します。
+					</td>
+				</tr>
+				<tr>
+					<td>fixedLanguaget</td>
+					<td>コメントアウト</td>
+					<td>
+						<div>言語固定設定</div>
+						ブラウザの言語設定を無視し、言語を固定する場合は以下の設定を有効にします。<br/>
+						, "fixedLanguage": "en"
+					</td>	
+				</tr>
+				<tr>
+					<td>serverConfigFile</td>
+					<td>/etc/dataforms/dataformsConf.jsonc</td>
+					<td>
+						<div>サーバー設定ファイル</div>
+						サーバ毎にアプリの設定を変更する場合、その設定ファイルのパスを指定します。
+						サーバにこのファイルが存在しない場合、この設定は無視されます。
+					</td>	
+				</tr>
+				<tr>
+					<td>clientLogLevel</td>
+					<td>debug</td>
+					<td>
+						 <div>クライアントログレベル</div>
+						 javascriptでのコンソール出力はconsoleではなくloggerを使用してください。
+						 loggerは基本的にconsoleをコピーしたものですが、以下の設定に応じて、
+						 log,info,warn,errorメソットが何もしないメソッドになります。
+						 <table style="margin-left: 2px; margin-bottom: 2px;">
+						 	<tbody>
+						 		<tr>
+						 			<td style="width: 80px;">debug</td>
+						 			<td>log,info,warn,errorメソットの全てがコンソールに出力します。</td>
+						 		</tr>
+						 		<tr>
+						 			<td>info</td>
+						 			<td>logメソットがコンソール出力されないメソッドになります。</td>
+						 		</tr>
+						 		<tr>
+						 			<td>warn</td>
+						 			<td>log,infoメソットがコンソール出力されないメソッドになります。</td>
+						 		</tr>
+						 		<tr>
+						 			<td>error</td>
+						 			<td>log,info,warnメソットがコンソール出力されないメソッドになります。</td>
+						 		</tr>
+						 		<tr>
+						 			<td>none</td>
+						 			<td>log,info,warn,errorメソットがコンソール出力されないメソッドになります。</td>
+						 		</tr>
+						 	</tbody>
+						 </table>
+					</td>
+				</tr>
+				<tr>
+					<td>jndiDataSourcen</td>
+					<td>
+{<br/>
+ // JNDIデータソースの前につける文字列<br/> 
+ "jndiPrefix": "java:/comp/env/"<br/>
+ // 使用するJNDIデータソースを指定する<br/>
+ , "dataSource": "&lt;&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#21517;&gt;"<br/>
+}							
+					</td>
+					<td>
+						<div>JNDI Data Source設定</div>
+						参照するJNDIデータソースを指定します。
+						プロジェクト初期化画面でプロジェクト名を元に自動的に設定されます。
+						この例では以下のコードでデータソースを取得します。<br/>
+<code>
+Context initContext = new InitialContext();<br/>
+dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#21517;&gt;");<br/>
+</code>
+					</td>
+				</tr>
+				<tr>
+					<td>mail</td>
+					<td>
+{<br/>
+ "mailSession": "mail/Session"<br/>
+ , "mailFrom": "hoge@hogehoge.jp"<br/>
+}<br/>
+					</td>
+					<td>
+						<div>Mail関連設定</div>
+						mailSessionにはcontext.xmlに設定したメールセッション名を指定します。<br/>
+						mailFormはシステムが送信する際のメールアドレスを設定します。<br/>
+					</td>
+				</tr>
+				<tr>
+					<td>framePath</td>
+					<td>/frame/flex</td>
+					<td>
+						<div>フレームレイアウトのパス</div>
+						dataforms3.jarはフレームのデザインを複数用意して切り替えることができます。
+						その場合のフレームデザインのパスを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>pageOverride</td>
+					<td style="max-width: 200px;">
+<div style="width: 100%; overflow: scroll;">
+	<pre>
+{
+	"dummy": "dummy"
+	// パスワード変更ページを隠す場合は以下を有効にしてください
+	// , "jp.dataforms.fw.app.user.page.ChangePasswordPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	// ユーザ情報変更ページを隠す場合は以下を有効にしてください。
+	// , "jp.dataforms.fw.app.user.page.UserSelfEditPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	//
+	// 外部ユーザ登録関連(外部ユーザ登録機能を無効にするには以下の2ページを無効にしてください)
+	//
+	// ユーザ登録ページを隠す場合は以下を有効にしてください。
+	// , "jp.dataforms.fw.app.user.page.UserRegistPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	// ユーザ有効化ページを隠す場合は以下を有効にしてください。
+	// , "jp.dataforms.fw.app.user.page.UserEnablePage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	//
+	// パスワードリセット機能(パスワードリセット機能を無効にするには以下の2ページを無効にしてください)
+	//
+	// パスワードリセットメール送信ページを隠す場合は以下を有効にしてください。
+	// , "jp.dataforms.fw.app.user.page.PasswordResetMailPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	// パスワードリセットページを隠す場合は以下を有効にしてください。
+	// , "jp.dataforms.fw.app.user.page.PasswordResetPage": "jp.dataforms.fw.app.base.page.HiddenPage"
+	//
+	// パスワードの暗号化処理を変更する場合、以下の設定をコメントアウトしパスワード再暗号化ページを有効にしてください。
+	//
+	, "jp.dataforms.fw.app.user.page.PasswordReencryptPage" : "jp.dataforms.fw.app.base.page.HiddenPage"
+}						
+		
+	</pre>
+</div>
+					</td>
+					<td>
+						<div>ページオーバーライド</div>
+						既存ページを組み替える場合、新たにページクラスを作成し
+						既存ページクラスを置き換える設定を以下に記述します。
+						またdataforms.app.base.page.HiddenPageに置き換えれば
+						メニューにも表示されず、アクセスできないページになります。
+						つまり既存ページを隠すことができます。		
+					</td>
+				</tr>
+				<tr>
+					<td>topPage</td>
+					<td>/dataforms/app/top/page/TopPage</td>
+					<td>
+						<div>トップページのパス</div>
+						このページはシステムやユーザの状態に応じて、ログイン画面やサイトマップに遷移します。
+					</td>
+				</tr>
+				<tr>
+					<td>userRegistPage</td>
+					<td>/dataforms/app/user/page/UserRegistPage</td>
+					<td>
+						<div>外部ユーザ登録ページ</div>
+						外部ユーザ登録ページのパスを指定します。
+						デフォルトのパスはdataforms3.jar中のページ"/dataforms/app/user/page/UserRegistPage"のパスになっています。
+						インターネットからのユーザ登録を許可しない場合は、pageOverrideパラメータで、
+						"jp.dataforms.fw.app.user.page.UserRegistPage"を無効にしてください。
+					</td>
+				</tr>
+				<tr>
+					<td>userEditFormConfig</td>
+					<td>
+						<code>
+{<br/>
+	"requiredMailAddress": false // メールアドレスを必須とする。<br/>
+}<br/>
+						</code>
+					</td>
+					<td>
+						<div>ユーザ情報編集フォーム設定</div>
+						ユーザ情報編集フォームの動作を設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>userRegistPageConfig</td>
+					<td>
+						<code>
+{<br/>
+	"loginIdIsMail": true, // メールアドレスをログインIDとする。<br/>
+	"mailCheck": true, // メールアドレスのチェックを行う。<br/>
+	"sendUserEnableMail": true // ユーザ有効化ページのURLをメールする。<br/>
+}<br/>
+						</code>
+					</td>
+					<td>
+						<div>外部ユーザ登録ページ設定</div>
+						外部ユーザ登録ページの動作を設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>userEnablePage</td>
+					<td>/dataforms/app/user/page/UserEnablePage</td>
+					<td>
+						<div>外部ユーザ有効化ページ</div>
+						外部ユーザ登録ページ設定でユーザ有効化ページのURLをメールするように設定した場合、このページのURLをメールで送信します。
+					</td>
+				</tr>
+				<tr>
+					<td>passwordResetMailPage</td>
+					<td>/dataforms/app/user/page/PasswordResetMailPage</td>
+					<td>
+						<div>パスワードリセットメール送信ページ</div>
+						この設定をコメントアウトするとパスワードリセットリンクが表示されません。
+					</td>
+				</tr>
+				<tr>
+					<td>passwordResetPage</td>
+					<td>/dataforms/app/user/page/PasswordResetPage</td>
+					<td>
+						<div>パスワードリセットページ</div>
+						パスワードリセットメールで、このページのURLを通知します。
+					</td>
+				</tr>
+				<tr>
+					<td>tempDir</td>
+					<td>/tmp</td>
+					<td>
+						<div>一時ファイルフォルダ</div>
+						一時ファイルを置くパスを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>cssAndScripts</td>
+					<td>/frame/jslib.html</td>
+					<td>
+						<div>Javascriptライブラリやcssの設定</div>
+						jQueryなどの標準ライブラリなどを読み込むhtmlを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>errorPage</td>
+					<td>/dataforms/app/errorpage/ErrorPage</td>
+					<td>
+						<div>エラーページ</div>
+						エラーページのパスを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>clientValidation</td>
+					<td>true</td>
+					<td>
+						<div>クライアントバリデーションの有無</div>
+						これをfalseに設定するとJavascriptでのバリデーションが停止します。
+					</td>
+				</tr>
+				<tr>
+					<td>uploadDataFolder</td>
+					<td>./uploadData</td>
+					<td>
+						<div>アップロードデータフォルダー</div>
+						アップロードデータを保存するフォルダを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>export-import-dir</td>
+					<td>/tmp/data</td>
+					<td>
+						開発ツールのテーブル管理ページでデータをエクスポート/インポートする際に使用するフォルダを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>passwordType</td>
+					<td>IRREVERSIBLE_PASSWORD</td>
+					<td>
+						REVERSIBLE_PASSWORD(可逆パスワード)またはIRREVERSIBLE_PASSWORD(不可逆パスワード)を指定します。
+						<b>この設定はシステムの運用開始前に設定してください。
+						(変更する際にはユーザテーブルを初期化する必要があります。)</b>
+						不可逆パスワードを指定した場合、パスワードの複合化は困難ですが、
+						管理者が各ユーザのパスワードを変更することはできません。
+						可逆パスワードを指定した場合、管理者側でユーザのパスワードを修正することができますが、
+						パスワードが複合化される可能性は不可逆パスワードより高くなります。
+					</td>
+				</tr>
+				<tr>
+					<td>hashAlgorithm</td>
+					<td>SHA-512</td>
+					<td>
+						<div>ハッシュアルゴリズム</div>
+						SHA-1 or SHA-256 or SHA-384 or SHA-512<br/>
+						passwordType不可逆パスワードを設定した場合、パスワードのハッシュを計算するアルゴリズムを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>cryptConfig</td>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
+{<br/>
+	//
+	// 暗号化アルゴリズムを選択します。("des" or "aes")<br/>
+	"algorithm": "aes",<br/>
+	//
+	// AESの初期化ベクトルを指定します。<br/>
+	// AES初期化ベクトルは16Byteである必要があるため、自動的に保管して使用します。<br/>
+	"aesInitialVector": "ランダムな値",<br/>
+	//<br/>
+	// ==============================================================<br/>
+	// 以下項目はDESパスワードまたはAESキーを指定します。<br/>
+	// AESキーは16Byteである必要があるため、自動的に保管して使用します。<br/>
+	// ==============================================================<br/>
+	// CryptUtilで使用するデフォルトのDESパスワードまたはAESキーを指定します。<br/>
+	// UserInfoTableのパスワードの暗号化で使用するので、<br/>
+	// 変更する場合は事前にUserInfoTableのパスワードの再構築を行う必要があります。<br/>
+	// nullを指定するとライブラリにハードコーディングされたものを使用します。<br/>
+	"defaultPassword": "ランダムな値",<br/>
+	// QueryStringを暗号化する場合に使用するDESパスワードまたはAESキーを指定します。<br/>
+	// BLOBデータ等のダウンロードパラメータの暗号化に使用しています。<br/>
+	// 運用時に変更しても問題ありません。<br/>
+	// nullを指定するとライブラリにハードコーディングされたものを使用します。<br/>
+	"queryStringCryptPassword": "ランダムな値",<br/>
+	// CSRF対策に使用するDESパスワードまたはAESキーを指定します。<br/>
+	// 指定されたDESパスワードまたはAESキーでセッションIDを暗号化し、<br/>
+	// CSRFトークンとしてブラウザに送信します。<br/>
+	// 運用時に変更しても問題ありません。<br/>
+	// nullを指定するとCSRF対策を行いません。<br/>
+	"csrfSessionidCryptPassword": "ランダムな値"<br/>
+}<br/>
+							</pre>
+						</div>
+					</td>
+					<td>
+						<div>暗号化アルゴリズム設定</div>
+						暗号化に必要な設定情報をjson形式で指定します。<br/>
+						プロジェクト初期化画面に各種パスワードに乱数を設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>onetimePasswordConfig</td>
+					<td>
+						<code>
+{<br/>
+	// ワンタイムパスワードを使用するかどうか。<br/>
+	"useOnetimePassword": false,<br/>
+	// ワンタイムパスワード文字数。<br/>
+	"length": 6,<br/>
+	// ワンタイムパスワードキャンセルクッキーの有効日数<br/>
+	// 0を指定すると毎回ワンタイムパスワードを確認します。<br/>
+	// それ以外の場合場クッキーが存在するブラウザの場合、ワンタイムパスワードのチェックは行われません。<br/>
+	"cookieExpiration": 20<br/>
+}<br/>
+						</code>
+					</td>
+					<td>
+						<div>ワンタイムパスワード設定</div>
+						useOnetimePasswordにtrueを設定すると、ユーザのメールにワンタイムパスワードを送信します。
+						dataforms3.jarではTOTPやPasskeyをサポートしたので、そちらの方を推奨します。
+					</td>
+				</tr>
+				<tr>
+					<td>cookieCheck</td>
+					<td>false</td>
+					<td>
+						<div>クッキーチェック設定</div>
+						ブラウザがクッキーを許可していることを確認する場合、trueを指定してください。
+					</td>
+				</tr>
+				<tr>
+					<td>messageResource</td>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
+{
+	// ----------------------------------
+	// クライアントに送信して使用するメッセージリソースの名称を指定します。
+	// このファイルはdataforms3.jar内に存在します。
+	"clientMessages": "/frame/messages/ClientMessages"
+	// ----------------------------------
+	// サーバ側で使用するメッセージリソースの名称を指定します。
+	// このファイルはdataforms3.jar内に存在します。
+	, "messages": "/frame/messages/Messages"
+	// ----------------------------------
+	// クライアントに送信して使用するアプリケーション用メッセージリソースの名称を指定します。
+	// このファイルはアプリケーション側で用意します。
+	, "appClientMessages": "/frame/messages/AppClientMessages"
+	// ----------------------------------
+	// サーバ側で使用するアプリケーション用メッセージリソースの名称を指定します。
+	// このファイルはアプリケーション側で用意します。
+	, "appMessages": "/frame/messages/AppMessages"
+}							
+							</pre>
+						</div>						
+					</td>
+					<td>
+						<div>メッセージリソース設定</div>
+						クライアントに送信して使用するメッセージリソースの名称を指定します。
+						このファイルはdataforms3.jar内に存在します。
+					</td>
+				</tr>
+				<tr>
+					<td>servletInstanceBean</td>
+					<td>dataforms.servlet.ServletInstanceBean</td>
+					<td>
+						<div>Servlet設定クラス</div>
+						DataFormsServlet#init,destoryで何らかの処理が必要な場合、ServletInstanceBeanから派生したクラスを作成し
+						そのクラスを設定してください。
+					</td>
+				</tr>
+				<tr>
+					<td>streamingBlockSize</td>
+					<td>
+						<code>
+[<br/>
+	{"uaPattern": ".*Firefox.*", "blockSize": -1},<br/>
+	{"uaPattern": ".+", "blockSize": 16777216}<br/>
+]<br/>
+						</code>
+					</td>
+					<td>
+						<div>ストリーミング設定</div>
+						ストリーミングのブラウザ毎の送信パターンを指定します。
+						html5のvideo,audioタグからの部分リクエストは大抵 "Range:bytes=0-"のように転送開始位置のみが指定されてきます。
+						この場合適切なサイズに区切って転送しないと、シーク機能が利用できません。
+						しかしFirefoxの場合、先頭のブロックのみを再生したところで止まってしまうので、指定された位置から最後まで転送するようにしないとうまく動作しないようです。
+					</td>
+				</tr>
+				<tr>
+					<td>contentTypeList</td>
+					<td>
+						<code>
+[<br/>
+	{"fnPattern": "(?i).*\\.txt$", "contentType": "text/plain"},<br/>
+	{"fnPattern": "(?i).*\\.html$", "contentType": "text/html"},<br/>
+	{"fnPattern": "(?i).*\\.htm$", "contentType": "text/html"},<br/>
+	{"fnPattern": "(?i).*\\.xhtml$", "contentType": "text/xhtml+xml"},<br/>
+	{"fnPattern": "(?i).*\\.rss$", "contentType": "application/rss+xml"},<br/>
+<br/>
+	{"fnPattern": "(?i).*\\.zip$", "contentType": "application/zip"},<br/>
+	{"fnPattern": "(?i).*\\.pdf$", "contentType": "application/pdf"},<br/>
+	{"fnPattern": "(?i).*\\.xlsx$", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},<br/>
+<br/>
+	{"fnPattern": "(?i).*\\.png$", "contentType": "image/png"},<br/>
+	{"fnPattern": "(?i).*\\.jpg$", "contentType": "image/jpeg"},<br/>
+	{"fnPattern": "(?i).*\\.jpeg$", "contentType": "image/jpeg"},<br/>
+	{"fnPattern": "(?i).*\\.gif$", "contentType": "image/gif"},<br/>
+	{"fnPattern": "(?i).*\\.svg$", "contentType": "image/svg+xml"},<br/>
+<br/>
+	{"fnPattern": "(?i).*\\.swf$", "contentType": "application/x-shockwave-flash"},<br/>
+	{"fnPattern": "(?i).*\\.mpg$", "contentType": "video/mpeg"},<br/>
+	{"fnPattern": "(?i).*\\.mpeg$", "contentType": "video/mpeg"},<br/>
+	{"fnPattern": "(?i).*\\.mp4$", "contentType": "video/mp4"},<br/>
+	{"fnPattern": "(?i).*\\.mov$", "contentType": "video/quicktime"}<br/>,
+	{"fnPattern": "(?i).*\\.qt$", "contentType": "video/quicktime"},<br/>
+	{"fnPattern": "(?i).*\\.mov$", "contentType": "video/x-msvideo"},<br/>
+<br/>
+	{"fnPattern": "(?i).*\\.mp3$", "contentType": "audio/mpeg"},<br/>
+	{"fnPattern": "(?i).*\\.wav$", "contentType": "audio/wav"},<br/>
+<br/>
+	{"fnPattern": ".+", "contentType": "application/octet-stream"}<br/>
+]<br/>
+						</code>
+					</td>
+					<td>
+						<div>Content-Type設定</div>
+						FileFieldの中に保存されたファイルをダウンロードする際に出力するcontent-typeを設定します。
+					</td>
+				</tr>
+				<tr>
+					<td>backupFileName</td>
+					<td>backup</td>
+					<td>
+						<div>バックアップファイル名</div>
+						データベースのバックアップファイル名を指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>apacheFopConfig</td>
+					<td>/WEB-INF/apachefop/fop.xconf</td>
+					<td>
+						<div>apache-fopの設定ファイル</div>
+						apache-fopの設定ファイルのパスを指定します。
+					</td>
+				</tr>
+				<tr>
+					<td>multiOpenMenu</td>
+					<td>true</td>
+					<td>
+						<div>メニューの表示設定</div>
+						trueを設定すると複数のメニューを開いた状態にすることができ、
+						falseを設定すると、開いたメニュー以外は自動的に閉じるようになります。
+					</td>
+				</tr>
+				<tr>
+					<td>jsonDebug</td>
+					<td>true</td>
+					<td>
+						<div>Json成形設定</div>
+						debugログに出力するjsonを整形するかどうかを指定します。
+						trueの場合成形されたjsonをログ出力に出力します。
+					</td>
+				</tr>
+				<tr>
+					<td>autoLogin</td>
+					<td>false</td>
+					<td>
+						<div>自動ログイン有効設定</div>
+						「ログインしたままにする」オプションを有効にします。
+						セキュリティを重視する場合この設定はfalseにすることを推奨します。
+					</td>
+				</tr>
+				<tr>
+					<td>secureAutoLoginCookie</td>
+					<td>true</td>
+					<td>
+						<div>自動ログインクッキー設定</div>
+ 						trueを設定すると、自動ログインクッキーにSecureを設定します。
+ 					</td>
+				</tr>
+				<tr>
+					<td>encoding</td>
+					<td>utf-8</td>
+					<td>
+						<div>文字コード</div>
+						使用する文字コードを指定します。
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		
+		
+		
+		
 		<h2>context.xml</h2>
 		<p>
 			プロジェクト初期化画面はMETA-INF/context.xmlファイルを作成します。
