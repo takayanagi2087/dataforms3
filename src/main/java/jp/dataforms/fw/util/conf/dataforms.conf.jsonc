@@ -29,10 +29,7 @@
 		// 初期化時に作成する特権ユーザのレベル
 		"userLevel": "developer" 
 		//"userLevel": "admin"
-		// データベースを定義するパッケージリスト
-		, "databasePackageList": [
-			"jp.dataforms.fw.app"
-		]
+		// ユーザインポート優先
 		// trueかつユーザの初期化データが存在した場合、ユーザのインポートを優先します。
 		, "checkUserImport": false
 		// ----------------------------------

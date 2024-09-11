@@ -277,16 +277,12 @@ public class DataFormsServlet extends HttpServlet {
 		this.getUserRegistConf();
 		super.init();
 		WebComponent.setServlet(this);
-		// DB存在チェック。
-		this.checkDbConnection();
-		// DBの存在チェック。
-		this.checkDBStructure();
-		// 制約マップを作成します。
-		this.makeConstraintMap();
 		this.setupServletInstanceBean();
 		// パスとパッケージの対応表を設定する。
 		try {
 			WebComponent.setFunctionMap(FunctionMap.getAppFunctionMap());
+			List<String> pkglist = WebComponent.getFunctionMap().getDBPackageList();
+			DataFormsServlet.confUtil.getConf().getInitialize().setDatabasePackageList(pkglist);
 			// CSSフィルターの初期化。
 			Set<String> cssList = WebResourceUtil.getFileList("/frame", "Variables.css");
 			for (String css: cssList) {
@@ -296,6 +292,12 @@ public class DataFormsServlet extends HttpServlet {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+		// DB存在チェック。
+		this.checkDbConnection();
+		// DBの存在チェック。
+		this.checkDBStructure();
+		// 制約マップを作成します。
+		this.makeConstraintMap();
 	}
 
 	/**

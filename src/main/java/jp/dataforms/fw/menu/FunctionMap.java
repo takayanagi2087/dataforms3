@@ -2,8 +2,10 @@ package jp.dataforms.fw.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.annotation.ApplicationFunctionMap;
 import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
+import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.devtool.menu.page.MenuEditForm;
 import jp.dataforms.fw.devtool.menu.page.MenuTable;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -733,6 +736,33 @@ public class FunctionMap {
 			logger.warn("There are multiple AppFunctionMap classes. Use the " + ret.getClass().getName() + " class.");
 		} else {
 			logger.info("Use the " + ret.getClass().getName() + " class.");
+		}
+		return ret;
+	}
+	
+	/**
+	 * データベースを定義するパッケージのリストを取得します。
+	 * @return データベースを定義するパッケージのリスト。
+	 * @throws Exception 例外。
+	 */
+	public List<String> getDBPackageList() throws Exception {
+		ClassFinder cf = new ClassFinder();
+		Set<String> set = new HashSet<String>();
+		for (PathPackage pp: this.pathPackageList) {
+			List<Class<?>> list = cf.findClasses(pp.getBasePackage(), Table.class);
+			if (list.size() > 0) {
+				for (Class<?> cls: list) {
+					set.add(cls.getPackageName());
+				}
+			}
+		}
+		List<String> ret = new ArrayList<String>();
+		for (String pkg: set) {
+			if ("jp.dataforms.fw.dao".equals(pkg)) {
+				continue;
+			}
+			logger.debug("getDBPackageList: package=" + pkg);
+			ret.add(pkg);
 		}
 		return ret;
 	}
