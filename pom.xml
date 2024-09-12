@@ -165,7 +165,7 @@
 		<dependency>
 		    <groupId>jp.dataforms</groupId>
 		    <artifactId>ExcelToXSLFO</artifactId>
-		    <version>1.03</version>
+		    <version>1.04</version>
 		</dependency>
 	</dependencies>
 	<build>
