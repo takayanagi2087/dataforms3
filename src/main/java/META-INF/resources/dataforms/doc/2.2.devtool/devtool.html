@@ -109,7 +109,8 @@
 						Webリソースエクスポート
 					</td>
 					<td>
-						dataforms3.jarの中の*.html,*.css,*.js等のファイルをエクスポートします。
+						dataforms3.jarの中の*.html,*.css,*.js等のファイルをプロジェクト内にエクスポートします。
+						エクスポートされた*.htmlや*.jsを修正することによって、dataforms3.jar中のページをカスタマイズすることができます。
 					</td>
 				</tr>
 				<tr>
@@ -257,11 +258,11 @@
 		</figure>
 		<h3>メニュー作成</h3>
 		<p>
-			dataforms3.jarの中には、既に「基本機能」と「開発ツール」というメニューが定義されています。
-			この画面で今回作成するWebシステムの独自メニューを追加します。
+			dataforms3.jarの中には、既に「基本機能」「開発ツール」「ドキュメント」というメニューが定義されています。
+			メニュー作成画面を使用し、今回作成するWebシステム独自のメニューを追加します。
 		</p>
 		<figure>
-			<figcaption>機能管理画面</figcaption>
+			<figcaption>メニュー作成画面</figcaption>
 			<img src="menuedit001.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
@@ -272,7 +273,7 @@
 			このメニュー内のページクラスはパッケージjp.dataforms.sample.edittable内に配置します。		
 		</p>
 		<figure>
-			<figcaption>機能追加後の画面</figcaption>
+			<figcaption>メニュー追加後の画面</figcaption>
 			<img src="menuedit002.png" style="width:50%; height:50%;"/>
 		</figure>
 		<p>
@@ -672,7 +673,7 @@ public class AppFunctionMap extends FunctionMap {
 			「Webリソース作成」は指定されたページJavaクラスに含まれるWebコンポーネントを検索し、そのWebコンポーネントに対応するHTMLやJavascriptを作成するツールです。
 			ページJavaクラスが動作するには、少なくともページJavaクラスに対応したHTMLが必要になります。
 			ページクラスは複数のフォームクラスを持っており、フォームクラスは複数のフィールドクラスを持っています。
-			今回は以下のように条件を指定し、sample.page.SamplePageクラス中のページクラスを検索します。
+			今回は以下のように条件を指定し、jp.dataforms.sample.edittable.page.SamplePageクラス中のページクラスを検索します。
 		</p>
 		<figure>
 			<figcaption>SamplePage内のコンポーネント検索</figcaption>
@@ -981,8 +982,8 @@ public class AppFunctionMap extends FunctionMap {
 			</pre>
 		</div>
 		<p>
-			このHTMLはonclick等のイベント関連のアトリビュートは一切技術されていません。
-			しかしブラウザから http://localhost:8080/sample/edittable/page/SamplePage.htmlをアクセスすると、
+			このHTMLにはonclick等のイベント関連のアトリビュートはしません。
+			しかし、ブラウザから http://localhost:8080/sample/edittable/page/SamplePage.htmlをアクセスすると、
 			dataforms3.jar中のDataFormsServletが動作し、以下のようなスクリプトが自動的に生成されます。
 			このスクリプトがSamplePageクラスに設定された構造情報をサーバから取得し、その情報を元に各HTML要則に適切なイベント処理を登録します。
 		</p>			

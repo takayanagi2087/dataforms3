@@ -14,18 +14,18 @@
 		<h2>dataforms3.jarとは</h2>
 		<p>
 			dataforms3.jarはJava21,Tomcat10以降でWebアプリケーションを作るためフレームワークです。
-			このdataforms3.jarを依存関係に追加するだけで、Webアプリケーションを作ることができます。
+			このdataforms3.jarをMavenの依存関係に追加するだけで、Webアプリケーションを作ることができます。
 		</p>
 		<h2>dataforms2.jarからの変更点</h2>
 		基本的にdataforms2.jarの構想を踏襲していますが、互換性はありません。
 		<ol>
-			<li>Tomcat10以降に対応(Tomcat9以前には対応しません)</li>
-			<li>IE11, MS EDGE対応コードの削除(Chromium版EDGEはサポートします)</li>
-			<li>非推奨機能を削除</li>
-			<li>JavascriptのModule対応</li>
-			<li>func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)</li>
-			<li>設定ファイルの形式をjsoncに変更</li>
-			<li>認証のpasskey対応</li>
+			<li>Tomcat10以降に対応(Tomcat9以前には対応しません)。</li>
+			<li>IE11, MS EDGE対応コードの削除(Chromium版EDGEはサポートします)。</li>
+			<li>非推奨機能を削除。</li>
+			<li>JavascriptのModule対応。</li>
+			<li>func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)。</li>
+			<li>設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを提供する機能を追加。</li>
+			<li>多要素認証(TOTP,Passkey)対応。</li>
 		</ol>
 		<h2>特徴</h2>
 		<p>
@@ -81,7 +81,7 @@
 					<td style="width: 300px;">ユーザの管理と最新の認証機能</td>
 					<td style="width: 500px;">
 						dataforms3.jarはWebアプリケーションのユーザの管理や認証の為の機能を持っており、	ログイン画面やユーザ管理画面を作る必要はありません。
-						またログイン画面はPassKeyにも対応しており、端末の生体認証でログイン可能なWebアプリケーションを作ることができます。
+						またログイン画面は多要素認証にも対応しており、端末の生体認証でログイン可能なWebアプリケーションを作ることができます。
 					</td>
 				</tr>
 				<tr>
@@ -104,7 +104,7 @@
 			</tbody>
 		</table>
 		<p>
-			Servletクラスもdataforms3.jarに入っており、web.xmlに設定を記述しなくても、*.dfというパターンで、DataFormsServletというServletが動作するようになっています。
+			Servletクラスもdataforms3.jarに入っており、web.xmlに設定を記述しなくても、*.html,*.api,*.batというパターンで、DataFormsServletというServletが動作するようになっています。
 			基本機能や開発ツールなどのページを構成するHTMLやJavascriptも、dataforms3.jarファイル中のMETA-INF/resourcesに入っています。
 			(これらはServlet 3.0でサポートされた機能を使用しています。)
 		</p>
@@ -200,6 +200,11 @@
 					<td>webauthn4j</td>
 					<td>webauthn4j-core-XXX.jar</td>
 					<td>Passkey認証</td>
+				</tr>
+				<tr>
+					<td>totp</td>
+					<td>totp-XXX.jar</td>
+					<td>TOTP認証</td>
 				</tr>
 			</tbody>
 		</table>

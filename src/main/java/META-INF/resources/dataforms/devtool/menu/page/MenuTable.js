@@ -52,7 +52,9 @@ export class MenuTable extends EditableHtmlTable {
 				for (let j = 0; j < this.fields.length; j++) {
 					let fld = table.getRowField(i, this.fields[j].id);
 					fld.lock(true);
-				}		
+				}
+				table.parent.find("#" + this.selectorEscape("menuList[" + i + "].addButton")).prop("disabled", true);
+				table.parent.find("#" + this.selectorEscape("menuList[" + i + "].deleteButton")).prop("disabled", true);
 			}
 		}
 	}

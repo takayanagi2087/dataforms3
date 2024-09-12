@@ -57,7 +57,7 @@
 			開発が終了したWebアプリケーションを公開する場合、最初に登録するユーザは管理者レベルになります。
 			userLevelをadminに設定すると、データベース初期化時に登録するユーザは管理者レベルになります。
 		</p>
-		<h3>アプリケーション設定</h3>
+		<h3>アプリケーション設定(application)</h3>
 		<h4>ブラウザのコンソールログ設定</h4>
 		<p>
 			Javascriptのデバッグ時にconsole.log等を使用しデバック情報をブラウザのコンソールに出力するケースがあります。
@@ -138,11 +138,7 @@
 		<p>
 			外部ユーザ登録機能などを使用しない場合、この機能を使用して該当するページを隠してください。
 		</p>
-		<h3>その他の設定項目</h3>
-		<p>
-			dataforms.conf.jsoncにはこの他にも多くの項目が存在します。
-			設定ファイル中の解説にしたがって適切に修正してください。
-		</p>
+		<h3>設定項目一覧</h3>
 		<table class="webxmlTable">
 			<thead>
 				<tr>
@@ -268,7 +264,7 @@
 					<td>mfaRequiredCount</td>
 					<td>0</td>
 					<td>
-						<div>ユーザインポート優先</div>
+						<div>多要素認証必須設定</div>
 						0: ユーザの判断で多要素認証を必須にする、 1以上:多要素認証に指定回数以上成功した場合、自動的に多要素認証を必須に設定する。					</td>
 				</tr>
 				<tr>
@@ -333,13 +329,17 @@
 				</tr>
 				<tr>
 					<td>jndiDataSourcen</td>
-					<td>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 {<br/>
  // JNDIデータソースの前につける文字列<br/> 
  "jndiPrefix": "java:/comp/env/"<br/>
  // 使用するJNDIデータソースを指定する<br/>
  , "dataSource": "&lt;&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#21517;&gt;"<br/>
-}							
+}
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>JNDI Data Source設定</div>
@@ -354,11 +354,15 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 				</tr>
 				<tr>
 					<td>mail</td>
-					<td>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 {<br/>
  "mailSession": "mail/Session"<br/>
  , "mailFrom": "hoge@hogehoge.jp"<br/>
 }<br/>
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>Mail関連設定</div>
@@ -453,14 +457,16 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 				</tr>
 				<tr>
 					<td>userRegistPageConfig</td>
-					<td>
-						<code>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 {<br/>
 	"loginIdIsMail": true, // メールアドレスをログインIDとする。<br/>
 	"mailCheck": true, // メールアドレスのチェックを行う。<br/>
 	"sendUserEnableMail": true // ユーザ有効化ページのURLをメールする。<br/>
 }<br/>
-						</code>
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>外部ユーザ登録ページ設定</div>
@@ -606,8 +612,9 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 				</tr>
 				<tr>
 					<td>onetimePasswordConfig</td>
-					<td>
-						<code>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 {<br/>
 	// ワンタイムパスワードを使用するかどうか。<br/>
 	"useOnetimePassword": false,<br/>
@@ -618,12 +625,13 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 	// それ以外の場合場クッキーが存在するブラウザの場合、ワンタイムパスワードのチェックは行われません。<br/>
 	"cookieExpiration": 20<br/>
 }<br/>
-						</code>
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>ワンタイムパスワード設定</div>
 						useOnetimePasswordにtrueを設定すると、ユーザのメールにワンタイムパスワードを送信します。
-						dataforms3.jarではTOTPやPasskeyをサポートしたので、そちらの方を推奨します。
+						dataforms3.jarではTOTPとPasskeyをサポートしたので、この機能は非推奨です。
 					</td>
 				</tr>
 				<tr>
@@ -663,7 +671,6 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 					<td>
 						<div>メッセージリソース設定</div>
 						クライアントに送信して使用するメッセージリソースの名称を指定します。
-						このファイルはdataforms3.jar内に存在します。
 					</td>
 				</tr>
 				<tr>
@@ -677,13 +684,15 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 				</tr>
 				<tr>
 					<td>streamingBlockSize</td>
-					<td>
-						<code>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 [<br/>
 	{"uaPattern": ".*Firefox.*", "blockSize": -1},<br/>
 	{"uaPattern": ".+", "blockSize": 16777216}<br/>
 ]<br/>
-						</code>
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>ストリーミング設定</div>
@@ -695,8 +704,9 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 				</tr>
 				<tr>
 					<td>contentTypeList</td>
-					<td>
-						<code>
+					<td style="max-width: 200px;">
+						<div style="width: 100%; overflow: scroll;">
+							<pre>
 [<br/>
 	{"fnPattern": "(?i).*\\.txt$", "contentType": "text/plain"},<br/>
 	{"fnPattern": "(?i).*\\.html$", "contentType": "text/html"},<br/>
@@ -727,7 +737,8 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 <br/>
 	{"fnPattern": ".+", "contentType": "application/octet-stream"}<br/>
 ]<br/>
-						</code>
+							</pre>
+						</div>
 					</td>
 					<td>
 						<div>Content-Type設定</div>

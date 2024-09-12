@@ -418,7 +418,7 @@ public class SampleTable extends Table {
 		<p>
 			テーブルクラスには必ずEntityクラスが定義されています。
 			Daoクラスでテーブルのレコードデータの入れ物としてはMap&lt;String, Object&gt;を使用しています。
-			このEntityクラスはこのMapオブジェクトを操作するため物です。
+			このEntityクラスはこのMapオブジェクトを操作するための物です。
 			Entityクラスにはテーブルに配置されたフィールド文のゲッター、セッターが定義されています。
 			登録するデータを作成したり、読み込んだーデータを取得する際に使用します。
 			また、EntityクラスにはフィールドIDの定数が定義されています。
@@ -967,10 +967,6 @@ public class JoinTestTableRelation extends TableRelation {
 			<figcaption>テーブル管理画面の外部キーの適用方法</figcaption>
 			<img src="fkey.png" style="width:50%; height:50%;"/>
 		</figure>
-		<p class="topic">
-			テーブル管理で外部キーの設定を行う場合、dataforms.conf.jsoncのinitialize.databasePackageList
-			に対象テーブルクラスが存在するパッケージを全て登録してください。
-		</p>
 		<p>
 			開発ツールの「問合せJavaクラス作成」を使用すると、JoinTestTableとSampleTableを結合した問合せを簡単に作成することができます。
 			定義された外部キーに対応した結合条件が生成されていることがわかります。
