@@ -463,8 +463,7 @@ public class DataFormsServlet extends HttpServlet {
 	/**
 	 * データベースの構造チェック。
 	 * <pre>
-	 * dataforms.app以下のパッケージのテーブル構造の違いがあった場合、
-	 * 最新の構造に変更します。
+	 * jp.dataforms.fw.app以下のパッケージのテーブル構造の違いがあった場合、最新の構造に変更します。
 	 * </pre>
 	 *
 	 */
