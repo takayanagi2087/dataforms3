@@ -31,7 +31,6 @@
 		// テーブルJavaクラス作成は移行元のDBを参照し、そのテーブル構造からテーブルクラスを作成することができます。
 		// 移行元のDBがapplication.jndiDataSource.dataSourceと異なる場合、ここにぞのデータソース名を記述します。
 		// この設定を行わない場合、application.jndiDataSourceを参照します。
-		// 使用するJNDIデータソースを指定する
 		, "originDataSource": null
 	}
 	// アプリケーションの初期化時の設定

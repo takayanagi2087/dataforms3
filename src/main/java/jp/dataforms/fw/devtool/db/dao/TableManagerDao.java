@@ -984,7 +984,7 @@ public class TableManagerDao extends Dao {
 			colinfo.put("superSimpleClassName", "BlobField");
 		}
 		colinfo.put("dataType", dataType);
-		colinfo.put("remarks", remarks);
+		colinfo.put("comment", remarks);
 		colinfo.put("overwriteMode", "error");
 		return colinfo;
 	}

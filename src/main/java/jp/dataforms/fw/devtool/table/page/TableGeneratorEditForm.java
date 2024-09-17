@@ -3,6 +3,7 @@ package jp.dataforms.fw.devtool.table.page;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -681,17 +682,19 @@ public class TableGeneratorEditForm extends EditForm {
 		logger.debug("func=" + func);
 		JndiDataSource ds = DataFormsServlet.getConf().getOriginalJndiDataSource();
 		TableManagerDao dao = new TableManagerDao(ds);
-		Map<String, Object> m = dao.queryTableInfo(importTable);
-		TableInfoEntity e = new TableInfoEntity(m);
-		String tblname = importTable + "_table";
-		m.put("tableClassName", StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(tblname)));
-		m.put("tableComment", e.getRemarks());
-		m.put("updateInfoFlag", "0");
-		List<Map<String, Object>> fieldList = dao.getTableColumnList(func, importTable);
-		m.put("fieldList", fieldList);
-		logger.debug("json=" + JsonUtil.encode(m, true));
-		Response ret = new JsonResponse(JsonResponse.SUCCESS, m);
-		return ret;
+		try (Connection conn = dao.getConnection()) {
+			Map<String, Object> m = dao.queryTableInfo(importTable);
+			TableInfoEntity e = new TableInfoEntity(m);
+			String tblname = importTable + "_table";
+			m.put("tableClassName", StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(tblname)));
+			m.put("tableComment", e.getRemarks());
+			m.put("updateInfoFlag", "0");
+			List<Map<String, Object>> fieldList = dao.getTableColumnList(func, importTable);
+			m.put("fieldList", fieldList);
+			logger.debug("json=" + JsonUtil.encode(m, true));
+			Response ret = new JsonResponse(JsonResponse.SUCCESS, m);
+			return ret;
+		}
 	}
 
 }
