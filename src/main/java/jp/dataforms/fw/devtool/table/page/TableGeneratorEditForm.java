@@ -39,6 +39,7 @@ import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
+import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
 import jp.dataforms.fw.util.JsonUtil;
@@ -667,20 +668,6 @@ public class TableGeneratorEditForm extends EditForm {
 	}
 
 	/**
-	 * 指定されたテーブルのフィールドリストを取得します。
-	 * @param func 機能(パッケージ)名。
-	 * @param tableName テーブル名。
-	 * @return フィールドリスト。
-	 * @throws Exception 例外。
-	 */
-	public List<Map<String, Object>> queryFieldList(final String func, final String tableName) throws Exception {
-		TableManagerDao dao = new TableManagerDao(this);
-		List<Map<String, Object>> ret = dao.getTableColumnList(func, tableName);
-		logger.debug("ret=" + JsonUtil.encode(ret, true));
-		return ret;
-	}
-
-	/**
 	 * 既存テーブルのインポートを行います。
 	 * @param param パラメータ。
 	 * @return テーブル構造情報。
@@ -692,15 +679,17 @@ public class TableGeneratorEditForm extends EditForm {
 		logger.debug("importTable=" + importTable);
 		String func = (String) param.get("functionSelect");
 		logger.debug("func=" + func);
-		TableManagerDao dao = new TableManagerDao(this);
+		JndiDataSource ds = DataFormsServlet.getConf().getOriginalJndiDataSource();
+		TableManagerDao dao = new TableManagerDao(ds);
 		Map<String, Object> m = dao.queryTableInfo(importTable);
 		TableInfoEntity e = new TableInfoEntity(m);
 		String tblname = importTable + "_table";
 		m.put("tableClassName", StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(tblname)));
 		m.put("tableComment", e.getRemarks());
 		m.put("updateInfoFlag", "0");
-		List<Map<String, Object>> fieldList = this.queryFieldList(func, importTable);
+		List<Map<String, Object>> fieldList = dao.getTableColumnList(func, importTable);
 		m.put("fieldList", fieldList);
+		logger.debug("json=" + JsonUtil.encode(m, true));
 		Response ret = new JsonResponse(JsonResponse.SUCCESS, m);
 		return ret;
 	}

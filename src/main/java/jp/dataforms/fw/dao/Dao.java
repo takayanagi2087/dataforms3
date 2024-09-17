@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,6 +56,7 @@ import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -155,6 +160,48 @@ public class Dao implements JDBCConnectableObject {
 		init(cobj);
 	}
 
+	/**
+	 * application.jndiDataSource以外のデータソース。
+	 */
+		private JndiDataSource dataSource =  null;
+	
+	/**
+	 * コンストラクタ。
+	 * <pre>
+	 * このコンストラクタを使用した場合、
+	 * connectionのクローズを行ってください。
+	 * </pre>
+	 * @param ds JNDIデータソース。
+	 * @throws Exception 例外。
+	 */
+	public Dao(final JndiDataSource ds) throws Exception {
+		this.dataSource = ds;
+		JDBCConnectableObject cobj = new JDBCConnectableObject() {
+			/**
+			 * JDBC接続。
+			 */
+			private Connection connection = null;
+			@Override
+			public Connection getConnection() {
+				if (this.connection == null) {
+					try {
+						Context initContext = new InitialContext();
+						String jndiPrefix = Dao.this.dataSource.getJndiPrefix();
+						String originDs = Dao.this.dataSource.getDataSource();
+						String dspath = jndiPrefix + originDs;
+						DataSource dataSource = (DataSource) initContext.lookup(dspath);
+						this.connection = dataSource.getConnection();
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+				return this.connection;
+			}
+		};
+		this.init(cobj);
+	}
+	
+	
 	/**
 	 * DB接続環境を初期化します。
 	 * @param cobj JDBC接続可能Object。

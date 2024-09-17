@@ -150,6 +150,17 @@ public class ConfUtil {
 		public JndiDataSource() {
 			
 		}
+		
+		/**
+		 * コンストラクタ。
+		 * @param jndiPrefix JNDIデータソースの前につける文字列。
+		 * @param dataSource 使用するJNDIデータソースを指定する。
+		 */
+		public JndiDataSource(String jndiPrefix, String dataSource) {
+			this.jndiPrefix = jndiPrefix;
+			this.dataSource = dataSource;
+			
+		}
 	}
 	
 	/**
@@ -634,11 +645,14 @@ public class ConfUtil {
 		 * @return 移行元のJNDIデータソース。
 		 */
 		public JndiDataSource getOriginalJndiDataSource() {
-			JndiDataSource ds = this.getApplication().getJndiDataSource();
+			String prefix = this.getApplication().getJndiDataSource().getJndiPrefix();
+			String dataSource = this.getApplication().getJndiDataSource().getDataSource();
 			if (this.getDevelopmentTool().getOriginDataSource() != null) {
-				ds.setDataSource(this.getDevelopmentTool().getOriginDataSource());
+				dataSource = this.getDevelopmentTool().getOriginDataSource();
 			}
-			return ds;
+			
+			JndiDataSource ret = new JndiDataSource(prefix, dataSource);
+			return ret;
 		}
 	}
 	
