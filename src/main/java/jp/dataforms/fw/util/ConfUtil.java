@@ -75,6 +75,11 @@ public class ConfUtil {
 		private String fieldLayout = null;
 		
 		/**
+		 * 移行元のDB設定。
+		 */
+		private String originDataSource = null;
+		
+		/**
 		 * コンストラクタ。
 		 */
 		public DevelopmentTool() {
@@ -622,6 +627,18 @@ public class ConfUtil {
 		private static Conf readJson(final String jsonc) {
 			Conf appConf  =  (Conf) JsonUtil.decode(jsonc, Conf.class);
 			return appConf;
+		}
+		
+		/**
+		 * 移行元のJNDIデータソースを取得します。
+		 * @return 移行元のJNDIデータソース。
+		 */
+		public JndiDataSource getOriginalJndiDataSource() {
+			JndiDataSource ds = this.getApplication().getJndiDataSource();
+			if (this.getDevelopmentTool().getOriginDataSource() != null) {
+				ds.setDataSource(this.getDevelopmentTool().getOriginDataSource());
+			}
+			return ds;
 		}
 	}
 	
