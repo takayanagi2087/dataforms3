@@ -125,7 +125,8 @@ public final class WebAuthnUtil {
 		RegistrationRequest registrationRequest = new RegistrationRequest(ao, cdj);
 		RegistrationParameters registrationParameters = new RegistrationParameters(serverProperty, null, userVerificationRequired, userPresenceRequired);
 		RegistrationData registrationData = webAuthnManager.parse(registrationRequest);
-		webAuthnManager.validate(registrationData, registrationParameters);
+//		webAuthnManager.validate(registrationData, registrationParameters);
+		webAuthnManager.verify(registrationData, registrationParameters);
 		logger.debug("AttestationObject:" + registrationData.getAttestationObject().toString());
 		logger.debug("CollectedClientData:" + registrationData.getCollectedClientData().toString());
 		AttestationObjectConverter attestationObjectConverter = new AttestationObjectConverter(new ObjectConverter());
@@ -195,7 +196,8 @@ public final class WebAuthnUtil {
 		WebAuthnManager webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
 		AuthenticationData authenticationData = null;
 		authenticationData = webAuthnManager.parse(authenticationRequest);
-		authenticationData = webAuthnManager.validate(authenticationData, authenticationParameters);
+//		authenticationData = webAuthnManager.validate(authenticationData, authenticationParameters);
+		authenticationData = webAuthnManager.verify(authenticationData, authenticationParameters);
 		long count = authenticationData.getAuthenticatorData().getSignCount();
 		logger.debug("signCount=" + count);
 		return authenticationData;
