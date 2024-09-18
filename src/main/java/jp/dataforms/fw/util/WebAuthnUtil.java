@@ -199,7 +199,7 @@ public final class WebAuthnUtil {
 //		authenticationData = webAuthnManager.validate(authenticationData, authenticationParameters);
 		authenticationData = webAuthnManager.verify(authenticationData, authenticationParameters);
 		long count = authenticationData.getAuthenticatorData().getSignCount();
-		logger.debug("signCount=" + count);
+		logger.debug("credentialId=" + authenticationData.getCredentialId() + "signCount=" + count);
 		return authenticationData;
 
 	}

@@ -484,6 +484,13 @@ public class LoginForm extends Form {
 			try {
 				AuthenticationData authenticationData = WebAuthnUtil.checkAuthenticationData(p, credentialRecord, serverProperty);
 				logger.debug("authenticationData=" + authenticationData.toString());
+				HttpSession session = this.getPage().getRequest().getSession();
+				@SuppressWarnings("unchecked")
+				Map<String, Object> webauthnRec = (Map<String, Object>) session.getAttribute(WEB_AUTHN_INFO);
+				WebAuthnTable.Entity e = new WebAuthnTable.Entity(webauthnRec);
+				logger.debug("webauthnRec=" + webauthnRec);
+				WebAuthnDao dao = new WebAuthnDao(this);
+				dao.updateSignCount(e.getWebAuthnId(), authenticationData.getAuthenticatorData().getSignCount());
 			} catch (DataConversionException e) {
 				throw new ApplicationException(getPage(), "error.badpasskey");
 			}

@@ -6,6 +6,7 @@ import java.util.Map;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.JDBCConnectableObject;
 import jp.dataforms.fw.dao.SingleTableQuery;
+import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.util.WebAuthnUtil;
 
 /**
@@ -151,5 +152,20 @@ public class WebAuthnDao extends Dao {
 		WebAuthnTable.Entity p = new WebAuthnTable.Entity();
 		p.setWebAuthnId(webAuthenId);
 		this.executeDelete(table, p.getMap());
+	}
+	
+	/**
+	 * 認証回数を更新します。
+	 * @param webAuthnId webauthnテーブルのレコードID。
+	 * @param signCount 認証回数。
+	 * @throws Exception 例外。
+	 */
+	public void updateSignCount(final Long webAuthnId, final Long signCount) throws Exception {
+		WebAuthnTable.Entity p = new WebAuthnTable.Entity();
+		p.setWebAuthnId(webAuthnId);
+		p.setSignCount(signCount);
+		WebAuthnTable table = new WebAuthnTable();
+		FieldList uflist = new FieldList(table.getSignCountField(), table.getUpdateTimestampField());
+		this.executeUpdate(table, uflist, table.getPkFieldList(), p.getMap(), true);
 	}
 }

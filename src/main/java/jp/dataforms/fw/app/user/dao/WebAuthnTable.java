@@ -1,17 +1,19 @@
 package jp.dataforms.fw.app.user.dao;
 
 import java.util.Map;
-import jp.dataforms.fw.dao.Table;
-import jp.dataforms.fw.app.user.field.WebAuthnIdField;
+
 import jp.dataforms.fw.app.user.field.AttestationObjectField;
-import jp.dataforms.fw.util.NumberUtil;
-import jp.dataforms.fw.app.user.field.UserIdField;
 import jp.dataforms.fw.app.user.field.AuthIdField;
-import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
-import jp.dataforms.fw.app.user.field.PlatformField;
-import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
 import jp.dataforms.fw.app.user.field.AuthTypeField;
+import jp.dataforms.fw.app.user.field.AuthenticatorAttachmentField;
+import jp.dataforms.fw.app.user.field.AuthenticatorNameField;
 import jp.dataforms.fw.app.user.field.CollectedClientDataField;
+import jp.dataforms.fw.app.user.field.PlatformField;
+import jp.dataforms.fw.app.user.field.SignCountField;
+import jp.dataforms.fw.app.user.field.UserIdField;
+import jp.dataforms.fw.app.user.field.WebAuthnIdField;
+import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.util.NumberUtil;
 
 
 /**
@@ -27,13 +29,14 @@ public class WebAuthnTable extends Table {
 		this.setComment("WebAuthenテーブル");
 		this.addPkField(new WebAuthnIdField()).setNotNull(true); //WebAuth情報のID
 		this.addField(new AuthenticatorNameField()); //認証機器の名称
-		this.addField(new UserIdField()); //ユーザを示すID。
+		this.addField(new UserIdField()); //ユーザを示すID
 		this.addField(new PlatformField()); //プラットフォーム
 		this.addField(new AuthIdField()); //認証情報ID
 		this.addField(new AuthTypeField()); //認証タイプ
 		this.addField(new AuthenticatorAttachmentField()); //AuthenticatorAttachment
 		this.addField(new AttestationObjectField()); //AttestationObject
 		this.addField(new CollectedClientDataField()); //CollectedClientData
+		this.addField(new SignCountField()); //認証回数
 		this.addUpdateInfoFields();
 	}
 
@@ -51,7 +54,7 @@ public class WebAuthnTable extends Table {
 		public static final String ID_WEB_AUTHN_ID = "webAuthnId";
 		/** 認証機器の名称のフィールドID。 */
 		public static final String ID_AUTHENTICATOR_NAME = "authenticatorName";
-		/** ユーザを示すID。のフィールドID。 */
+		/** ユーザを示すIDのフィールドID。 */
 		public static final String ID_USER_ID = "userId";
 		/** プラットフォームのフィールドID。 */
 		public static final String ID_PLATFORM = "platform";
@@ -65,6 +68,8 @@ public class WebAuthnTable extends Table {
 		public static final String ID_ATTESTATION_OBJECT = "attestationObject";
 		/** CollectedClientDataのフィールドID。 */
 		public static final String ID_COLLECTED_CLIENT_DATA = "collectedClientData";
+		/** 認証回数のフィールドID。 */
+		public static final String ID_SIGN_COUNT = "signCount";
 
 		/**
 		 * コンストラクタ。
@@ -112,16 +117,16 @@ public class WebAuthnTable extends Table {
 		}
 
 		/**
-		 * ユーザを示すID。を取得します。
-		 * @return ユーザを示すID。。
+		 * ユーザを示すIDを取得します。
+		 * @return ユーザを示すID。
 		 */
 		public java.lang.Long getUserId() {
 			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_USER_ID));
 		}
 
 		/**
-		 * ユーザを示すID。を設定します。
-		 * @param userId ユーザを示すID。。
+		 * ユーザを示すIDを設定します。
+		 * @param userId ユーザを示すID。
 		 */
 		public void setUserId(final java.lang.Long userId) {
 			this.getMap().put(Entity.ID_USER_ID, userId);
@@ -223,6 +228,22 @@ public class WebAuthnTable extends Table {
 			this.getMap().put(Entity.ID_COLLECTED_CLIENT_DATA, collectedClientData);
 		}
 
+		/**
+		 * 認証回数を取得します。
+		 * @return 認証回数。
+		 */
+		public java.lang.Long getSignCount() {
+			return NumberUtil.longValueObject(this.getMap().get(Entity.ID_SIGN_COUNT));
+		}
+
+		/**
+		 * 認証回数を設定します。
+		 * @param signCount 認証回数。
+		 */
+		public void setSignCount(final java.lang.Long signCount) {
+			this.getMap().put(Entity.ID_SIGN_COUNT, signCount);
+		}
+
 
 	}
 
@@ -243,8 +264,8 @@ public class WebAuthnTable extends Table {
 	}
 
 	/**
-	 * ユーザを示すID。フィールドを取得します。
-	 * @return ユーザを示すID。フィールド。
+	 * ユーザを示すIDフィールドを取得します。
+	 * @return ユーザを示すIDフィールド。
 	 */
 	public UserIdField getUserIdField() {
 		return (UserIdField) this.getField(Entity.ID_USER_ID);
@@ -296,6 +317,14 @@ public class WebAuthnTable extends Table {
 	 */
 	public CollectedClientDataField getCollectedClientDataField() {
 		return (CollectedClientDataField) this.getField(Entity.ID_COLLECTED_CLIENT_DATA);
+	}
+
+	/**
+	 * 認証回数フィールドを取得します。
+	 * @return 認証回数フィールド。
+	 */
+	public SignCountField getSignCountField() {
+		return (SignCountField) this.getField(Entity.ID_SIGN_COUNT);
 	}
 
 
