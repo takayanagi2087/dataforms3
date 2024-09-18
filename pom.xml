@@ -17,7 +17,7 @@
 		<!-- Java VMのパス　-->
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-		<log4j.version>2.23.1</log4j.version>
+		<log4j.version>2.24.0</log4j.version>
 		<poi.version>5.3.0</poi.version>
 	</properties>
 	<repositories>
@@ -33,7 +33,7 @@
 			<name>deployRepository</name>
 			<url>${env.RREP}</url>
 		</repository>
-	</distributionManagement>	
+	</distributionManagement>
 	<!-- 依存ライブラリの設定 -->
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -43,7 +43,8 @@
 			<version>1.18.32</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+		<!--
+		https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
@@ -56,7 +57,8 @@
 			<version>10.17.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api -->
+		<!--
+		https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api -->
 		<dependency>
 			<groupId>jakarta.activation</groupId>
 			<artifactId>jakarta.activation-api</artifactId>
@@ -83,23 +85,33 @@
 			<artifactId>commons-text</artifactId>
 			<version>1.11.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+		<!--
+		https://mvnrepository.com/artifact/commons-validator/commons-validator -->
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.8.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+		<!--
+		https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.4</version>
 		</dependency>
 		<!-- LOG出力ライブラリ -->
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
 		<!-- Excel出力を使う場合はPOIを依存ライブラリに追加 -->
@@ -163,9 +175,9 @@
 			<version>1.7.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>jp.dataforms</groupId>
-		    <artifactId>ExcelToXSLFO</artifactId>
-		    <version>1.04</version>
+			<groupId>jp.dataforms</groupId>
+			<artifactId>ExcelToXSLFO</artifactId>
+			<version>1.04</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -250,9 +262,11 @@
 							<executable>${env.JSDOC}</executable>
 							<arguments>
 								<argument>-d</argument>
-								<argument>target/classes/META-INF/resources/doc/jsdoc</argument>
+								<argument>
+									target/classes/META-INF/resources/doc/jsdoc</argument>
 								<argument>-r</argument>
-								<argument>src/main/java/META-INF/resources/dataforms</argument>
+								<argument>
+									src/main/java/META-INF/resources/dataforms</argument>
 							</arguments>
 						</configuration>
 						<goals>
@@ -267,7 +281,8 @@
 							<executable>${env.MAKEVER}</executable>
 							<arguments>
 								<argument>${project.basedir}</argument>
-								<argument>${project.version}-${maven.build.timestamp}</argument>
+								<argument>
+									${project.version}-${maven.build.timestamp}</argument>
 							</arguments>
 						</configuration>
 						<goals>
