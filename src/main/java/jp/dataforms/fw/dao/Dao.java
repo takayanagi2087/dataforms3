@@ -139,6 +139,7 @@ public class Dao implements JDBCConnectableObject {
 
 	@Override
 	public Connection getConnection() {
+		logger.debug("this.jdbcConnectableObject:" + this.jdbcConnectableObject);
 		return this.jdbcConnectableObject.get().getConnection();
 	}
 
@@ -163,7 +164,12 @@ public class Dao implements JDBCConnectableObject {
 	/**
 	 * application.jndiDataSource以外のデータソース。
 	 */
-		private JndiDataSource dataSource =  null;
+	private JndiDataSource dataSource =  null;
+
+	/**
+	 * JNDI指定用接続オブジェクト。
+	 */
+	private JDBCConnectableObject jndiConnectableObject = null;
 	
 	/**
 	 * コンストラクタ。
@@ -191,6 +197,7 @@ public class Dao implements JDBCConnectableObject {
 						String dspath = jndiPrefix + originDs;
 						DataSource dataSource = (DataSource) initContext.lookup(dspath);
 						this.connection = dataSource.getConnection();
+						this.connection.setAutoCommit(false);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -198,6 +205,7 @@ public class Dao implements JDBCConnectableObject {
 				return this.connection;
 			}
 		};
+		this.jndiConnectableObject = cobj;	// 弱参照で消えてしまわないようにする。
 		this.init(cobj);
 	}
 	
