@@ -100,6 +100,9 @@ export class TableGeneratorEditForm extends EditForm {
 			this.get("updateInfoFlag").prop("checked", true);
 		}
 		let fieldList = this.getComponent("fieldList");
+		
+		logger.debug("fieldList=", fieldList);
+		
 		fieldList.setTableData(data.fieldList);
 	}
 
@@ -111,7 +114,8 @@ export class TableGeneratorEditForm extends EditForm {
 			let m = this.getWebMethod("importTable");
 			let importTable = this.getFieldValue("importTable");
 			let func = this.getFieldValue("functionSelect");
-			let r = await m.execute("importTable=" + importTable + "&functionSelect=" + func);
+			let packageName = this.getFieldValue("packageName");
+			let r = await m.execute("importTable=" + importTable + "&functionSelect=" + func + "&packageName=" + packageName);
 			if (r.status == JsonResponse.SUCCESS) {
 				this.setTableInfo(r.result);
 				this.find(".importFields").toggle();

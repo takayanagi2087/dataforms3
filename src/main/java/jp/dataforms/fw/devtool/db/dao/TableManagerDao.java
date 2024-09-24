@@ -928,11 +928,12 @@ public class TableManagerDao extends Dao {
 	/**
 	 * フィールド情報を取得します。
 	 * @param func 機能(パッケージ)名。
+	 * @param pkg パッケージ。
 	 * @param rs 結果セット。
 	 * @return フィールド情報。
 	 * @throws Exception 例外。
 	 */
-	private Map<String, Object> getTableClassFieldInfo(final String func, final ResultSet rs) throws Exception {
+	private Map<String, Object> getTableClassFieldInfo(final String func, final String pkg, final ResultSet rs) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
 		Map<String, Object> colinfo = new HashMap<String, Object>();
 		String name = rs.getString("COLUMN_NAME");
@@ -940,7 +941,8 @@ public class TableManagerDao extends Dao {
 		String fieldClassName = StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(name + "_field"));
 		colinfo.put("fieldClassName", fieldClassName);
 		if (func != null && func.length() > 0) {
-			colinfo.put("packageName", func.substring(1) + ".field");
+//			colinfo.put("packageName", func.substring(1) + ".field");
+			colinfo.put("packageName", pkg.replaceAll("\\.dao$", ".field"));
 		}
 		colinfo.put("superPackageName", WebComponent.BASE_PACKAGE + ".field.sqltype");
 		String type = rs.getString("TYPE_NAME");
@@ -1018,11 +1020,12 @@ public class TableManagerDao extends Dao {
 	/**
 	 * テーブル構造取得します。
 	 * @param func 機能(パッケージ)名。
+	 * @param pkg パッケージ。
 	 * @param tblname テーブル名。
 	 * @return テーブル構造。
 	 * @throws Exception 例外。
 	 */
-	public List<Map<String, Object>> getTableColumnList(final String func, final String tblname) throws Exception {
+	public List<Map<String, Object>> getTableColumnList(final String func, final String pkg, final String tblname) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
 		Connection conn = this.getConnection();
 		DatabaseMetaData md = conn.getMetaData();
@@ -1031,7 +1034,7 @@ public class TableManagerDao extends Dao {
 		ResultSet rs = md.getColumns(conn.getCatalog(), schema, gen.convertTableNameForDatabaseMetaData(tblname), "%");
 		try {
 			while (rs.next()) {
-				Map<String, Object> m = this.getTableClassFieldInfo(func, rs);
+				Map<String, Object> m = this.getTableClassFieldInfo(func, pkg, rs);
 				collist.add(m);
 			}
 		} finally {

@@ -169,6 +169,7 @@ public class Dao implements JDBCConnectableObject {
 	/**
 	 * JNDI指定用接続オブジェクト。
 	 */
+	@SuppressWarnings("unused")
 	private JDBCConnectableObject jndiConnectableObject = null;
 	
 	/**

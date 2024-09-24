@@ -680,6 +680,7 @@ public class TableGeneratorEditForm extends EditForm {
 		logger.debug("importTable=" + importTable);
 		String func = (String) param.get("functionSelect");
 		logger.debug("func=" + func);
+		String pkg = (String) param.get("packageName");
 		JndiDataSource ds = DataFormsServlet.getConf().getOriginalJndiDataSource();
 		TableManagerDao dao = new TableManagerDao(ds);
 		try (Connection conn = dao.getConnection()) {
@@ -689,7 +690,7 @@ public class TableGeneratorEditForm extends EditForm {
 			m.put("tableClassName", StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(tblname)));
 			m.put("tableComment", e.getRemarks());
 			m.put("updateInfoFlag", "0");
-			List<Map<String, Object>> fieldList = dao.getTableColumnList(func, importTable);
+			List<Map<String, Object>> fieldList = dao.getTableColumnList(func, pkg, importTable);
 			m.put("fieldList", fieldList);
 			logger.debug("json=" + JsonUtil.encode(m, true));
 			Response ret = new JsonResponse(JsonResponse.SUCCESS, m);
