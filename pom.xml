@@ -211,7 +211,7 @@
 							<resources>
 								<resource>
 									<directory>src/main/java/META-INF/resources</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 							<outputDirectory>target/classes/META-INF/resources</outputDirectory>
@@ -228,7 +228,7 @@
 							<resources>
 								<resource>
 									<directory>src/main/java/jp/dataforms</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 							<outputDirectory>target/classes/jp/dataforms</outputDirectory>

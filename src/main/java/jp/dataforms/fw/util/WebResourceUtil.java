@@ -145,7 +145,7 @@ public final class WebResourceUtil {
 		return ret;
 	}
 
-	
+
 	/**
 	 * html,js,css等のWEBリソースを取得します。
 	 * @param path パス。
@@ -162,6 +162,68 @@ public final class WebResourceUtil {
 		return ret;
 	}
 
+	
+	/**
+	 * 実ファイルを読み込みます。
+	 * @param rpath 実ファイルのパス。
+	 * @return ファイルの内容。
+	 * @throws Exception 例外。
+	 */
+	private static byte[] readBinaryFile(final String rpath) throws Exception {
+		byte[] ret = null;
+		try (InputStream is = new FileInputStream(rpath)) {
+			ret = FileUtil.readInputStream(is);
+		}
+		return ret;
+	}
+	
+	
+	/**
+	 * Jarからファイルを読み込みます。
+	 * @param path ファイルのバス。
+	 * @return ファイルの内容。
+	 * @throws Exception 例外。
+	 */
+	private static byte[] readJarBinaryFile(final String path) throws Exception {
+		byte[] ret = null;
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		URL url = classLoader.getResource("/META-INF/resources" + path);
+		logger.debug("readJarFile path=" + path);
+		logger.debug("readJarFile url=" + url);
+		if (url != null) {
+			JarURLConnection conn = (JarURLConnection) url.openConnection();
+			try (InputStream is = conn.getInputStream()) {
+				ret = FileUtil.readInputStream(is);
+			}
+		}
+		return ret;
+	}
+	
+	
+	/**
+	 * 画像の等のバイナリWebリソースを取得します。
+	 * @param path パス。
+	 * @return バイナリWebリソース。
+	 * @throws Exception 例外。
+	 */
+	public static byte[] getBinaryWebResource(final String path) throws Exception {
+		byte[] ret = null;
+		String rpath = Page.getServlet().getServletContext().getRealPath(path);
+		logger.debug("readFile rpath=" + rpath);
+		if (rpath != null) {
+			File f = new File(rpath);
+			if (f.exists()) {
+				ret = WebResourceUtil.readBinaryFile(rpath);
+			} else {
+				ret = WebResourceUtil.readJarBinaryFile(path);
+			}
+		} else {
+			ret = WebResourceUtil.readJarBinaryFile(path);
+		}
+		return ret;
+	}
+	
+	
 	/**
 	 * 指定されたパスのWebリソースの更新日付を取得します。
 	 * @param path パス。

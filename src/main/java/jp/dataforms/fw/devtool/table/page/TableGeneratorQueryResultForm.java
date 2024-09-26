@@ -114,7 +114,6 @@ public class TableGeneratorQueryResultForm extends QueryResultForm {
 		} finally {
 			template.delete();
 		}
-//		ret = new JsonResponse(JsonResponse.INVALID, "テスト");
 		return ret;
 	}
 }

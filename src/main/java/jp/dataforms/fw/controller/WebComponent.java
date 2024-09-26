@@ -578,21 +578,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @throws Exception 例外。
 	 */
 	public byte[] getBinaryWebResource(final String path) throws Exception {
-		byte[] ret = null;
-		URI uri = new URI(getWebResourceUrl(path));
-		URL url = uri.toURL();
-		logger.debug("webResourceUrl=" + url.toString());
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.connect();
-		try {
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				InputStream is = conn.getInputStream();
-				ret = FileUtil.readInputStream(is);
-			}
-		} finally {
-			conn.disconnect();
-		}
-		return ret;
+		return WebResourceUtil.getBinaryWebResource(path);
 	}
 
 	/**
