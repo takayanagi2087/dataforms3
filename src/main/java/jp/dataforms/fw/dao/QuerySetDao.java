@@ -255,16 +255,15 @@ public class QuerySetDao extends Dao {
 	/**
 	 * 関連問合せの結果を取得します。
 	 * @param q 関連問合せ。
-	 * @param data 検索条件データ。
 	 * @param ret 結果を登録するマップ。
 	 * @return テーブルID。
 	 * @throws Exception 例外。
 	 */
-	protected String setMultiRecordQueryResult(final Query q, final Map<String, Object> data,  final Map<String, Object> ret) throws Exception {
+	protected String setMultiRecordQueryResult(final Query q, final Map<String, Object> ret) throws Exception {
 		//Query query = this.getMainQuery();
 		if (this.getMultiRecordQueryKeyList() != null) {
 			q.setConditionFieldList(this.getMultiRecordQueryKeyList());
-			q.setConditionData(data);
+			q.setConditionData(ret);
 		}
 		String tid = q.getListId();
 		List<Map<String, Object>> list = this.executeQuery(q);
@@ -293,7 +292,7 @@ public class QuerySetDao extends Dao {
 		}
 		if (this.multiRecordQueryList != null) {
 			for (Query q: this.multiRecordQueryList) {
-				this.setMultiRecordQueryResult(q, data, ret);
+				this.setMultiRecordQueryResult(q, ret);
 			}
 		}
 		return ret;
