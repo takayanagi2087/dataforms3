@@ -6,7 +6,7 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
 
 /**
- * 問い合わせフォームHTMLジェネレータ。
+ * 編集フォームHTMLジェネレータ。
  *
  */
 public class EditFormHtmlGenerator extends FormHtmlGenerator {
@@ -22,7 +22,7 @@ public class EditFormHtmlGenerator extends FormHtmlGenerator {
 	}
 
 	/**
-	 * フォーム直下にフィールドを検索します。
+	 * フォーム直下のフィールドを検索します。
 	 * @param form フォーム。
 	 * @param field 検索するフィールド。
 	 * @return 見つかったフィールド。
