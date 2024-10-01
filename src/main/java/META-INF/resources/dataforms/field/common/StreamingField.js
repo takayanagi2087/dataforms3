@@ -71,9 +71,10 @@ export class StreamingField extends FileField {
 		let type = comp.prop("type");
 		if ("INPUT" == tag && type == "file") {
 			comp.after(html);
-		} else if (tag == "DIV") {
+		} else if (tag == "DIV" || tag == "SPAN") {
 			comp.html(html);
 			this.hideDelCheckbox();
+			this.find("div").remove();
 		}
 	}
 
