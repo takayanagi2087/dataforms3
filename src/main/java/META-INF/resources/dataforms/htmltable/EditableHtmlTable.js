@@ -287,7 +287,7 @@ export class EditableHtmlTable extends HtmlTable {
 			rowIndex = null;
 		}
 		let lidx = thisTable.addTr(rowIndex);
-		logger.log("lidx=" + lidx);
+//		logger.log("lidx=" + lidx);
 		this.onAddTr(thisTable.id + "[" + lidx + "]");
 		this.resetIdIndex();
 	}

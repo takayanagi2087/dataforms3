@@ -3,18 +3,28 @@ package jp.dataforms.fw.field.common;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.file.FileStore;
 import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.response.ImageResponse;
+import jp.dataforms.fw.util.JsonUtil;
 
 /**
  * 画像フィールドクラス。
  *
  */
 public class ImageField extends FileField<ImageData> {
+	
+	/**
+	 * Logger.
+	 */
+	private static Logger logger = LogManager.getLogger(ImageField.class);
+	
 	/**
 	 * サムネイル幅。
 	 */
@@ -128,6 +138,7 @@ public class ImageField extends FileField<ImageData> {
 		String key = (String) p.get("key");
 		if (key != null) {
 			 param = FileStore.decryptDownloadParameter(key);
+			 logger.debug("readImageData=" + JsonUtil.encode(param, true));
 		}
 		FileStore store = this.newFileStore(param);
 		FileObject fobj = store.readFileObject(param);
@@ -153,6 +164,7 @@ public class ImageField extends FileField<ImageData> {
 	 */
 	@WebMethod(useDB = true)
 	public ImageResponse downloadThumbnail(final Map<String, Object> param) throws Exception {
+		logger.debug("downloadThumbnail=" + JsonUtil.encode(param, true));
 		ImageData image = this.readImageData(param);
 		ImageResponse resp = new ImageResponse(image.getReducedImage(thumbnailWidth, thumbnailHeight));
 		return resp;

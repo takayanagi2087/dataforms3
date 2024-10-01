@@ -214,7 +214,7 @@ export class WebComponent {
 				if (id != null) {
 					sel += " " + this.convertSelector("#" + id);
 				}
-				logger.log("sel=" + sel);
+//				logger.log("sel=" + sel);
 				
 				ret = $(sel);
 //				logger.log("B:" + this.id + ":get(" + id + ") sel=" + sel + ",sel.length=" + ret.length);

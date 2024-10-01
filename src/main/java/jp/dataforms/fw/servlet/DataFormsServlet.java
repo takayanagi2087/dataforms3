@@ -1165,7 +1165,11 @@ public class DataFormsServlet extends HttpServlet {
     		logger.debug("param name  :" + p.getName());
     		if (filename != null) {
 				String name = p.getName();
-				map.put(name, p);
+				if (filename.length() > 0) {
+					map.put(name, p);
+				} else {
+					map.put(name, null);
+				}
     		} else {
 				String value = this.readString(p);
 	    		logger.debug("value  :" + value);

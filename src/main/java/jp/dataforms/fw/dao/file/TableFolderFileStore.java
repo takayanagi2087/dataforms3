@@ -155,7 +155,7 @@ public class TableFolderFileStore extends FileStore {
 	 */
 	@Override
 	public File makeTempFromFileItem(final Part part) throws Exception {
-		this.fileName = FileUtil.getFileName(part.getName());
+		this.fileName = FileUtil.getFileName(part.getSubmittedFileName());
 
 		File file = this.makeUniqFile();
 		FileOutputStream os = new FileOutputStream(file);
@@ -255,9 +255,12 @@ public class TableFolderFileStore extends FileStore {
 
 	@Override
 	public FileObject readFileObject(final Map<String, Object> param) throws Exception {
+		logger.debug("readFileObject() = " + param);
 		String folder = DataFormsServlet.getUploadDataFolder();
 		Long u = null;
-		if (param.get("u") instanceof BigDecimal) {
+		if (param.get("u") instanceof Double) {
+			u = ((Double) param.get("u")).longValue();
+		} else if (param.get("u") instanceof BigDecimal) {
 			u = ((BigDecimal) param.get("u")).longValue();
 		} else {
 			u = (Long) param.get("u");
