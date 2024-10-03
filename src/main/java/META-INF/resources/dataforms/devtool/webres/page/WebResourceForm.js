@@ -40,7 +40,7 @@ export class WebResourceForm extends Form {
 		this.get("generateJavascript").prop("checked", false);
 		super.setFormData(data);
 		if (data.htmlStatus == "0" || data.htmlStatus == "1") {
-			this.get("htmlTr").show();
+			this.find(".htmlTr").show();
 			this.get("generateHtmlButton").show();
 			this.get("noFormContent").prop("checked", false);
 			if (data.className.match(/Form$/) == null) {
@@ -51,7 +51,7 @@ export class WebResourceForm extends Form {
 				this.find("label.outputFormHtml").hide();
 			}
 		} else {
-			this.get("htmlTr").hide();
+			this.find(".htmlTr").hide();
 		}
 		if (data.javascriptStatus == "0" || data.javascriptStatus == "1") {
 			this.get("generateJavascriptButton").show();
