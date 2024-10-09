@@ -317,27 +317,51 @@ div.audioPlayer {
 /**
  * カレンダーテーブルのスタイル。
  */
-.calendarTable {
+table.calendarTable {
 	width: 100%;
 }
 
-.calendarTable th,.calendarTable td	{
+/**
+ * 各セルの幅設定。
+ */
+table.calendarTable th,table.calendarTable td	{
 	width: calc(100% / 7);
 }
 
-.calendarTable td {
+/**
+ * 日付のセルのスタイル設定。
+ */
+table.calendarTable td {
 	text-align: right;
 }
 
-.calendarTable th {
+/**
+ * thのスタイル設定。
+ */
+table.calendarTable th {
 	font-size: 160%;
 	font-weight: bold;
 }
-.calendarTable span.date {
-	font-size: 140%;
-	font-weight: bold;
-}
-div.boxCount {
-	text-align: right;
-} 
 
+/**
+ * 日付表示divのスタイル。
+ */
+table.calendarTable div.date {
+	font-weight: bold;
+	background-color: darkgray;
+}
+
+/**
+ * コンテンツ領域のスタイル。
+ */
+table.calendarTable div.contents {
+	text-align: left;
+	height: 50px;
+}
+
+/**
+ * 選択時のスタイル。
+ */
+table.calendarTable td.selected {
+	background-color:lightpink;
+}
