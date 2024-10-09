@@ -458,7 +458,6 @@ export class Page extends DataForms {
 						let id = $(el).attr("id");
 						if (id == null) {
 							let realId = ch.realId + "." + $(el).attr("data-id");
-							logger.log("realId=" + realId);
 							$(el).attr("id", realId);
 						}
 					});
@@ -478,7 +477,6 @@ export class Page extends DataForms {
 		$("[data-id]").each((_, el) => {
 			let id = $(el).attr("id");
 			if (id == null) {
-				logger.log("data-id=" + $(el).attr("data-id"));
 				$(el).attr("id", $(el).attr("data-id"));
 			}
 		});

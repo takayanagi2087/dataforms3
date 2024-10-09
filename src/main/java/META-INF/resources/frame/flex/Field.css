@@ -313,3 +313,31 @@ div.audioPlayer {
 .fileReceiverActive {
 	border: 2px solid #0B85A1;
 }
+
+/**
+ * カレンダーテーブルのスタイル。
+ */
+.calendarTable {
+	width: 100%;
+}
+
+.calendarTable th,.calendarTable td	{
+	width: calc(100% / 7);
+}
+
+.calendarTable td {
+	text-align: right;
+}
+
+.calendarTable th {
+	font-size: 160%;
+	font-weight: bold;
+}
+.calendarTable span.date {
+	font-size: 140%;
+	font-weight: bold;
+}
+div.boxCount {
+	text-align: right;
+} 
+
