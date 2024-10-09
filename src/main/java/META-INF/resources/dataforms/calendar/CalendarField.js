@@ -109,17 +109,13 @@ export class CalendarField extends Field {
 	 * @param {Event} ev イベント処理。
 	 */
 	onClickCell(ev) {
-		logger.log("ev=", ev);
 		let idx = $(ev.currentTarget).data("index");
-		logger.log("idx=" + idx);
 		let dateInfo = this.#calendarInfo["dateInfo" + idx];
 		if (dateInfo != null) {
 			let day = $(ev.currentTarget).data("day");
-			logger.log("date=" + day);
 			let date = new Date(this.#year, this.#month, parseInt(day));
 			let fmt = new SimpleDateFormat(this.#dateFormat);
 			this.#dateValue	= fmt.format(date);
-			logger.log("#dateValue=" + this.#dateValue);
 			this.selectDate(date);
 		}
 	}
@@ -131,7 +127,6 @@ export class CalendarField extends Field {
 	async onPrevMonth() {
 		let fmt = new SimpleDateFormat(this.#dateFormat);
 		let d = fmt.parse(this.#dateValue);
-		logger.log("d=", d);
 		d.setMonth(d.getMonth() - 1);
 		this.setValue(fmt.format(d));
 	}
@@ -142,7 +137,6 @@ export class CalendarField extends Field {
 	async onNextMonth() {
 		let fmt = new SimpleDateFormat(this.#dateFormat);
 		let d = fmt.parse(this.#dateValue);
-		logger.log("d=", d);
 		d.setMonth(d.getMonth() + 1);
 		this.setValue(fmt.format(d));
 	}
@@ -192,7 +186,6 @@ export class CalendarField extends Field {
 			this.find("table.calendarTable tbody tr").each((_, tr) => {
 				$(tr).find("td").each((_, td) => {
 					let dateInfo = this.#calendarInfo["dateInfo" + idx];
-					logger.log("dateInfo=", dateInfo);
 					if (dateInfo != null) {
 						let tag = this.getDateCellHtml(idx, dateInfo);
 						$(td).html(tag);
@@ -205,6 +198,7 @@ export class CalendarField extends Field {
 				});
 			});
 		}
+		this.selectDate(d);
 	}
 	
 	/**
