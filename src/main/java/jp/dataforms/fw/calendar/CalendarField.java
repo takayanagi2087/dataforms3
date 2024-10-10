@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,11 +43,6 @@ public class CalendarField extends Field<java.sql.Date> {
 	 */
 	private static final String ID_MONTH_YEAR = "monthYear";
 	
-	/**
-	 * 日付フィールドのID。
-	 */
-	private static final String ID_DATE_INFO = "dateInfo";
-
 	/**
 	 * カレンダーHTMLテーブル。
 	 */
@@ -304,11 +300,9 @@ public class CalendarField extends Field<java.sql.Date> {
 	 * @throws Exception 例外。
 	 */
 	protected Map<String, Object> getDateInfo(final java.sql.Date d) throws Exception {
+		SimpleDateFormat dfmt = new SimpleDateFormat(MessagesUtil.getMessage(this.getPage(), this.dateFormat));
 		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("date", d);
-		Calendar ical = Calendar.getInstance();
-		ical.setTime(d);
-		ret.put("day", ical.get(Calendar.DATE));
+		ret.put("date", dfmt.format(d));
 		return ret;
 	}
 	
@@ -318,7 +312,7 @@ public class CalendarField extends Field<java.sql.Date> {
 	 * @return カレンダー情報。
 	 * @throws Exception 例外。
 	 */
-	private Map<String, Object> getCalendarInfo(final java.sql.Date currentDate) throws Exception {
+	protected Map<String, Object> getCalendarInfo(final java.sql.Date currentDate) throws Exception {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		ret.put(ID_CURRENT_MONTH, currentDate);
 		SimpleDateFormat fmt = new SimpleDateFormat(this.yearMonthFormat, this.locale);
@@ -327,22 +321,19 @@ public class CalendarField extends Field<java.sql.Date> {
 		logger.debug("month text=" + text);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentDate);
-		
+		List<Map<String, Object>> dateList = new ArrayList<Map<String, Object>>();
 		int week = cal.get(Calendar.DAY_OF_WEEK) - 1;
-		int lastDate = cal.getActualMaximum(Calendar.DATE);
 		for (int i = 0; i < CALENDAR_CELLS; i++) {
 			int date = (i - week) + 1;
-			if (date < 1 || lastDate < date) {
-				ret.put(ID_DATE_INFO + i, null);
-			} else {
-				Calendar ical = Calendar.getInstance();
-				ical.setTime(currentDate);
-				ical.add(Calendar.DATE, (date - 1));
-				java.sql.Date d = new java.sql.Date(ical.getTime().getTime());
-				Map<String, Object> info = this.getDateInfo(d);
-				ret.put(ID_DATE_INFO + i, info);
-			}
+			Calendar ical = Calendar.getInstance();
+			ical.setTime(currentDate);
+			ical.add(Calendar.DATE, (date - 1));
+			java.sql.Date d = new java.sql.Date(ical.getTime().getTime());
+			Map<String, Object> dinfo = this.getDateInfo(d);
+			dateList.add(dinfo);
+			
 		}
+		ret.put("dateList", dateList);
 		return ret;
 	}
 	
@@ -365,6 +356,24 @@ public class CalendarField extends Field<java.sql.Date> {
 	}
 	
 	/**
+	 * カレンダー情報を取得します。
+	 * @param p パラメータ。
+	 * @return カレンダー情報。
+	 * @throws Exception 例外。
+	 */
+	public Map<String, Object> queryCalendarInfo(final Map<String, Object> p) throws Exception {
+		logger.debug("p=" + JsonUtil.encode(p));
+		String d = (String) p.get(this.getId());
+		this.setClientValue(d);
+		java.sql.Date date = this.getValue();
+		logger.debug("currentMonth=" + date);
+		java.sql.Date currentMonth = this.getFirstDateOfManth(date);
+		Map<String, Object> ret = this.getCalendarInfo(currentMonth);
+		return ret;
+	}
+
+	
+	/**
 	 * カレンダ情報マップを作成する。
 	 * @param p パラメータ。
 	 * @return カレンダ情報マップ。
@@ -372,16 +381,11 @@ public class CalendarField extends Field<java.sql.Date> {
 	 */
 	@WebMethod
 	public Response getCalenderInfo(final Map<String, Object> p) throws Exception {
-		logger.debug("p=" + JsonUtil.encode(p));
-		String d = (String) p.get("date");
-		this.setClientValue(d);
-		java.sql.Date date = this.getValue();
-		logger.debug("currentMonth=" + date);
-		java.sql.Date currentMonth = this.getFirstDateOfManth(date);
-		Map<String, Object> ret = this.getCalendarInfo(currentMonth);
+		Map<String, Object> ret = queryCalendarInfo(p);
 		Response resp = new JsonResponse(JsonResponse.SUCCESS, ret);
 		return resp;
 	}
+
 	
 	
 	@Override

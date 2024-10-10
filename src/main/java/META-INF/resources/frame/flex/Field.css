@@ -348,13 +348,28 @@ table.calendarTable th {
  */
 table.calendarTable div.date {
 	font-weight: bold;
+	background-color: beige
+}
+
+/**
+ * 日付表示divのスタイル(月外)。
+ */
+table.calendarTable div.outdate {
 	background-color: darkgray;
 }
+
 
 /**
  * コンテンツ領域のスタイル。
  */
 table.calendarTable div.contents {
+	text-align: left;
+	height: 50px;
+}
+/**
+ * コンテンツ領域のスタイル(月外)。
+ */
+table.calendarTable div.outcontents {
 	text-align: left;
 	height: 50px;
 }

@@ -21,21 +21,6 @@ export class CalendarField extends Field {
 	#dateValue = null;
 
 	/**
-	 * 年。
-	 */
-	#year = null;
-	
-	/**
-	 * 月。
-	 */
-	#month = null;
-	
-	/**
-	 * 日。
-	 */
-	#day = null;
-		
-	/**
 	 * 日付フォーマット。
 	 */
 	#dateFormat = null;
@@ -44,6 +29,10 @@ export class CalendarField extends Field {
 	 * カレンダー情報。
 	 */
 	#calendarInfo = null;
+	
+	get calendarInfo() {
+		return this.#calendarInfo;
+	}
 	
 	/**
 	 * コンストラクタ。
@@ -59,6 +48,7 @@ export class CalendarField extends Field {
 	attach() {
 		super.attach();
 		this.get().html(this.calendarHtml);
+		this.get().append("<input type='hidden' name='" + this.id + "' />");
 		for (let i = 0; i < this.weekList.length; i++) {
 			this.find(".week" + i).text(this.weekList[i]);
 		}
@@ -88,20 +78,20 @@ export class CalendarField extends Field {
 
 	/**
 	 * 日付を選択します。
-	 * @param {Date} d 日付。
+	 * @param {String} d 日付。
 	 */
 	selectDate(d) {
-		this.#year = d.getFullYear();
-		this.#month = d.getMonth();
-		this.#day = d.getDate();
+		logger.log("this.#dateValue=" + this.#dateValue + ", " + d);
+		this.#dateValue = d;
 		this.find("table.calendarTable td").each((_, td) => {
-			let day = parseInt($(td).data("day"));
-			if (this.#day == day) {
+			let date = $(td).attr("data-date");
+			if (this.#dateValue == date) {
 				$(td).addClass("selected");
 			} else {
 				$(td).removeClass("selected");
 			}			
 		});
+		this.find("[name='" + this.id + "']").val(this.#dateValue);
 	}
 		
 	/**
@@ -109,15 +99,8 @@ export class CalendarField extends Field {
 	 * @param {Event} ev イベント処理。
 	 */
 	onClickCell(ev) {
-		let idx = $(ev.currentTarget).data("index");
-		let dateInfo = this.#calendarInfo["dateInfo" + idx];
-		if (dateInfo != null) {
-			let day = $(ev.currentTarget).data("day");
-			let date = new Date(this.#year, this.#month, parseInt(day));
-			let fmt = new SimpleDateFormat(this.#dateFormat);
-			this.#dateValue	= fmt.format(date);
-			this.selectDate(date);
-		}
+		let date = $(ev.currentTarget).attr("data-date");
+		this.selectDate(date);
 	}
 	
 		
@@ -149,7 +132,7 @@ export class CalendarField extends Field {
 	 * @param {Object} dateInfo 日付毎の情報。
 	 */
 	getDateContents(dateInfo) {
-		logger.log("dateInfo=", dateInfo);
+//		logger.log("dateInfo=", dateInfo);
 		return "";
 	}
 	
@@ -160,10 +143,38 @@ export class CalendarField extends Field {
 	 * @param {Object} dateInfo 日付情報。
 	 */	
 	getDateCellHtml(idx, dateInfo) {
-		let tag = '<div data-id="date' + idx + '" class="date">' + dateInfo.day + '</div>';
+		let fmt = new SimpleDateFormat(this.#dateFormat);
+		let selectDate = fmt.parse(this.#dateValue);
+		let d = fmt.parse(dateInfo.date);
+		let tag = "";
 		let contents = this.getDateContents(dateInfo);
-		tag += '<div class="contents">' + contents + '</div>';
+		if (selectDate.getFullYear() == d.getFullYear() && selectDate.getMonth() == d.getMonth()) {
+			tag += '<div data-id="date' + idx + '" class="date">' + d.getDate() + '</div>';
+			tag += "<div class='contents'>" + contents + "</div>";
+		} else {
+			tag += '<div data-id="date' + idx + '" class="outdate">' + (d.getMonth() + 1) + "/" + d.getDate() + '</div>';
+			tag += "<div class='outcontents'>" + contents + "</div>";
+		}
 		return tag;
+	}
+	
+	/**
+	 * カレンダーに表示する情報を取得します。
+	 * <pre>
+	 * 指定日付以外のパラメータが必要な場合、
+	 * このメソッドをオーバーライドしてください。
+	 * </pre>
+	 * @param {String} dateValue 日付情報。
+	 * @returns カレンダーに表示する情報。
+	 */
+	async getCalenderInfo(dateValue) {
+		let m = this.getWebMethod("getCalenderInfo");
+		let r = await m.execute(this.id + "=" + dateValue);
+		return r;
+	}
+	
+	async update() {
+		this.setValue(this.#dateValue);
 	}
 	
 	/**
@@ -174,31 +185,24 @@ export class CalendarField extends Field {
 		this.#dateValue = v;
 		let fmt = new SimpleDateFormat(this.#dateFormat);
 		let d = fmt.parse(this.#dateValue);
-		this.#year = d.getFullYear();
-		this.#month = d.getMonth();
-		this.#day = d.getDate();
-		let m = this.getWebMethod("getCalenderInfo");
-		let r = await m.execute("date=" + this.#dateValue);
+		let r = await this.getCalenderInfo(this.#dateValue);
 		if (r.status == JsonResponse.SUCCESS) {
+			logger.log("r=", r);
 			this.find(".monthYear").text(r.result.monthYear);
 			this.#calendarInfo = r.result;
+			let dateList = this.#calendarInfo.dateList;
 			let idx = 0;
 			this.find("table.calendarTable tbody tr").each((_, tr) => {
 				$(tr).find("td").each((_, td) => {
-					let dateInfo = this.#calendarInfo["dateInfo" + idx];
-					if (dateInfo != null) {
-						let tag = this.getDateCellHtml(idx, dateInfo);
-						$(td).html(tag);
-						$(td).attr("data-day", dateInfo.day);
-					} else {
-						$(td).html("");
-						$(td).attr("data-day", null);
-					}
+					let dateInfo = dateList[idx];
+					let tag = this.getDateCellHtml(idx, dateInfo);
+					$(td).html(tag);
+					$(td).attr("data-date", dateInfo.date);
 					idx++;
 				});
 			});
+			this.selectDate(this.#dateValue);
 		}
-		this.selectDate(d);
 	}
 	
 	/**
