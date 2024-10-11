@@ -621,7 +621,7 @@ public class TableManagerDao extends Dao {
 	 * @param tbl テーブル。
 	 * @throws Exception 例外。
 	 */
-	private void adjustSequence(final Table tbl) throws Exception {
+	public void adjustSequence(final Table tbl) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
 		if (gen.isSequenceSupported()) {
 			if (tbl.recordIdExists() && tbl.isAutoIncrementId()) {
@@ -631,12 +631,13 @@ public class TableManagerDao extends Dao {
 				} else {
 					String maxsql = gen.generateGetMaxValueSql(tbl, tbl.getIdField(), new FieldList(), null);
 					Long max = NumberUtil.longValueObject(this.executeScalarQuery(maxsql, null));
-					if (max != null) {
-						String dssql = gen.generateDropSequenceSql(tbl.getSequenceName());
-						this.executeUpdate(dssql, (Map<String, Object>) null);
-						String cssql = gen.generateCreateSequenceSql(tbl.getSequenceName(), max.longValue() + 1);
-						this.executeUpdate(cssql, (Map<String, Object>) null);
+					if (max == null) {
+						max = 0L;
 					}
+					String dssql = gen.generateDropSequenceSql(tbl.getSequenceName());
+					this.executeUpdate(dssql, (Map<String, Object>) null);
+					String cssql = gen.generateCreateSequenceSql(tbl.getSequenceName(), max.longValue() + 1);
+					this.executeUpdate(cssql, (Map<String, Object>) null);
 				}
 			}
 		}
