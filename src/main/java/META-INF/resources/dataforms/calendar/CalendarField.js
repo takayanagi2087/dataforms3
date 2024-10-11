@@ -174,7 +174,7 @@ export class CalendarField extends Field {
 	}
 	
 	async update() {
-		this.setValue(this.#dateValue);
+		await this.setValue(this.#dateValue);
 	}
 	
 	/**
