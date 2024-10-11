@@ -133,7 +133,7 @@ export class CalendarField extends Field {
 	 */
 	getDateContents(dateInfo) {
 //		logger.log("dateInfo=", dateInfo);
-		return "";
+		return "<div class='contents'></div>";
 	}
 	
 	
@@ -150,10 +150,10 @@ export class CalendarField extends Field {
 		let contents = this.getDateContents(dateInfo);
 		if (selectDate.getFullYear() == d.getFullYear() && selectDate.getMonth() == d.getMonth()) {
 			tag += '<div data-id="date' + idx + '" class="date">' + d.getDate() + '</div>';
-			tag += "<div class='contents'>" + contents + "</div>";
+			tag += contents;
 		} else {
 			tag += '<div data-id="date' + idx + '" class="outdate">' + (d.getMonth() + 1) + "/" + d.getDate() + '</div>';
-			tag += "<div class='outcontents'>" + contents + "</div>";
+			tag += contents;
 		}
 		return tag;
 	}
