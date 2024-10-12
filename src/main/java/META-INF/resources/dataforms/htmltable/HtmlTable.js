@@ -738,7 +738,7 @@ export class HtmlTable extends WebComponent {
 	 * @param {String} rowid 設定する行のID('tableid[idx]'形式)。
 	 */
 	onAddTr(rowid) {
-		logger.log("onAddTr(" + rowid + ")");
+//		logger.log("onAddTr(" + rowid + ")");
 	}
 
 	/**
