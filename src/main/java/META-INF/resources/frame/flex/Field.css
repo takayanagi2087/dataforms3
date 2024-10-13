@@ -331,7 +331,12 @@ table.calendarTable th,table.calendarTable td	{
 /**
  * 日付のセルのスタイル設定。
  */
-table.calendarTable td {
+ table.calendarTable tbody tr {
+	height: calc(100% / 6);
+ }
+
+ 
+ table.calendarTable td {
 	text-align: right;
 }
 
@@ -348,7 +353,8 @@ table.calendarTable th {
  */
 table.calendarTable div.date {
 	font-weight: bold;
-	background-color: beige
+	background-color: beige;
+	height: 20px;
 }
 
 /**
@@ -358,20 +364,12 @@ table.calendarTable div.outdate {
 	background-color: darkgray;
 }
 
-
 /**
  * コンテンツ領域のスタイル。
  */
 table.calendarTable div.contents {
 	text-align: left;
-	height: 50px;
-}
-/**
- * コンテンツ領域のスタイル(月外)。
- */
-table.calendarTable div.outcontents {
-	text-align: left;
-	height: 50px;
+	height: calc(100% - 18px);
 }
 
 /**
