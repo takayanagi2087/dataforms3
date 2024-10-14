@@ -1,7 +1,7 @@
 	// フォームの各フィールドの関連チェックを行う場合は、以下のvalidateFormメソッドを実装してください。
 	/**
 	 * フォームのデータをチェックします。
-	 * @param p パラメータ。
+	 * @param data POSTされたデータ。
 	 * @return 判定結果リスト。
 	 * @throws Exception 例外。
 	 */
