@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import jp.dataforms.fw.devtool.field.PagePatternSelectField;
 import jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorEditForm;
 import jp.dataforms.fw.devtool.query.page.SelectFieldHtmlTable;
@@ -13,6 +16,11 @@ import jp.dataforms.fw.util.JsonUtil;
  * 検索結果フォームのJavaソースジェネレータ。
  */
 public class EditFormGenerator extends FormSrcGenerator {
+	
+	/**
+	 * Logger.
+	 */
+	private Logger logger = LogManager.getLogger(EditFormGenerator.class);
 
 	/**
 	 * コンストラクタ。
@@ -91,6 +99,7 @@ public class EditFormGenerator extends FormSrcGenerator {
 				}
 			}
 		}
+		logger.debug("getMultiRecordFieldConfig()=" + sb.toString());
 		return sb.toString();
 	}
 
@@ -103,11 +112,15 @@ public class EditFormGenerator extends FormSrcGenerator {
 		StringBuilder sb = new StringBuilder();
 		String cls = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CLASS_NAME);
 		String conf = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CONFIG);
-		sb.append(this.getMultiRecordFieldConfig(data));
-		if (sb.length() > 0) {
-			sb.append("\n");
+		String pagePattern = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_PATTERN);
+		if (!"p9002".equals(pagePattern)) {
+			// 全レコード編集の場合このフィールドは不要。
+			sb.append(this.getMultiRecordFieldConfig(data));
+			if (sb.length() > 0) {
+				sb.append("\n");
+			}
+			sb.append(this.getFieldConfig(cls, conf));
 		}
-		sb.append(this.getFieldConfig(cls, conf));
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(DaoAndPageGeneratorEditForm.ID_MULTI_RECORD_QUERY_LIST);
 		for (Map<String, Object> m: list) {
@@ -125,7 +138,9 @@ public class EditFormGenerator extends FormSrcGenerator {
 	@Override
 	protected void setFormComponent(Template tmp, String formClassName, Map<String, Object> data) throws Exception {
 		tmp.replace(DaoAndPageGeneratorEditForm.ID_EDIT_FORM_CLASS_NAME, formClassName);
-		tmp.replace("fieldConfig", this.getFieldConfig(data));
+		String fieldConfig = this.getFieldConfig(data);
+		logger.debug("fileConfig=" + fieldConfig);
+		tmp.replace("fieldConfig", fieldConfig);
 	}
 
 }
