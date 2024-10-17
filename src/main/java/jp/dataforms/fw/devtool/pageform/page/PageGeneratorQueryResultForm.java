@@ -15,6 +15,7 @@ import jp.dataforms.fw.controller.QueryResultForm;
 import jp.dataforms.fw.devtool.field.ClassNameField;
 import jp.dataforms.fw.devtool.field.PackageNameField;
 import jp.dataforms.fw.devtool.field.PageClassNameField;
+import jp.dataforms.fw.devtool.field.PageNameField;
 import jp.dataforms.fw.devtool.field.PagePatternSelectField;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.RowNoField;
@@ -41,6 +42,7 @@ public class PageGeneratorQueryResultForm extends QueryResultForm {
 			, (new RowNoField()).setSpanField(true)
 			, (new PackageNameField()).setHidden(true)
 			, (new PageClassNameField()).setHidden(true)
+			, (new PageNameField()).setSpanField(true)
 			, (new ClassNameField("fullClassName")).setSpanField(true)
 			, (new ClassNameField("daoClassName")).setSpanField(true)
 			, (new PagePatternSelectField("pagePattern")).setSpanField(true)
@@ -82,6 +84,7 @@ public class PageGeneratorQueryResultForm extends QueryResultForm {
 			m.put("pageClassName", pagecls.getSimpleName());
 			m.put("fullClassName", pagecls.getName());
 			Page p = (Page) pagecls.getConstructor().newInstance();
+			m.put("pageName", p.getPageName());
 			m.put("pagePattern", p.getPagePattern());
 
 			result.add(m);
