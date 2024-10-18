@@ -119,4 +119,28 @@ ${fieldConfig}
 ${validateForm}
 
 ${webMethod}
+
+	/**
+	 * HTMLテーブル作成メソッド。
+	 * <pre>
+	 * QuerySetDaoクラスのmultiRecordQueryListに問合せが登録されている場合、
+	 * EditFormはcreateHtmlTableメソッドを呼び出して、HtmlTableクラスのインスタンスを作成します。
+	 * EditFormクラスのcreateHtmlTableメソッドはQueryに対応するEditableHtmlTableクラスの
+	 * インスタンスを作成するようになっています。
+	 * このHTMLテーブルクラスを独自のものに変更したい場合、このメソッドをオーバーライドして
+	 * 実装してください。
+	 * </pre>
+	 */
+/*	@Override
+	protected HtmlTable createHtmlTable(Query q) {
+		// HogeQueryという問合せだった場合
+		if (q instanceof HogeQuery) {
+			// HogeQueryの内容を表示する独自のHogeHtmlTableクラスを作成
+			HogeHtmlTable htmlTable = new HogeHtmlTable((HogeQuery) q);
+			return htmlTable;
+		}
+		return super.createHtmlTable(q);
+	}
+*/	
+
 }
