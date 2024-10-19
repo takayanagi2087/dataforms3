@@ -2,9 +2,6 @@ package jp.dataforms.fw.servlet;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,19 +28,6 @@ public class DataFormsFilter {
 		
 	}
 	
-	/**
-	 * Webリソースのタイムスタンプキャッシュ。
-	 */
-	private static Map<String, Long> webResourceTimestampCache = Collections.synchronizedMap(new HashMap<String, Long>());
-
-	/**
-	 * タイムスタンプキャッシュを取得します。
-	 * @return タイムスタンプキャッシュ。
-	 */
-	public static Map<String, Long> getWebResourceTimestampCache() {
-		return webResourceTimestampCache;
-	}
-
 	/**
 	 * WebリソースのURLを取得します。
 	 *

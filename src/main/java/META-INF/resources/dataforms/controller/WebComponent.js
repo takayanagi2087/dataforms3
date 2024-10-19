@@ -306,12 +306,14 @@ export class WebComponent {
 			let module = await import(currentPage.contextPath + list[i].jsPath);
 			WebComponent.#moduleMap[list[i].jsClass] = module;
 		}
+		logger.log("menuJs=" + this.menuJs);
+		logger.log("sideMenuJs=" + this.sideMenuJs);
 		{
-			let module = await import(currentPage.contextPath + "/dataforms/menu/Menu.js");
+			let module = await import(currentPage.contextPath + this.menuJs);
 			WebComponent.#moduleMap['Menu'] = module;
 		}
 		{
-			let module = await import(currentPage.contextPath + "/dataforms/menu/SideMenu.js");
+			let module = await import(currentPage.contextPath + this.sideMenuJs);
 			WebComponent.#moduleMap['SideMenu'] = module;
 		}
 		logger.log("#moduleMap=", WebComponent.#moduleMap);
