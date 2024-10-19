@@ -116,10 +116,6 @@ ${fieldConfig}
 		dao.delete(data);
 	}
 
-${validateForm}
-
-${webMethod}
-
 	/**
 	 * HTMLテーブル作成メソッド。
 	 * <pre>
@@ -142,5 +138,10 @@ ${webMethod}
 		return super.createHtmlTable(q);
 	}
 */	
+
+${validateForm}
+
+${webMethod}
+
 
 }
