@@ -3,7 +3,6 @@ package jp.dataforms.fw.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +62,6 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 	 * @throws Exception 例外。
 	 */
 	private String rewriteImport(final HttpServletRequest req, final String path, final String js) throws Exception {
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
 		if (js != null) {
 			Pattern p = Pattern.compile("import.*\\{(.+?)}.*from.*['\\\"](.+?)['\\\"]");
 			Matcher m = p.matcher(js);
@@ -75,15 +73,12 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 				idx0 = m.end();
 				logger.debug("JsImport:" + m.group(1).trim() + ":" + m.group(2));
 				String abspath = PathUtil.getAbsolutePath(path, m.group(2));
-				Long t = this.getLastUpdate(abspath);
-				if (t == null) {
+				String ts = this.getTimestamp(abspath);
+				if (ts == null) {
 					this.readWebResource(abspath);
-					t = this.getLastUpdate(abspath);
+					ts = this.getTimestamp(abspath);
 				}
-				java.sql.Timestamp d = new java.sql.Timestamp(t);
-				String ts = fmt.format(d);
 				String imp = "import { " + m.group(1).trim() + " } from '" + m.group(2) + "?t=" + ts + "'";
-//				logger.debug("Abs path:" + abspath + ", t=" + t);
 				sb.append(imp);
 			}
 			sb.append(js.substring(idx0));

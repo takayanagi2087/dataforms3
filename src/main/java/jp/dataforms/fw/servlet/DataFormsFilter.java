@@ -61,7 +61,7 @@ public class DataFormsFilter {
 	}
 
 	/**
-	 * 指定ファイルのタイムスタンプを取得します。
+	 * 指定ファイルのタイムスタンプ(Long値)を取得します。
 	 * @param path 取得するファイルのパス。
 	 * @return タイムスタンプ。
 	 * @throws Exception 例外。
@@ -71,4 +71,14 @@ public class DataFormsFilter {
 		return ret;
 	}
 
+	/**
+	 * 指定ファイルのタイムスタンプ(yyyyMMddHHmmss形式)を取得します。
+	 * @param path 取得するファイルのパス。
+	 * @return タイムスタンプ。
+	 * @throws Exception 例外。
+	 */
+	protected String getTimestamp(final String path) throws Exception {
+		String ret =  WebResourceUtil.getLastUpdate(path);
+		return ret;
+	}
 }
