@@ -144,38 +144,31 @@ export class HtmlTable extends WebComponent {
 		if (this.isHtmlTableElementId(fid)) {
 			fid = this.getHtmlTableColumnId(fid);
 		}
-		let tag = this.parent.find("label[for='" + fid + "']");
-
-		if (tag.length > 0) {
-			// ラベルのIDが指定されていた場合の処理.
-			label = tag;
-		} else {
-			let theadTr = this.parent.find("#" + tblid).find("thead tr:last");
-			let tbodyTr = this.parent.find("#" + tblid).find("tbody tr:first");
-			if (tbodyTr.length == 0) {
-				tbodyTr = $("<tr>" + this.trLine + "</tr>");
+		let theadTr = this.parent.find("#" + tblid).find("thead tr:last");
+		let tbodyTr = this.parent.find("#" + tblid).find("tbody tr:first");
+		if (tbodyTr.length == 0) {
+			tbodyTr = $("<tr>" + this.trLine + "</tr>");
+		}
+		let tdlist = tbodyTr.children();
+		let idx = -1;
+		for (let i = 0; i < tdlist.length; i++) {
+			let comp = $(tdlist[i]).find(this.convertSelector("[id$='" + field.id + "']"));
+			if (comp.length > 0) {
+				idx = i;
+				break;
 			}
-			let tdlist = tbodyTr.children();
-			let idx = -1;
-			for (let i = 0; i < tdlist.length; i++) {
-				let comp = $(tdlist[i]).find(this.convertSelector("[id$='" + field.id + "']"));
-				if (comp.length > 0) {
-					idx = i;
-					break;
+		}
+		if (idx >= 0) {
+			let thlist = theadTr.find("th")
+			let hidx = idx;
+			for (let i = 0; i < idx && i < thlist.length; i++) {
+				let colspan = thlist.eq(i).attr("colspan");
+				if (colspan != null) {
+					let cs = parseInt(colspan);
+					hidx -= (cs - 1);
 				}
 			}
-			if (idx >= 0) {
-				let thlist = theadTr.find("th")
-				let hidx = idx;
-				for (let i = 0; i < idx && i < thlist.length; i++) {
-					let colspan = thlist.eq(i).attr("colspan");
-					if (colspan != null) {
-						let cs = parseInt(colspan);
-						hidx -= (cs - 1);
-					}
-				}
-				label = $(theadTr.children()[hidx]);
-			}
+			label = $(theadTr.children()[hidx]);
 		}
 		return label;
 	}
@@ -443,11 +436,11 @@ export class HtmlTable extends WebComponent {
 	 */
 	setSortMark() {
 		logger.log("setSortMark");
-		let thisTable = this;
 		for (let i = 0; i < this.fields.length; i++) {
 			let field = this.fields[i];
 			if (field.sortable) {
 				let el = this.getLabelElement(field);
+				logger.log("el=" + el.length, el);
 				if (el == null) {
 					continue;
 				}
