@@ -502,6 +502,26 @@ public class Page extends DataForms implements WebEntryPoint {
 		"\t\t});\n" +
 		"\t\t</script>\n";
 
+    /**
+     * html中のdataformsスクリプトの挿入ポイントを取得します。
+     * @param html HTML。
+     * @return scriptの挿入ポジション。
+     */
+    private int getScriptPosition(final String html) {
+		Pattern stylePat = Pattern.compile("<style");
+		Matcher m = stylePat.matcher(html);
+    	if (m.find()) {
+    		return m.start();
+    	} else {
+    		Pattern headPat = Pattern.compile("</head");
+    		Matcher hm = headPat.matcher(html);
+    		if (hm.find()) {
+    			return hm.start();
+    		}
+    	}
+    	return -1;
+    }
+    
 	/**
 	 * HTMLにcssとscriptを追加します。
 	 * @param html HTML。
@@ -523,17 +543,15 @@ public class Page extends DataForms implements WebEntryPoint {
 		String csrfToken = this.getCsrfToken();
 		this.buildInitScript(sb, pageclass, csrfToken);
 		String s = sb.toString();
-//		log.info("scriptPath=" + scriptPath);
-		Pattern pat = Pattern.compile("</head>");
-		Matcher m = pat.matcher(html);
 		StringBuilder htmlbuffer = new StringBuilder();
-		if (m.find()) {
-			int start = m.start();
-			int end = m.end();
+		int start = this.getScriptPosition(html);
+		if (start >= 0) {
 			htmlbuffer.append(html.substring(0, start));
 			htmlbuffer.append(s);
-			htmlbuffer.append("\t" + m.group());
-			htmlbuffer.append(html.substring(end));
+			htmlbuffer.append("\t");
+			htmlbuffer.append(html.substring(start));
+		} else {
+			htmlbuffer.append(html);
 		}
 		return htmlbuffer.toString();
 	}
