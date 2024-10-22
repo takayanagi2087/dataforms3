@@ -7,6 +7,7 @@
 import { MessagesUtil } from '../util/MessagesUtil.js';
 import { JsonResponse } from '../response/JsonResponse.js';
 import { Form } from './Form.js';
+import { Dialog } from './Dialog.js';
 
 /**
  * @class QueryResultForm
@@ -295,31 +296,62 @@ export class QueryResultForm extends Form {
 	}
 
 	/**
+	 * Viewボタン押下時の処理。
+	 * @param {Event} ev イベント情報。
+	 */
+	onViewButton(ev) {
+		if (this.setSelectedKey($(ev.currentTarget))) {
+			this.viewData();
+		}
+	}
+	
+	/**
+	 * Updateボタン押下時の処理。
+	 * @param {Event} ev イベント情報。
+	 */
+	onUpdateButton(ev) {
+		if (this.setSelectedKey($(ev.currentTarget))) {
+			// データ検索ダイアログ用に選択されたデータを設定する。
+			this.setSelectedData($(ev.currentTarget));
+			this.updateData();
+		}
+	}
+
+	/**
+	 * 参照登録ボタン押下時の処理。
+	 * @param {Event} ev イベント情報。
+	 */
+	onReferButton(ev) {
+		if (this.setSelectedKey($(ev.currentTarget))) {
+			this.referData();
+		}
+	}
+	
+	/**
+	 * 削除ボタン押下時の処理。
+	 * @param {Event} ev イベント情報。
+	 */
+	onDeleteButton(ev) {
+		if (this.setSelectedKey($(ev.currentTarget))) {
+			this.deleteData();
+		}
+	}
+	
+	/**
 	 * 問合せ結果にデフォルトイベント処理を設定します。
 	 */
 	setQueryResultEventHandler() {
 		this.find("[id$='\.viewButton']").click((ev) => {
-			if (this.setSelectedKey($(ev.currentTarget))) {
-				this.viewData();
-			}
+			this.onViewButton(ev);
 		});
-		//
 		this.find("[id$='\.updateButton']").click((ev) => {
-			if (this.setSelectedKey($(ev.currentTarget))) {
-				// データ検索ダイアログ用に選択されたデータを設定する。
-				this.setSelectedData($(ev.currentTarget));
-				this.updateData();
-			}
+			this.onUpdateButton(ev);
 		});
 		this.find("[id$='\.referButton']").click((ev) => {
-			if (this.setSelectedKey($(ev.currentTarget))) {
-				this.referData();
-			}
+			this.onReferButton(ev);
 		});
 		this.find("[id$='\.deleteButton']").click((ev) => {
-			if (this.setSelectedKey($(ev.currentTarget))) {
-				this.deleteData();
-			}
+			this.onDeleteButton(ev);
 		});
 
 		let editForm = this.parent.getComponent("editForm");
