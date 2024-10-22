@@ -366,6 +366,13 @@ export class Page extends DataForms {
 	}
 
 	/**
+	 * メニュー非表示モードに設定します。
+	 */
+	hideMenu() {
+		$("body").addClass("hideMenu");
+	}
+	
+	/**
 	 * ページの初期化処理を行います。
 	 */
 	async init() {
@@ -409,6 +416,10 @@ export class Page extends DataForms {
 			//
 			this.attach();
 			$(this.convertSelector("#mainDiv")).addClass("mainDiv");
+			// window.openで表示された場合。
+			if (window.opener != null) {
+				this.hideMenu();
+			}
 		} catch (e) {
 			console.log("currentPage=", currentPage);
 			console.log("e=", e);

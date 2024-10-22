@@ -339,3 +339,13 @@ tr.errorTr td {background-color:mistyrose !important;}
 	text-align: center;
 }
 
+/* メニュー非表示モードの設定 */
+body.hideMenu div.showMenuButton {
+	display: none;
+}
+body.hideMenu div.leftbarDiv {
+	display: none;
+}
+body.hideMenu div.mainDiv {
+	width: 100%;
+}
