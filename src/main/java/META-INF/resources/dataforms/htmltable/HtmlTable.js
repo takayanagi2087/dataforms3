@@ -440,7 +440,6 @@ export class HtmlTable extends WebComponent {
 			let field = this.fields[i];
 			if (field.sortable) {
 				let el = this.getLabelElement(field);
-				logger.log("el=" + el.length, el);
 				if (el == null) {
 					continue;
 				}
