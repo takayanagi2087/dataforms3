@@ -290,7 +290,6 @@ div.bodyDiv {
 
 /* ページロックDIVのスタイル */
 .lockLayer {
-	background: url(./image/loading.gif) center no-repeat;
 	background-color: rgba(0,0,0,0.0);
 	position: absolute;
 	display: block;
@@ -299,6 +298,11 @@ div.bodyDiv {
 	z-index: 10000;
 }
 
+.lockLayer img {
+	position: fixed;
+	left: calc(50% - 40px);
+	top: calc(50% - 40px);
+}
 
 /*
  * エラーメッセージ領域(開始)

@@ -385,6 +385,7 @@ export class Page extends DataForms {
 			// ページの構造情報を取得.
 			let method = new WebMethod("getPageInfo");
 			let result = await method.execute("");
+			this.lock();
 			for (let key in result.result) {
 				this[key] = result.result[key];
 			}
@@ -401,6 +402,7 @@ export class Page extends DataForms {
 			this.initForm(this.formMap);
 			// ダイアログの初期化
 			this.initDialog(this.dialogMap);
+			this.unlock();
 			// バージョン情報などを表示。
 			$(this.convertSelector("#dataformsVersion")).html(this.dataformsVersion);
 			// クッキーチェック
@@ -430,9 +432,9 @@ export class Page extends DataForms {
 	/**
 	 * エレメントとの対応付けを行います。
 	 */
-	async attach() {
+	attach() {
 		let thisPage = this;
-		await super.attach();
+		super.attach();
 		$(this.convertSelector("#showMenuButton")).click(() => {
 			let menu = $(thisPage.convertSelector("#menuDiv"));
 			if (menu.length == 0) {
@@ -500,13 +502,10 @@ export class Page extends DataForms {
 		if ($(window).width() >= 1024) {
 			$(this.convertSelector("div.menuDiv")).css("display", "");
 		}
-		let sel = this.convertSelector("#lockLayer");
-		// let h = $("body").clientHeight();
-		let h = window.innerHeight;
-		if ($(sel).is(":visible")) {
-			$(sel).css({
-				width: $(document).width(),
-				height: h
+		if ($("#lockLayer").is(":visible")) {
+			$("#lockLayer").css({
+				width: $("body").innerWidth(),
+				height: $("body").innerHeight()
 			});
 		}
 	}
@@ -518,14 +517,19 @@ export class Page extends DataForms {
 	 * </pre>
 	 */
 	lock() {
-		let sel = this.convertSelector("#lockLayer");
-//		let h = $("body").height();
-		let h = window.innerHeight;
-		logger.log("lock() w=" + $(document).width() + ", h=" + h);
-		$(sel).css({
+		if ($("#lockLayer").length == 0) {
+			let html = '<div id="lockLayer" class="lockLayer" style="display:none;"></div>';
+			$("body").append(html);
+		}
+		if (this.contextPath != null) {
+			if ($("#lockLayer img").length == 0) {
+				$("#lockLayer").html('<img src="' + this.contextPath + '/frame/flex/image/loading.gif">');
+			}
+		}
+		$("#lockLayer").css({
 			display: 'block',
-			width: $(document).width(),
-			height: h
+			width: $("body").innerWidth(),
+			height: $("body").innerHeight()
 		});
 	}
 
@@ -536,8 +540,7 @@ export class Page extends DataForms {
 	 * </pre>
 	 */
 	unlock() {
-		let sel = this.convertSelector("#lockLayer");
-		 $(sel).css({display: 'none'});
+		 $("#lockLayer").css({display: 'none'});
 	}
 
 
@@ -546,7 +549,7 @@ export class Page extends DataForms {
 	 * @return ロックされている場合true。
 	 */
 	isLocked() {
-		return $(this.convertSelector("#lockLayer")).is(":visible");
+		return $("#lockLayer").is(":visible");
 	}
 
 	/**
