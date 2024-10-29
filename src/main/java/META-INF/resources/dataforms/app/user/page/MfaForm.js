@@ -32,14 +32,6 @@ export class MfaForm extends Form {
 			this.regist();
 			return false;
 		});
-		if (currentPage.getPlatform() == "android") {
-			this.find("div.croudShare").show();
-			this.find("div.passkey").css("grid-template-columns", "1fr 1fr");
-		} else {
-			this.find("div.croudShare").hide();
-			this.find("div.passkey").css("grid-template-columns", "");
-		}
-		
 		this.get("passkeyDescButton").click(() => {
 			this.get("passkeyDesc").toggle();
 		});
@@ -288,7 +280,7 @@ export class MfaForm extends Form {
 					let opt = await this.submit("getOption");
 					if (opt.status == JsonResponse.SUCCESS) {
 						logger.log("opt=", opt);
-						opt.result.requireResidentKey = this.get("requireResidentKey").prop("checked");
+//						opt.result.requireResidentKey = true; //this.get("requireResidentKey").prop("checked");
 						let util = new WebAuthnUtil();
 						let resp = await util.create(opt.result);
 						resp.authenticatorName = this.get("authenticatorName").val();

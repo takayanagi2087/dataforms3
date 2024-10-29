@@ -34,7 +34,6 @@ import jp.dataforms.fw.app.user.field.SharedPasskeyField;
 import jp.dataforms.fw.app.user.field.WebAuthnIdField;
 import jp.dataforms.fw.controller.Form;
 import jp.dataforms.fw.field.base.FieldList;
-import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.htmltable.HtmlTable;
@@ -64,7 +63,7 @@ public class MfaForm extends Form {
 	/**
 	 * クラウド共有フラグのID。
 	 */
-	private static final String ID_REQUIRE_RESIDENT_KEY = "requireResidentKey";
+//	private static final String ID_REQUIRE_RESIDENT_KEY = "requireResidentKey";
 
 	/**
 	 * logger.
@@ -77,7 +76,7 @@ public class MfaForm extends Form {
 	public MfaForm() {
 		super(null);
 		this.addField(new AuthenticatorNameField()).addValidator(new RequiredValidator());
-		this.addField(new FlagField(ID_REQUIRE_RESIDENT_KEY));
+//		this.addField(new FlagField(ID_REQUIRE_RESIDENT_KEY));
 		FieldList flist = new FieldList();
 		flist.addField(new RowNoField());
 		flist.addField(new WebAuthnIdField());
