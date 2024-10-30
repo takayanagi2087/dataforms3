@@ -249,7 +249,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 */
 	private String getScriptPath(final Class<?> cls) throws Exception {
 		String jspath = this.getWebResourcePath(cls) + ".js";
-		logger.info("getScriptPath:jspath = " + jspath);
+		logger.debug("getScriptPath:jspath = " + jspath);
 		String script = this.getWebResource(jspath);
 		if (StringUtil.isBlank(script)) {
 			jspath = this.getScriptPath(cls.getSuperclass());

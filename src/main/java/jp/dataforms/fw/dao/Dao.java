@@ -1475,7 +1475,7 @@ public class Dao implements JDBCConnectableObject {
 					Object value = rset.getObject(i + 1);
 					m.put(name, value);
 				}
-				logger.info("md=" + JsonUtil.encode(m, true));
+				logger.debug("md=" + JsonUtil.encode(m, true));
 				Object nu = m.get("nonUnique");
 				Boolean nonUnique = this.getNonUnique(nu);
 				logger.debug(() -> "nu=" + nu + ", nonUnique=" + nonUnique);

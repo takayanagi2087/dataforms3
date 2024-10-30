@@ -696,7 +696,7 @@ public class ConfUtil {
 		Class<?> cls = this.getClass();
 		InputStream is = cls.getResourceAsStream("./conf/dataforms.conf.jsonc");
 		String ret = new String(FileUtil.readInputStream(is), "utf-8");
-		logger.debug("*** デフォルト設定 = \n" + ret);
+//		logger.debug("*** デフォルト設定 = \n" + ret);
 		return ret;
 	}
 	
@@ -710,7 +710,7 @@ public class ConfUtil {
 		Class<?> cls = this.getClass();
 		InputStream is = cls.getResourceAsStream(path);
 		String ret = new String(FileUtil.readInputStream(is), "utf-8");
-		logger.debug("*** デフォルトweb.xml = \n" + ret);
+//		logger.debug("*** デフォルトweb.xml = \n" + ret);
 		return ret;
 	}
 	
@@ -829,7 +829,7 @@ public class ConfUtil {
 			// jarのリソース中のデフォルト設定を取得する。
 			String defaultJsonc = this.getDefaultConfFile();
 			this.conf  =  Conf.readJson(defaultJsonc);
-			logger.debug("jar conf json=\n" + JsonUtil.encode(this.conf, true));
+//			logger.debug("jar conf json=\n" + JsonUtil.encode(this.conf, true));
 			{
 				// アプリケーション設定ファイルの読み込み
 				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");

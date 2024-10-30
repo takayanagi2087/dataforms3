@@ -29,7 +29,6 @@ public class ZipCodeField extends VarcharField {
 	 */
 	private String addressFieldId = null;
 
-
 	/**
 	 * 住所フィールドID2.
 	 */
@@ -39,6 +38,22 @@ public class ZipCodeField extends VarcharField {
 	 * 住所フィールドID2.
 	 */
 	private String addressFieldId3 = null;
+
+	
+	/**
+	 * カナ住所フィールドID.
+	 */
+	private String kanaAddressFieldId = null;
+
+	/**
+	 * カナ住所フィールドID2.
+	 */
+	private String kanaAddressFieldId2 = null;
+
+	/**
+	 * カナ住所フィールドID2.
+	 */
+	private String kanaAddressFieldId3 = null;
 
 	/**
 	 * コンストラクタ。
@@ -79,8 +94,8 @@ public class ZipCodeField extends VarcharField {
 	}
 
 	/**
-	 * 二番目のアドレスフィールドIDを取得します。
-	 * @return 二番目のアドレスフィールドID。
+	 * 二番目の住所フィールドIDを取得します。
+	 * @return 二番目の住所フィールドID。
 	 */
 	public String getAddressFieldId2() {
 		return addressFieldId2;
@@ -88,16 +103,16 @@ public class ZipCodeField extends VarcharField {
 
 
 	/**
-	 * 二番目のアドレスフィールドIDを設定します。
-	 * @param addressFieldId2 二番目のアドレスフィールドID。
+	 * 二番目の住所フィールドIDを設定します。
+	 * @param addressFieldId2 二番目の住所フィールドID。
 	 */
 	public void setAddressFieldId2(final String addressFieldId2) {
 		this.addressFieldId2 = addressFieldId2;
 	}
 
 	/**
-	 * 三番目のアドレスフィールドIDを取得します。
-	 * @return 三番目のアドレスフィールドID。
+	 * 三番目の住所フィールドIDを取得します。
+	 * @return 三番目の住所フィールドID。
 	 */
 	public String getAddressFieldId3() {
 		return addressFieldId3;
@@ -105,11 +120,69 @@ public class ZipCodeField extends VarcharField {
 
 
 	/**
-	 * 三番目のアドレスフィールドIDを設定します。
-	 * @param addressFieldId3 三番目のアドレスフィールドID。
+	 * 三番目の住所フィールドIDを設定します。
+	 * @param addressFieldId3 三番目の住所フィールドID。
 	 */
 	public void setAddressFieldId3(final String addressFieldId3) {
 		this.addressFieldId3 = addressFieldId3;
+	}
+
+	/**
+	 * カナ住所フィールドのIDを取得します。
+	 * @return 住所フィールドのID。
+	 */
+	public String getKanaAddressFieldId() {
+		return kanaAddressFieldId;
+	}
+
+	/**
+	 * カナ住所フィールドのIDを設定します。
+	 * @param kanaAddressFieldId 住所フィールドID。
+	 * @return 設定したフィールド。
+	 */
+	public ZipCodeField setKanaAddressFieldId(String kanaAddressFieldId) {
+		this.kanaAddressFieldId = kanaAddressFieldId;
+		return this;
+	}
+
+
+	/**
+	 * 二番目のカナ住所フィールドIDを取得します。
+	 * @return 二番目のカナ住所フィールドID。
+	 */
+	public String getKanaAddressFieldId2() {
+		return kanaAddressFieldId2;
+	}
+
+
+	/**
+	 * 二番目のカナ住所フィールドIDを設定します。
+	 * @param kanaAddressFieldId2 二番目のカナ住所フィールドID。
+	 * @return 設定したフィールド。
+	 */
+	public ZipCodeField setKanaAddressFieldId2(String kanaAddressFieldId2) {
+		this.kanaAddressFieldId2 = kanaAddressFieldId2;
+		return this;
+	}
+
+
+	/**
+	 * 三番目のカナ住所フィールドIDを取得します。
+	 * @return 三番目のカナ住所フィールドID。
+	 */
+	public String getKanaAddressFieldId3() {
+		return kanaAddressFieldId3;
+	}
+
+
+	/**
+	 * 三番目のカナ住所フィールドIDを設定します。
+	 * @param kanaAddressFieldId3 三番目のカナ住所フィールドID。
+	 * @return 設定したフィールド。
+	 */
+	public ZipCodeField setKanaAddressFieldId3(String kanaAddressFieldId3) {
+		this.kanaAddressFieldId3 = kanaAddressFieldId3;
+		return this;
 	}
 
 
@@ -119,6 +192,9 @@ public class ZipCodeField extends VarcharField {
 		m.put("addressFieldId", this.getAddressFieldId());
 		m.put("addressFieldId2", this.getAddressFieldId2());
 		m.put("addressFieldId3", this.getAddressFieldId3());
+		m.put("kanaAddressFieldId", this.getKanaAddressFieldId());
+		m.put("kanaAddressFieldId2", this.getKanaAddressFieldId2());
+		m.put("kanaAddressFieldId3", this.getKanaAddressFieldId3());
 		return m;
 	}
 

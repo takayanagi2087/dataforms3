@@ -388,7 +388,7 @@ public class FunctionMap {
 			Class<? extends Page> tp = (Class<? extends Page>) Class.forName(pgclass);
 			this.addPage(new PageInfo(tp));
 		} catch (ClassNotFoundException e) {
-			logger.info("package jp.dataforms.test not found.");
+			logger.debug("package jp.dataforms.test not found.");
 		}
 	}
 	
@@ -735,7 +735,7 @@ public class FunctionMap {
 		if (cnt != 1) {
 			logger.warn("There are multiple AppFunctionMap classes. Use the " + ret.getClass().getName() + " class.");
 		} else {
-			logger.info("Use the " + ret.getClass().getName() + " class.");
+			logger.debug("Use the " + ret.getClass().getName() + " class.");
 		}
 		return ret;
 	}

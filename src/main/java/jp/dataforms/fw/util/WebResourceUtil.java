@@ -138,7 +138,7 @@ public final class WebResourceUtil {
 	private static String readWebResource(final String path) throws Exception {
 		logger.debug("readWebResource path=" + path);
 		String ret =  WebResourceUtil.readAppFile(path);
-		logger.debug("ret=" + ret);
+		// logger.debug("ret=" + ret);
 		if (ret == null) {
 			ret = "";
 		}

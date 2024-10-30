@@ -2,6 +2,9 @@ package jp.dataforms.fw.response;
 
 import java.io.PrintWriter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import jakarta.servlet.http.HttpServletResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.JsonUtil;
@@ -14,7 +17,7 @@ public class JsonResponse extends Response {
 	/**
      * Logger.
      */
-   // private static Logger logger = Logger.getLogger(JsonResponse.class.getName());
+    private static Logger logger = LogManager.getLogger(JsonResponse.class.getName());
 
 	/**
 	 * 処理が正常終了したことを示します。
@@ -100,6 +103,7 @@ public class JsonResponse extends Response {
 			if (obj != null) {
 				String json = JsonUtil.encode(obj);
 				out.print(json);
+				logger.debug(this.toString());
 			}
 		} finally {
 			out.flush();

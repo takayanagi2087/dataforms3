@@ -175,10 +175,10 @@ public class ClassFinder {
 			resourceName = rootpackage.replace('.', '/');
 		}
 		URL url = this.convertUrl(classLoader.getResource(resourceName));
-		logger.info("findClasses:resourceName=" + resourceName + ", url=" + url);
+		logger.debug("findClasses:resourceName=" + resourceName + ", url=" + url);
 		if (url != null) {
-			logger.info("findClasses:URL = " + url);
-			logger.info("findClasses:Protocol = " + url.getProtocol());
+			logger.debug("findClasses:URL = " + url);
+			logger.debug("findClasses:Protocol = " + url.getProtocol());
 			if ("file".equals(url.getProtocol())) {
 				String fname = url.getFile().replaceAll("%20", " "); // パスのスペース対応。
 				ret = this.findClassesWithFile(rootpackage, new File(fname), c);

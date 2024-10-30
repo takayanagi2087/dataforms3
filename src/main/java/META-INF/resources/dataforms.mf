@@ -1,5 +1,5 @@
 Manifest-Version: 1.0 
-Implementation-Version: 3.0.1-SNAPSHOT-241029 
+Implementation-Version: 3.0.1-SNAPSHOT-241030 
 Implementation-Vendor: Masahiko Takayanagi 
 Implementation-Title: Dataforms java web application framework 
-CreatedTime: 2024/10/29 19:04:32.96 
+CreatedTime: 2024/10/30 13:11:35.69 
