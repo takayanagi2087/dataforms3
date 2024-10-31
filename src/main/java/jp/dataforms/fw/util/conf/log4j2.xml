@@ -27,19 +27,30 @@
 	</Appenders>
 
 	<Loggers>
+		<!-- 開発時はDEBUG -->
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="Logfile001" />
 		</Root>
-		<!--
-			Rootのlevelをinfo以上に設定した場合、logにSQLが必要力されなくなります。
-			実行したSQLをlogに出力したい場合、以下の設定を有効にしてください。
-		-->
-		<!--
+		<!-- フレームワークのログはinfo -->
+		<Logger name="jp.dataforms.fw" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="Logfile001" />
+		</Logger>
+		<!-- 実行時のSQLをログに出力 -->
 		<Logger name="jp.dataforms.fw.dao.sqlgen" level="debug" additivity="false">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="Logfile001" />
 		</Logger>
-		-->
+		<!-- ブラウザに送るjsonを確認する設定 -->
+		<Logger name="jp.dataforms.fw.response.JsonResponse" level="debug" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="Logfile001" />
+		</Logger>
+		<!-- apache提供ライブラリはinfo -->
+		<Logger name="org.apache" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="Logfile001" />
+		</Logger>
 	</Loggers>
 </Configuration>
