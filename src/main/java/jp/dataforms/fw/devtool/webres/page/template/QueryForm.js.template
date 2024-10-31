@@ -41,9 +41,9 @@ ${setFormData}
 	 * 問合せを行います。
 	 */
 /*
-	query() {
+	async query() {
 		// TODO:問合せの前処理を実装してください。
-		super.query();
+		await super.query();
 	}
 */
 
@@ -62,9 +62,9 @@ ${setFormData}
 	 * エクスポートを行います。
 	 */
 /*
-	exportData() {
+	async exportData() {
 		// TODO:エクスポートの前処理を実装してください。
-		super.exportData();
+		await super.exportData();
 	}
 */
 

@@ -103,8 +103,8 @@ ${setFormData}
 	 * ページの更新を行います。
 	 */
 /*
-	changePage() {
-		super.changePage();
+	async changePage() {
+		await super.changePage();
 	}
 */
 
@@ -129,8 +129,8 @@ ${setFormData}
 	 * 選択データの削除を行います。
 	 */
 /*
-	deleteData() {
-		super.deleteData();
+	async deleteData() {
+		await super.deleteData();
 	}
 */
 

@@ -69,11 +69,11 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	confirm() {
-		super.confirm();
+	async confirm() {
+		await super.confirm();
 	}
 */
-		/**
+	/**
 	 * 新規登録モードにします。
 	 * <pre>
 	 * 対応するEditFormのgetNewDataを呼び出し、初期データを取得します。
@@ -81,12 +81,12 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	newData() {
-		super.newData();
+	async newData() {
+		await super.newData();
 	}
 */
 
-		/**
+	/**
 	 * 更新登録モードにします。
 	 * <pre>
 	 * 対応するEditFormのgetDataを呼び出し、編集対象データを取得します。
@@ -94,8 +94,8 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	updateData() {
-		super.updateData();
+	async updateData() {
+		await super.updateData();
 	}
 */
 
@@ -108,8 +108,8 @@ ${setFormData}
 	 *
 	 */
 /*
-	referData() {
-		super.referData();
+	async referData() {
+		await super.referData();
 	}
 */
 	/**
@@ -120,8 +120,8 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	viewData() {
-		super.viewData();
+	async viewData() {
+		await super.viewData();
 	}
 */
 
@@ -142,8 +142,8 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	save() {
-		super.save();
+	async save() {
+		await super.save();
 	}
 */
 
@@ -154,8 +154,8 @@ ${setFormData}
 	 * </pre>
 	 */
 /*
-	del() {
-		super.del();
+	async del() {
+		await super.del();
 	}
 */
 }
