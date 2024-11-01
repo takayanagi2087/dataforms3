@@ -426,6 +426,8 @@ export class Page extends DataForms {
 			console.log("currentPage=", currentPage);
 			console.log("e=", e);
 			currentPage.reportError(e);
+		} finally {
+			$("#loadingDiv").remove();
 		}
 	}
 

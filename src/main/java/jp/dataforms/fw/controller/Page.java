@@ -522,6 +522,7 @@ public class Page extends DataForms implements WebEntryPoint {
     	return -1;
     }
     
+    
 	/**
 	 * HTMLにcssとscriptを追加します。
 	 * @param html HTML。
@@ -650,6 +651,18 @@ public class Page extends DataForms implements WebEntryPoint {
 	}
 
 
+    /**
+     * Loading Divを取得します。
+     * @return loadingDivのHTML文字列。
+     * @throws Exception 例外。
+     */
+    protected String getLoadingDiv() throws Exception {
+		String path = this.getAppropriatePath(this.getPageFramePath() + "/Loading.html", this.getRequest());
+    	String loadingDiv = WebResourceUtil.getWebResource(path);
+    	String context = this.getRequest().getContextPath();
+    	return loadingDiv.replace("${context}", context);
+    }
+	
 	/**
 	 * このページのHTMLを取得します。
 	 * @param req HTTP要求情報。
@@ -671,8 +684,9 @@ public class Page extends DataForms implements WebEntryPoint {
 		if (!m.find()) {
 			htmltext = htmltext.replaceAll("<html" , "<html lang=\"" + req.getLocale().getLanguage() + "\" ");
 		}
-		htmltext = htmltext.replaceAll("\\<[Tt][Ii][Tt][Ll][Ee]>.*\\</[Tt][Ii][Tt][Ll][Ee]\\>", "<title>" + this.getPageTitle() + "</title>");
-		htmltext = htmltext.replaceAll("\\</[Bb][Oo][Dd][Yy]\\>", "\t<noscript><br/><div class='noscriptDiv'><b>" + MessagesUtil.getMessage(this.getPage(), "message.noscript") + "</b></div></noscript>\n\t</body>");
+//		htmltext = htmltext.replaceAll("\\<[Tt][Ii][Tt][Ll][Ee]>.*\\</[Tt][Ii][Tt][Ll][Ee]\\>", "<title>" + this.getPageTitle() + "</title>");
+		String loadingDiv = this.getLoadingDiv();
+		htmltext = htmltext.replaceAll("\\</[Bb][Oo][Dd][Yy]\\>", "\t<noscript><br/><div class='noscriptDiv'><b>" + MessagesUtil.getMessage(this.getPage(), "message.noscript") + "</b></div></noscript>\n\t" + loadingDiv + "</body>");
 		return this.convertIdAttribute(htmltext);
 	}
 
