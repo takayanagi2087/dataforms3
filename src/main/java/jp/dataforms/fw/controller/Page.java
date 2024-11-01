@@ -503,23 +503,38 @@ public class Page extends DataForms implements WebEntryPoint {
 		"\t\t</script>\n";
 
     /**
+     * 指定したタグの開始位置を取得します。
+     * @param regexp タグの正規表現。
+     * @return タグの位置。
+     */
+    private int getTagPosition(final String regexp) {
+		Pattern stylePat = Pattern.compile(regexp);
+		Matcher m = stylePat.matcher(regexp);
+    	if (m.find()) {
+    		return m.start();
+    	}
+    	return Integer.MAX_VALUE;
+    }
+    
+    /**
      * html中のdataformsスクリプトの挿入ポイントを取得します。
      * @param html HTML。
      * @return scriptの挿入ポジション。
      */
     private int getScriptPosition(final String html) {
-		Pattern stylePat = Pattern.compile("<style");
-		Matcher m = stylePat.matcher(html);
-    	if (m.find()) {
-    		return m.start();
-    	} else {
-    		Pattern headPat = Pattern.compile("</head");
-    		Matcher hm = headPat.matcher(html);
-    		if (hm.find()) {
-    			return hm.start();
-    		}
+    	int style = this.getTagPosition("<style");
+    	int script = this.getTagPosition("<script");
+    	int pos = this.getTagPosition("</head");
+    	if (style < pos) {
+    		pos = style;
     	}
-    	return -1;
+    	if (script < pos) {
+    		pos = script;
+    	}
+    	if (script == Integer.MAX_VALUE) {
+    		pos = -1;
+    	}
+    	return pos;
     }
     
     
