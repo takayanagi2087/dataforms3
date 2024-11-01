@@ -505,11 +505,12 @@ public class Page extends DataForms implements WebEntryPoint {
     /**
      * 指定したタグの開始位置を取得します。
      * @param regexp タグの正規表現。
+     * @param html HTMLのテキスト。
      * @return タグの位置。
      */
-    private int getTagPosition(final String regexp) {
+    private int getTagPosition(final String regexp, final String html) {
 		Pattern stylePat = Pattern.compile(regexp);
-		Matcher m = stylePat.matcher(regexp);
+		Matcher m = stylePat.matcher(html);
     	if (m.find()) {
     		return m.start();
     	}
@@ -522,16 +523,16 @@ public class Page extends DataForms implements WebEntryPoint {
      * @return scriptの挿入ポジション。
      */
     private int getScriptPosition(final String html) {
-    	int style = this.getTagPosition("<style");
-    	int script = this.getTagPosition("<script");
-    	int pos = this.getTagPosition("</head");
+    	int style = this.getTagPosition("<style", html);
+//    	int script = this.getTagPosition("<script", html);
+    	int pos = this.getTagPosition("</head", html);
     	if (style < pos) {
     		pos = style;
     	}
-    	if (script < pos) {
+/*    	if (script < pos) {
     		pos = script;
     	}
-    	if (script == Integer.MAX_VALUE) {
+ */   	if (pos == Integer.MAX_VALUE) {
     		pos = -1;
     	}
     	return pos;
