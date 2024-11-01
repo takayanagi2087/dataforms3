@@ -524,15 +524,15 @@ public class Page extends DataForms implements WebEntryPoint {
      */
     private int getScriptPosition(final String html) {
     	int style = this.getTagPosition("<style", html);
-//    	int script = this.getTagPosition("<script", html);
+    	int link = this.getTagPosition("<link.+text/css", html);
     	int pos = this.getTagPosition("</head", html);
     	if (style < pos) {
     		pos = style;
     	}
-/*    	if (script < pos) {
-    		pos = script;
+    	if (link < pos) {
+    		pos = link;
     	}
- */   	if (pos == Integer.MAX_VALUE) {
+    	if (pos == Integer.MAX_VALUE) {
     		pos = -1;
     	}
     	return pos;
