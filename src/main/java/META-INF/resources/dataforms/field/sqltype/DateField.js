@@ -47,7 +47,7 @@ export class DateField extends DateTimeField {
 	/**
 	 * Datepickerで日付を選択したときに呼び出されます。
 	 * @param {String} datetext 日付テキスト。
-	 * @param {Object} Datepickerのインスタンス。
+	 * @param {Object} inst Datepickerのインスタンス。
 	 */
 	onSelect(datetext, inst) {
 		logger.log("datetext=" + datetext + ",inst=" + inst);
@@ -55,6 +55,7 @@ export class DateField extends DateTimeField {
 			let form = this.getParentForm();
 			form.onCalc(this.get());
 		}
+		this.get().change();
 	}
 
 	/**
