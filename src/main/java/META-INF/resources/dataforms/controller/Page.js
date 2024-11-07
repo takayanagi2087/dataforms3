@@ -681,8 +681,8 @@ export class Page extends DataForms {
 	 * 例外の情報を出力します。
 	 * @param {Error} e 例外。
 	 */
-	reportError(e) {
+	async reportError(e) {
 		this.printStackTrace(e);
-		this.alert(null, e.message);
+		await this.alert(null, e.message);
 	}
 }
