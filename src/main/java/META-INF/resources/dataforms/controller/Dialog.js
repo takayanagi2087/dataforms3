@@ -78,10 +78,10 @@ export class Dialog extends DataForms {
 		let dlgdiv = $('body').find(this.convertSelector('#' + this.selectorEscape(this.id)));
 		let m = {
 			modal: modal
-			,title: this.title
-			,height: this.width
-			,width: this.height
-			,resizable: this.resizable
+			, title: this.title
+			, width: this.width
+			, height: this.height
+			, resizable: this.resizable
 		};
 		if (p != null) {
 			for (let k in p) {
