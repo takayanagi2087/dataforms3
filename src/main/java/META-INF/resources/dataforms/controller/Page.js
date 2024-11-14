@@ -266,7 +266,11 @@ export class Page extends DataForms {
 	 * トップページに遷移します。
 	 */
 	toTopPage() {
-		window.location.href = this.contextPath + this.topPage + "." + currentPage.pageExt;
+		if (window.opener == null) {
+			window.location.href = this.contextPath + this.topPage + "." + currentPage.pageExt;
+		} else {
+			window.close();
+		}
 	}
 
 	/**
