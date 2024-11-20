@@ -74,10 +74,11 @@ export class ${className} extends ${superClassName} {
 
 	/**
 	 * 関連データの更新後に呼び出されるメソッドです。
+	 * @param {Object} data 関連データ。
 	 */
 /*
-	onUpdateRelationField() {
-		super.onUpdateRelationField();
+	onUpdateRelationField(data) {
+		super.onUpdateRelationField(data);
 		// このフィールドが配置されたフォームのメソッドを呼び出す場合は以下の様にします。
 		let form = this.getParentForm();
 		if (typeof(form.hogeFunc) == "function") {

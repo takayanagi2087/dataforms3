@@ -198,8 +198,8 @@ export class Field extends WebComponent {
 	/**
 	 * 関連データの更新後に呼び出されるメソッドです。
 	 */
-	onUpdateRelationField() {
-		logger.log("onUpdateRelationField");
+	onUpdateRelationField(data) {
+		logger.log("onUpdateRelationField=", data);
 	}
 
 	/**
@@ -226,8 +226,8 @@ export class Field extends WebComponent {
 						form.setFieldValue(k, ret.result[k]);
 					}
 				}
+				this.onUpdateRelationField(ret.result);
 			}
-			this.onUpdateRelationField();
 		} catch (e) {
 			currentPage.reportError(e);
 		}
