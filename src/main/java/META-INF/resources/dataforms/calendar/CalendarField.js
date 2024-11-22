@@ -62,6 +62,12 @@ export class CalendarField extends Field {
 	}
 
 	/**
+	 * クリック数
+	 */
+	#clickCount = 0;
+	#ev = null;
+		
+	/**
 	 * 各TDのイベント処理を登録します。
 	 */
 	setupTd() {
@@ -70,7 +76,14 @@ export class CalendarField extends Field {
 			$(td).attr("data-index", idx);
 			$(td).attr("class", "dateCell");
 			$(td).click((ev) => {
-				this.onClickCell(ev);
+				this.handleClick(ev, 
+					(ev) => {
+						this.onClickCell(ev);
+					}, 
+					(ev) => {
+						this.onDblClickCell(ev);
+					}
+				);
 			});
 			idx++;
 		});
@@ -93,16 +106,25 @@ export class CalendarField extends Field {
 		});
 		this.find("[name='" + this.id + "']").val(this.#dateValue);
 	}
-		
+
 	/**
 	 * カレンダーのセルのクリックイベント処理。
 	 * @param {Event} ev イベント処理。
 	 */
 	onClickCell(ev) {
+		logger.log("onClickCell=", ev);
 		let date = $(ev.currentTarget).attr("data-date");
 		this.selectDate(date);
 	}
 	
+	
+	/**
+	 * カレンダーのセルのダブルクリックイベント処理。
+	 * @param {Event} ev イベント処理。
+	 */
+	onDblClickCell(ev) {
+		logger.log("onDblClickCell=", ev);
+	}
 		
 	/**
 	 * 前の月を表示。
