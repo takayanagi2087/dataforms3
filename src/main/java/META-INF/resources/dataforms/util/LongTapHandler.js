@@ -26,25 +26,13 @@ export class LongTapHandler {
 	 */
 	constructor(jq, longtap) {
 		this.#longtap = longtap;
-		jq.on("mousedown", (ev) => {
-			this.#touch = false;
-			this.#onDown(ev);
-		});
-		jq.on("mouseup", (ev) => {
-			if (!this.#touch) {
-				this.#onUp(ev);
-			}
-		});
-		jq.on("mousemove", (ev) => {
-			if (!this.#touch) {
-				this.#onUp(ev);
-			}
-		});
 		jq.on("touchstart", (ev) => {
+			logger.log("touchstart", ev);
 			this.#touch = true;
 			this.#onDown(ev);
 		});
 		jq.on("touchend", (ev) => {
+			logger.log("touchend", ev);
 			if (this.#touch) {
 				this.#onUp(ev);
 			}
