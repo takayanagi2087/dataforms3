@@ -582,37 +582,4 @@ export class WebComponent {
 		return window.navigator.userLanguage || window.navigator.language || window.navigator.browserLanguage;
 	}
 	
-	/**
-	 * クリック数。
-	 */
-	#clickCount = 0;
-	/**
-	 * クリックイベント。
-	 */
-	#ev = null;
-
-	
-	/**
-	 * 1つのコンポーネントでクリックとダブルクリックを分けて処理します。
-	 * @param {Event} ev イベント情報。
-	 * @param {Function} click クリック処理メソッド。
-	 * @param {Function} dblclick ダブルクリック処理メソッド。
-	 */
-	handleClick(ev, click, dblclick) {
-		this.#ev = ev;
-		// 300ms後にクリック数を判定。
-		if (this.#clickCount == 0) {
-			setTimeout(() => {
-			    if (this.#clickCount == 1) {
-					// クリック
-					click(this.#ev);
-			    } else {
-					// ダブルクリック
-					dblclick(this.#ev);
-				}
-			    this.#clickCount = 0;
-			}, 300);
-		}
-		this.#clickCount++;
-	}
 }

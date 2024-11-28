@@ -8,6 +8,7 @@ import { Field } from '../field/base/Field.js';
 import { JsonResponse } from '../response/JsonResponse.js';
 import { SimpleDateFormat } from '../util/SimpleDateFormat.js';
 import { MessagesUtil } from '../util/MessagesUtil.js';
+import { ClickHandler } from '../util/ClickHandler.js';
 
 /**
  * @class CalendarField
@@ -62,12 +63,6 @@ export class CalendarField extends Field {
 	}
 
 	/**
-	 * クリック数
-	 */
-	#clickCount = 0;
-	#ev = null;
-		
-	/**
 	 * 各TDのイベント処理を登録します。
 	 */
 	setupTd() {
@@ -75,16 +70,14 @@ export class CalendarField extends Field {
 		this.find("table.calendarTable td").each((_, td) => {
 			$(td).attr("data-index", idx);
 			$(td).attr("class", "dateCell");
-			$(td).click((ev) => {
-				this.handleClick(ev, 
-					(ev) => {
-						this.onClickCell(ev);
-					}, 
-					(ev) => {
-						this.onDblClickCell(ev);
-					}
-				);
-			});
+			new ClickHandler($(td), 
+				(ev) => {
+					this.onClickCell(ev);
+				}, 
+				(ev) => {
+					this.onDblClickCell(ev);
+				}
+			);
 			idx++;
 		});
 	}
