@@ -28,6 +28,7 @@ export class ContextMenu {
 			jq.on("contextmenu", contextmenu);
 		}
 		// モバイル端末での長押しコピーの禁止
+		jq.attr("oncontextmenu", "return false;");
 		jq.css("-webkit-touch-callout", "none");
 		jq.css("-webkit-user-select", "none");
 		jq.css("touch-action", "manipulation");
