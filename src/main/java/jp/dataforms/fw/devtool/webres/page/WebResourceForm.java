@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,6 +135,9 @@ public class WebResourceForm extends Form {
 	 */
 	private String getDataformsHtml(final String className, final String sourcePath, final String outputFormHtml, final String fieldLayout) throws Exception {
 		String src = this.getStringResourse("template/Page.html.template");
+		if (Pattern.matches(".+Dialog$", className)) {
+			src = this.getStringResourse("template/Dialog.html.template");
+		}
 		Class<?> pageClass = Class.forName(className);
 		DataForms page = (DataForms) pageClass.getDeclaredConstructor().newInstance();
 		StringBuilder sb = new StringBuilder();
