@@ -23,8 +23,8 @@ export class NumberField extends Field {
 	 * focus, blurイベント処理を登録し、カンマの付け外しを行います。
 	 * </pre>
 	 */
-	async attach() {
-		await super.attach();
+	attach() {
+		super.attach();
 		let el = this.get();
 		// 右寄せに設定.
 		el.css("text-align", "right");
