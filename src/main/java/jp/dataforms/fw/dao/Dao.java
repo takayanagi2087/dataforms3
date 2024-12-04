@@ -2278,4 +2278,31 @@ public class Dao implements JDBCConnectableObject {
 	public String queryNextCode(final Field<?> field) throws Exception {
 		return this.queryNextCode(field, null);
 	}
+	
+	/**
+	 * リストに更新ユーザIDを設定します。
+	 * @param updateUserId 更新ユーザID。
+	 * @param list リスト。
+	 */
+	public void setUserIdToList(final Long updateUserId, final List<Map<String, Object>> list) {
+		for (Map<String, Object> m: list) {
+			Entity e = new Entity(m);
+			e.setUpdateUserId(updateUserId);
+		}
+	}
+	
+	/**
+	 * リストに作成ユーザIDと更新ユーザIDを設定します。
+	 * @param createUserId 更新ユーザID。
+	 * @param updateUserId 更新ユーザID。
+	 * @param list リスト。
+	 */
+	public void setUserIdToList(final Long createUserId, final Long updateUserId, final List<Map<String, Object>> list) {
+		for (Map<String, Object> m: list) {
+			Entity e = new Entity(m);
+			e.setCreateUserId(createUserId);
+			e.setUpdateUserId(updateUserId);
+		}
+	}
+
 }
