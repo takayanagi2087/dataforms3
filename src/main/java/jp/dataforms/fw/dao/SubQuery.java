@@ -80,6 +80,8 @@ public class SubQuery extends Table {
 	 */
 	public void setQuery(final Query query) {
 		this.query = query;
+		FieldList flist = cloneFieldList(query.getFieldList());
+		this.setFieldList(flist);
 	}
 
 	/**
