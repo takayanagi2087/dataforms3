@@ -75,6 +75,47 @@ button.fileFieldButton:hover {
 	cursor: pointer;
 }
 
+/* 複数ファイルアップロードフィールド */
+button.multiFileUploadFieldButton {
+	width: 32px;
+	height: 32px;
+}
+
+/* フォルダーアイコン */
+.folderIcon {
+	background-image: url(./image/folder.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.folderIcon:hover {
+	color: var(--button-hover-color);
+	background: var(--button-hover-background-color);
+	font-weight: bold;
+	cursor: pointer;	
+	background-image: url(./image/folder.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+
+/* ゴミ箱アイコン */
+.trashIcon {
+	background-image: url(./image/trash.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.trashIcon:hover {
+	color: var(--button-hover-color);
+	background: var(--button-hover-background-color);
+	font-weight: bold;
+	cursor: pointer;	
+	background-image: url(./image/trash.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
 /* テキストボックスまたはプルダウンスタイル */
 input[type='text'],
 input[type='password'],

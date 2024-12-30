@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>FileFieldの追加コンポーネントのレイアウト</title>
+	</head>
+	<body>
+		<span>
+			<button type="button" id='${fieldId}_sel' class='multiFileUploadFieldButton folderIcon'>
+			</button>
+			<button type="button" id='${fieldId}_del' class='multiFileUploadFieldButton trashIcon'>
+			</button>
+			<div id='${fieldId}_rcv' class='fileReceiver' style="display: flex; align-items: center; width: 300px; height: 100px;"></div>
+			<span id='${fieldId}_selfile'></span>
+			<a id='${fieldId}_link' href=''></a>
+			<input type='hidden' id='${fieldId}_fn' name='${fieldId}_fn' value=''>
+		</span>
+	</body>
+</html>
