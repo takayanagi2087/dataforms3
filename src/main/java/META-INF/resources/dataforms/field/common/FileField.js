@@ -132,8 +132,14 @@ export class FileField extends Field {
 	selectFile(fld) {
 		let selfileid = this.id + "_selfile"; // 選択ボタンID.
 		let selfile = this.parent.get(selfileid);
-		selfile.text(fld.val());
-
+		let el = this.get().get()[0];
+		let filelist = "";
+		for (let i = 0; i < el.files.length; i++) {
+			filelist += "<br/>";
+			filelist += el.files[i].name;
+		}
+		selfile.html(filelist);
+			
 		let linkid = this.id + "_link"; // ダウンロードリンク.
 		let fnlink = this.parent.get(linkid);
 
