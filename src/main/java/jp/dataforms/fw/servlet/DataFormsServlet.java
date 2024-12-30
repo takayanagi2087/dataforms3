@@ -1106,6 +1106,31 @@ public class DataFormsServlet extends HttpServlet {
 		return map;
 	}
 
+	/**
+	 * パラメータマップに値を追加します。
+	 * @param map パラメータマップ。
+	 * @param key キー。
+	 * @param value 値。
+	 */
+	private void addParamMap(final Map<String, Object> map, final String key, final Part value) {
+//		log.info("paramater:" + key + "=" + value);
+		if (map.containsKey(key)) {
+			Object o = map.get(key);
+			if (o instanceof List<?>) {
+				@SuppressWarnings("unchecked")
+				List<Part> list = (List<Part>) o;
+				list.add(value);
+				map.put(key, list);
+			} else {
+				List<Part> list = new ArrayList<Part>();
+				list.add((Part) o);
+				list.add(value);
+				map.put(key, list);
+			}
+		} else {
+			map.put(key, value);
+		}
+	}
 
 	/**
 	 * パラメータマップに値を追加します。
@@ -1166,7 +1191,8 @@ public class DataFormsServlet extends HttpServlet {
     		if (filename != null) {
 				String name = p.getName();
 				if (filename.length() > 0) {
-					map.put(name, p);
+					this.addParamMap(map, name, p);
+//					map.put(name, p);
 				} else {
 					map.put(name, null);
 				}
