@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.mail.Part;
+import jakarta.servlet.http.Part;
 import jp.dataforms.fw.dao.file.FileObject;
 
 /**
