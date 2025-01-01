@@ -10,7 +10,11 @@ import jp.dataforms.fw.dao.file.FileObject;
 /**
  * 複数ファイルアップロードフィールド。
  * <pre>
- * このフィールドの値はForm#convertToServerDataメソッドでは常にnullになります。
+ * 複数のファイルの配列をDBには登録できないので、
+ * Form#convertToServerDataメソッドでPostされたパラメータを処理すると、
+ * このフィールドの値はnullになります。
+ * MultiFileUploadField#getPartListメソッドにPostされたパラメータを渡すと、
+ * アップロードされたファイルのリストを取得することができます。
  * </pre>
  */
 public class MultiFileUploadField extends FileObjectField {
