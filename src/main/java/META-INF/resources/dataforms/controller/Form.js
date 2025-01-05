@@ -4,7 +4,6 @@
 
 'use strict';
 
-import { MessagesUtil } from '../util/MessagesUtil.js';
 import { ValidationError } from '../validator/ValidationError.js';
 import { WebComponent } from './WebComponent.js';
 
@@ -29,7 +28,8 @@ export class Form extends WebComponent {
 		super();
 		this.clientValidation = true;
 		this.fields = [];
-		this.htmlTables = []
+		this.htmlTables = [];
+		this.contextMenus = [];
 	}
 
 	/**
@@ -58,6 +58,18 @@ export class Form extends WebComponent {
 		}
 	}
 
+	/**
+	 * コンテキストメニューの初期化を行います。
+	 * @param {Array} contextMenuList コンテキストメニューリスト.
+	 */
+	initContextMenu(contextMenuList) {
+		for (let i = 0; i < contextMenuList.length; i++) {
+			let m = contextMenuList[i];
+			let menu = this.newInstance(m);
+			menu.init();
+			this.contextMenus[i] = menu;
+		}
+	}
 
 	/**
 	 * 必須マークを設定します。
@@ -158,6 +170,7 @@ export class Form extends WebComponent {
 		super.init();
 		this.initField(this.fieldList);
 		this.initHtmlTable(this.htmlTableList);
+		this.initContextMenu(this.contextMenuList);
 	}
 
 	/**

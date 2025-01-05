@@ -267,6 +267,9 @@ export class WebComponent {
 		if (obj.htmlTableList != null) {
 			list = list.concat(this.#getChildImportJs(obj.htmlTableList));
 		}
+		if (obj.contextMenuList != null) {
+			list = list.concat(this.#getChildImportJs(obj.contextMenuList));
+		}
 		if (obj.validatorList != null) {
 			list = list.concat(this.#getChildImportJs(obj.validatorList));
 		}
@@ -306,13 +309,13 @@ export class WebComponent {
 			let module = await import(currentPage.contextPath + list[i].jsPath);
 			WebComponent.#moduleMap[list[i].jsClass] = module;
 		}
-		logger.log("menuJs=" + this.menuJs);
-		logger.log("sideMenuJs=" + this.sideMenuJs);
-		{
+		if (this.menuJs != null) {
+			logger.log("menuJs=" + this.menuJs);
 			let module = await import(currentPage.contextPath + this.menuJs);
 			WebComponent.#moduleMap['Menu'] = module;
 		}
-		{
+		if (this.sideMenuJs != null) {
+			logger.log("sideMenuJs=" + this.sideMenuJs);
 			let module = await import(currentPage.contextPath + this.sideMenuJs);
 			WebComponent.#moduleMap['SideMenu'] = module;
 		}

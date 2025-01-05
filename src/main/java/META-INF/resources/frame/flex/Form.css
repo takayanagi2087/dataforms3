@@ -221,3 +221,20 @@ div.flexLayout > div.w20p {
 	}
 }
 
+ul.contextMenu {
+	padding-left: 4px;
+	z-index: 1000;
+	display: none;
+	position: fixed;
+	right: 0;
+	width: 300px;
+	height: auto;
+	background: white;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+
+ul.contextMenu li:hover {
+	background-color: lightgray;
+}

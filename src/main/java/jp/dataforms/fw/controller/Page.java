@@ -996,6 +996,16 @@ public class Page extends DataForms implements WebEntryPoint {
 		}
 		map.put(WebEntryPoint.USER_INFO, userInfo);
 		map.put("useUniqueId", WebComponent.getUseUniqueId());
+		
+		{
+			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");
+			map.put("menuJs", "/dataforms/menu/Menu.js?t=" + ts);
+		}
+		{
+			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/SideMenu.js");
+			map.put("sideMenuJs", "/dataforms/menu/SideMenu.js?t=" + ts);
+		}
+
 		return map;
 	}
 

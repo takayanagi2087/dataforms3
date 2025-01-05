@@ -12,7 +12,7 @@ import { LongTapHandler } from './LongTapHandler.js';
  * 長押しを無理やり検出して動作します。
  * </pre>
  */
-export class ContextMenu {
+export class ContextMenuEventListener {
 	/**
 	 * コンストラクタ。
 	 * @param {jQuery} jqueryオブジェクト。

@@ -15,6 +15,7 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.htmltable.HtmlTable;
+import jp.dataforms.fw.menu.ContextMenu;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.ValidationError;
@@ -43,6 +44,12 @@ public  class Form extends WebComponent {
 	 */
 	private List<HtmlTable> htmlTableList = new ArrayList<HtmlTable>();
 
+	
+	/**
+	 * コンテキストメニューのリスト。
+	 */
+	private List<ContextMenu> contextMenuList = new ArrayList<ContextMenu>();
+	
 	/**
 	 * 初期化データ。
 	 */
@@ -139,6 +146,17 @@ public  class Form extends WebComponent {
 		this.addComponent(table);
 	}
 
+
+	/**
+	 * コンテキストメニューを追加します。
+	 * @param contextMenu コンテキストメニューリスト。
+	 */
+	protected void addContextMenu(final ContextMenu contextMenu) {
+		this.contextMenuList.add(contextMenu);
+		this.addComponent(contextMenu);
+	}
+
+	
 	/**
 	 * HTMLテーブルのリストを取得します。
 	 * @return HTMLテーブルのリスト。
@@ -206,6 +224,11 @@ public  class Form extends WebComponent {
 		if (htmlPath != null) {
 			map.put("htmlPath", htmlPath);
 		}
+		List<Map<String, Object>> menuList = new ArrayList<Map<String, Object>>();
+		for (ContextMenu menu: this.contextMenuList) {
+			menuList.add(menu.getProperties());
+		}
+		map.put("contextMenuList", menuList);
 		return map;
 	}
 

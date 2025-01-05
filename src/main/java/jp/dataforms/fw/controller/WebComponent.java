@@ -394,14 +394,6 @@ public class WebComponent implements JDBCConnectableObject {
 			}
 		}
 		obj.put("realId", this.getRealId());
-		{
-			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");
-			obj.put("menuJs", "/dataforms/menu/Menu.js?t=" + ts);
-		}
-		{
-			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/SideMenu.js");
-			obj.put("sideMenuJs", "/dataforms/menu/SideMenu.js?t=" + ts);
-		}
 		return obj;
 	}
 
