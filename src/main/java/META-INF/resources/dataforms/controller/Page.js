@@ -657,7 +657,7 @@ export class Page extends DataForms {
 	 */
 	getPlatform() {
 		try {
-			logger.log("navigator.userAgentData=", navigator.userAgentData);
+//			logger.log("navigator.userAgentData=", navigator.userAgentData);
 			return navigator.userAgentData.platform.toLowerCase();
 		} catch (e) {
 			let ua = window.navigator.userAgent.toLowerCase();
