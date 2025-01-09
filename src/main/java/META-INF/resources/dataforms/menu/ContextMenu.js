@@ -64,9 +64,17 @@ export class ContextMenu extends WebComponent {
 	 * @return メニューの選択値。
 	 */
 	async select(ev) {
+		let x = ev.clientX;
+		let y = ev.clientY;
+		if (ev.touches != null) {
+			if (ev.touches.length > 0) {
+				x = ev.touches[0].pageX;
+				y = ev.touches[0].pageY;
+			}
+		}
 		this.get().offset({
-			top: ev.clientY,
-			left: ev.clientX
+			top: y,
+			left: x
 		});
 		this.get().show();
 		let ret = new Promise((resolv) => {
