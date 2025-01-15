@@ -66,7 +66,17 @@ export class Dialog extends DataForms {
 			return false;
 		});
 	}
-
+	
+	/**
+	 * ダイアログクローズ前の処理。
+	 * @param {Event} ev イベント情報。
+	 * @param {Object} ui オブジェクト。 
+	 */
+	beforeClose(ev, ui) {
+		logger.log("ev=", ev);
+		logger.log("ui=", ui);
+	}
+	
 	/**
 	 * ダイアログを表示します。
 	 * @param {Boolean} modal モーダル表示の場合true。
@@ -82,6 +92,9 @@ export class Dialog extends DataForms {
 			, width: this.width
 			, height: this.height
 			, resizable: this.resizable
+			, beforeClose: (ev, ui) => {
+				this.beforeClose(ev, ui);	
+			}
 		};
 		if (p != null) {
 			for (let k in p) {
