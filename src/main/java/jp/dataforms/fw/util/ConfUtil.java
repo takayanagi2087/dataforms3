@@ -417,7 +417,7 @@ public class ConfUtil {
 		/**
 		 * 多要素認証を必須にするログイン回数。
 		 */
-		private Integer mfaRequiredCount = null;
+		private Integer mfaRequiredCount = 0;
 		/**
 		 * サポート言語リスト。
 		 */
@@ -774,7 +774,7 @@ public class ConfUtil {
 	 * @throws Exception 例外。
 	 */
 	public void copyConf(final Object src, final Object dst) throws Exception {
-		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
+//		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
 		Map<String, Object> map = this.getPropertyMap(src);
 		for (String key: map.keySet()) {
 			Object obj = map.get(key);
@@ -827,9 +827,8 @@ public class ConfUtil {
 	public void readDefaultConf(DataFormsServlet servlet) {
 		try {
 			// jarのリソース中のデフォルト設定を取得する。
-			String defaultJsonc = this.getDefaultConfFile();
-			this.conf  =  Conf.readJson(defaultJsonc);
-//			logger.debug("jar conf json=\n" + JsonUtil.encode(this.conf, true));
+			// String defaultJsonc = this.getDefaultConfFile();
+			this.conf  =  null;
 			{
 				// アプリケーション設定ファイルの読み込み
 				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");
@@ -837,7 +836,7 @@ public class ConfUtil {
 				if (cf.exists()) {
 					logger.debug("confPath=" + confPath);
 					Conf appConf  =  Conf.read(confPath);
-					this.copyConf(appConf, this.conf);
+					this.conf = appConf;
 				}
 			}
 			{
