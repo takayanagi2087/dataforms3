@@ -7,6 +7,7 @@
 import { JsonResponse } from '../../../response/JsonResponse.js';
 import { MessagesUtil } from '../../../util/MessagesUtil.js';
 import { EditForm } from '../../../controller/EditForm.js';
+import { ValidationError } from '../../../validator/ValidationError.js';
 
 /**
  * @class DaoAndPageGeneratorEditForm

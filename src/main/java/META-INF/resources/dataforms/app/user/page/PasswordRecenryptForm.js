@@ -6,6 +6,7 @@
 
 import { JsonResponse } from "../../../response/JsonResponse.js";
 import { MessagesUtil } from "../../../util/MessagesUtil.js";
+import { ValidationError } from '../../../validator/ValidationError.js';
 
 /**
  * @class PasswordRecenryptForm

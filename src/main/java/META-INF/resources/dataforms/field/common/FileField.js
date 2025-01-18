@@ -5,6 +5,7 @@
 'use strict';
 
 import { MessagesUtil } from '../../util/MessagesUtil.js';
+import { ValidationError } from '../../validator/ValidationError.js';
 import { Field } from '../base/Field.js';
 
  /**
