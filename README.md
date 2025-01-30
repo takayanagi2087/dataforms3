@@ -4,7 +4,6 @@
 
 dataforms3.jarはまだ開発中です。
 
-コミットテスト。
 
 dataforms2.jarから以下の点を変更する予定です。
 
