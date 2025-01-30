@@ -4,6 +4,8 @@
 
 dataforms3.jarはまだ開発中です。
 
+コミットテスト。
+
 dataforms2.jarから以下の点を変更する予定です。
 
 * Tomcat10以上に対応。Tomcat9以下では動作しません。
