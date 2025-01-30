@@ -67,6 +67,7 @@ import { Field } from '../base/Field.js';
 	 * @param {Array} ファイルリスト。
 	 */
 	setFile(files) {
+		// TODO: 将来、複数ファイルフィールドの場合、ファイルの追加をサポートしたい。
 		let el = this.fileField.get().get()[0];
 		el.files = files;
 		this.fileField.selectFile(this.fileField.get());

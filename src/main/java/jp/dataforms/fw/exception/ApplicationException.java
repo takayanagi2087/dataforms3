@@ -38,6 +38,8 @@ public class ApplicationException extends Exception {
 	 */
 	private ResponseMode responseMode = ResponseMode.JSON;
 
+	
+	// TODO:epointの設定のないコンストラクタもサポートする。
 	/**
 	 * コンストラクタ。
 	 * @param epoint エラーが発生したページ。
