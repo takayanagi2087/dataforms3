@@ -197,26 +197,29 @@ export class CalendarField extends Field {
 	 * @param {String} v 日付。
 	 */
 	async setValue(v) {
+		logger.log("this.#dateFormat=" + this.#dateFormat);
 		this.#dateValue = v;
-		let fmt = new SimpleDateFormat(this.#dateFormat);
-		let d = fmt.parse(this.#dateValue);
-		let r = await this.getCalenderInfo(this.#dateValue);
-		if (r.status == JsonResponse.SUCCESS) {
-			logger.log("r=", r);
-			this.find(".monthYear").text(r.result.monthYear);
-			this.#calendarInfo = r.result;
-			let dateList = this.#calendarInfo.dateList;
-			let idx = 0;
-			this.find("table.calendarTable tbody tr").each((_, tr) => {
-				$(tr).find("td").each((_, td) => {
-					let dateInfo = dateList[idx];
-					let tag = this.getDateCellHtml(idx, dateInfo);
-					$(td).html(tag);
-					$(td).attr("data-date", dateInfo.date);
-					idx++;
+//		let fmt = new SimpleDateFormat(this.#dateFormat);
+//		let d = fmt.parse(this.#dateValue);
+		if (v != null) {
+			let r = await this.getCalenderInfo(this.#dateValue);
+			if (r.status == JsonResponse.SUCCESS) {
+				logger.log("r=", r);
+				this.find(".monthYear").text(r.result.monthYear);
+				this.#calendarInfo = r.result;
+				let dateList = this.#calendarInfo.dateList;
+				let idx = 0;
+				this.find("table.calendarTable tbody tr").each((_, tr) => {
+					$(tr).find("td").each((_, td) => {
+						let dateInfo = dateList[idx];
+						let tag = this.getDateCellHtml(idx, dateInfo);
+						$(td).html(tag);
+						$(td).attr("data-date", dateInfo.date);
+						idx++;
+					});
 				});
-			});
-			this.selectDate(this.#dateValue);
+				this.selectDate(this.#dateValue);
+			}
 		}
 	}
 	
