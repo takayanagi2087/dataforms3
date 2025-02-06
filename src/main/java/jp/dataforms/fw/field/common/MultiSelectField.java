@@ -68,6 +68,9 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 
 	/**
 	 * コンストラクタ。
+	 * <pre>
+	 * TYPEにStringを指定した場合のみこのコンストラクタを使用してください。
+	 * </pre>
 	 * @param id フィールドID。
 	 */
 	public MultiSelectField(final String id) {
@@ -84,7 +87,7 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	/**
 	 * コンストラクタ。
 	 * @param id フィールドID。
-	 * @param cls 。
+	 * @param cls TYPEがString以外の場合、TYPEに指定したクラスを指定してください。
 	 */
 	public MultiSelectField(final String id, final Class<?> cls) {
 		super(id);
@@ -94,6 +97,11 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	}
 	
 
+	/**
+	 * Listの要素をTYPEに応じた型に変換します。
+	 * @param list リスト。
+	 * @return 変換されたリスト。
+	 */
 	private List<Object> convertListValue(final List<Object> list) {
 		List<Object> ret = new ArrayList<Object>();
 		if (list != null) {
@@ -120,7 +128,7 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	@Override
 	public void setClientValue(final Object v) {
 		if (v instanceof String) {
-			// 選択件数が1件の場合、文字列で渡ったてくるので、Listを作成します。
+			// 選択件数が1件の場合、文字列で渡されるのでListを作成します。
 			List<Object> list = new ArrayList<Object>();
 			list.add(v);
 			this.setValue((List<TYPE>) this.convertListValue(list));
