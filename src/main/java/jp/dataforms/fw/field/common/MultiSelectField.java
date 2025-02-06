@@ -22,6 +22,11 @@ import jp.dataforms.fw.util.StringUtil;
  */
 public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements SqlClob, OptionField<TYPE> {
 	/**
+	 * Logger.
+	 */
+//	private static Logger logger = LogManager.getLogger(MultiSelectField.class);
+	
+	/**
 	 * HTMLフィールドタイプ。
 	 */
 	public enum HtmlFieldType {
@@ -66,9 +71,48 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	 * @param id フィールドID。
 	 */
 	public MultiSelectField(final String id) {
+		this(id, String.class);
+		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "text");
+		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longtext");
+	}
+
+	/**
+	 * リスト要素のクラス。
+	 */
+	private Class<?> elementClass = null;
+	
+	/**
+	 * コンストラクタ。
+	 * @param id フィールドID。
+	 * @param cls 。
+	 */
+	public MultiSelectField(final String id, final Class<?> cls) {
 		super(id);
 		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "text");
 		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longtext");
+		this.elementClass = cls;
+	}
+	
+
+	private List<Object> convertListValue(final List<Object> list) {
+		List<Object> ret = new ArrayList<Object>();
+		if (list != null) {
+			for (Object str: list) {
+				if (String.class.isAssignableFrom(this.elementClass)) {
+					ret.add(str);
+				} else if (Short.class.isAssignableFrom(this.elementClass)) {
+					Short v = Short.parseShort(str.toString());
+					ret.add(v);
+				} else if (Integer.class.isAssignableFrom(this.elementClass)) {
+					Integer v = Integer.parseInt(str.toString());
+					ret.add(v);
+				} else if (Long.class.isAssignableFrom(this.elementClass)) {
+					Long v = Long.parseLong(str.toString());
+					ret.add(v);
+				}
+			}
+		}
+		return ret;
 	}
 
 
@@ -77,11 +121,12 @@ public class MultiSelectField<TYPE> extends SelectField<List<TYPE>> implements S
 	public void setClientValue(final Object v) {
 		if (v instanceof String) {
 			// 選択件数が1件の場合、文字列で渡ったてくるので、Listを作成します。
-			List<TYPE> list = new ArrayList<TYPE>();
-			list.add((TYPE) v);
-			this.setValue(list);
+			List<Object> list = new ArrayList<Object>();
+			list.add(v);
+			this.setValue((List<TYPE>) this.convertListValue(list));
 		} else {
-			this.setValue((List<TYPE>) v);
+			List<Object> list = (List<Object>) v;
+			this.setValue((List<TYPE>) this.convertListValue(list));
 		}
 	}
 
