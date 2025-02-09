@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import jp.dataforms.fw.dao.condition.ConditionExpression;
+import jp.dataforms.fw.dao.condition.ConditionExpressionList.Operator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
@@ -114,6 +115,11 @@ public class Query {
 	 * コメント。
 	 */
 	private String comment = null;
+	
+	/**
+	 * 各条件の結合演算子を指定します。
+	 */
+	private Operator conditionOperator = Operator.AND;
 
 	/**
 	 * コンストラクタ。
@@ -122,6 +128,26 @@ public class Query {
 
 	}
 
+	/**
+	 * 条件オペレータを指定します。
+	 * @param conditionOperator 条件オペレータ。
+	 */
+	public void setConditionOperator(final Operator conditionOperator) {
+		this.conditionOperator = conditionOperator;
+	}
+
+	/**
+	 * SQLの条件演算時を取得します。
+	 * @return " and " または " or "を返します。
+	 */
+	public String getConditionOperatorSql() {
+		if (this.conditionOperator == Operator.AND) {
+			return " and ";
+		} else {
+			return " or ";
+		}
+	}
+	
 	/**
 	 * コメントを取得します。
 	 * @return コメント。

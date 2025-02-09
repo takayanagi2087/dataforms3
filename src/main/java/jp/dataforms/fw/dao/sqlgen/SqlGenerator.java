@@ -1275,7 +1275,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				String ex = this.getFieldCondition(query, f, p);
 				if (ex != null) {
 					if (sb.length() > 0) {
-						sb.append(" and ");
+						sb.append(query.getConditionOperatorSql());
 					}
 					sb.append(ex);
 				}
@@ -1333,7 +1333,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		String sql = this.getWhereCondition(query, cond, p);
 		if (!StringUtil.isBlank(sql)) {
 			if (sb.length() > 0) {
-				sb.append(" and ");
+				sb.append(query.getConditionOperatorSql());
 			}
 			sb.append(sql);
 		}

@@ -24,7 +24,7 @@ export class CheckListBoxField extends MultiSelectField {
 		let f = this.getParentForm();
 		let span = f.find("#" + this.selectorEscape(this.id + "[0]")).parents("span:first");
 		let div = span.parents(":first");
-		span.wrap("<div class='checkboxList' style='width: 100%; height: " + (div.innerHeight() - 5) + "px !important; overflow-y: scroll; border-style: solid; border-width: 1px;'></div>")
+		span.wrap("<div class='checkboxList' style='width: calc(100% - 2px); height: " + (div.innerHeight() - 5) + "px !important; overflow-y: scroll; border-style: solid; border-width: 1px;'></div>")
 		super.setOptionList(opt);
 		let first = true;
 		f.find("[name='" + this.id + "']").each((_, el) => {
