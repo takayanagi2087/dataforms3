@@ -253,6 +253,24 @@ export class QueryResultForm extends Form {
 	}
 
 	/**
+	 * 選択インデックス。
+	 */
+	#selectedIndex = null;
+	
+	get selectedIndex() {
+		return this,this.#selectedIndex;
+	}
+
+	/**
+	 * 選択されたデータ。
+	 */
+	#selectedData = null;
+	
+	get selectedData() {
+		return this.#selectedData;
+	}
+		
+	/**
 	 * 各種操作をするためのキーを設定します。
 	 * <pre>
 	 * 更新等のイベント処理時に更新対象のキー情報を適切に設定する処理です。
@@ -265,6 +283,8 @@ export class QueryResultForm extends Form {
 		this.selectedQueryString = "";
 		let tbl = this.getComponent("queryResult");
 		let ridx = tbl.getRowIndex(comp);
+		this.#selectedIndex = ridx;
+		this.#selectedData = this.queryResult.queryResult[ridx];
 		for (let i = 0; i < this.pkFieldList.length; i++) {
 			let id = this.pkFieldList[i];
 			let v = this.queryResult.queryResult[ridx][id];
