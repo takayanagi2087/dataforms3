@@ -22,6 +22,22 @@ export class RadioListBoxField extends SingleSelectField {
 	#noListDiv = true;
 
 	/**
+	 * 各項目の間に改行を追加します。
+	 */
+	addBr() {
+		let f = this.getParentForm();
+		let first = true;
+		f.find("[name='" + this.id + "']").each((_, el) => {
+			if (first) {
+				first = false;
+			} else {
+				$(el).before("<br>");
+			}
+		});
+	}
+	
+	
+	/**
 	 * オプションを設定します。
 	 * @param {Array} opt オプション情報。
 	 */
@@ -42,18 +58,11 @@ export class RadioListBoxField extends SingleSelectField {
 			span.wrap("<div class='radioList' style='height: " + (div.innerHeight() - 5) + "px !important;'></div>")
 			this.#noListDiv = false;
 		}
-		super.setRadioOptionList();
+		this.setRadioOptionList();
 		if (hide) {
 			f.find("[name='" + this.id + "']").hide();
 		} else {
-			let first = true;
-			f.find("[name='" + this.id + "']").each((_, el) => {
-				if (first) {
-					first = false;
-				} else {
-					$(el).before("<br>");
-				}
-			});
+			this.addBr();
 		}
 	}
 }

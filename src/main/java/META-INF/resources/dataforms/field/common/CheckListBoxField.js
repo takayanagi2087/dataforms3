@@ -21,6 +21,21 @@ export class CheckListBoxField extends MultiSelectField {
 	 */
 	#noListDiv = true;
 
+	/**
+	 * 各項目の間に改行を追加します。
+	 */
+	addBr() {
+		let f = this.getParentForm();
+		let first = true;
+		f.find("[name='" + this.id + "']").each((_, el) => {
+			if (first) {
+				first = false;
+			} else {
+				$(el).before("<br>");
+			}
+		});
+	}
+
 
 	/**
 	 * オプションを設定します。
@@ -47,14 +62,7 @@ export class CheckListBoxField extends MultiSelectField {
 		if (hide) {
 			f.find("[name='" + this.id + "']").hide();
 		} else {
-			let first = true;
-			f.find("[name='" + this.id + "']").each((_, el) => {
-				if (first) {
-					first = false;
-				} else {
-					$(el).before("<br>");
-				}
-			});
+			this.addBr();
 		}
 	}
 }
