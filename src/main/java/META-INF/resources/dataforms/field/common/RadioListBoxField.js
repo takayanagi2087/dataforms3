@@ -4,7 +4,7 @@
 
 'use strict';
 
-import { MultiSelectField } from './MultiSelectField.js';
+import { SingleSelectField } from './SingleSelectField.js';
 
 
 /**
@@ -12,15 +12,14 @@ import { MultiSelectField } from './MultiSelectField.js';
  * 複数選択リストフィールドクラス。
  * <pre>
  * </pre>
- * @extends MultiSelectField
+ * @extends SingleSelectField
  */
-export class CheckListBoxField extends MultiSelectField {
+export class RadioListBoxField extends SingleSelectField {
 	
 	/**
 	 * スクロールリスト用のDIV設定済フラグ。
 	 */
 	#noListDiv = true;
-
 
 	/**
 	 * オプションを設定します。
@@ -40,10 +39,10 @@ export class CheckListBoxField extends MultiSelectField {
 		if (this.#noListDiv) {
 			let span = f.find("#" + this.selectorEscape(this.id + "[0]")).parents("span:first");
 			let div = span.parents(":first");
-			span.wrap("<div class='checkboxList' style='height: " + (div.innerHeight() - 5) + "px !important;'></div>")
+			span.wrap("<div class='radioList' style='height: " + (div.innerHeight() - 5) + "px !important;'></div>")
 			this.#noListDiv = false;
 		}
-		this.setCheckboxOptionList();
+		super.setRadioOptionList();
 		if (hide) {
 			f.find("[name='" + this.id + "']").hide();
 		} else {

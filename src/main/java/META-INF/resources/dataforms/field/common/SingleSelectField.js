@@ -27,8 +27,6 @@ export class SingleSelectField extends SelectField {
 	 * @param {String} value 値。
 	 */
 	setInputValue(comp, value) {
-		logger.log("SingleSelectField setValue comp=", comp);
-		logger.log("SingleSelectField setValue value=" +  value);
 		let tag = comp.prop("tagName");
 		let type = comp.prop("type");
 		if ("INPUT" == tag && "radio" == type) {

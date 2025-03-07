@@ -115,12 +115,74 @@ export class SelectField extends Field {
 	}
 
 	/**
-	 * 選択肢を対応する要素に設定します。
-	 * @param {Array} opt 選択肢のリスト。
+	 * SelectタグのOptionを展開します。
 	 */
-	setOptionList(opt) {
-		if (opt != null) {
-			this.optionList = opt;
+	setSelectOptionList() {
+		let el = this.get();
+		let opthtml = "";
+		if (this.blankOption) {
+			opthtml += "<option value=''></option>";
+		}
+		for (let i = 0; i < this.optionList.length; i++) {
+			let opt = this.optionList[i];
+			opthtml += "<option value='" + opt.value + "'>" + opt.name + "</option>";
+		}
+		el.html(opthtml);
+	}
+
+	/**
+	 * ラジオボタンのリストを展開します。
+	 */
+	setRadioOptionList() {
+		let el = this.get();
+		let pl = el.parent();
+		pl.html("");
+		let opthtml = "";
+		for (let i = 0; i < this.optionList.length; i++) {
+			let opt = this.optionList[i];
+			if (currentPage.useUniqueId) {
+				opthtml +=
+					"<input type='radio' id='" + this.realId + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+						+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
+			} else {
+				opthtml +=
+					"<input type='radio' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+						+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
+			}
+		}
+		pl.html(opthtml);
+	}
+		
+	/**
+	 * チェックボックスのリストを展開します。
+	 */
+	setCheckboxOptionList() {
+		let el = this.get();
+		let pl = el.parent();
+		pl.html("");
+		let opthtml = "";
+		for (let i = 0; i < this.optionList.length; i++) {
+			let opt = this.optionList[i];
+			if (currentPage.useUniqueId) {
+				opthtml +=
+					"<input type='checkbox' id='" + this.realId  + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+						+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
+			} else {
+				opthtml +=
+					"<input type='checkbox' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+						+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
+			}
+		}
+		pl.html(opthtml);
+	}
+	
+	/**
+	 * 選択肢を対応する要素に設定します。
+	 * @param {Array} optlist 選択肢のリスト。
+	 */
+	setOptionList(optlist) {
+		if (optlist != null) {
+			this.optionList = optlist;
 		}
 		if (this.optionList == null) {
 			return;
@@ -128,50 +190,12 @@ export class SelectField extends Field {
 		let el = this.get();
 		if (el.length > 0) {
 			if (el.prop("tagName") == "SELECT") {
-				let opthtml = "";
-				if (this.blankOption) {
-					opthtml += "<option value=''></option>";
-				}
-				for (let i = 0; i < this.optionList.length; i++) {
-					let opt = this.optionList[i];
-					opthtml += "<option value='" + opt.value + "'>" + opt.name + "</option>";
-				}
-				el.html(opthtml);
+				this.setSelectOptionList();
 			} else if (el.prop("tagName") == "INPUT") {
 				if (el.attr("type").toLowerCase() == "radio" ) {
-					let pl = el.parent();
-					pl.html("");
-					let opthtml = "";
-					for (let i = 0; i < this.optionList.length; i++) {
-						let opt = this.optionList[i];
-						if (currentPage.useUniqueId) {
-							opthtml +=
-								"<input type='radio' id='" + this.realId + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-									+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-						} else {
-							opthtml +=
-								"<input type='radio' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-									+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-						}
-					}
-					pl.html(opthtml);
+					this.setRadioOptionList();
 				} else if (el.attr("type").toLowerCase() == "checkbox" ) {
-					let pl = el.parent();
-					pl.html("");
-					let opthtml = "";
-					for (let i = 0; i < this.optionList.length; i++) {
-						let opt = this.optionList[i];
-						if (currentPage.useUniqueId) {
-							opthtml +=
-								"<input type='checkbox' id='" + this.realId  + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-									+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-						} else {
-							opthtml +=
-								"<input type='checkbox' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-									+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-						}
-					}
-					pl.html(opthtml);
+					this.setCheckboxOptionList();
 				}
 			}
 		}
