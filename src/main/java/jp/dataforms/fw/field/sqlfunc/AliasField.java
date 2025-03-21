@@ -2,6 +2,8 @@ package jp.dataforms.fw.field.sqlfunc;
 
 import jp.dataforms.fw.field.base.Field;
 
+// TODO:このフィールドをFormに配置した場合、POSTデータがnullになる不具合があるので後で修正。
+
 /**
  * 別名フィールドクラス。
  * <pre>

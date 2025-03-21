@@ -622,6 +622,7 @@ public class TableManagerDao extends Dao {
 	 * @throws Exception 例外。
 	 */
 	public void adjustSequence(final Table tbl) throws Exception {
+		// TODO:レコードが0件の場合の対応を確認(Pgsqlで不具合あり?)
 		SqlGenerator gen = this.getSqlGenerator();
 		if (gen.isSequenceSupported()) {
 			if (tbl.recordIdExists() && tbl.isAutoIncrementId()) {
