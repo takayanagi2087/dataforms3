@@ -827,8 +827,8 @@ public class ConfUtil {
 	public void readDefaultConf(DataFormsServlet servlet) {
 		try {
 			// jarのリソース中のデフォルト設定を取得する。
-			// String defaultJsonc = this.getDefaultConfFile();
-			this.conf  =  null;
+ 			String defaultJsonc = this.getDefaultConfFile();
+			this.conf  =  (Conf) JsonUtil.decode(defaultJsonc, Conf.class);
 			{
 				// アプリケーション設定ファイルの読み込み
 				String confPath = servlet.getServletContext().getRealPath("/WEB-INF/dataforms.conf.jsonc");
