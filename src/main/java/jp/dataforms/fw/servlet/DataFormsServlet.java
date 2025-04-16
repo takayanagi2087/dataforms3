@@ -195,7 +195,9 @@ public class DataFormsServlet extends HttpServlet {
 	 * ページオーバーライドマップを初期化します。
 	 */
 	private void initPageOverrideMap() {
-		DataFormsServlet.pageOverrideMap.putAll(DataFormsServlet.getConf().getApplication().getPageOverride());
+		if (DataFormsServlet.getConf() != null) {
+			DataFormsServlet.pageOverrideMap.putAll(DataFormsServlet.getConf().getApplication().getPageOverride());
+		}
 	}
 
 
