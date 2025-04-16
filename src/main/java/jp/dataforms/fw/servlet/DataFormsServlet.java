@@ -235,7 +235,9 @@ public class DataFormsServlet extends HttpServlet {
 		
 		this.initPageOverrideMap();
 		
-		LoginForm.setMfaRequiredCount(DataFormsServlet.confUtil.getConf().getApplication().getMfaRequiredCount());
+		if (DataFormsServlet.confUtil.getConf() != null) {
+			LoginForm.setMfaRequiredCount(DataFormsServlet.confUtil.getConf().getApplication().getMfaRequiredCount());
+		}
 
 		// 一時フォルダがない場合作成する。
 		File tmp = new File(DataFormsServlet.getTempDir());
