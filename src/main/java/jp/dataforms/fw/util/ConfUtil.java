@@ -841,12 +841,14 @@ public class ConfUtil {
 			}
 			{
 				// サーバ設定ファイルを読み込む
-				String serverConf = this.conf.getApplication().getServerConfigFile();
-				if (serverConf != null) {
-					File cf = new File(serverConf);
-					if (cf.exists()) {
-						Conf appConf = Conf.read(serverConf);
-						this.copyConf(appConf, this.conf);
+				if (this.conf != null) {
+					String serverConf = this.conf.getApplication().getServerConfigFile();
+					if (serverConf != null) {
+						File cf = new File(serverConf);
+						if (cf.exists()) {
+							Conf appConf = Conf.read(serverConf);
+							this.copyConf(appConf, this.conf);
+						}
 					}
 				}
 			}
