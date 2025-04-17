@@ -381,7 +381,7 @@ public class Page extends DataForms implements WebEntryPoint {
 			if (cls != null) {
 				String pp = p.substring(context.length());
 				String t = WebResourceUtil.getLastUpdate(pp);
-				sb.append("\t\timport { " + cls + " } from '" + p + "?t=" + t + "';\n");
+				sb.append("\t\timport { " + cls + " } from '" + p + "?t=" + DataFormsServlet.getAppUpdateTime() + "';\n");
 			}
 		}
 	}
@@ -397,7 +397,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		String jspath = this.getAppropriatePath(js, this.getRequest());
 		if (jspath != null) {
 			String t = this.getLastUpdate(jspath);
-			sb.append("\t\t<script src=\"" + context + jspath + "?t=" + t + "\"></script>\n");
+			sb.append("\t\t<script src=\"" + context + jspath + "?t=" + DataFormsServlet.getAppUpdateTime() + "\"></script>\n");
 		}
 	}
 
@@ -431,7 +431,7 @@ public class Page extends DataForms implements WebEntryPoint {
 			String csspath = this.getAppropriatePath(css, this.getRequest());
 			if (csspath != null) {
 				String t = this.getLastUpdate(csspath);
-				sb.append("\t\t<link type=\"text/css\" href=\"" + context + csspath + "?t=" + t + "\" rel=\"stylesheet\" />\n");
+				sb.append("\t\t<link type=\"text/css\" href=\"" + context + csspath + "?t=" + DataFormsServlet.getAppUpdateTime() + "\" rel=\"stylesheet\" />\n");
 			}
 		}
 
@@ -999,11 +999,11 @@ public class Page extends DataForms implements WebEntryPoint {
 		
 		{
 			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");
-			map.put("menuJs", "/dataforms/menu/Menu.js?t=" + ts);
+			map.put("menuJs", "/dataforms/menu/Menu.js?t=" + DataFormsServlet.getAppUpdateTime());
 		}
 		{
 			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/SideMenu.js");
-			map.put("sideMenuJs", "/dataforms/menu/SideMenu.js?t=" + ts);
+			map.put("sideMenuJs", "/dataforms/menu/SideMenu.js?t=" + DataFormsServlet.getAppUpdateTime());
 		}
 
 		return map;

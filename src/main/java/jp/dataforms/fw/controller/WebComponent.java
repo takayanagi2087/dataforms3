@@ -383,7 +383,7 @@ public class WebComponent implements JDBCConnectableObject {
 		obj.put("path", this.getViewPath());
 		String jspath = this.getScriptPath();
 		String t = this.getLastUpdate(jspath);
-		obj.put("jsPath", jspath + "?t=" + t);
+		obj.put("jsPath", jspath + "?t=" + DataFormsServlet.getAppUpdateTime());
 		obj.put("jsClass", this.getJsClass());
 		String additionalHtmlText = this.getAdditionalHtmlText();
 		if (additionalHtmlText != null) {

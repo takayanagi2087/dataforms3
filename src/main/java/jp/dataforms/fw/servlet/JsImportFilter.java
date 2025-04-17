@@ -20,7 +20,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jp.dataforms.fw.util.PathUtil;
 
 
 /**
@@ -72,12 +71,13 @@ public class JsImportFilter extends DataFormsFilter implements Filter {
 				sb.append(js.substring(idx0, m.start()));
 				idx0 = m.end();
 				logger.debug("JsImport:" + m.group(1).trim() + ":" + m.group(2));
-				String abspath = PathUtil.getAbsolutePath(path, m.group(2));
-				String ts = this.getTimestamp(abspath);
+//				String abspath = PathUtil.getAbsolutePath(path, m.group(2));
+/*				String ts = this.getTimestamp(abspath);
 				if (ts == null) {
 					this.readWebResource(abspath);
 					ts = this.getTimestamp(abspath);
-				}
+				}*/
+				String ts = DataFormsServlet.getAppUpdateTime();
 				String imp = "import { " + m.group(1).trim() + " } from '" + m.group(2) + "?t=" + ts + "'";
 				sb.append(imp);
 			}

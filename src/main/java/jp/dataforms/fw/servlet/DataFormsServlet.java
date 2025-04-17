@@ -7,12 +7,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.naming.Context;
@@ -224,11 +231,65 @@ public class DataFormsServlet extends HttpServlet {
 	}
 	
 	/**
+	 * アプリケーション更新日付。
+	 */
+	private static String appUpdateTime = null;
+	
+	/**
+	 * アプリケーション更新日付を取得します。
+	 * @return アプリケーション更新日付。
+	 */
+	public static String getAppUpdateTime() {
+		return appUpdateTime;
+	}
+	
+	
+	/**
+	 * システムの更新日付を取得します。
+	 */
+	private void getUpdateTime() {
+		String appPath = this.getServletContext().getRealPath("/");
+		logger.info("appPath=" + appPath);
+		Path folderPath = Paths.get(appPath);
+        try {
+            Optional<Path> latestFile = Files.walk(folderPath)
+                    .filter(Files::isRegularFile)
+                    .max(Comparator.comparing(path -> {
+                        try {
+                            return Files.getLastModifiedTime(path);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return FileTime.fromMillis(0);
+                        }
+                    }));
+
+            if (latestFile.isPresent()) {
+                Path file = latestFile.get();
+                FileTime lastModifiedTime = Files.getLastModifiedTime(file);
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        		logger.info("system newest file=" + file);
+        		DataFormsServlet.appUpdateTime = fmt.format(new java.util.Date(lastModifiedTime.toMillis()));
+        		logger.info("lastupdate=" + DataFormsServlet.appUpdateTime);
+            } else {
+            	logger.error("App file not found.");
+            }
+        } catch (IOException e) {
+        	logger.error(e.getMessage(), e);
+        }
+
+	}
+	
+	
+	/**
 	 * 初期化パラメータを取得します。
 	 * @throws ServletException 例外。
 	 */
 	@Override
 	public void init() throws ServletException {
+		
+		this.getUpdateTime();
+		
+		
 		
 		DataFormsServlet.confUtil = new ConfUtil();
 		DataFormsServlet.confUtil.readDefaultConf(this);
