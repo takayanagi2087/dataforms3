@@ -32,6 +32,7 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 * フレームデザインは単純なHTML,CSSで記述してあるので、簡単にカスタマイズすることができます。
 
 
+
 ## Install
 
 * [Pleiades All in One ](https://willbrains.jp/)をダウンロードしインストール。
