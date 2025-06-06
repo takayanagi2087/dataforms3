@@ -193,6 +193,23 @@ export class CalendarField extends Field {
 	}
 	
 	/**
+	 * 内容の再描画を行います。
+	 */
+	updateContents() {
+		let dateList = this.#calendarInfo.dateList;
+		let idx = 0;
+		this.find("table.calendarTable tbody tr").each((_, tr) => {
+			$(tr).find("td").each((_, td) => {
+				let dateInfo = dateList[idx];
+				let tag = this.getDateCellHtml(idx, dateInfo);
+				$(td).html(tag);
+				$(td).attr("data-date", dateInfo.date);
+				idx++;
+			});
+		});
+	}
+	
+	/**
 	 * 日付を設定します。
 	 * @param {String} v 日付。
 	 */
@@ -207,17 +224,7 @@ export class CalendarField extends Field {
 				logger.log("r=", r);
 				this.find(".monthYear").text(r.result.monthYear);
 				this.#calendarInfo = r.result;
-				let dateList = this.#calendarInfo.dateList;
-				let idx = 0;
-				this.find("table.calendarTable tbody tr").each((_, tr) => {
-					$(tr).find("td").each((_, td) => {
-						let dateInfo = dateList[idx];
-						let tag = this.getDateCellHtml(idx, dateInfo);
-						$(td).html(tag);
-						$(td).attr("data-date", dateInfo.date);
-						idx++;
-					});
-				});
+				this.updateContents();
 				this.selectDate(this.#dateValue);
 			}
 		}
