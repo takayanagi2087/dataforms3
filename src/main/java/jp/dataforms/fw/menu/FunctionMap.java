@@ -759,6 +759,7 @@ public class FunctionMap {
 		List<String> ret = new ArrayList<String>();
 		for (String pkg: set) {
 			if ("jp.dataforms.fw.dao".equals(pkg)) {
+				// Tableのベースクラスなどは無視する。
 				continue;
 			}
 			logger.debug("getDBPackageList: package=" + pkg);
