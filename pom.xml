@@ -18,7 +18,7 @@
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
 		<log4j.version>2.24.0</log4j.version>
-		<poi.version>5.3.0</poi.version>
+		<poi.version>5.4.1</poi.version>
 	</properties>
 	<repositories>
 		<repository>
