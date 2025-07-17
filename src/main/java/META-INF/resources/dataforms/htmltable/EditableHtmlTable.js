@@ -252,7 +252,7 @@ export class EditableHtmlTable extends HtmlTable {
 	 * @param {String} rowid 設定する行のID('tableid[idx]'形式)。
 	 */
 	onAddTr(rowid) {
-		super.onAddTr(rowid);
+//		super.onAddTr(rowid);
 		this.get(rowid + ".addButton").click((ev) => {
 			this.addRow(ev.currentTarget);
 			return false;

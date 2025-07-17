@@ -644,21 +644,17 @@ export class HtmlTable extends WebComponent {
 	addTr(l) {
 		let tb = this.find("tbody");
 		let lidx = this.find("tbody>tr").length;
-		let ret = l;
-		if (l == null) {
-			ret = lidx;
-		}
-		let line = this.trLine.replace(/\[0\]/g, "[" + ret + "]");
+		let line = this.trLine.replace(/\[0\]/g, "[" + lidx + "]");
 		if (l == null) {
 			tb.append("<tr>" + line + "</tr>");
 		} else {
-			$(this.find("tbody>tr").get(ret)).before("<tr>" + line + "</tr>");
+			$(this.find("tbody>tr").get(l)).before("<tr>" + line + "</tr>");
 		}
 		for (let i = 0; i < this.fields.length; i++) {
-			let f = this.getRowField(ret, this.fields[i]);
+			let f = this.getRowField(lidx, this.fields[i]);
 			f.attach();
 		}
-		return ret;
+		return lidx;
 	}
 
 	/**
