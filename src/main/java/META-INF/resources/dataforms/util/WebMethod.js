@@ -272,7 +272,12 @@ export class WebMethod {
 	 * @returns {Promise} Promiseオブジェクト。
 	 */
 	async submit(form) {
-		return await this.submitWithFile(form);
+		let ff = form.find("input[type='file']");
+		if (ff.length > 0) {
+			return await this.submitWithFile(form);
+		} else {
+			return await this.submitWithoutFile(form);
+		}
 	}
 
 	/**
