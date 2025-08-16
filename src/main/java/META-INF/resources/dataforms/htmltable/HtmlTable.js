@@ -99,6 +99,23 @@ export class HtmlTable extends WebComponent {
 		let tbl = this.get();
 		this.trLine = tbl.find("tbody>tr:first").html();
 		this.clear();
+		this.get().on("wheel", (ev) => {
+			this.onWheel(ev);
+		});
+	}
+	
+	/**
+	 * Wheelイベント処理。
+	 * <pre>
+	 * カラム固定を使用した場合、マウスホイールでのスクロールで
+	 * テーブルが崩れる現象が発生することがある。
+	 * このイベント処理は何もしないが、この処理を入れることで
+	 * テーブルが崩れることが防止できた。
+	 * </pre>
+	 * @param {Event} ev イベント情報。
+	 */
+	onWheel(ev) {
+		// logger.log("onWheeel");
 	}
 
 	/**
