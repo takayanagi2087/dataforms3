@@ -319,7 +319,9 @@ export class LoginForm extends Form {
 	 */	
 	onEnter() {
 		if (this.get("nextButton").is(":visible")) {
-			this.getAuthOption();
+			if (this.validateLoginId()) {
+				this.getAuthOption();
+			}
 		} else {
 			this.login();
 		}
@@ -336,7 +338,25 @@ export class LoginForm extends Form {
 		}
 		this.changeAuthMethod();
 	}
-		
+
+	/**
+	 * LoginIdを確認します。
+	 * @return 正常の場合true。
+	 */
+	validateLoginId() {
+		currentPage.resetErrorStatus();
+		let loginIdField = this.getComponent("loginId");
+		let err = loginIdField.validate();
+		logger.log("err=", err);
+		if (err != null) {
+			let errlist = [];
+			errlist.push(err);
+			currentPage.setErrorInfo(errlist, this);
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
@@ -350,7 +370,9 @@ export class LoginForm extends Form {
 			this.changeAuthMethod();
 		});
 		this.get("nextButton").click(() => {
-			this.getAuthOption();
+			if (this.validateLoginId()) {
+				this.getAuthOption();
+			}
 			return false;
 		});
 		this.get().on("keydown", (ev) => {
