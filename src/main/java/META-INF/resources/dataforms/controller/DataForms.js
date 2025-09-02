@@ -115,6 +115,7 @@ export class DataForms extends WebComponent {
 	resetErrorStatus() {
 		let area = this.get("errorMessages");
 		area.html("");
+		area.hide();
 		let ef = this.find('.errorField');
 		ef.each((_, el) => {
 			$(el).removeClass('errorField');
@@ -136,6 +137,7 @@ export class DataForms extends WebComponent {
 	setErrorInfo(errors, form) {
 		let area = this.get("errorMessages");
 		this.resetErrorStatus();
+		area.show();
 		for (let i = 0; i < errors.length; i++) {
 			area.append(errors[i].message + "<br/>");
 			let comp = form.get(this.selectorEscape(errors[i].fieldId));
