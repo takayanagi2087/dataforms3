@@ -353,3 +353,9 @@ body.hideMenu div.leftbarDiv {
 body.hideMenu div.mainDiv {
 	width: 100%;
 }
+
+form.loginInfoForm {
+	display: flex; 
+	flex-flow: row; 
+	align-items: center;
+}

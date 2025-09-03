@@ -27,9 +27,19 @@ export class LoginInfoForm extends Form {
 				thisForm.setFormData(ret.result);
 				thisForm.get("underLoginDiv").show();
 				thisForm.get("dontLoginDiv").hide();
+				if (window.opener != null) {
+					this.get("logoutButton").hide();
+				} else {
+					this.get("logoutButton").show();
+				}
 			} else {
 				thisForm.get("underLoginDiv").hide();
 				thisForm.get("dontLoginDiv").show();
+			}
+			if (window.opener != null) {
+				this.get("pageCloseButton").show();
+			} else {
+				this.get("pageCloseButton").hide();
 			}
 		}
 	}
@@ -61,6 +71,9 @@ export class LoginInfoForm extends Form {
 		}
 		this.get('logoutButton').click(() => {
 			this.logout();
+		});
+		this.get('pageCloseButton').click(() => {
+			window.close();
 		});
 		this.update();
 	}
