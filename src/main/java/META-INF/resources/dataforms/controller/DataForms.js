@@ -162,6 +162,7 @@ export class DataForms extends WebComponent {
 		let qf = this.get("queryForm");
 		let qrf = this.get("queryResultForm");
 		if (qf.length > 0 || qrf.length > 0) {
+			this.resetErrorStatus();
 			let queryForm = this.getComponent("queryForm");
 			if (queryForm != null) {
 				qf.show();
