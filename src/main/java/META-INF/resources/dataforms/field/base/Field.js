@@ -27,6 +27,9 @@ export class Field extends WebComponent {
 		super();
 	}
 
+	// IME入力フラグ
+	#isComposing = false;
+	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
 	 * <pre>
@@ -38,6 +41,14 @@ export class Field extends WebComponent {
 	attach() {
 		let thisField = this;
 		super.attach();
+		
+		this.get().on("compositionstart", () => {
+			this.#isComposing = true;	
+		});
+		this.get().on("compositionend", () => {
+			this.#isComposing = false;	
+		});
+		
 		if (this.label == null) {
 			this.label = this.getLabel();
 		}
@@ -566,6 +577,10 @@ export class Field extends WebComponent {
 	 * @param {res} リスト設定メソッド.
 	 */
 	async getSource(res) {
+		// IME入力中の場合はリストを表示しない
+		if (this.#isComposing) {
+			return;
+		}
 		try {
 			let method = this.getWebMethod("getAutocompleteSource");
 			let param = this.getAjaxParameter();
