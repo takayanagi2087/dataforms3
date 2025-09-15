@@ -5,7 +5,7 @@
 		<link type="text/css" href="../css/document.css" rel="stylesheet" />
 		<title></title>
 	</head>
-	<body>
+	<div>
 		<h1><span>2.3.</span>ページのカスタマイズ</h1>
 		<p>
 			開発ツールで作成したコードを見ていただければ、シンプルで可読性の高いものになっていることがわかると思います。
@@ -35,6 +35,64 @@
 			XXXEditForm.jsに記載された初期化処理が動作するようになります。
 			ブラウザ側の動作を独自に定義したい場合は、Javascriptクラスを作成し必要な機能を追記してください。
 		</p>
+		<h2>WebComponentとjQuery</h2>
+		<p>
+			PageクラスはFormとDialogを配置することができ、FormにはFieldやHtmlTableを配置することができます。
+			親のWebCompoentクラスに配置された子のWebComponentのインスタンスを取得するには、
+			以下のようにgetComponentメソッドを使用します。
+		</p>
+		
+		<div class="wrappre">
+			<pre>
+let comp = this.getComponent(id);	// idをから配置されている子のWebComponentを取得します。
+// comp.method(...); でWebComponentに定義されたメソッドを呼び出すことができます。
+			</pre>
+		</div>
+		<p>
+			WebComponentのget()メソッドを使うと、対応するjQueryオブジェクトを取得することができます。
+			get()のように引数を指定せずに呼び出すと、WebComponentに対応した要素のjQueryオブジェクトを取得します。
+			get(id)のようにidを指定すると、WebComponent内に配置された指定したidを持つ要素に対応したjQueryオブジェクトを取得することができます。
+		</p>
+		<div class="wrappre">
+			<pre>
+let jq0 = comp.get();　// compに対応した、jQueryオブジェクトを取得。
+let jq1 = comp.get(id);　// 指定されたidを持つ、comp内に配置された要素のjQueryオブジェクトを取得します。
+			</pre>
+		</div>
+		<p>
+			WebComponentのfind(jQuerySelector)メソッドを使うと、WebComponent内の要素をjQuery selectorで検索することができます。
+		</p>
+		<div class="wrappre">
+			<pre>
+let hogeDiv = comp.find("div.hoge");　// comp内の"hoge" classを持つdivのjQueryオブジェクトを取得します。
+			</pre>
+		</div>
+		<p>
+			editFormに以下のタグを記述すると、
+		</p>
+		<div class="wrappre">
+			<pre>
+&lt;input type=&quot;text&quot; id=&quot;sampleText&quot; /&gt;
+			</pre>
+		</div>
+		<p>
+			以下のようなタグに変換されます。
+		</p>
+		<div class="wrappre">
+			<pre>
+&lt;input type=&quot;text&quot; data-id=&quot;sampleText&quot; id=&quot;mainDiv.editForm.sampleText&quot; name=&quot;sampleText&quot; class=&quot;ui-autocomplete-input&quot; autocomplete=&quot;off&quot;&gt;
+			</pre>
+		</div>
+		<p>
+			これはページ中にqueryFormとeditFormを配置した場合、検索条件のフィールドと編集項目フィールドに同じidが指定されるケースがあり、
+			これをそのまま出力すると、idが一意ならないページになってしまいます。そのためサーバ中のhtmlに記載されたidはdata-idに転記し、	idには
+			"mainDiv.editForm.sampleText"のようにWebComponentの階層を"."で接続したページ中で一意になるidが指定を設定するようになっています。
+		</p>
+		<p>
+			WebComponentのget(id)はdata-idの値を検索しています。またfind("[id='hoge']")のように、jQuery selectorにidを指定した場合、
+			自動的にidをdata-idに変換して検索するようになっています。
+		</p>
+				
 		<h2>カスタマイズの例</h2>
 		<h3>ページの使用権限の変更</h3>
 		<p>
