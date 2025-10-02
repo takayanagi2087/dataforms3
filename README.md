@@ -32,7 +32,6 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 * フレームデザインは単純なHTML,CSSで記述してあるので、簡単にカスタマイズすることができます。
 
 
-
 ## Install
 
 * [Pleiades All in One ](https://willbrains.jp/)をダウンロードしインストール。
@@ -59,9 +58,14 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 		</dependency>
 	</dependencies>
 ``` 
+ 
 * ビルドした後Tomcat10にWebアプリケーションを追加して実行し、ブラウザからアクセスするとプロジェクト初期化画面が表示されます。
 
+詳しくは[dataforms3.jarドキュメント](https://www.dataforms.jp/sample3/dataforms/doc/page/DocFramePage.html)を参照してください。
+
+
 ## Requirement
+
 主に、Eclipse(pleiades2024-06) + Java21 + Tomcat10 + Apache Derby,PostgreSQLでテストしています。
 
 対応しているデータベースサーバは、以下の通りです。
