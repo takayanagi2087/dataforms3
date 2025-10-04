@@ -22,6 +22,7 @@ import jp.dataforms.fw.dao.sqldatatype.SqlVarchar;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.response.BinaryResponse;
+import jp.dataforms.fw.response.BinaryResponse.Disposition;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -51,6 +52,19 @@ public abstract class FileField<TYPE extends FileObject> extends Field<TYPE> {
 	 * 基底フォルダ。
 	 */
 	private String baseFolder = null;
+
+	/**
+	 * ファイルダウンロード時のContent-Dispositio指定。
+	 */
+	private Disposition contentDisposition = Disposition.ATTACHMENT;
+	
+	/**
+	 * ファイルダウンロード時のContent-Dispositionを指定します。
+	 * @param contentDisposition Content-Dispositionを指定。
+	 */
+	public void setContentDisposition(Disposition contentDisposition) {
+		this.contentDisposition = contentDisposition;
+	}
 
 	/**
 	 * Logger.
@@ -314,6 +328,7 @@ public abstract class FileField<TYPE extends FileObject> extends Field<TYPE> {
 		BinaryResponse resp = new BinaryResponse(fobj);
 		resp.setRequest(req);
 		resp.setTempFile(store.getTempFile(fobj));
+		resp.setContentDisposition(this.contentDisposition);
 		if (key != null) {
 			if (!store.isSeekingSupported()) {
 				// BLOBでRangeヘッダが指定されていた場合、一時ファイルのパスをセッションに記録する。
