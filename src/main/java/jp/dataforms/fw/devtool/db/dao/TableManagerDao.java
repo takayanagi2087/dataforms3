@@ -1028,12 +1028,20 @@ public class TableManagerDao extends Dao {
 	 * @throws Exception 例外。
 	 */
 	public List<Map<String, Object>> getTableColumnList(final String func, final String pkg, final String tblname) throws Exception {
+		logger.info("tblname=" + tblname);
+		String tn = tblname;
 		SqlGenerator gen = this.getSqlGenerator();
 		Connection conn = this.getConnection();
 		DatabaseMetaData md = conn.getMetaData();
 		String schema = getSchema(conn);
+		if (tblname.indexOf(".") >= 0) {
+			String[] sp = tblname.split("\\.");
+			schema = sp[0];
+			tn = sp[1];
+		}
+		logger.debug("schema=" + schema + ", " + tn);
 		List<Map<String, Object>> collist = new ArrayList<Map<String, Object>>();
-		ResultSet rs = md.getColumns(conn.getCatalog(), schema, gen.convertTableNameForDatabaseMetaData(tblname), "%");
+		ResultSet rs = md.getColumns(conn.getCatalog(), schema, gen.convertTableNameForDatabaseMetaData(tn), "%");
 		try {
 			while (rs.next()) {
 				Map<String, Object> m = this.getTableClassFieldInfo(func, pkg, rs);
