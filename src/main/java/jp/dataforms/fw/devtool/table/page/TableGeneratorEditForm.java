@@ -687,6 +687,10 @@ public class TableGeneratorEditForm extends EditForm {
 			Map<String, Object> m = dao.queryTableInfo(importTable);
 			TableInfoEntity e = new TableInfoEntity(m);
 			String tblname = importTable + "_table";
+			if (tblname.indexOf(".") >= 0) {
+				String [] sp = tblname.split("\\.");
+				tblname = sp[1];
+			}
 			m.put("tableClassName", StringUtil.firstLetterToUpperCase(StringUtil.snakeToCamel(tblname)));
 			m.put("tableComment", e.getRemarks());
 			m.put("updateInfoFlag", "0");
