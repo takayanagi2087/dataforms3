@@ -113,6 +113,8 @@
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
@@ -124,13 +126,6 @@
 			<artifactId>log4j-jakarta-web</artifactId>
 			<version>${log4j.version}</version>
 			<scope>runtime</scope>
-		</dependency>
-		<!--
-		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 		<!-- Excel出力を使う場合はPOIを依存ライブラリに追加 -->
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->

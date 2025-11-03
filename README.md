@@ -46,8 +46,8 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 ``` 
 	<repositories>
 		<repository>
-			<id>jp.dataforms</id>
-			<url>https://www.dataforms.jp/mvn/repository</url>
+			<id>jp.dataforms.dataforms3</id>
+			<url>https://takayanagi2087.github.io/dataforms3/</url>
 		</repository>
 	</repositories>
 	<dependencies>
