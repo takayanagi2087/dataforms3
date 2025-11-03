@@ -12,6 +12,7 @@ import jp.dataforms.fw.controller.QueryResultForm;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.base.NumberField;
 import jp.dataforms.fw.field.common.SortOrderField;
 import jp.dataforms.fw.field.sqltype.BigintField;
 import jp.dataforms.fw.field.sqltype.CharField;
@@ -134,8 +135,14 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 	 */
 	private String getDataHtml() {
 		StringBuilder sb = new StringBuilder();
+		boolean flg = true;
 		for (Field<?> f: this.htmlTable.getFieldList()) {
-			sb.append("<td>");
+			if (f instanceof NumberField) {
+				sb.append("<td style='text-align: right;'>");
+				flg = false;
+			} else {
+				sb.append("<td>");
+			}
 			if (Page.getUseUniqueId()) {
 				sb.append("<span data-id=\"queryResult[0].");
 				sb.append(f.getId());
