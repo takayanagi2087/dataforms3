@@ -64,7 +64,7 @@ public class QueryClassNameField extends SimpleClassNameField {
 
 	@Override
 	protected String getClassNameSuffix() {
-		return "Query";
+		return "((Query)|(Table))";
 	}
 
 	@Override
