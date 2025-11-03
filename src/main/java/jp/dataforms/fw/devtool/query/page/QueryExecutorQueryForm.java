@@ -39,7 +39,12 @@ public class QueryExecutorQueryForm extends QueryForm {
 	public QueryExecutorQueryForm() {
 		this.addField(new FunctionSelectField());
 		this.addField(new PackageNameField());
-		QueryClassNameField fld = new QueryClassNameField("queryClassName");
+		QueryClassNameField fld = new QueryClassNameField("queryClassName") {
+			@Override
+			protected String getClassNameSuffix() {
+				return "((Query)|(Table))";
+			}
+		};
 		fld.addBaseClass(Table.class);
 		this.addField(fld).setAutocomplete(true).setRelationDataAcquisition(true);
 		this.addField(new SqlField("sql")).addValidator(new RequiredValidator());
