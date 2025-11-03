@@ -26,7 +26,31 @@ import lombok.Setter;
  *  Pathとパッケージの変換を行うクラス。
  */
 public class FunctionMap {
-	
+
+	/**
+	 * dataformsのパス。
+	 */
+	private static final String PATH_DATAFORMS = "/dataforms";
+	/**
+	 * アプリケーションの基本機能のパス。
+	 */
+	private static final String PATH_DATAFORMS_APP = "/dataforms/app";
+	/**
+	 * 開発ツールのパス。
+	 */
+	private static final String PATH_DATAFORMS_DEVTOOL = "/dataforms/devtool";
+	/**
+	 * データベースツールのパス。
+	 */
+	private static final String PATH_DATAFORMS_DBTOOL = "/dataforms/dbtool";
+	/**
+	 * ドキュメントのパス。
+	 */
+	private static final String PATH_DATAFORMS_DOC = "/dataforms/doc";
+	/**
+	 * テストツールのパス。
+	 */
+	private static final String PATH_DATAFORMS_TEST = "/dataforms/test";
 	/**
 	 * Logger.
 	 */
@@ -83,11 +107,11 @@ public class FunctionMap {
 	 * フレームワークのPath-Package対応表の登録を行う。
 	 */
 	protected void addFwPathPackage() {
-		this.addPathPackage(new PathPackage("/dataforms/devtool", WebComponent.BASE_PACKAGE + ".devtool"));
-		this.addPathPackage(new PathPackage("/dataforms/test", "jp.dataforms.test"));
-		this.addPathPackage(new PathPackage("/dataforms/app", WebComponent.BASE_PACKAGE + ".app"));
-		this.addPathPackage(new PathPackage("/dataforms/doc", WebComponent.BASE_PACKAGE + ".doc"));
-		this.addPathPackage(new PathPackage("/dataforms", WebComponent.BASE_PACKAGE));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS_DEVTOOL, WebComponent.BASE_PACKAGE + ".devtool"));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS_TEST, "jp.dataforms.test"));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS_APP, WebComponent.BASE_PACKAGE + ".app"));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS_DOC, WebComponent.BASE_PACKAGE + ".doc"));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS, WebComponent.BASE_PACKAGE));
 	}
 
 	/**
@@ -163,10 +187,11 @@ public class FunctionMap {
 	 * フレームワークのメニューを追加します。
 	 */
 	private void addFwMenu() {
-		this.addMenu(new Menu("/dataforms/app", "Basic Function", "ja\t基本機能"));
-		this.addMenu(new Menu("/dataforms/devtool", "Develop tool", "ja\t開発ツール"));
-		this.addMenu(new Menu("/dataforms/test", "Test develop tool", "ja\tテスト開発ツール"));
-		this.addMenu(new Menu("/dataforms/doc", "Documents", "ja\tドキュメント"));
+		this.addMenu(new Menu(PATH_DATAFORMS_APP, "Basic Function", "ja\t基本機能"));
+		this.addMenu(new Menu(PATH_DATAFORMS_DEVTOOL, "Develop tool", "ja\t開発ツール"));
+		this.addMenu(new Menu(PATH_DATAFORMS_DBTOOL, "Database tool", "ja\tDBツール"));
+		this.addMenu(new Menu(PATH_DATAFORMS_TEST, "Test develop tool", "ja\tテスト開発ツール"));
+		this.addMenu(new Menu(PATH_DATAFORMS_DOC, "Documents", "ja\tドキュメント"));
 	}
 	
 	/**
@@ -404,9 +429,11 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.pageform.page.DaoAndPageGeneratorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.webres.page.WebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.expwebres.page.ExportWebResourcePage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
-		this.addPage(new PageInfo(jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
+
+		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
+		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
+		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
+		
 		this.addOtherJarPage("jp.dataforms.test.devtool.pageform.page.TestSrcGeneratorPage");
 		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.VersionInfoPage.class));
@@ -685,7 +712,7 @@ public class FunctionMap {
 			ClassFinder finder = new ClassFinder();
 			for (Menu m: this.getMenuList()) {
 				String path = m.getPath();
-				if (path.indexOf("/dataforms") == 0) {
+				if (path.indexOf(PATH_DATAFORMS) == 0) {
 					continue;
 				}
 				String pkg = this.getPackage(m);
