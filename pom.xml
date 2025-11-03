@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>jp.dataforms</groupId>
 	<artifactId>dataforms3</artifactId>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0.1</version>
 	<name>dataforms version 3</name>
 	<!--
 		以下の環境変数を設定してください。
