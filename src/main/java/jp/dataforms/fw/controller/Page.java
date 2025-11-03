@@ -379,8 +379,8 @@ public class Page extends DataForms implements WebEntryPoint {
 			String p = context + jspath;
 			String cls = this.getJsClass(p);
 			if (cls != null) {
-				String pp = p.substring(context.length());
-				String t = WebResourceUtil.getLastUpdate(pp);
+//				String pp = p.substring(context.length());
+//				String t = WebResourceUtil.getLastUpdate(pp);
 				sb.append("\t\timport { " + cls + " } from '" + p + "?t=" + DataFormsServlet.getAppUpdateTime() + "';\n");
 			}
 		}
@@ -396,7 +396,7 @@ public class Page extends DataForms implements WebEntryPoint {
 	private void addScriptTag(final String context, final String js, final StringBuilder sb) throws Exception {
 		String jspath = this.getAppropriatePath(js, this.getRequest());
 		if (jspath != null) {
-			String t = this.getLastUpdate(jspath);
+//			String t = this.getLastUpdate(jspath);
 			sb.append("\t\t<script src=\"" + context + jspath + "?t=" + DataFormsServlet.getAppUpdateTime() + "\"></script>\n");
 		}
 	}
@@ -430,7 +430,7 @@ public class Page extends DataForms implements WebEntryPoint {
 		for (String css : this.preloadCssList) {
 			String csspath = this.getAppropriatePath(css, this.getRequest());
 			if (csspath != null) {
-				String t = this.getLastUpdate(csspath);
+//				String t = this.getLastUpdate(csspath);
 				sb.append("\t\t<link type=\"text/css\" href=\"" + context + csspath + "?t=" + DataFormsServlet.getAppUpdateTime() + "\" rel=\"stylesheet\" />\n");
 			}
 		}
@@ -998,11 +998,11 @@ public class Page extends DataForms implements WebEntryPoint {
 		map.put("useUniqueId", WebComponent.getUseUniqueId());
 		
 		{
-			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");
+//			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");
 			map.put("menuJs", "/dataforms/menu/Menu.js?t=" + DataFormsServlet.getAppUpdateTime());
 		}
 		{
-			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/SideMenu.js");
+//			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/SideMenu.js");
 			map.put("sideMenuJs", "/dataforms/menu/SideMenu.js?t=" + DataFormsServlet.getAppUpdateTime());
 		}
 
