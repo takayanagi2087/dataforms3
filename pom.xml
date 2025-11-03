@@ -21,9 +21,15 @@
 		<poi.version>5.4.1</poi.version>
 	</properties>
 	<repositories>
+<!--
 		<repository>
 			<id>jp.dataforms</id>
 			<url>https://www.dataforms.jp/mvn/repository</url>
+		</repository>
+-->
+		<repository>
+			<id>jp.dataforms.ExcelToXSLFO</id>
+			<url>https://takayanagi2087.github.io/ExcelToXSLFO/</url>
 		</repository>
 	</repositories>
 	<!-- デプロイ先の設定 -->
