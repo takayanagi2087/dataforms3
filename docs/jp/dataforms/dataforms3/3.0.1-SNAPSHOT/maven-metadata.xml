@@ -3,21 +3,21 @@
   <groupId>jp.dataforms</groupId>
   <artifactId>dataforms3</artifactId>
   <versioning>
-    <lastUpdated>20251103005840</lastUpdated>
+    <lastUpdated>20251103012620</lastUpdated>
     <snapshot>
-      <timestamp>20251103.005840</timestamp>
+      <timestamp>20251103.012620</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>3.0.1-20251103.005840-1</value>
-        <updated>20251103005840</updated>
+        <value>3.0.1-20251103.012620-1</value>
+        <updated>20251103012620</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>3.0.1-20251103.005840-1</value>
-        <updated>20251103005840</updated>
+        <value>3.0.1-20251103.012620-1</value>
+        <updated>20251103012620</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
