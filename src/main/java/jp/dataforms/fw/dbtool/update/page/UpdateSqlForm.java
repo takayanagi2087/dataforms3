@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.update.page;
+package jp.dataforms.fw.dbtool.update.page;
 
 import java.util.HashMap;
 import java.util.List;

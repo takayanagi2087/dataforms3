@@ -108,6 +108,7 @@ public class FunctionMap {
 	 */
 	protected void addFwPathPackage() {
 		this.addPathPackage(new PathPackage(PATH_DATAFORMS_DEVTOOL, WebComponent.BASE_PACKAGE + ".devtool"));
+		this.addPathPackage(new PathPackage(PATH_DATAFORMS_DBTOOL, WebComponent.BASE_PACKAGE + ".dbtool"));
 		this.addPathPackage(new PathPackage(PATH_DATAFORMS_TEST, "jp.dataforms.test"));
 		this.addPathPackage(new PathPackage(PATH_DATAFORMS_APP, WebComponent.BASE_PACKAGE + ".app"));
 		this.addPathPackage(new PathPackage(PATH_DATAFORMS_DOC, WebComponent.BASE_PACKAGE + ".doc"));
@@ -431,8 +432,8 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.expwebres.page.ExportWebResourcePage.class));
 
 		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
-		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.query.page.QueryExecutorPage.class));
-		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.update.page.UpdateSqlPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.dbtool.query.page.QueryExecutorPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.dbtool.update.page.UpdateSqlPage.class));
 		
 		this.addOtherJarPage("jp.dataforms.test.devtool.pageform.page.TestSrcGeneratorPage");
 		this.addPage(new PageInfo(jp.dataforms.fw.doc.page.DocFramePage.class));

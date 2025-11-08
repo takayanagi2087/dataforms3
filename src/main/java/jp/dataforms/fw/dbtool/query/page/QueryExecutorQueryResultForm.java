@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.query.page;
+package jp.dataforms.fw.dbtool.query.page;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -135,11 +135,11 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 	 */
 	private String getDataHtml() {
 		StringBuilder sb = new StringBuilder();
-		boolean flg = true;
+//		boolean flg = true;
 		for (Field<?> f: this.htmlTable.getFieldList()) {
 			if (f instanceof NumberField) {
 				sb.append("<td style='text-align: right;'>");
-				flg = false;
+//				flg = false;
 			} else {
 				sb.append("<td>");
 			}

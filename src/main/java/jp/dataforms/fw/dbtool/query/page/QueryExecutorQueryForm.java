@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.query.page;
+package jp.dataforms.fw.dbtool.query.page;
 
 import java.util.HashMap;
 import java.util.List;

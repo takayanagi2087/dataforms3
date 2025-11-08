@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.query.page;
+package jp.dataforms.fw.dbtool.update.page;
 
 import java.util.Map;
 
@@ -15,12 +15,12 @@ import jp.dataforms.fw.response.Response;
 /**
  * ページクラス。
  */
-public class QueryExecutorPage extends DbToolPage {
+public class UpdateSqlPage extends DbToolPage {
 
 	/**
 	 * Logger.
 	 */
-	private static Logger logger = LogManager.getLogger(QueryExecutorPage.class);
+	private static Logger logger = LogManager.getLogger(UpdateSqlPage.class);
 
 	/**
 	 * テーブル名のセッションID。
@@ -30,9 +30,8 @@ public class QueryExecutorPage extends DbToolPage {
 	/**
 	 * コンストラクタ。
 	 */
-	public QueryExecutorPage() {
-		this.addForm(new QueryExecutorQueryForm());
-		this.addForm(new QueryExecutorQueryResultForm());
+	public UpdateSqlPage() {
+		this.addForm(new UpdateSqlForm());
 
 	}
 
