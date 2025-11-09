@@ -1,4 +1,4 @@
-package jp.dataforms.fw.devtool.db.page;
+package jp.dataforms.fw.dbtool.db.page;
 
 import java.util.Map;
 

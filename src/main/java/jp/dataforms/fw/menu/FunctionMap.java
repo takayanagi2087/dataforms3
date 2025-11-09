@@ -431,7 +431,7 @@ public class FunctionMap {
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.webres.page.WebResourcePage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.devtool.expwebres.page.ExportWebResourcePage.class));
 
-		this.addPage(new PageInfo(PATH_DATAFORMS_DBTOOL, jp.dataforms.fw.devtool.db.page.TableManagementPage.class));
+		this.addPage(new PageInfo(jp.dataforms.fw.dbtool.db.page.TableManagementPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.dbtool.query.page.QueryExecutorPage.class));
 		this.addPage(new PageInfo(jp.dataforms.fw.dbtool.update.page.UpdateSqlPage.class));
 		

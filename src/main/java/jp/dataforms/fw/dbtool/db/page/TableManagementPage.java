@@ -1,6 +1,7 @@
-package jp.dataforms.fw.devtool.db.page;
+package jp.dataforms.fw.dbtool.db.page;
 
 import jp.dataforms.fw.devtool.base.page.DbToolPage;
+import jp.dataforms.fw.devtool.db.page.DatabaseInfoForm;
 
 /**
  * DB管理ページクラス。
