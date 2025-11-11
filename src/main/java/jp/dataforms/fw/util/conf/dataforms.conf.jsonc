@@ -101,6 +101,21 @@
 			// 使用するJNDIデータソースを指定する
 			, "dataSource": null
 		}
+		// 事情によりアプリケーションのWEB-INF/libにJDBCドライバーを配置しなければならない場合、
+		// JNDIデータソースは利用できなくなります。
+		// その場合、context.xmlからJNDI DataSourseの設定を削除し、
+		// 以下の設定を有効にすることによってでDBCPのコネクションフールを試用するこちができます。
+/*		, "dbcpDataSource": {
+			"default": {
+				"driverClassName": ""
+				, "url": ""
+				, "user": ""
+				, "password": ""
+				, "initialSize": 5
+				, "maxTotal": 20
+				, "maxMaxIdle": 20
+			}
+		}*/
 		// ----------------------------------
 		// Mail関連設定
 		, "mail": {

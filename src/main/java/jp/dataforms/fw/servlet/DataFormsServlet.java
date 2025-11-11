@@ -27,6 +27,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -77,6 +78,7 @@ import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.ConfUtil;
 import jp.dataforms.fw.util.ConfUtil.Conf;
 import jp.dataforms.fw.util.ConfUtil.CryptConfig;
+import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.OnetimePasswordConfig;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.FileUtil;
@@ -483,21 +485,75 @@ public class DataFormsServlet extends HttpServlet {
 	}
 
 	/**
+	 * データソースを取得します。
+	 * @param jndiPrefix JNDIデータソースの前につける文字列。
+	 * @param dataSourceName JNDIデータソース名称。
+	 * @return データソース。
+	 * @throws Exception 例外。
+	 */
+	public static DataSource getJndiDataSource(final String jndiPrefix, final String dataSourceName) throws Exception {
+		Context initContext = new InitialContext();
+		String dspath = jndiPrefix + dataSourceName;
+		logger.info(() -> "jndi data source=" + dspath);
+		DataSource dataSource = (DataSource) initContext.lookup(dspath);
+		return dataSource;
+	}
+
+	/**
+	 * DBCPデータソースを取得します。
+	 * @param dbcpDataSourseMap DBCP設定情報。
+	 * @param dataSourceName データソース名。
+	 * @return データソース。
+	 * @throws Exception 例外。
+	 */
+	public static DataSource getDbcpDataSource(final Map<String, DbcpDataSource> dbcpDataSourseMap, final String dataSourceName) throws Exception {
+		DbcpDataSource conf = dbcpDataSourseMap.get(dataSourceName);
+		logger.info("dbcp data source=" + JsonUtil.encode(conf, true));
+		BasicDataSource ds = new BasicDataSource();
+		ds.setDriverClassName(conf.getDriverClassName());
+		ds.setUrl(conf.getUrl());
+		ds.setUsername(conf.getUser());
+		ds.setPassword(conf.getPassword());
+		ds.setInitialSize(conf.getInitialSize());
+		ds.setMaxTotal(conf.getMaxTotal());
+		ds.setMaxIdle(conf.getMaxMaxIdle());
+		// ds.setMaxWaitMillis(conf.getMaxWaitMillis());
+		return ds;
+
+	}
+	
+	/**
+	 * データソースを取得します。
+	 * @param jndiPrefix JNDIデータソースの前につける文字列。
+	 * @param dataSourceName JNDIデータソース名称。
+	 * @param dbcpDataSourseMap DBCP設定情報。
+	 * @return データソース。
+	 * @throws Exception 例外。
+	 */
+	public static DataSource getDataSource(final String jndiPrefix, final String dataSourceName, final Map<String, DbcpDataSource> dbcpDataSourseMap) throws Exception {
+		if (dbcpDataSourseMap != null) {
+			return DataFormsServlet.getDbcpDataSource(dbcpDataSourseMap, "default");
+		} else {
+			return DataFormsServlet.getJndiDataSource(jndiPrefix, dataSourceName);
+		}
+		
+	}
+	
+	/**
 	 * DBの接続チェックを行ないます。
 	 */
 	private void checkDbConnection() {
 		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
 		String jndiPrefix = DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix();
-		if (dataSourceName == null) {
+		Map<String, DbcpDataSource> dbcpDataSourseMap = DataFormsServlet.getConf().getApplication().getDbcpDataSource();
+		if (dataSourceName == null && dbcpDataSourseMap == null) {
 			// DataFormsServlet.configStatus = "error.notfounddatasourcesetting";
 		} else {
 			try {
 				if (dataSourceName != null) {
-					Context initContext = new InitialContext();
-					String dspath = jndiPrefix + dataSourceName;
-					logger.info(() -> "lookup data source=" + dspath);
-					this.dataSource = (DataSource) initContext.lookup(dspath);
+					this.dataSource = DataFormsServlet.getDataSource(jndiPrefix, dataSourceName, dbcpDataSourseMap);
 
+					Context initContext = new InitialContext();
 					try {
 						DataFormsServlet.duplicateErrorMessage = (String) initContext.lookup(jndiPrefix + "duplicateErrorMessage");
 					} catch (Exception ex) {

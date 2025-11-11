@@ -164,6 +164,47 @@ public class ConfUtil {
 	}
 	
 	/**
+	 * DBCP Source設定。
+	 */
+	@Data
+	public static class DbcpDataSource implements ConfClass {
+		/**
+		 * ドライバークラス名。
+		 */
+		private String driverClassName = null;
+		/**
+		 * URL。
+		 */
+		private String url = null;
+		/**
+		 * ユーザ。
+		 */
+		private String user = null;
+		/**
+		 * パスワード。
+		 */
+		private String password = null;
+		/**
+		 * 初期サイズ。
+		 */
+		private Integer initialSize = null;
+		/**
+		 * 最大サイズ。
+		 */
+		private Integer maxTotal = null;
+		/**
+		 * 最大アイドル。
+		 */
+		private Integer maxMaxIdle = null;
+		/**
+		 * コンストラクタ。
+		 */
+		public DbcpDataSource() {
+			
+		}
+	}
+	
+	/**
 	 * Mail設定。
 	 */
 	@Data
@@ -452,6 +493,12 @@ public class ConfUtil {
 		 * JNDIデータソース設定。
 		 */
 		private JndiDataSource jndiDataSource = null;
+		
+		/**
+		 * DBCPデータソース。
+		 */
+		private Map<String, DbcpDataSource> dbcpDataSource = null;
+		
 		/**
 		 * メール設定。
 		 */
@@ -677,6 +724,9 @@ public class ConfUtil {
 	 * @throws Exception 例外。
 	 */
 	private Object getProperty(final Object obj, final String pname) throws Exception {
+		if ("originalJndiDataSource".equals(pname)) {
+			return null;
+		}
 		String mname = "get" + pname.substring(0, 1).toUpperCase() + pname.substring(1);
 		logger.debug("getProperty() obj=" + obj.getClass().getName() + " -> " + mname);
 		Class<?>[] arg = new Class<?>[0]; 
@@ -774,6 +824,9 @@ public class ConfUtil {
 	 * @throws Exception 例外。
 	 */
 	public void copyConf(final Object src, final Object dst) throws Exception {
+		if (src == null) {
+			return;
+		}
 //		logger.debug("*** className = " + src.getClass().getName() + " -> " + dst.getClass().getName());
 		Map<String, Object> map = this.getPropertyMap(src);
 		for (String key: map.keySet()) {
@@ -808,6 +861,9 @@ public class ConfUtil {
 		Method[] mlist = src.getClass().getMethods();
 		for (Method m: mlist) {
 			String fn = m.getName();
+			if ("getOriginalJndiDataSource".equals(fn)) {
+				continue;
+			}
 			if (fn.indexOf("get") == 0) {
 				String pname = fn.substring(3, 4).toLowerCase() + fn.substring(4);
 				logger.debug("pname=" + pname);
