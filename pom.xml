@@ -17,7 +17,7 @@
 		<!-- Java VMのパス　-->
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-		<log4j.version>2.24.0</log4j.version>
+		<log4j.version>2.25.2</log4j.version>
 		<poi.version>5.4.1</poi.version>
 	</properties>
 	<repositories>
@@ -125,7 +125,15 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-jakarta-web</artifactId>
 			<version>${log4j.version}</version>
-			<scope>runtime</scope>
+			<!--
+				<scope>runtime</scope>
+			-->
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-web</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Excel出力を使う場合はPOIを依存ライブラリに追加 -->
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->

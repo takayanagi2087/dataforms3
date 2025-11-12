@@ -12,10 +12,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +145,11 @@ public class DataFormsServlet extends HttpServlet {
 	 * データソースのオブジェクト.
 	 */
 	private DataSource dataSource = null;
+	
+	/**
+	 * DBCP試用フラグ。
+	 */
+	private static boolean isDbcp = false;
 
 	/**
 	 * 設定の状態.
@@ -496,6 +505,7 @@ public class DataFormsServlet extends HttpServlet {
 		String dspath = jndiPrefix + dataSourceName;
 		logger.info(() -> "jndi data source=" + dspath);
 		DataSource dataSource = (DataSource) initContext.lookup(dspath);
+		DataFormsServlet.isDbcp = false;
 		return dataSource;
 	}
 
@@ -518,6 +528,7 @@ public class DataFormsServlet extends HttpServlet {
 		ds.setMaxTotal(conf.getMaxTotal());
 		ds.setMaxIdle(conf.getMaxMaxIdle());
 		// ds.setMaxWaitMillis(conf.getMaxWaitMillis());
+		DataFormsServlet.isDbcp = true;
 		return ds;
 
 	}
@@ -1360,10 +1371,27 @@ public class DataFormsServlet extends HttpServlet {
 	public static String getClientLogLevel() {
 		return DataFormsServlet.getConf().getApplication().getClientLogLevel();
 	}
+	
+	private void deregisterDrivers() throws Exception {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		Enumeration<Driver> drivers = DriverManager.getDrivers();
+		while (drivers.hasMoreElements()) {
+			Driver driver = drivers.nextElement();
+			if (driver.getClass().getClassLoader() == cl) {
+				try {
+					DriverManager.deregisterDriver(driver);
+					System.out.println("Deregistered JDBC driver: " + driver);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 
 	@Override
 	public void destroy() {
-		logger.debug("DataFormsServlet destroy");
+		logger.info("DataFormsServlet destroy");
 		if (DataFormsServlet.servletInstanceBean != null) {
 			try {
 				DataFormsServlet.servletInstanceBean.destroy();
@@ -1371,6 +1399,21 @@ public class DataFormsServlet extends HttpServlet {
 				logger.error(() -> e.getMessage(), e);
 			}
 		}
+		if (DataFormsServlet.isDbcp) {
+			if (this.dataSource instanceof BasicDataSource) {
+				try {
+					logger.info("cleanup dbcp data source");
+					((BasicDataSource) this.dataSource).close();
+					this.deregisterDrivers();
+				} catch (Exception e) {
+					logger.error(() -> e.getMessage(), e);
+				}
+			}
+		}
+		
+		//LoggerContext context = (LoggerContext) LogManager.getContext(false);
+		//context.stop();
+//		LogManager.shutdown();
 		super.destroy();
 		BlobFileStore.cleanup();
 	}

@@ -213,8 +213,8 @@ public class InitDevelopmentToolForm extends EditForm {
 	private void copyWebXML(final String webSrcPath) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String webxml = util.getWebXML();
-		String context = this.getPage().getRequest().getContextPath();
-		webxml = webxml.replaceAll("///etc/context/log4j2.xml", "///etc" + context + "/log4j2.xml");
+		// String context = this.getPage().getRequest().getContextPath();
+		// webxml = webxml.replaceAll("///etc/context/log4j2.xml", "///etc" + context + "/log4j2.xml");
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/web.xml", webxml, "utf-8");
 	}
 
@@ -261,7 +261,8 @@ public class InitDevelopmentToolForm extends EditForm {
 		
 		conf = conf.replaceAll("\"initialized\": false", "\"initialized\": true");
 		String context = this.getPage().getRequest().getContextPath();
-		conf = conf.replaceAll("/etc/context/dataforms.conf.jsonc", "/etc" + context + "/dataforms.conf.jsonc");		
+		conf = conf.replaceAll("/etc/context/dataforms.conf.jsonc", "/etc" + context + "/dataforms.conf.jsonc");
+		conf = conf.replaceAll("/etc/context/log4j2.xml", "/etc" + context + "/log4j2.xml");
 		conf = conf.replaceAll("\"javaSourcePath\": null", "\"javaSourcePath\": \"" + javaSrcPath + "\"");
 		conf = conf.replaceAll("\"webSourcePath\": null", "\"webSourcePath\": \"" + webSrcPath + "\"");
 		conf = conf.replaceAll("\"jndiPrefix\": \"java:/comp/env/\"", "\"jndiPrefix\": \"" + jndiPrefix + "\"");

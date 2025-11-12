@@ -12,19 +12,7 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 	
-	<listener>
-		<description>Handles Log4j Core lifecycle</description>
-		<listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
-	</listener>
-	<!-- 
-		*.warに開発時のlog4j2.xmlが入っている場合でも、以下のパスにlog4j2.xmlを記述すれば、
-		その設定が優先されます。
-	 -->
-	<context-param>
-	    <param-name>log4jConfiguration</param-name>
-	    <param-value>file:///etc/context/log4j2.xml</param-value>
-	</context-param>
-	
+
 	<!-- セッションタイムアウト -->
 	<session-config>
 		<session-timeout>30</session-timeout>

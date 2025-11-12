@@ -473,6 +473,11 @@ public class ConfUtil {
 		private String serverConfigFile = null;
 		
 		/**
+		 * サーバーlog4j2設定ファイル。
+		 */
+		private String serverLog4j2Xml = null;
+		
+		/**
 		 * WebリソースURL。
 		 */
 		private String webResourceUrl = null;
