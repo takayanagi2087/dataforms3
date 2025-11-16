@@ -82,6 +82,7 @@ import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.ConfUtil;
 import jp.dataforms.fw.util.ConfUtil.Conf;
 import jp.dataforms.fw.util.ConfUtil.CryptConfig;
+import jp.dataforms.fw.util.ConfUtil.DbcpConfig;
 import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.OnetimePasswordConfig;
 import jp.dataforms.fw.util.CryptUtil;
@@ -505,19 +506,31 @@ public class DataFormsServlet extends HttpServlet {
 		String dspath = jndiPrefix + dataSourceName;
 		logger.info(() -> "jndi data source=" + dspath);
 		DataSource dataSource = (DataSource) initContext.lookup(dspath);
+		try {
+			DataFormsServlet.duplicateErrorMessage = (String) initContext.lookup(jndiPrefix + "duplicateErrorMessage");
+		} catch (Exception ex) {
+			logger.debug(() -> ex.getMessage());
+		}
+		try {
+			DataFormsServlet.foreignKeyErrorMessage = (String) initContext.lookup(jndiPrefix + "foreignKeyErrorMessage");
+		} catch (Exception ex) {
+			logger.debug(() -> ex.getMessage());
+		}
+		logger.info(() -> "DataFormsServlet.duplicateErrorMessage=" + DataFormsServlet.duplicateErrorMessage);
+		logger.info(() -> "DataFormsServlet.foreignKeyErrorMessage=" + DataFormsServlet.foreignKeyErrorMessage);
 		DataFormsServlet.isDbcp = false;
 		return dataSource;
 	}
 
 	/**
 	 * DBCPデータソースを取得します。
-	 * @param dbcpDataSourseMap DBCP設定情報。
-	 * @param dataSourceName データソース名。
+	 * @param dbcpConfig DBCP設定情報。
 	 * @return データソース。
 	 * @throws Exception 例外。
 	 */
-	public static DataSource getDbcpDataSource(final Map<String, DbcpDataSource> dbcpDataSourseMap, final String dataSourceName) throws Exception {
-		DbcpDataSource conf = dbcpDataSourseMap.get(dataSourceName);
+	public static DataSource getDbcpDataSource(final DbcpConfig dbcpConfig) throws Exception {
+		String dataSourceName = dbcpConfig.getMainDataSource();
+		DbcpDataSource conf = dbcpConfig.getDataSourceMap().get(dataSourceName);
 		logger.info("dbcp data source=" + JsonUtil.encode(conf, true));
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(conf.getDriverClassName());
@@ -528,6 +541,10 @@ public class DataFormsServlet extends HttpServlet {
 		ds.setMaxTotal(conf.getMaxTotal());
 		ds.setMaxIdle(conf.getMaxMaxIdle());
 		// ds.setMaxWaitMillis(conf.getMaxWaitMillis());
+		DataFormsServlet.duplicateErrorMessage = conf.getDuplicateErrorMessage();
+		DataFormsServlet.foreignKeyErrorMessage = conf.getForeignKeyErrorMessage();
+		logger.info(() -> "DataFormsServlet.duplicateErrorMessage=" + DataFormsServlet.duplicateErrorMessage);
+		logger.info(() -> "DataFormsServlet.foreignKeyErrorMessage=" + DataFormsServlet.foreignKeyErrorMessage);
 		DataFormsServlet.isDbcp = true;
 		return ds;
 
@@ -537,13 +554,13 @@ public class DataFormsServlet extends HttpServlet {
 	 * データソースを取得します。
 	 * @param jndiPrefix JNDIデータソースの前につける文字列。
 	 * @param dataSourceName JNDIデータソース名称。
-	 * @param dbcpDataSourseMap DBCP設定情報。
+	 * @param dbcpConfig DBCP設定情報。
 	 * @return データソース。
 	 * @throws Exception 例外。
 	 */
-	public static DataSource getDataSource(final String jndiPrefix, final String dataSourceName, final Map<String, DbcpDataSource> dbcpDataSourseMap) throws Exception {
-		if (dbcpDataSourseMap != null) {
-			return DataFormsServlet.getDbcpDataSource(dbcpDataSourseMap, "default");
+	public static DataSource getDataSource(final String jndiPrefix, final String dataSourceName, final DbcpConfig dbcpConfig) throws Exception {
+		if (dbcpConfig != null && dbcpConfig.getMainDataSource() != null) {
+			return DataFormsServlet.getDbcpDataSource(dbcpConfig);
 		} else {
 			return DataFormsServlet.getJndiDataSource(jndiPrefix, dataSourceName);
 		}
@@ -556,28 +573,13 @@ public class DataFormsServlet extends HttpServlet {
 	private void checkDbConnection() {
 		String dataSourceName = DataFormsServlet.getConf().getApplication().getJndiDataSource().getDataSource();
 		String jndiPrefix = DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix();
-		Map<String, DbcpDataSource> dbcpDataSourseMap = DataFormsServlet.getConf().getApplication().getDbcpDataSource();
-		if (dataSourceName == null && dbcpDataSourseMap == null) {
+		DbcpConfig dbcpConfig = DataFormsServlet.getConf().getApplication().getDbcpConfig();
+		if (dataSourceName == null && dbcpConfig == null) {
 			// DataFormsServlet.configStatus = "error.notfounddatasourcesetting";
 		} else {
 			try {
 				if (dataSourceName != null) {
-					this.dataSource = DataFormsServlet.getDataSource(jndiPrefix, dataSourceName, dbcpDataSourseMap);
-
-					Context initContext = new InitialContext();
-					try {
-						DataFormsServlet.duplicateErrorMessage = (String) initContext.lookup(jndiPrefix + "duplicateErrorMessage");
-					} catch (Exception ex) {
-						logger.debug(() -> ex.getMessage());
-					}
-					try {
-						DataFormsServlet.foreignKeyErrorMessage = (String) initContext.lookup(jndiPrefix + "foreignKeyErrorMessage");
-					} catch (Exception ex) {
-						logger.debug(() -> ex.getMessage());
-					}
-
-					logger.debug(() -> "DataFormsServlet.duplicateErrorMessage=" + DataFormsServlet.duplicateErrorMessage);
-					logger.debug(() -> "DataFormsServlet.foreignKeyErrorMessage=" + DataFormsServlet.foreignKeyErrorMessage);
+					this.dataSource = DataFormsServlet.getDataSource(jndiPrefix, dataSourceName, dbcpConfig);
 				}
 			} catch (NameNotFoundException e) {
 				// アプリケーションサーバにデータソースの設定が無い場合。

@@ -108,21 +108,97 @@
 			// 使用するJNDIデータソースを指定する
 			, "dataSource": null
 		}
-		// 事情によりアプリケーションのWEB-INF/libにJDBCドライバーを配置しなければならない場合、
-		// JNDIデータソースは利用できなくなります。
+		// WEB-INF/libにJDBCドライバーを配置したい場合、JNDIデータソースは利用できません。
 		// その場合、context.xmlからJNDI DataSourseの設定を削除し、
-		// 以下の設定を有効にすることによってでDBCPのコネクションフールを試用するこちができます。
-/*		, "dbcpDataSource": {
-			"default": {
-				"driverClassName": ""
-				, "url": ""
-				, "user": ""
-				, "password": ""
-				, "initialSize": 5
-				, "maxTotal": 20
-				, "maxMaxIdle": 20
+		// 以下の設定を有効にすることによってでDBCPのコネクションプールを使用することができます。
+/*		, "dbcpConfig": {
+			// このシステムで使用するデーターソースの名称を設定します。
+			// nullを指定した場合はjdniDataSourceの設定を試用します。
+			"mainDataSource": null
+			, "dataSourceMap": {
+				// 組み込み　Apache derby データソースの設定例
+				"derbyEmbedded": {
+					"driverClassName": "org.apache.derby.jdbc.EmbeddedDriver"
+					, "url": "jdbc:derby:path;create=true"
+					, "user": ""
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+				}
+				// ネットワーク　Apache derby データソースの設定例
+				, "derbyNetwork": {
+					"driverClassName": "org.apache.derby.jdbc.ClientDriver"
+					, "url": "jdbc:derby://server:1527/javadb/blank;create=true"
+					, "user": ""
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+				}
+				// PostgreSQL　データソースの設定例
+				, "postgreSQL": {
+					"driverClassName": "org.postgresql.Driver"
+					, "url": "jdbc:postgresql://server:5432/dfdb"
+					, "user": "postgres"
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "一意性制約\"(.+?)\"に違反"
+					, "foreignKeyErrorMessage": "外部キー制約\"(.+?)\"に違反"
+				}
+				// MariaDB　データソースの設定例
+				, "mariaDB": {
+					"driverClassName": "org.mariadb.jdbc.Driver"
+					, "url": "jdbc:mariadb://server:3306/testdb?user=root&password=secret"
+					, "user": ""
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "for key '(.+?)'$"
+					, "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+				}
+				// MySQL　データソースの設定例
+				, "mySQL": {
+					"driverClassName": "com.mysql.jdbc.Driver"
+					, "url": "jdbc:mysql://server/dfdb?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
+					, "user": ""
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "for key '(.+?)'$"
+					, "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+				}
+				// Oracle　データソースの設定例
+				, "oracle": {
+					"driverClassName": "oracle.jdbc.OracleDriver"
+					, "url": "jdbc:oracle:thin:@server:1521/xepdb1"
+					, "user": "dfuser"
+					, "password": "password"
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "constraint \\(.+?\\.(.+?)\\) violated"
+					, "foreignKeyErrorMessage": "constraint \\(.+?\\.(.+?)\\) violated"
+				}
+				// SQLServer　データソースの設定例
+				, "sqlServer": {
+					"driverClassName": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+					, "url": "jdbc:sqlserver://server:1433;databaseName=dfdb;user=dfuser;password=P@sow0rd;encrypt=false;"
+					, "user": ""
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "一意インデックス '(.+?)' を含むオブジェクト"
+					, "foreignKeyErrorMessage": "制約 \"(.+?)\" と競合しています。"
+				}
 			}
-		}*/
+		}
+*/
 		// ----------------------------------
 		// Mail関連設定
 		, "mail": {

@@ -196,6 +196,16 @@ public class ConfUtil {
 		 * 最大アイドル。
 		 */
 		private Integer maxMaxIdle = null;
+		
+		/**
+		 * 一意制約違反のエラーメッセージ。
+		 */
+		private String duplicateErrorMessage = null;
+		
+		/**
+		 * 外部キー制約違反のエラーメッセージ。
+		 */
+		private String foreignKeyErrorMessage = null;
 		/**
 		 * コンストラクタ。
 		 */
@@ -203,6 +213,28 @@ public class ConfUtil {
 			
 		}
 	}
+	
+	/**
+	 * DBCP設定情報。
+	 */
+	@Data
+	public static class DbcpConfig {
+		/**
+		 * 主に利用するDBCPデータソース名。
+		 */
+		private String mainDataSource = null;
+		/**
+		 * データソースマップ。
+		 */
+		private Map<String, DbcpDataSource> dataSourceMap = null;
+		/**
+		 * コンストラクタ。
+		 */
+		public DbcpConfig() {
+			
+		}
+	}
+	
 	
 	/**
 	 * Mail設定。
@@ -500,9 +532,9 @@ public class ConfUtil {
 		private JndiDataSource jndiDataSource = null;
 		
 		/**
-		 * DBCPデータソース。
+		 * DBCPデータソース設定。
 		 */
-		private Map<String, DbcpDataSource> dbcpDataSource = null;
+		private DbcpConfig dbcpConfig = null;
 		
 		/**
 		 * メール設定。

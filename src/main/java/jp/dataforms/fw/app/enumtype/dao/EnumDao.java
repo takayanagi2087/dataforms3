@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import jp.dataforms.fw.app.enumtype.field.EnumCodeField;
 import jp.dataforms.fw.app.enumtype.page.EnumEditForm;
 import jp.dataforms.fw.dao.Dao;
@@ -19,6 +22,7 @@ import jp.dataforms.fw.field.common.RowNoField;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
 
 /**
@@ -29,7 +33,7 @@ public class EnumDao extends Dao {
 	/**
 	 * Logger.
 	 */
-//	private static Logger logger = Logger.getLogger(EnumDao.class);
+	private static Logger logger = LogManager.getLogger(EnumDao.class);
 
 	/**
 	 * コンストラクタ。
@@ -376,6 +380,8 @@ public class EnumDao extends Dao {
 	 * @return 更新されたリスト。
 	 */
 	private List<Map<String, Object>> updateList(final List<Map<String, Object>> deflist, final List<Map<String, Object>> list) {
+		logger.info("defList=" + JsonUtil.encode(deflist, true));
+		logger.info("list=" + JsonUtil.encode(list, true));
 		for (Map<String, Object> m: list) {
 			SelectField.OptionEntity e = new SelectField.OptionEntity(m);
 			for (Map<String, Object> dm: deflist) {
