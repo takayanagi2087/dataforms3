@@ -26,6 +26,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,6 +57,7 @@ import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.NumberUtil;
@@ -170,7 +172,7 @@ public class Dao implements JDBCConnectableObject {
 	 * JNDI指定用接続オブジェクト。
 	 */
 	@SuppressWarnings("unused")
-	private JDBCConnectableObject jndiConnectableObject = null;
+	private JDBCConnectableObject connectableObject = null;
 	
 	/**
 	 * コンストラクタ。
@@ -206,10 +208,49 @@ public class Dao implements JDBCConnectableObject {
 				return this.connection;
 			}
 		};
-		this.jndiConnectableObject = cobj;	// 弱参照で消えてしまわないようにする。
+		this.connectableObject = cobj;	// 弱参照で消えてしまわないようにする。
 		this.init(cobj);
 	}
 	
+	
+	/**
+	 * application.jndiDataSource以外のデータソース。
+	 */
+	private DbcpDataSource dbcpDataSource =  null;
+	
+	/**
+	 * コンストラクタ。
+	 * <pre>
+	 * このコンストラクタを使用した場合、
+	 * connectionのクローズを行ってください。
+	 * </pre>
+	 * @param ds JNDIデータソース。
+	 * @throws Exception 例外。
+	 */
+	public Dao(final DbcpDataSource ds) throws Exception {
+		this.dbcpDataSource = ds;
+		JDBCConnectableObject cobj = new JDBCConnectableObject() {
+			/**
+			 * JDBC接続。
+			 */
+			private Connection connection = null;
+			@Override
+			public Connection getConnection() {
+				if (this.connection == null) {
+					try {
+						BasicDataSource dataSource = DataFormsServlet.getDbcpDataSource(Dao.this.dbcpDataSource);
+						this.connection = dataSource.getConnection();
+						this.connection.setAutoCommit(false);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+				return this.connection;
+			}
+		};
+		this.connectableObject = cobj;	// 弱参照で消えてしまわないようにする。
+		this.init(cobj);
+	}
 	
 	/**
 	 * DB接続環境を初期化します。
@@ -438,7 +479,8 @@ public class Dao implements JDBCConnectableObject {
 	private void setResultSetMetaData(final ResultSetMetaData meta) throws Exception {
 		this.resultSetColumnList = new ArrayList<ColumnInfo>();
 		for (int i = 1; i <= meta.getColumnCount(); i++) {
-			String name = meta.getColumnName(i);
+//			String name = meta.getColumnName(i);
+			String name = this.sqlGenerator.getColumnName(meta, i);
 			int type = meta.getColumnType(i);
 			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i));
 			this.resultSetColumnList.add(ci);
@@ -484,7 +526,8 @@ public class Dao implements JDBCConnectableObject {
 				while (rset.next()) {
 					Map<String, Object> m = new HashMap<String, Object>();
 					for (int i = 1; i <= meta.getColumnCount(); i++) {
-						String name = meta.getColumnName(i);
+//						String name = meta.getColumnName(i);
+						String name = this.sqlGenerator.getColumnName(meta, i);
 						if (meta.getColumnType(i) == Types.BLOB) {
 							Blob blob = rset.getBlob(i);
 							FileObject obj = null;
@@ -1471,7 +1514,8 @@ public class Dao implements JDBCConnectableObject {
 			while (rset.next()) {
 				Map<String, Object> m = new HashMap<String, Object>();
 				for (int i = 0; i < rmd.getColumnCount(); i++) {
-					String name = StringUtil.snakeToCamel(rmd.getColumnName(i + 1).toLowerCase());
+//					String name = StringUtil.snakeToCamel(rmd.getColumnName(i + 1).toLowerCase());
+					String name = StringUtil.snakeToCamel(this.sqlGenerator.getColumnName(rmd, i + 1).toLowerCase());
 					Object value = rset.getObject(i + 1);
 					m.put(name, value);
 				}
@@ -1530,7 +1574,8 @@ public class Dao implements JDBCConnectableObject {
 			while (rset.next()) {
 				Map<String, Object> m = new HashMap<String, Object>();
 				for (int i = 0; i < rmd.getColumnCount(); i++) {
-					String name = StringUtil.snakeToCamel(rmd.getColumnName(i + 1).toLowerCase());
+					// String name = StringUtil.snakeToCamel(rmd.getColumnName(i + 1).toLowerCase());
+					String name = StringUtil.snakeToCamel(this.sqlGenerator.getColumnName(rmd, i + 1).toLowerCase());
 					Object value = rset.getObject(i + 1);
 					logger.debug(() -> "name=" + name + ", value=" + value);
 					m.put(name, value);

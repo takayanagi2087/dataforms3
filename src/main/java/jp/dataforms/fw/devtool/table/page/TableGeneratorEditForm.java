@@ -40,6 +40,7 @@ import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.response.Response;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
+import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
@@ -681,8 +682,14 @@ public class TableGeneratorEditForm extends EditForm {
 		String func = (String) param.get("functionSelect");
 		logger.debug("func=" + func);
 		String pkg = (String) param.get("packageName");
-		JndiDataSource ds = DataFormsServlet.getConf().getOriginalJndiDataSource();
-		TableManagerDao dao = new TableManagerDao(ds);
+		TableManagerDao dao = null;
+		DbcpDataSource dbcpds = DataFormsServlet.getConf().getOriginalDbcpDataSource();
+		if (dbcpds != null) {
+			dao = new TableManagerDao(dbcpds);
+		} else {
+			JndiDataSource jds = DataFormsServlet.getConf().getOriginalJndiDataSource();
+			dao = new TableManagerDao(jds);
+		}
 		try (Connection conn = dao.getConnection()) {
 			Map<String, Object> m = dao.queryTableInfo(importTable);
 			TableInfoEntity e = new TableInfoEntity(m);

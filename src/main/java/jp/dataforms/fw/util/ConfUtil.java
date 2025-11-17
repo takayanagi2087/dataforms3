@@ -738,6 +738,28 @@ public class ConfUtil {
 			JndiDataSource ret = new JndiDataSource(prefix, dataSource);
 			return ret;
 		}
+
+		/**
+		 * 移行元DBCPデータソースを取得します。
+		 * @return 移行元のDBCPデータソース。
+		 */
+		public DbcpDataSource getOriginalDbcpDataSource() {
+			DbcpDataSource ret = null;
+			DbcpConfig dbcpConfig = this.getApplication().getDbcpConfig();
+			
+			String dsname = dbcpConfig.getMainDataSource();
+			if (dsname != null) {
+				ret = dbcpConfig.getDataSourceMap().get(dsname);
+			}
+			if (this.getDevelopmentTool().getOriginDataSource() != null) {
+				dsname = this.getDevelopmentTool().getOriginDataSource();
+				ret = dbcpConfig.getDataSourceMap().get(dsname);
+			}
+			
+			return ret;
+		}
+	
+	
 	}
 	
 	/**
@@ -761,7 +783,7 @@ public class ConfUtil {
 	 * @throws Exception 例外。
 	 */
 	private Object getProperty(final Object obj, final String pname) throws Exception {
-		if ("originalJndiDataSource".equals(pname)) {
+		if ("originalJndiDataSource".equals(pname) || "originalDbcpDataSource".equals(pname)) {
 			return null;
 		}
 		String mname = "get" + pname.substring(0, 1).toUpperCase() + pname.substring(1);
@@ -898,7 +920,7 @@ public class ConfUtil {
 		Method[] mlist = src.getClass().getMethods();
 		for (Method m: mlist) {
 			String fn = m.getName();
-			if ("getOriginalJndiDataSource".equals(fn)) {
+			if ("getOriginalJndiDataSource".equals(fn) || "getOriginalDbcpDataSource".equals(fn)) {
 				continue;
 			}
 			if (fn.indexOf("get") == 0) {

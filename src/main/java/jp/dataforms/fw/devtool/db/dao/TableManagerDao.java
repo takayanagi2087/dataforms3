@@ -49,6 +49,7 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
+import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
@@ -82,6 +83,16 @@ public class TableManagerDao extends Dao {
 	public TableManagerDao(final JndiDataSource ds) throws Exception {
 		super(ds);
 	}
+
+	/**
+	 * コンストラクタ。
+	 * @param ds データソース。
+	 * @throws Exception 例外。
+	 */
+	public TableManagerDao(final DbcpDataSource ds) throws Exception {
+		super(ds);
+	}
+
 
 	/**
 	 * データベースが初期化されているかどうかを判定します。

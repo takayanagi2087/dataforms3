@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
 
 /**
@@ -47,8 +48,14 @@ public class DbTableNameField extends TextField {
 		String rowid = this.getHtmlTableRowId(id);
 		String colid = this.getHtmlTableColumnId(id);
 		String tblname = (String) data.get(id);
-		JndiDataSource ds = DataFormsServlet.getConf().getOriginalJndiDataSource();
-		Dao dao = new Dao(ds);
+		Dao dao = null;
+		DbcpDataSource dbcpds = DataFormsServlet.getConf().getOriginalDbcpDataSource();
+		if (dbcpds != null) {
+			dao = new Dao(dbcpds);
+		} else {
+			JndiDataSource jds = DataFormsServlet.getConf().getOriginalJndiDataSource();
+			dao = new Dao(jds);
+		}
 		try (Connection conn = dao.getConnection()) {
 			List<Map<String, Object>> tableList = dao.queryTableInfo();
 			List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();

@@ -148,7 +148,7 @@ public class DataFormsServlet extends HttpServlet {
 	private DataSource dataSource = null;
 	
 	/**
-	 * DBCP試用フラグ。
+	 * DBCP使用フラグ。
 	 */
 	private static boolean isDbcp = false;
 
@@ -532,6 +532,17 @@ public class DataFormsServlet extends HttpServlet {
 		String dataSourceName = dbcpConfig.getMainDataSource();
 		DbcpDataSource conf = dbcpConfig.getDataSourceMap().get(dataSourceName);
 		logger.info("dbcp data source=" + JsonUtil.encode(conf, true));
+		BasicDataSource ds = getDbcpDataSource(conf);
+		DataFormsServlet.isDbcp = true;
+		return ds;
+	}
+
+	/**
+	 * DBCPデータソースを取得します。
+	 * @param conf DBCPデータソース設定情報。
+	 * @return DBCPデータソース。
+	 */
+	public static BasicDataSource getDbcpDataSource(DbcpDataSource conf) {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(conf.getDriverClassName());
 		ds.setUrl(conf.getUrl());
@@ -545,9 +556,7 @@ public class DataFormsServlet extends HttpServlet {
 		DataFormsServlet.foreignKeyErrorMessage = conf.getForeignKeyErrorMessage();
 		logger.info(() -> "DataFormsServlet.duplicateErrorMessage=" + DataFormsServlet.duplicateErrorMessage);
 		logger.info(() -> "DataFormsServlet.foreignKeyErrorMessage=" + DataFormsServlet.foreignKeyErrorMessage);
-		DataFormsServlet.isDbcp = true;
 		return ds;
-
 	}
 	
 	/**

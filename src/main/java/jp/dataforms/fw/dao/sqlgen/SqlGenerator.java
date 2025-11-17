@@ -2,6 +2,7 @@ package jp.dataforms.fw.dao.sqlgen;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2261,4 +2262,24 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	}
 
 
+	/**
+	 * カラム名を取得します。
+	 * <pre>
+	 * 一般的なJDBCドライバーのgetColumnNameメソッドは以下のSQLのcollabelを返す。
+	 * しかし、MariaDBのJDBCドライバーはcolnameを返す仕様になっており、
+	 * collabelを取得するには、getColumnLabelメソッドを使う必要がある。
+	 * select colname as colbabel ...
+	 * (JDBCの規格からするとこの仕様が正しいと思われる...)
+	 * 
+	 * この仕様違いをこのメソッドをオーバーライドして吸収する。
+	 * 
+	 * </pre>
+	 * @param meta 結果集合メタデータ。
+	 * @param idx カラムインデックス。
+	 * @return カラム名。
+	 * @throws Exception 例外。
+	 */
+	public String getColumnName(final ResultSetMetaData meta, final int idx) throws Exception {
+		return meta.getColumnName(idx);
+	}
 }
