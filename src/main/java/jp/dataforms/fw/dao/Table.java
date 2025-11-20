@@ -266,6 +266,9 @@ public class Table {
 		Class<?> cls = this.getClass();
 		String clsname = cls.getSimpleName();
 		while (!Pattern.matches(".+\\.dao\\.Table$", cls.getSuperclass().getName())) {
+			if ((cls.getSuperclass().getModifiers() & Modifier.ABSTRACT) != 0) {
+				break;
+			}
 			cls = cls.getSuperclass();
 			clsname = cls.getSimpleName();
 		}
