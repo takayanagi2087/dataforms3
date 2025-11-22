@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.nio.file.Files;
@@ -683,11 +684,17 @@ public class DataFormsServlet extends HttpServlet {
 				ClassFinder f = new ClassFinder();
 				List<Class<?>> tblist = f.findClasses(pkg, Table.class);
 				for (Class<?> cls: tblist) {
-					logger.debug(() -> "table class=" + cls.getName());
+					logger.info(() -> "table class= " + cls.getName());
+					if ((cls.getModifiers() & Modifier.ABSTRACT) != 0) {
+						logger.info(() -> "skip abstrct class = " + cls.getName());
+						continue;
+					}
 					if (cls.isAnonymousClass()) {
+						logger.info(() -> "skip anonymous class = " + cls.getName());
 						continue;
 					}
 					if (SubQuery.class.isAssignableFrom(cls)) {
+						logger.info(() -> "skip SubQuery class = " + cls.getName());
 						continue;
 					}
 					Table tbl = (Table) cls.getDeclaredConstructor().newInstance();
