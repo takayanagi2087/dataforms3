@@ -1490,6 +1490,9 @@ public class Dao implements JDBCConnectableObject {
 		} else if (nonUnique instanceof Long) {
 			Long v = (Long) nonUnique;
 			return v != 0;
+		} else if (nonUnique instanceof Integer) {
+			Integer v = (Integer) nonUnique;
+			return v != 0;
 		} else {
 			return (Boolean) nonUnique;
 		}

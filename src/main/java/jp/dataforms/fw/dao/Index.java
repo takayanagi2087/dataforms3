@@ -164,6 +164,9 @@ public class Index {
 		} else if (o instanceof Long) {
 			Long v = (Long) o;
 			return v != 0;
+		} else if (o instanceof Integer) {
+			Integer v = (Integer) o;
+			return v != 0;
 		} else {
 			Boolean b = (Boolean) o;
 			return b.booleanValue();

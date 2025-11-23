@@ -145,7 +145,7 @@
 					, "initialSize": 5
 					, "maxTotal": 20
 					, "maxMaxIdle": 20
-					, "duplicateErrorMessage": "一意性制約\"(.+?)\"に違反"
+					, "duplicateErrorMessage": "一意性制約\"(.+?)\"違反"
 					, "foreignKeyErrorMessage": "外部キー制約\"(.+?)\"に違反"
 				}
 				// MariaDB　データソースの設定例
@@ -181,8 +181,8 @@
 					, "initialSize": 5
 					, "maxTotal": 20
 					, "maxMaxIdle": 20
-					, "duplicateErrorMessage": "constraint \\(.+?\\.(.+?)\\) violated"
-					, "foreignKeyErrorMessage": "constraint \\(.+?\\.(.+?)\\) violated"
+					, "duplicateErrorMessage": "一意制約\\(.+?\\.(.+?)\\).*が違反しました"
+					, "foreignKeyErrorMessage": "整合性制約\\(.+?\\.(.+?)\\)に違反しました"
 				}
 				// SQLServer　データソースの設定例
 				, "sqlServer": {
