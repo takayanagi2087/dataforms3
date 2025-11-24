@@ -1778,8 +1778,8 @@ public class Dao implements JDBCConnectableObject {
 				return true;
 			}
 		} else {
-			// TODO:この判定で良いか検討をする必要がある。
-			return true;
+			// 他人が削除した場合。
+			return false;
 		}
 	}
 
