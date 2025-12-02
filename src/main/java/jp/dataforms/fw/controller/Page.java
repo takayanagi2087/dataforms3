@@ -145,7 +145,6 @@ public class Page extends DataForms implements WebEntryPoint {
 		this.addDialog(new ConfirmDialog());
 	}
 
-
 	/**
 	 * クラスを継承関係を元にソートします。
 	 * @param list クラスリスト。
@@ -930,11 +929,29 @@ public class Page extends DataForms implements WebEntryPoint {
 	 * ダイアログを追加する.
 	 * @param dlg ダイアログ.
 	 */
-	protected void addDialog(final Dialog dlg) {
+	public void addDialog(final Dialog dlg) {
 		this.dialogMap.put(dlg.getId(), dlg);
 		this.addComponent(dlg);
 	}
 
+	/**
+	 * ダイアログを削除します。
+	 * @param dlg ダイアログ。
+	 */
+	public void removeDialog(final Dialog dlg) {
+		this.dialogMap.remove(dlg.getId());
+		this.removeComponent(dlg.getId());
+	}
+	
+	/**
+	 * ダイアログを入れ替えます。
+	 * @param dlg ダイアログ。
+	 */
+	protected void replaceDialog(final Dialog dlg) {
+		this.removeDialog(dlg);
+		this.addDialog(dlg);
+	}
+	
 	/**
 	 * クッキーチェックフラグを取得します。
 	 * <pre>

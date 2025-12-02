@@ -1,6 +1,7 @@
 package jp.dataforms.fw.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -142,6 +143,42 @@ public class DataForms extends WebComponent {
 		return form;
 	}
 
+	/**
+	 * コンポーネントを削除します。
+	 * @param id コンポーネントID。
+	 */
+	public void removeComponent(final String id) {
+		List<WebComponent> list = this.getComponentList();
+		WebComponent lf = null;
+		for (WebComponent c: list) {
+			if (c.getId().equals(id)) {
+				lf = c;
+				break;
+			}
+		}
+		if (lf != null) {
+			list.remove(lf);
+			this.getComponentMap().remove(id);
+		}
+	}
+
+	/**
+	 * フォームを削除します。
+	 * @param form フォーム。
+	 */
+	public void removeForm(final Form form) {
+		this.removeComponent(form.getId());
+	}
+	
+	/**
+	 * フォームを置換します。
+	 * @param form フォーム。
+	 */
+	public void relpaceForm(final Form form) {
+		this.removeComponent(form.getId());
+		this.addForm(form);
+	}
+	
 	/**
 	 * このページまたはダイアログ中のフォームのマップを取得します。
 	 * @return 保持するフォームのマップ。
