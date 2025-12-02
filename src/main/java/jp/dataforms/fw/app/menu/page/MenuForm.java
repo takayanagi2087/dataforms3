@@ -102,6 +102,7 @@ public class MenuForm extends Form {
 			try {
 				Page page = clazz.getDeclaredConstructor().newInstance();
 				page.setRequest(this.getPage().getRequest());
+				page.setConnection(this.getConnection());
 				if (page.isMenuItem()) {
 					if (page.isAuthenticated(new HashMap<String, Object>())) {
 						String menuName = (String) m.get("menuName");
