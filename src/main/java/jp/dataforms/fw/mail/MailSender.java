@@ -1,6 +1,8 @@
 package jp.dataforms.fw.mail;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -11,8 +13,10 @@ import org.apache.logging.log4j.Logger;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
+import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.Multipart;
+import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
@@ -20,8 +24,6 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.MimeUtility;
-
-
 
 /**
  * メール送信クラス。
@@ -31,7 +33,7 @@ public class MailSender {
 	/**
 	 * Logger.
 	 */
-	private Logger log = LogManager.getLogger(MailSender.class);
+	private static Logger log = LogManager.getLogger(MailSender.class);
 
 	/**
 	 * jndi-prefix。
@@ -44,10 +46,14 @@ public class MailSender {
 	private static String mailSessionName = null;
 
 	/**
+	 * Jakarta Mailのプロパティ。
+	 */
+	private static Map<String, String> jakartaMailProperties = null;
+
+	/**
 	 * 送信元アドレス。
 	 */
 	private static String mailFrom = null;
-
 
 	/**
 	 * コンストラクタ。
@@ -90,6 +96,14 @@ public class MailSender {
 	}
 
 	/**
+	 * Jakarta Mailのプロパティを設定します。
+	 * @param jakartaMailProperties Jakarta Mailのプロパティ。
+	 */
+	public static void setJakartaMailProperties(Map<String, String> jakartaMailProperties) {
+		MailSender.jakartaMailProperties = jakartaMailProperties;
+	}
+
+	/**
 	 * メールセッション名を設定します。
 	 * <pre>
 	 * web.xmlのmail-sessionの内容を設定します。
@@ -123,14 +137,68 @@ public class MailSender {
 	}
 
 	/**
+	 * パスワード認証クラス。
+	 */
+	private static class PasswordAuthenticator extends Authenticator {
+		/**
+		 * ユーザ名。
+		 */
+		private String user = null;
+		/**
+		 * パスワード。
+		 */
+		private String password = null;
+		/**
+//		 * コンストラクタ。
+		 * @param user ユーザ名。
+		 * @param password パスワード。
+		 */
+		public PasswordAuthenticator(String user, String password) {
+			this.user = user;
+			this.password = password;
+		}
+		
+		@Override
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication(this.user, this.password);
+		}
+	}
+	
+	
+	/**
 	 * メールセッションを取得します。
 	 * @return メールセッション。
 	 * @throws Exception 例外。
 	 */
 	public static Session getMailSession() throws Exception {
-		Context initCtx = new InitialContext();
-		Session session = (Session) initCtx.lookup(MailSender.jndiPrefix + MailSender.mailSessionName);
-		return session;
+		if (jakartaMailProperties != null) {
+			// SMTPプロパティからメールセッションを作成。
+			Properties props = new Properties();
+			String user = null;
+			String password = null;
+			for (String key : jakartaMailProperties.keySet()) {
+				if ("mail.smtp.user".equals(key)) {
+					user = (String) jakartaMailProperties.get(key);
+				}
+				if ("mail.smtp.password".equals(key)) {
+					password = (String) jakartaMailProperties.get(key);
+				}
+				props.put(key, jakartaMailProperties.get(key));
+			}
+			if (user == null) {
+				Session session = Session.getInstance(props);
+				return session;
+			} else {
+				Authenticator auth = new PasswordAuthenticator(user, password);
+				Session session = Session.getInstance(props, auth);
+				return session;
+			}
+		} else {
+			// JNDI から取得
+			Context initCtx = new InitialContext();
+			Session session = (Session) initCtx.lookup(MailSender.jndiPrefix + MailSender.mailSessionName);
+			return session;
+		}
 	}
 
 	/**
@@ -143,7 +211,7 @@ public class MailSender {
 		if (list.size() > 0) {
 			InternetAddress[] ret = new InternetAddress[list.size()];
 			for (int i = 0; i < list.size(); i++) {
-				ret[i] =  new InternetAddress(list.get(i));
+				ret[i] = new InternetAddress(list.get(i));
 			}
 			return ret;
 		} else {
@@ -175,7 +243,7 @@ public class MailSender {
 		if (bcclist != null) {
 			msg.setRecipients(Message.RecipientType.BCC, bcclist);
 		}
-//		msg.setSubject(subject, "ISO-2022-JP");
+		//		msg.setSubject(subject, "ISO-2022-JP");
 		msg.setSubject(subject, "UTF-8");
 
 		// mixed
@@ -189,10 +257,10 @@ public class MailSender {
 
 		// text mail
 		MimeBodyPart textBodyPart = new MimeBodyPart();
-//		textBodyPart.setText(templ.getMailTextBody(), "ISO-2022-JP", "plain");
+		//		textBodyPart.setText(templ.getMailTextBody(), "ISO-2022-JP", "plain");
 		textBodyPart.setText(templ.getMailTextBody(), "UTF-8", "plain");
 		textBodyPart.setHeader("Content-Transfer-Encoding", "base64");
-		alternativePart.addBodyPart(textBodyPart);	// alter
+		alternativePart.addBodyPart(textBodyPart); // alter
 
 		// related
 		MimeBodyPart relatedBodyPart = new MimeBodyPart();
@@ -202,21 +270,21 @@ public class MailSender {
 
 		// html mail
 		MimeBodyPart htmlBodyPart = new MimeBodyPart();
-//		htmlBodyPart.setText(templ.getMailHtmlBody(), "ISO-2022-JP", "html");
+		//		htmlBodyPart.setText(templ.getMailHtmlBody(), "ISO-2022-JP", "html");
 		htmlBodyPart.setText(templ.getMailHtmlBody(), "UTF-8", "html");
 		htmlBodyPart.setHeader("Content-Transfer-Encoding", "base64");
 		relatedPart.addBodyPart(htmlBodyPart);
 
 		// attach file
-		for (MailTemplate.AttachFileInfo finfo: templ.getAttachFileList()) {
+		for (MailTemplate.AttachFileInfo finfo : templ.getAttachFileList()) {
 			MimeBodyPart attachBodyPart = new MimeBodyPart();
 			DataSource dataSource2 = new FileDataSource(finfo.getPath());
 			DataHandler dataHandler2 = new DataHandler(dataSource2);
 			attachBodyPart.setDataHandler(dataHandler2);
-//			attachBodyPart.setFileName(MimeUtility.encodeWord(finfo.getFilename(), "iso-2022-jp", "B"));
-//			attachBodyPart.setFileName(MimeUtility.encodeWord(finfo.getFilename(), "UTF-8", null));
+			//			attachBodyPart.setFileName(MimeUtility.encodeWord(finfo.getFilename(), "iso-2022-jp", "B"));
+			//			attachBodyPart.setFileName(MimeUtility.encodeWord(finfo.getFilename(), "UTF-8", null));
 			attachBodyPart.setFileName(MimeUtility.encodeWord(finfo.getFilename(), "UTF-8", "B"));
-			attachBodyPart.setDisposition("attachment");  // attachment 指定しておく
+			attachBodyPart.setDisposition("attachment"); // attachment 指定しておく
 			mixedPart.addBodyPart(attachBodyPart);
 		}
 		msg.setContent(mixedPart);

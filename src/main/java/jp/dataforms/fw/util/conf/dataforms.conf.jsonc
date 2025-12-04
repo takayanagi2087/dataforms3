@@ -202,7 +202,14 @@
 		// ----------------------------------
 		// Mail関連設定
 		, "mail": {
-			"mailSession": "mail/Session"
+			// JNDI Mail Sessionを使う場合は以下にJNDIリソースの名所を指定します。
+			"jndiMailSession": "mail/Session"
+			// jakarta.Mailのプロパティを直接指定する場合は以下に記述します。
+			// 以下を設定するとjakartaMailPropertiesの設定を優先し、JNDI Resourceは使用しません。
+			, "jakartaMailProperties": {
+				"mail.smtp.host": "smtpserver"
+				, "mail.smtp.port": "25"
+			}
 			, "mailFrom": "hoge@hogehoge.jp"
 		}
 		// ----------------------------------

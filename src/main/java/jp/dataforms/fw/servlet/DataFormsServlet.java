@@ -423,8 +423,10 @@ public class DataFormsServlet extends HttpServlet {
 		PasswordResetMailForm.setPasswordResetPage(DataFormsServlet.getConf().getApplication().getPasswordResetPage());
 		UserRegistForm.setConfig(DataFormsServlet.getConf().getApplication().getUserRegistPageConfig());
 		// メール関連設定。
-		String mailSession = DataFormsServlet.getConf().getApplication().getMail().getMailSession();
-		if (mailSession != null) {
+		String mailSession = DataFormsServlet.getConf().getApplication().getMail().getJndiMailSession();
+		Map<String,String> jakartaMailProperties = DataFormsServlet.getConf().getApplication().getMail().getJakartaMailProperties();
+		if (mailSession != null || jakartaMailProperties != null) {
+			MailSender.setJakartaMailProperties(jakartaMailProperties);
 			MailSender.setJndiPrefix(DataFormsServlet.getConf().getApplication().getJndiDataSource().getJndiPrefix());
 			MailSender.setMailSessionName(mailSession);
 			MailSender.setMailFrom(DataFormsServlet.getConf().getApplication().getMail().getMailFrom());

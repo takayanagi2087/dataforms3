@@ -242,13 +242,17 @@ public class ConfUtil {
 	@Data
 	public static class Mail implements ConfClass {
 		/**
-		 * mailSessionの名称。
+		 * JNDI mailSessionの名称。
 		 */
-		private String mailSession = null;
+		private String jndiMailSession = null;
 		/**
 		 * メール送信者アドレス。
 		 */
 		private String mailFrom = null;
+		/**
+		 * jakarta.mailのプロパティマップ。
+		 */
+		private Map<String, String> jakartaMailProperties = null;
 		
 		/**
 		 * コンストラクタ。
