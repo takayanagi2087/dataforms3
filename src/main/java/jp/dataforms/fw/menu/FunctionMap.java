@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.StringUtil;
 
 import jp.dataforms.fw.annotation.ApplicationFunctionMap;
 import jp.dataforms.fw.controller.Page;
@@ -287,7 +288,8 @@ public class FunctionMap {
 			{
 				String htmlpath = path + ".html";
 				String html = this.getPageHtml(htmlpath);
-				if (html != null) {
+				if (!StringUtil.isBlank(html)) {
+					//　Pageクラスに対応するhtmlが存在する場合、そのタイトルと詳細を取得する。
 					String title = HtmlUtil.getTitle(html);
 					logger.debug("title=" + title);
 					if (title != null) {
@@ -304,10 +306,18 @@ public class FunctionMap {
 						this.langDescMap.put(LangNameMap.LANG_DEFAULT, "");
 					}
 				} else {
-					Class<?> cls = Class.forName(classname);
-					this.langNameMap.put(LangNameMap.LANG_DEFAULT, cls.getSimpleName());
-					this.langDescMap.put(LangNameMap.LANG_DEFAULT, "");
-					
+					//　Pageクラスに対応するhtmlが無い場合。
+					@SuppressWarnings("unchecked")
+					Class<? extends Page> cls = (Class<? extends Page>) Class.forName(classname);
+					Page p = cls.getConstructor().newInstance();
+					String pageName = p.getPageName();
+					logger.info("page=" + p.getClass().getName() + ":pageName=" + pageName + ":" + p.getPageDescription());
+					if (!StringUtil.isBlank(pageName)) {
+						this.langNameMap.put(LangNameMap.LANG_DEFAULT, pageName);
+					} else {
+						this.langNameMap.put(LangNameMap.LANG_DEFAULT, cls.getSimpleName());
+					}
+					this.langDescMap.put(LangNameMap.LANG_DEFAULT, p.getPageDescription());
 				}
 			}
 			List<String> langList = DataFormsServlet.getSupportLanguage();
