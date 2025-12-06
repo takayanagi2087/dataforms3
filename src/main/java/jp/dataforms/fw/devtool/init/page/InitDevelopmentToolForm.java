@@ -280,22 +280,22 @@ public class InitDevelopmentToolForm extends EditForm {
 		conf = conf.replaceAll("\\$\\{dbname}", projectName);
 		// 
 		{
-			String aesInitialVector = RandomStringUtils.randomAlphanumeric(16);
+			String aesInitialVector = RandomStringUtils.secure().nextAlphanumeric(16);
 			logger.debug("aesInitialVector=" + aesInitialVector);
 			conf = conf.replaceAll("\"aesInitialVector\": \".+\"", "\"aesInitialVector\": \"" + aesInitialVector + "\"");
 		}
 		{
-			String defaultPassword = RandomStringUtils.randomAlphanumeric(16);
+			String defaultPassword = RandomStringUtils.secure().nextAlphanumeric(16);
 			logger.debug("defaultPassword=" + defaultPassword);
 			conf = conf.replaceAll("\"defaultPassword\": \".+\"", "\"defaultPassword\": \"" + defaultPassword + "\"");
 		}
 		{
-			String queryStringCryptPassword = RandomStringUtils.randomAlphanumeric(16);
+			String queryStringCryptPassword = RandomStringUtils.secure().nextAlphanumeric(16);
 			logger.debug("queryStringCryptPassword=" + queryStringCryptPassword);
 			conf = conf.replaceAll("\"queryStringCryptPassword\": \".+\"", "\"queryStringCryptPassword\": \"" + queryStringCryptPassword + "\"");
 		}
 		{
-			String csrfSessionidCryptPassword = RandomStringUtils.randomAlphanumeric(16);
+			String csrfSessionidCryptPassword = RandomStringUtils.secure().nextAlphanumeric(16);
 			logger.debug("csrfSessionidCryptPassword=" + csrfSessionidCryptPassword);
 			conf = conf.replaceAll("\"csrfSessionidCryptPassword\": \".+\"", "\"csrfSessionidCryptPassword\": \"" + csrfSessionidCryptPassword + "\"");
 		}

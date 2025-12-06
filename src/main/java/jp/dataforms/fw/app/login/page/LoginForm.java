@@ -437,8 +437,13 @@ public class LoginForm extends Form {
 		String ch = (String) opt.get("challenge");
 		logger.debug("challenge=" + ch);
 		Challenge challenge = new DefaultChallenge(ch.getBytes());
-		byte[] tokenBindingId = null;
-		ServerProperty ret = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+//		byte[] tokenBindingId = null;
+//		ServerProperty ret = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+		ServerProperty ret = ServerProperty.builder()
+				.origin(origin)
+				.rpId(rpId)
+				.challenge(challenge)
+				.build();
 		return ret;
 	}
 

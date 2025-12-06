@@ -210,8 +210,13 @@ public class MfaForm extends Form {
 		String rpId = this.getPage().getRequest().getServerName();
 		String ch = (String) opt.get("challenge");
 		Challenge challenge = new DefaultChallenge(ch.getBytes());
-		byte[] tokenBindingId = null;
-		ServerProperty ret = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+//		byte[] tokenBindingId = null;
+//		ServerProperty ret = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+		ServerProperty ret = ServerProperty.builder()
+				.origin(origin)
+				.rpId(rpId)
+				.challenge(challenge)
+				.build();
 		return ret;
 	}
 	
