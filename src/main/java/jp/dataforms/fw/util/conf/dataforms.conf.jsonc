@@ -99,27 +99,18 @@
 		//, "clientLogLevel": "error"
 		//, "clientLogLevel": "none"		
 		// ----------------------------------
-		// JNDI Data Source設定
-		// 参照するJNDIデータソースを指定します。
-		// プロジェクト初期化画面でプロジェクト名を元に自動的に設定されます
-		, "jndiDataSource": {
-			// JNDIデータソースの前につける文字列 
-			"jndiPrefix": "java:/comp/env/"
-			// 使用するJNDIデータソースを指定する
-			, "dataSource": null
-		}
 		// WEB-INF/libにJDBCドライバーを配置したい場合、JNDIデータソースは利用できません。
 		// その場合、context.xmlからJNDI DataSourseの設定を削除し、
 		// 以下の設定を有効にすることによってでDBCPのコネクションプールを使用することができます。
-/*		, "dbcpConfig": {
+		, "dbcpConfig": {
 			// このシステムで使用するデーターソースの名称を設定します。
 			// nullを指定した場合はjdniDataSourceの設定を試用します。
-			"mainDataSource": null
+			"mainDataSource": "derbyEmbedded"
 			, "dataSourceMap": {
 				// 組み込み　Apache derby データソースの設定例
 				"derbyEmbedded": {
 					"driverClassName": "org.apache.derby.jdbc.EmbeddedDriver"
-					, "url": "jdbc:derby:path;create=true"
+					, "url": "jdbc:derby:${dataBasePath};create=true"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
@@ -129,7 +120,7 @@
 				// ネットワーク　Apache derby データソースの設定例
 				, "derbyNetwork": {
 					"driverClassName": "org.apache.derby.jdbc.ClientDriver"
-					, "url": "jdbc:derby://server:1527/javadb/blank;create=true"
+					, "url": "jdbc:derby://dbserver:1527/javadb/${dbname};create=true"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
@@ -139,7 +130,7 @@
 				// PostgreSQL　データソースの設定例
 				, "postgreSQL": {
 					"driverClassName": "org.postgresql.Driver"
-					, "url": "jdbc:postgresql://server:5432/dfdb"
+					, "url": "jdbc:postgresql://dbserver:5432/${dbname}"
 					, "user": "postgres"
 					, "password": ""
 					, "initialSize": 5
@@ -151,7 +142,7 @@
 				// MariaDB　データソースの設定例
 				, "mariaDB": {
 					"driverClassName": "org.mariadb.jdbc.Driver"
-					, "url": "jdbc:mariadb://server:3306/testdb?user=root&password=secret"
+					, "url": "jdbc:mariadb://dbserver:3306/${dbname}?user=root&password=secret"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
@@ -163,7 +154,7 @@
 				// MySQL　データソースの設定例
 				, "mySQL": {
 					"driverClassName": "com.mysql.jdbc.Driver"
-					, "url": "jdbc:mysql://server/dfdb?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
+					, "url": "jdbc:mysql://dbserver/${dbname}?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
@@ -175,8 +166,8 @@
 				// Oracle　データソースの設定例
 				, "oracle": {
 					"driverClassName": "oracle.jdbc.OracleDriver"
-					, "url": "jdbc:oracle:thin:@server:1521/xepdb1"
-					, "user": "dfuser"
+					, "url": "jdbc:oracle:thin:@dbserver:1521/FREEPDB1"
+					, "user": "${dbname}"
 					, "password": "password"
 					, "initialSize": 5
 					, "maxTotal": 20
@@ -187,7 +178,7 @@
 				// SQLServer　データソースの設定例
 				, "sqlServer": {
 					"driverClassName": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-					, "url": "jdbc:sqlserver://server:1433;databaseName=dfdb;user=dfuser;password=P@sow0rd;encrypt=false;"
+					, "url": "jdbc:sqlserver://dbserver:1433;databaseName=${dbname};user=dfuser;password=P@sow0rd;encrypt=false;"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
@@ -198,18 +189,27 @@
 				}
 			}
 		}
-*/
+		// JNDI Data Source設定
+		// 参照するJNDIデータソースを指定します。
+		// プロジェクト初期化画面でプロジェクト名を元に自動的に設定されます
+		, "jndiDataSource": {
+			// JNDIデータソースの前につける文字列 
+			"jndiPrefix": "java:/comp/env/"
+			// 使用するJNDIデータソースを指定する
+			, "dataSource": null
+		}
 		// ----------------------------------
 		// Mail関連設定
 		, "mail": {
-			// JNDI Mail Sessionを使う場合は以下にJNDIリソースの名所を指定します。
-			"jndiMailSession": "mail/Session"
+			// JNDI Mail Sessionを使う場合は以下にJNDIリソースの名称を指定します。
+			"jndiMailSession": null
 			// jakarta.Mailのプロパティを直接指定する場合は以下に記述します。
 			// 以下を設定するとjakartaMailPropertiesの設定を優先し、JNDI Resourceは使用しません。
 			, "jakartaMailProperties": {
 				"mail.smtp.host": "smtpserver"
 				, "mail.smtp.port": "25"
 			}
+			// 送信者のメールアドレス。
 			, "mailFrom": "hoge@hogehoge.jp"
 		}
 		// ----------------------------------

@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Context><Context addWebinfClassesResources="true">
+	<!-- 
+		JNDIを試用したメールセッションやデータソースを使用する場合、
+		以下のコメントを参考に適切に設定してください。
+	 -->
 	<!-- メールセッション設定 -->
+	<!-- 
 	<Resource name="mail/Session" auth="Container"
 		type="jakarta.mail.Session" mail.smtp.host="smtpserver" />
-		
+	 -->
 	<!-- DB接続設定 -->
+	<!-- 
 	<Resource auth="Container"
 		driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
 		name="${dataSource}" type="javax.sql.DataSource"
 		url="jdbc:derby:${dataBasePath};create=true"
 		username="" password="" />
-
+	 -->
 	<!--
 		組み込みApache derby用の接続設定
 		Apache derbyのJDBCドライバは制約名称を取得するAPIがあるため
 		duplicateErrorMessageとforeignKeyErrorMessageの設定は不要。
 	 -->
-	 <!--
+	<!--
 	<Resource auth="Container"
 		driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
 		name="jdbc/dfdb" type="javax.sql.DataSource"
@@ -34,7 +40,6 @@
 		url="jdbc:derby://localhost:1527/javadb/blank;create=true" username="APP"
 		password="password" />
 	-->
-
 	<!--
 		PostgreSQL用の接続設定
 		制約違反の場合、制約名はエラーメッセージから取得するので、

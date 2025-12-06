@@ -253,9 +253,18 @@ public class InitDevelopmentToolForm extends EditForm {
 	 * @param javaSrcPath javaソースパス。
 	 * @param jndiPrefix JNDI接頭辞
 	 * @param dataSource データソース。
+	 * @param derbyDbPath derbyのDBパス。
+	 * @param projectName プロジェクト名。
 	 * @throws Exception 例外。
 	 */
-	private void copyConfFile(final String webSrcPath, final String javaSrcPath, final String jndiPrefix, final String dataSource) throws Exception {
+	private void copyConfFile(
+			final String webSrcPath, 
+			final String javaSrcPath, 
+			final String jndiPrefix, 
+			final String dataSource,
+			final String derbyDbPath,
+			final String projectName
+		) throws Exception {
 		ConfUtil util = new ConfUtil();
 		String conf = util.getDefaultConfFile();
 		
@@ -267,6 +276,8 @@ public class InitDevelopmentToolForm extends EditForm {
 		conf = conf.replaceAll("\"webSourcePath\": null", "\"webSourcePath\": \"" + webSrcPath + "\"");
 		conf = conf.replaceAll("\"jndiPrefix\": \"java:/comp/env/\"", "\"jndiPrefix\": \"" + jndiPrefix + "\"");
 		conf = conf.replaceAll("\"dataSource\": null", "\"dataSource\": \"" + dataSource + "\"");
+		conf = conf.replaceAll("\\$\\{dataBasePath}", derbyDbPath);
+		conf = conf.replaceAll("\\$\\{dbname}", projectName);
 		// 
 		{
 			String aesInitialVector = RandomStringUtils.randomAlphanumeric(16);
@@ -307,6 +318,13 @@ public class InitDevelopmentToolForm extends EditForm {
 	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
+		String projectPath = (String) data.get(ID_PROJECT_PATH);
+		String projectName = null;
+		int idx = projectPath.lastIndexOf("/");
+		if (idx > 0) {
+			projectName = projectPath.substring(idx + 1);
+		}
+		logger.info("projectName=" + projectName);
 		String javaSrcPath = (String) data.get(ID_JAVA_SRC_PATH);
 		String webSrcPath = (String) data.get(ID_WEB_SRC_PATH);
 		String jndiPrefix = (String) data.get(ID_JNDI_PREFIX);
@@ -319,7 +337,7 @@ public class InitDevelopmentToolForm extends EditForm {
 
 		this.copyLog4j2XML(javaSrcPath);
 		this.copyContextXML(webSrcPath, dataSource, derbyDbPath);
-		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource);
+		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource, derbyDbPath, projectName);
 
 		this.copyApacheFopXconf(webSrcPath);
 
