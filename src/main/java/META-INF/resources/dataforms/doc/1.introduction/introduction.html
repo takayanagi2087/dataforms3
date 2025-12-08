@@ -24,8 +24,9 @@
 			<li>非推奨機能を削除。</li>
 			<li>JavascriptのModule対応。</li>
 			<li>func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)。</li>
-			<li>設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを提供する機能を追加。</li>
+			<li>設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを外部から提供する機能を追加。</li>
 			<li>多要素認証(TOTP,Passkey)対応。</li>
+			<li>DBCP2を使用したデータベース接続をサポート。(JNDIデータソースも利用可能)</li>
 		</ol>
 		<h2>特徴</h2>
 		<p>
@@ -66,14 +67,14 @@
 						<p>
 							Apache Derby, MySQL, PostgreSQL, Oracle, Microsoft SQL Server
 						</p>
-						SQLの方言はライブラリで吸収する構造になっているため、TomcatのJNDIデータソースの接続先に応じたSQLを発行します。
+						SQLの方言はライブラリで吸収する構造になっているため、データベースの接続先に応じたSQLを発行します。
 					</td>
 				</tr>
 				<tr>
 					<td class="num">2</td>
 					<td style="width: 300px;">レポート出力機能</td>
 					<td style="width: 500px;">
-						Apache POIを利用したExcelレポートとApache FOPに対応したPDFレポート機能を持っています。						
+						Apache POIを利用したExcelレポートとApache FOPに対応したPDFレポート機能を持っています。	
 					</td>
 				</tr>
 				<tr>
@@ -107,110 +108,6 @@
 			Servletクラスもdataforms3.jarに入っており、web.xmlに設定を記述しなくても、*.html,*.api,*.batというパターンで、DataFormsServletというServletが動作するようになっています。
 			基本機能や開発ツールなどのページを構成するHTMLやJavascriptも、dataforms3.jarファイル中のMETA-INF/resourcesに入っています。
 			(Servlet 3.0でサポートされた機能を使用しています。)
-		</p>
-		<h3>依存ライブラリが少ない</h3>
-		<p>
-			依存するライブラリは以下のものに抑えています。
-		</p>
-		<table class="jarlist">
-			<caption>
-				依存ライブラリ一覧
-			</caption>
-			<thead>
-				<tr>
-					<th style="width: 100px;">グルーブ</th>
-					<th style="width: 300px;">ファイル</th>
-					<th style="width: 400px;">コメント</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td rowspan="4">Javascriptライブラリ</td>
-					<td>jQuery</td>
-					<td rowspan="3">jQuery関連</td>
-				</tr>
-				<tr>
-					<td>jQuery-ui</td>
-				</tr>
-				<tr>
-					<td>jquery-ui-touch-punch</td>
-				</tr>
-				<tr>
-					<td>ajaxzip3</td>
-					<td>郵便番号住所変換</td>
-				</tr>
-				<tr>
-					<td rowspan="4">Apache commons</td>
-					<td >commons-io-XXX.jar</td>
-					<td>ファイルIOライブラリ</td>
-				</tr>
-				<tr>
-					<td>commons-text-XXX.jar</td>
-					<td>テキスト操作ライブラリ</td>
-				</tr>
-				<tr>
-					<td>commons-validator-XXX.jar</td>
-					<td>入力値のバリデーション</td>
-				</tr>
-				<tr>
-					<td>commons-beanutils-XXX.jar</td>
-					<td>Java Beanの操作</td>
-				</tr>
-				<tr>
-					<td>apache log4j2</td>
-					<td>log4j-core-XXX.jar</td>
-					<td>ログ出力</td>
-				</tr>
-				<tr>
-					<td rowspan="3">apache POI</td>
-					<td>poi-XXX.jar</td>
-					<td rowspan="3">
-						Excel出力で使用<br/>
-						(Excel出力を使用しない場合は削除できます)
-					</td>
-				</tr>
-				<tr>
-					<td>poi-ooxml-XXX.jar</td>
-				</tr>
-				<tr>
-					<td>poi-scratchpad-XXX.jar</td>
-				</tr>
-				<tr>
-					<td>apache fop</td>
-					<td>fop-XXX.jar</td>
-					<td>
-						PDF出力<br/>
-						(PDF出力を使用しない場合は削除できます)
-					</td>
-				</tr>
-				<tr>
-					<td>google.zxing</td>
-					<td>javase-XXX.jar</td>
-					<td>
-						QR-Code生成<br/>
-						(QR-Code出力を使用しない場合は削除できます)
-					</td>
-				</tr>
-				<tr>
-					<td>gson</td>
-					<td>gson-XXX.jar</td>
-					<td>JSON変換</td>
-				</tr>
-				<tr>
-					<td>webauthn4j</td>
-					<td>webauthn4j-core-XXX.jar</td>
-					<td>Passkey認証</td>
-				</tr>
-				<tr>
-					<td>totp</td>
-					<td>totp-XXX.jar</td>
-					<td>TOTP認証</td>
-				</tr>
-			</tbody>
-		</table>
-		<p class="topic">
-			依存ライブラリ中のjarファイル一覧はpom.xmlの&lt;dependencies&gt;&lt;/dependencies&gt;に登録してあるもののみを挙げており、
-			これらのライブラリが依存しているものは記載していません。
 		</p>
 		<h3>開発ツールを装備</h3>
 		<p>
@@ -402,6 +299,20 @@
 			これが何故動作するのか不思議に思うかもしれませんが、dataforms3.jarがこのページの初期化スクリプトを自動的に生成するので、
 			所定のイベント処理が自動的に組み込まれます。
 			つまりHTMLは純粋に見た目だけを記述することになり、外見はHTMLやCSSの文法を理解しているデザイナーさんにお任せすることができます。
+		</p>
+		<p>
+			DataFormsServletの動作は以下のようになっています
+			<ol>
+				<li>HogePage.htmlをブラウザからDataFromsServletにリクエスト。</li>
+				<li>DataFormsServletはHogePageに対応したJavaのクラス、HogePage.classを探す。</li>
+				<li>
+					HogePage.classが見つかった場合、HogePage.classに対応したJavascriptクラスをHogePage.htmlに追加してブラウザに送信する。
+					(HogePage.classが存在しない場合HogePage.htmlを加工せずに送信する。)
+				</li>
+				<li>
+					HogePage.classに対応したHogePage.jsは、HogePage.html内の各要素に適切なイベントハンドラを設定する。
+				</li>
+			</ol>
 		</p>
 		<h3>フレームデザインの共通化</h3>
 		<p>
