@@ -20,19 +20,19 @@ import com.google.gson.stream.JsonWriter;
  * JSON変換ユーティリティ。
  */
 public class JsonUtil {
-	
+
 	/**
 	 * Logger.
 	 */
 //	private static Logger logger = LogManager.getLogger(JsonUtil.class);
-	
+
 	/**
 	 * コンストラクタ。
 	 */
 	private JsonUtil() {
-		
+
 	}
-	
+
 	/**
 	 * オブジェクトをJSONに変換します。
 	 * @param object 変換するオブジェクト。
@@ -48,7 +48,7 @@ public class JsonUtil {
 		}
 		return gson.toJson(object);
 	}
-	
+
 	/**
 	 * オブジェクトをJSONに変換します。
 	 * @param object 変換するオブジェクト。
@@ -84,7 +84,7 @@ public class JsonUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * JsonWriterを取得します。
 	 * @param out 出力先。
@@ -107,21 +107,24 @@ public class JsonUtil {
 		 JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		 return reader;
 	}
-	
-	
+
+
 	/**
 	 * Jsonのシーケンス例外。
 	 */
 	public static class JsonSequenceException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * コンストラクタ。
 		 */
 		public JsonSequenceException() {
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * オブジェクトを取得する。
 	 * @param r JsonReader。
@@ -147,8 +150,8 @@ public class JsonUtil {
 		}
 		return ret;
 	}
-	
-	
+
+
 	/**
 	 * 配列を取得します。
 	 * @param r JsonReader。
@@ -169,7 +172,7 @@ public class JsonUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Jsonを読みこみます。
 	 * @param r JsonReader。
@@ -200,9 +203,9 @@ public class JsonUtil {
 		}
 		return ret;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * オブジェクト処理関数インターフェース。
 	 */
@@ -229,7 +232,7 @@ public class JsonUtil {
 			return ret;
 		}
 	}
-	
+
 	/**
 	 * 巨大なJSON配列を処理します。
 	 * <pre>
@@ -262,8 +265,8 @@ public class JsonUtil {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * テスト用メインメソッド。
 	 * @param args コマンドライン引数。
@@ -288,7 +291,7 @@ public class JsonUtil {
 				String json = JsonUtil.encode(list, true);
 				System.out.println("json=" + json);
 			}
-	
+
 		} catch (Exception  e) {
 			e.printStackTrace();
 		}

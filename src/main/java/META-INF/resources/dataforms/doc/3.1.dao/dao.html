@@ -50,7 +50,7 @@
 	&lt;!-- &#12513;&#12540;&#12523;&#12475;&#12483;&#12471;&#12519;&#12531;&#35373;&#23450; --&gt;
 	&lt;Resource name=&quot;mail/Session&quot; auth=&quot;Container&quot;
 		type=&quot;jakarta.mail.Session&quot; mail.smtp.host=&quot;smtpserver&quot; /&gt;
-		
+
 	<b>&lt;!-- DB&#25509;&#32154;&#35373;&#23450; --&gt;
 	&lt;Resource auth=&quot;Container&quot;
 		driverClassName=&quot;org.apache.derby.jdbc.EmbeddedDriver&quot;
@@ -180,25 +180,25 @@
 		<div class="wrappre">
 			<pre>
 {
-	
+
 	・・・
-	
+
 	// アプリケーション設定
 	, "application": {
 
 		・・・
-		
+
 		// ----------------------------------
 		// JNDI Data Source設定
 		, "jndiDataSource": {
-			// JNDIデータソースの前につける文字列 
+			// JNDIデータソースの前につける文字列
 			"jndiPrefix": "java:/comp/env/"
 			// 使用するJNDIデータソースを指定する
 			, "dataSource": "jdbc/sample"
 		}
 
 		・・・
-		
+
 	}
 
 	・・・
@@ -497,7 +497,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));		// 
 for (Map&lt;String, Object&gt; m: result) {
 	SampleTable.Entity e = new SampleTable.Entity(m);
 	logger.debug(&quot;{},{},{},{}\n&quot;, e.getSampleId(), e.getSampleText(), e.getSampleNumeric(), e.getSampleDate());
-}	
+}
 			</pre>
 		</div>
 		<p>
@@ -506,7 +506,7 @@ for (Map&lt;String, Object&gt; m: result) {
 		<div class="filecaption">問合せクラスの実行ログ</div>
 		<div class="wrappre">
 			<pre>
-2024/08/19 13:46:07.012 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
+2024/08/19 13:46:07.012 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -606,7 +606,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &
 		<div class="filecaption">条件フィールドリストの実行ログ</div>
 		<div class="wrappre">
 			<pre>
-2024/08/19 14:06:00.060 [http-nio-8080-exec-3] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
+2024/08/19 14:06:00.060 [http-nio-8080-exec-3] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -672,7 +672,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &
 		<div class="filecaption">複雑な条件式の実行結果</div>
 		<div class="wrappre">
 			<pre>
-2024/08/19 14:13:54.428 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
+2024/08/19 14:13:54.428 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -719,7 +719,8 @@ SampleTable.Entity e = new SampleTable.Entity();		// &#26465;&#20214;&#12487;&#1
 e.setSampleText(&quot;aaa&quot;);
 query.setConditionData(e.getMap());
 List&lt;Map&lt;String, Object&gt;&gt; result = dao.executeQuery(query);	// &#21839;&#21512;&#12379;&#12434;&#34892;&#12356;&#12289;&#12381;&#12398;&#32080;&#26524;&#12434;Map&#12398;List&#12391;&#36820;&#12375;&#12414;&#12377;&#12290;
-logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;		
+logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &#21839;&#21512;&#12379;&#32080;&#26524;&#12434;JSON&#24418;&#24335;&#12391;log&#20986;&#21147;&#12375;&#12414;&#12377;&#12290;
+            </pre>
 		</div>
 		<p>
 			この処理を実行すると以下のようなログが出力されます。
@@ -727,7 +728,7 @@ logger.debug(() -&gt; &quot;result=&quot; + JsonUtil.encode(result, true));	// &
 		<div class="filecaption">SQL条件式の直接指定</div>
 		<div class="wrappre">
 			<pre>
-2024/08/19 14:20:39.654 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select 
+2024/08/19 14:20:39.654 [http-nio-8080-exec-8] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=select
 m.sample_id as sample_id
 ,m.sample_text as sample_text
 ,m.sample_numeric as sample_numeric
@@ -762,7 +763,7 @@ m.sample_id as sample_id
 			テーブルJavaクラス作成でXxxTableを作成すると、同時にXxxTableRelationというクラスが作成されます。
 			XxxTableRelationクラスはXxxTableと別のテーブルを結合する際の結合条件を記述するクラスです。
 			XxxTableRelationクラスは開発者が条件を追記する必要があるため、開発ツールでXxxTableクラスのソースを更新しても、
-			XxxTableRelationクラスは更新されないようになっています。	
+			XxxTableRelationクラスは更新されないようになっています。
 		</p>
 		<p>
 			以下に開発ツールで生成したSampleTableRelation.javaを示します。
@@ -1080,7 +1081,7 @@ public class JoinTestQuery extends Query {
 		<div class="filecaption">JoinTestQueryに対応するSQL</div>
 		<div class="wrappre">
 			<pre>
-select 
+select
 m.join_test_id as join_test_id
 ,m.sample_id as sample_id
 ,m.join_test_text as join_test_text
@@ -1163,7 +1164,7 @@ public class JoinTestTableRelation extends TableRelation {
 		if (joinTable instanceof SampleTable) {
 			return this.getTable().getLinkFieldCondition(JoinTestTable.Entity.ID_SAMPLE_ID, joinTable, alias);
 		}
-			
+
 		</b>
 
 		return super.getJoinCondition(joinTable, alias);
@@ -1485,7 +1486,7 @@ dao.executeDelete(new SampleTable(), e.getMap()); // レコードの削除
 2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 6 :create_user_id=0
 2024/08/19 12:07:38.626 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 7 :update_user_id=0
 2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.sample.edittable.page.SampleEditForm sampleId=104
-2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>update sample set 
+2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser sql=<b>update sample set
 sample_text = :sample_text
 , sample_numeric = :sample_numeric
 , sample_date = :sample_date
@@ -1505,6 +1506,6 @@ sample_id = :sample_id</b>
 
 2024/08/19 12:07:38.627 [http-nio-8080-exec-6] DEBUG  jp.dataforms.fw.dao.sqlgen.SqlParser 1 :sample_id=104
 			</pre>
-		</div>	
+		</div>
 	</body>
 </html>

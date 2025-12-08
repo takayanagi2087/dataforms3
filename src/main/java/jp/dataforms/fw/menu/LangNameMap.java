@@ -6,6 +6,9 @@ import java.util.HashMap;
  * 各言語毎の名称マップ。
  */
 public class LangNameMap extends HashMap<String, String> {
+
+
+	private static final long serialVersionUID = 1L;
 	/**
 	 * デフォルト言語コード。
 	 */

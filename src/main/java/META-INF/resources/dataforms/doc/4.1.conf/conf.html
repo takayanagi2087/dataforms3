@@ -17,10 +17,10 @@
 			}
 			td.group {
 				text-align: center;
-				font-weight: bold;	
+				font-weight: bold;
 			}
 			td div {
-				font-weight: bold;	
+				font-weight: bold;
 			}
 		</style>
 	</head>
@@ -220,7 +220,7 @@
 				<tr>
 					<td colspan="3" class="group">
 						initialize(アプリケーションの初期化時の設定)
-					</th>
+					</td>
 				</tr>
 				<tr>
 					<td>userLevel</td>
@@ -268,7 +268,7 @@
 				<tr>
 					<td colspan="3" class="group">
 						application(アプリケーション設定)
-					</th>
+					</td>
 				</tr>
 				<tr>
 					<td>mfaRequiredCount</td>
@@ -292,7 +292,7 @@
 						<div>言語固定設定</div>
 						ブラウザの言語設定を無視し、言語を固定する場合は以下の設定を有効にします。<br/>
 						, "fixedLanguage": "en"
-					</td>	
+					</td>
 				</tr>
 				<tr>
 					<td>serverConfigFile</td>
@@ -301,7 +301,7 @@
 						<div>サーバー設定ファイル</div>
 						サーバ毎にアプリの設定を変更する場合、その設定ファイルのパスを指定します。
 						サーバにこのファイルが存在しない場合、この設定は無視されます。
-					</td>	
+					</td>
 				</tr>
 				<tr>
 					<td>clientLogLevel</td>
@@ -343,7 +343,7 @@
 						<div style="width: 100%; overflow: scroll;">
 							<pre>
 {<br/>
- // JNDIデータソースの前につける文字列<br/> 
+ // JNDIデータソースの前につける文字列<br/>
  "jndiPrefix": "java:/comp/env/"<br/>
  // 使用するJNDIデータソースを指定する<br/>
  , "dataSource": "&lt;&#12487;&#12540;&#12479;&#12477;&#12540;&#12473;&#21517;&gt;"<br/>
@@ -418,8 +418,8 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 	// パスワードの暗号化処理を変更する場合、以下の設定をコメントアウトしパスワード再暗号化ページを有効にしてください。
 	//
 	, "jp.dataforms.fw.app.user.page.PasswordReencryptPage" : "jp.dataforms.fw.app.base.page.HiddenPage"
-}						
-		
+}
+
 	</pre>
 </div>
 					</td>
@@ -429,7 +429,7 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 						既存ページクラスを置き換える設定を以下に記述します。
 						またdataforms.app.base.page.HiddenPageに置き換えれば
 						メニューにも表示されず、アクセスできないページになります。
-						つまり既存ページを隠すことができます。		
+						つまり既存ページを隠すことができます。
 					</td>
 				</tr>
 				<tr>
@@ -674,9 +674,9 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 	// サーバ側で使用するアプリケーション用メッセージリソースの名称を指定します。
 	// このファイルはアプリケーション側で用意します。
 	, "appMessages": "/frame/messages/AppMessages"
-}							
+}
 							</pre>
-						</div>						
+						</div>
 					</td>
 					<td>
 						<div>メッセージリソース設定</div>
@@ -817,10 +817,10 @@ dataSource = initContext.lookup("java:/comp/env/jdbc/&lt;&#12487;&#12540;&#12479
 			</tbody>
 		</table>
 
-		
-		
-		
-		
+
+
+
+
 		<h2>context.xml</h2>
 		<p>
 			プロジェクト初期化画面はMETA-INF/context.xmlファイルを作成します。

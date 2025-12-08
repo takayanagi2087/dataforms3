@@ -58,7 +58,7 @@
 			これだけでデータベース(Apache Derby)が使えるようになります。
 		</p>
 		<h2>JavaMailのインストール</h2>
-		<p>
+	    <p>
 			dataforms3.jarはJavaMailを使用したメールの送信機能を持っています。
 			そのためJavaMailをTomcatにインストールする必要があります。
 			以下のjarファイルをダウンローして、tomcat10/libにコピーしてください。
@@ -168,22 +168,18 @@
 		<p>
 			このページで「確認」→「登録」の順にボタンを押下すると、以下の設定ファイルがプロジェクト内に展開されます。
 		</p>
-		<p>			
+		<p>
 			"/src/main/webapp/WEB-INF/dataforms.conf.jsonc"にはアプリケーションの各種設定が記録されています。
-			 設定項目はdataforms.conf.jsonc中のコメントや<a href="../4.1.conf/conf.html#top">設定</a>のドキュメントを参照してください。 
+			 設定項目はdataforms.conf.jsonc中のコメントや<a href="../4.1.conf/conf.html#top">設定</a>のドキュメントを参照してください。
 		</p>
 		<table>
 			<caption>展開された各種設定ファイル</caption>
 			<thead>
-				<th>
-					No.
-				</th>
-				<th>
-					ファイル名
-				</th>
-				<th>
-					内容
-				</th>
+				<tr>
+					<th>No.</th>
+					<th>ファイル名</th>
+					<th>内容	</th>
+	            </tr>
 			</thead>
 			<tbody>
 				<tr>
@@ -240,7 +236,7 @@
 			その接続先はApache deby(URL:jdbc:derby:./javadb/blankdb;create=true)になっています。
 			PostgreSQL等のデータベースサーバを使用する場合、この接続設定を修正してください。
 			"/src/main/webapp/META-INF/context.xml"には各種データベースへの接続設定例が記載されているので、それを参考に修正してください。
-		</p>	
+		</p>
 		<p>
 			プロジェクト内のcontex.xmlにJNDIデータソースを設定すると、warファイル内にDBの接続先が記録されてしまいます。
 			デプロイ先によってJNDIデータソースの接続先を変更したい場合、JDNIデータソースの設定を"/src/main/webapp/META-INF/context.xml"から
@@ -261,7 +257,7 @@
 			このページで開発者の情報を入力すると、データベースに必要なテーブルが作成され、開発者が登録されます。
 			データベースが作成されると、ログイン画面が表示されます。
 		</p>
-		
+
 		<figure>
 			<figcaption>ログイン画面</figcaption>
 			<img src="initdb002.png" style="width:50%; height:50%;"/>
