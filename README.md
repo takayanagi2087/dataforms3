@@ -36,25 +36,59 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 
 * [Pleiades All in One ](https://willbrains.jp/)をダウンロードしインストール。
 * EclipseのサーバービューにTomcat10(java21)を追加。
-* Pleiadesに付属するtomcat10のlibフォルダに[Apache Derby](https://db.apache.org/derby/)からダウンロードした組み込みDerbyのドライバをコピー。
-* jakarta.mail-XXX.jar, jakarta.mail-api-XXX.jar, jakarta.activation-api-XXX.jar, angus-activation-XXX.jar tomcat10のlibフォルダにコピー。
 * Webパースペクティブを表示。
 * 動的Webプロジェクトを作成。
 * 作成したプロジェクトMavenプロジェクトに変換。
 * pom.xmlに以下の依存関係を追加。
 
 ``` 
+	<properties>
+		<derby.version>10.17.1.0</derby.version>
+	</properties>
 	<repositories>
+		<!--　リリースバージョンのリポジトリ -->
 		<repository>
 			<id>jp.dataforms.dataforms3</id>
 			<url>https://takayanagi2087.github.io/dataforms3/</url>
 		</repository>
+		<!--　開発中バージョンのリポジトリ -->
+		<repository>
+			<id>jp.dataforms</id>
+			<url>https://www.dataforms.jp/mvn/repository</url>
+		</repository>
 	</repositories>
 	<dependencies>
+		<!-- 利用するJDBCドライバーを追加 -->
+		<!--　Apache derby JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyshared</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyLocale_ja_JP</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- datafoms3.jarを追加 -->
 		<dependency>
 			<groupId>jp.dataforms</groupId>
 			<artifactId>dataforms3</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 ``` 
