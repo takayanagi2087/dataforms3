@@ -48,35 +48,6 @@
 		<p>
 			Tomcatの起動が確認出来たら、一旦Tomcatを終了してください。
 		</p>
-		<h2>データベースを用意する</h2>
-		<p>
-			dataforms3.jarを動かすためには、何らかのデータベースが必要になります。
-			通常Tomcatからデータベースを使うには、サーバーソフトを別にセットアップし、それに接続するためのjdbcドライバをTomcatにインストールします。<br/>
-			サーバーソフトの設定はいろいろ面倒なので、ここでは組込み用Apache Derbyを使用します。<br/>
-			<a href="https://db.apache.org/derby/" target="_blank">Apache Derby</a>のサイトよりdb-derby-&lt;version&gt;-bin.zipダウンロードし、
-			その中に含まれているlib/derby*.jarを全て$CATALINA_HOME/lib(今回はC:\eclipse\pleiades\tomcat\10\lib)にコピーしてください。
-			これだけでデータベース(Apache Derby)が使えるようになります。
-		</p>
-		<h2>JavaMailのインストール</h2>
-	    <p>
-			dataforms3.jarはJavaMailを使用したメールの送信機能を持っています。
-			そのためJavaMailをTomcatにインストールする必要があります。
-			以下のjarファイルをダウンローして、tomcat10/libにコピーしてください。
-			<ol>
-				<li>
-					<a href="https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api" target="_blank">jakarta.mail-api-xxx.jar</a>
-				</li>
-				<li>
-					<a href="https://mvnrepository.com/artifact/org.eclipse.angus/jakarta.mail" target="_blank">jakarta.mail-xxx.jar</a>
-				</li>
-				<li>
-					<a href="https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api" target="_blank">jakarta.activation-api-xxx.jar</a>
-				</li>
-				<li>
-					<a href="https://mvnrepository.com/artifact/org.eclipse.angus/angus-activation" target="_blank">angus-activation-xxx.jar</a>
-				</li>
-			</ol>
-		</p>
 		<h2>プロジェクトの作成</h2>
 		<p>
 			Eclipseのプロジェクト・エクスプローラーのコンテキストメニューの「新規」「プロジェクト...」を選択し、
@@ -111,20 +82,61 @@
 		<p>
 			この操作で作成されたpom.xmlに以下の依存関係を追加します。
 		</p>
+		<p>
+			依存関係に追加するものはdataforms3.jarとアプリケーションで使用するデータベースのJDBCドライバーです。
+			今回はサーバソフトが不要な組み込みApache derbyを使用します。<br/>
+			複数のデータベースサーバーをサポートするWEBアプリケーションの場合、複数種のJDBCドライバーを追加してください。
+		</p>
 		<div class="filecaption">POM.XMLに追加する記述</div>
 		<div class="wrappre">
 			<pre>
+		&lt;properties&gt;
+			&lt;derby.version&gt;10.17.1.0&lt;/derby.version&gt;
+		&lt;/properties&gt;
 		&lt;repositories&gt;
+			&lt;!--&#12288;&#12522;&#12522;&#12540;&#12473;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
 			&lt;repository&gt;
 				&lt;id&gt;jp.dataforms.dataforms3&lt;/id&gt;
 				&lt;url&gt;https://takayanagi2087.github.io/dataforms3/&lt;/url&gt;
 			&lt;/repository&gt;
+			&lt;!--&#12288;&#38283;&#30330;&#20013;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
+			&lt;repository&gt;
+				&lt;id&gt;jp.dataforms&lt;/id&gt;
+				&lt;url&gt;https://www.dataforms.jp/mvn/repository&lt;/url&gt;
+			&lt;/repository&gt;
 		&lt;/repositories&gt;
 		&lt;dependencies&gt;
+			&lt;!-- &#21033;&#29992;&#12377;&#12427;JDBC&#12489;&#12521;&#12452;&#12496;&#12540;&#12434;&#36861;&#21152; --&gt;
+			&lt;!--&#12288;Apache derby JDBC&#12489;&#12521;&#12452;&#12496;&#12540;&#12288;--&gt;
+			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derby --&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+				&lt;artifactId&gt;derby&lt;/artifactId&gt;
+				&lt;version&gt;${derby.version}&lt;/version&gt;
+			&lt;/dependency&gt;
+			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared --&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+				&lt;artifactId&gt;derbyshared&lt;/artifactId&gt;
+				&lt;version&gt;${derby.version}&lt;/version&gt;
+			&lt;/dependency&gt;
+			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools --&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+				&lt;artifactId&gt;derbytools&lt;/artifactId&gt;
+				&lt;version&gt;${derby.version}&lt;/version&gt;
+			&lt;/dependency&gt;
+			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP --&gt;
+			&lt;dependency&gt;
+				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+				&lt;artifactId&gt;derbyLocale_ja_JP&lt;/artifactId&gt;
+				&lt;version&gt;${derby.version}&lt;/version&gt;
+			&lt;/dependency&gt;
+			&lt;!-- datafoms3.jar&#12434;&#36861;&#21152; --&gt;
 			&lt;dependency&gt;
 				&lt;groupId&gt;jp.dataforms&lt;/groupId&gt;
 				&lt;artifactId&gt;dataforms3&lt;/artifactId&gt;
-				&lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
+				&lt;version&gt;3.1.0-SNAPSHOT&lt;/version&gt;
 			&lt;/dependency&gt;
 		&lt;/dependencies&gt;
 			</pre>

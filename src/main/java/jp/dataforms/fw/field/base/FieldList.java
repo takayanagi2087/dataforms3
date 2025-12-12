@@ -291,4 +291,30 @@ public class FieldList extends ArrayList<Field<?>> {
 		}
 		return list;
 	}
+
+	/**
+	 * 生のフィールドリストを取得します。
+	 * <pre>
+	 * Queryクラスのフィールドリストをフォームに配置する場合、
+	 * AliasField等が含まれる可能性があります。
+	 * このようなフィールドは保持するデータ型が特定できないためフォームへの配置はできません。
+	 * このメソッドはこのようなフィールドをフォームに配置できるフィールドに変換したリストほ作成します。
+	 * </pre>
+	 * @return 生のフィールドリスト。
+	 */
+	public FieldList getRawFieldList() {
+		FieldList flist = new FieldList();
+		for (Field<?> f: this) {
+			if (f instanceof FunctionField) {
+				FunctionField af = (FunctionField) f;
+				Field<?> ff = af.getTargetField();
+				ff.setId(f.getId());
+				ff.setComment(f.getComment());
+				flist.add(ff);
+			} else {
+				flist.add(f);
+			}
+		}
+		return flist;
+	}
 }
