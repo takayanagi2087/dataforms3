@@ -20,8 +20,7 @@
 		<p>
 			<a href="https://willbrains.jp/" target="_blank">Pleiades - Eclipse プラグイン日本語化プラグイン</a>のサイトから、
 			Pleiades All in Oneをダウンロードします。
-			今回はpleiades-2024-06-java-win-64bit-jre_20240626.exeというファイル名のものを使用しました。
-			このexeファイルを実行しC:\eclipse\pleiadesに展開します。
+			ダウンロードしたexeファイルを実行しC:\eclipse\pleiadesに展開します。
 		</p>
 		<p>
 			展開したEclipseを起動し、ワークスペースC:\eclipse\pleiades\workspaceを作成します。
@@ -85,66 +84,64 @@
 		<p>
 			依存関係に追加するものはdataforms3.jarとアプリケーションで使用するデータベースのJDBCドライバーです。
 			今回はサーバソフトが不要な組み込みApache derbyを使用します。<br/>
-			複数のデータベースサーバーをサポートするWEBアプリケーションの場合、複数種のJDBCドライバーを追加してください。
+			PostgreSQL等のデータベースをサーバーを使用する場合、そのJDBCドライバーを設定します。
+			また、	複数のデータベースサーバーをサポートするWEBアプリケーションの場合、複数種のJDBCドライバーを追加してください。
 		</p>
 		<div class="filecaption">POM.XMLに追加する記述</div>
 		<div class="wrappre">
 			<pre>
-		&lt;properties&gt;
-			&lt;derby.version&gt;10.17.1.0&lt;/derby.version&gt;
-		&lt;/properties&gt;
-		&lt;repositories&gt;
-			&lt;!--&#12288;&#12522;&#12522;&#12540;&#12473;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
-			&lt;repository&gt;
-				&lt;id&gt;jp.dataforms.dataforms3&lt;/id&gt;
-				&lt;url&gt;https://takayanagi2087.github.io/dataforms3/&lt;/url&gt;
-			&lt;/repository&gt;
-			&lt;!--&#12288;&#38283;&#30330;&#20013;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
-			&lt;repository&gt;
-				&lt;id&gt;jp.dataforms&lt;/id&gt;
-				&lt;url&gt;https://www.dataforms.jp/mvn/repository&lt;/url&gt;
-			&lt;/repository&gt;
-		&lt;/repositories&gt;
-		&lt;dependencies&gt;
-			&lt;!-- &#21033;&#29992;&#12377;&#12427;JDBC&#12489;&#12521;&#12452;&#12496;&#12540;&#12434;&#36861;&#21152; --&gt;
-			&lt;!--&#12288;Apache derby JDBC&#12489;&#12521;&#12452;&#12496;&#12540;&#12288;--&gt;
-			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derby --&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
-				&lt;artifactId&gt;derby&lt;/artifactId&gt;
-				&lt;version&gt;${derby.version}&lt;/version&gt;
-			&lt;/dependency&gt;
-			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared --&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
-				&lt;artifactId&gt;derbyshared&lt;/artifactId&gt;
-				&lt;version&gt;${derby.version}&lt;/version&gt;
-			&lt;/dependency&gt;
-			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools --&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
-				&lt;artifactId&gt;derbytools&lt;/artifactId&gt;
-				&lt;version&gt;${derby.version}&lt;/version&gt;
-			&lt;/dependency&gt;
-			&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP --&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
-				&lt;artifactId&gt;derbyLocale_ja_JP&lt;/artifactId&gt;
-				&lt;version&gt;${derby.version}&lt;/version&gt;
-			&lt;/dependency&gt;
-			&lt;!-- datafoms3.jar&#12434;&#36861;&#21152; --&gt;
-			&lt;dependency&gt;
-				&lt;groupId&gt;jp.dataforms&lt;/groupId&gt;
-				&lt;artifactId&gt;dataforms3&lt;/artifactId&gt;
-				&lt;version&gt;3.1.0-SNAPSHOT&lt;/version&gt;
-			&lt;/dependency&gt;
-		&lt;/dependencies&gt;
+&lt;properties&gt;
+	&lt;derby.version&gt;10.17.1.0&lt;/derby.version&gt;
+&lt;/properties&gt;
+&lt;repositories&gt;
+	&lt;!--&#12288;&#12522;&#12522;&#12540;&#12473;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
+	&lt;repository&gt;
+		&lt;id&gt;jp.dataforms.dataforms3&lt;/id&gt;
+		&lt;url&gt;https://takayanagi2087.github.io/dataforms3/&lt;/url&gt;
+	&lt;/repository&gt;
+	&lt;!--&#12288;&#38283;&#30330;&#20013;&#12496;&#12540;&#12472;&#12519;&#12531;&#12398;&#12522;&#12509;&#12472;&#12488;&#12522; --&gt;
+	&lt;repository&gt;
+		&lt;id&gt;jp.dataforms&lt;/id&gt;
+		&lt;url&gt;https://www.dataforms.jp/mvn/repository&lt;/url&gt;
+	&lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;dependencies&gt;
+	&lt;!-- dataforms3 --&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;jp.dataforms&lt;/groupId&gt;
+		&lt;artifactId&gt;dataforms3&lt;/artifactId&gt;
+		&lt;version&gt;3.1.0-SNAPSHOT&lt;/version&gt;
+	&lt;/dependency&gt;
+	&lt;!--&#12288;Apache derby JDBC&#12489;&#12521;&#12452;&#12496;&#12540;&#12288;--&gt;
+	&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derby --&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+		&lt;artifactId&gt;derby&lt;/artifactId&gt;
+		&lt;version&gt;${derby.version}&lt;/version&gt;
+	&lt;/dependency&gt;
+	&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared --&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+		&lt;artifactId&gt;derbyshared&lt;/artifactId&gt;
+		&lt;version&gt;${derby.version}&lt;/version&gt;
+	&lt;/dependency&gt;
+	&lt;!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools --&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+		&lt;artifactId&gt;derbytools&lt;/artifactId&gt;
+		&lt;version&gt;${derby.version}&lt;/version&gt;
+	&lt;/dependency&gt;
+	&lt;!--
+	https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP --&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;org.apache.derby&lt;/groupId&gt;
+		&lt;artifactId&gt;derbyLocale_ja_JP&lt;/artifactId&gt;
+		&lt;version&gt;${derby.version}&lt;/version&gt;
+	&lt;/dependency&gt;
+&lt;/dependencies&gt;
+
 			</pre>
 		</div>
-		<figure>
-			<figcaption>POM.XMLにdataforms3.jarを追加した状態</figcaption>
-			<img src="eclipse_proj02-1.png" style="width:50%; height:50%;"/>
-		</figure>
 		<p>
 			作成したプロジェクトを"Tomcat10_Java21"に追加します。サーバビューの"Tomcat10_Java21"を右クリックし、「追加および消去」を選択します。
 		</p>
@@ -191,7 +188,7 @@
 					<th>No.</th>
 					<th>ファイル名</th>
 					<th>内容	</th>
-	            </tr>
+				</tr>
 			</thead>
 			<tbody>
 				<tr>
@@ -239,27 +236,124 @@
 		</figure>
 		<h2>データベース初期化</h2>
 		<p>
-			以下の「データベース初期化」ページを使用してシステムで利用するデータベースを作成します。
-			dataforms3.jarのデータベースにはユーザ情報等を管理するテーブルが定義されています。
-			そのためシステムを開発権限を持ったユーザ"developer"のパスワードを指定します。
+			プロジェクト初期化処理は"/src/main/webapp/WEB-INF/dataforms.conf.jsonc"に組み込みApache Derbyデータベースへの接続設定を作成します。
+			その内容を以下に示します。
+		</p>
+		<div class="filecaption">dataforms.conf.jsoncのデータベース接続設定</div>
+		<div class="wrappre">
+			<pre>
+, "dbcpConfig": {
+	// このシステムで使用するデーターソースの名称を設定します。
+	// nullを指定した場合はjdniDataSourceの設定を試用します。
+	"mainDataSource": <b>"derbyEmbedded"</b>
+	, "dataSourceMap": {
+		<b>
+		// 組み込み　Apache derby データソースの設定例
+		"derbyEmbedded": {
+			"driverClassName": "org.apache.derby.jdbc.EmbeddedDriver"
+			, "url": "jdbc:derby:C:/eclipse/workspaceDataforms3/sample/javadb;create=true"
+			, "user": ""
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+		}
+		</b>
+		// ネットワーク　Apache derby データソースの設定例
+		, "derbyNetwork": {
+			"driverClassName": "org.apache.derby.jdbc.ClientDriver"
+			, "url": "jdbc:derby://dbserver:1527/javadb/sample;create=true"
+			, "user": ""
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+		}
+		// PostgreSQL　データソースの設定例
+		, "postgreSQL": {
+			"driverClassName": "org.postgresql.Driver"
+			, "url": "jdbc:postgresql://dbserver:5432/sample"
+			, "user": "postgres"
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+			, "duplicateErrorMessage": "一意性制約\"(.+?)\"違反"
+			, "foreignKeyErrorMessage": "外部キー制約\"(.+?)\"に違反"
+		}
+		// MariaDB　データソースの設定例
+		, "mariaDB": {
+			"driverClassName": "org.mariadb.jdbc.Driver"
+			, "url": "jdbc:mariadb://dbserver:3306/sample?user=root&password=secret"
+			, "user": ""
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+			, "duplicateErrorMessage": "for key '(.+?)'$"
+			, "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+		}
+		// MySQL　データソースの設定例
+		, "mySQL": {
+			"driverClassName": "com.mysql.jdbc.Driver"
+			, "url": "jdbc:mysql://dbserver/sample?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
+			, "user": ""
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+			, "duplicateErrorMessage": "for key '(.+?)'$"
+			, "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+		}
+		// Oracle　データソースの設定例
+		, "oracle": {
+			"driverClassName": "oracle.jdbc.OracleDriver"
+			, "url": "jdbc:oracle:thin:@dbserver:1521/FREEPDB1"
+			, "user": "sample"
+			, "password": "password"
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+			, "duplicateErrorMessage": "一意制約\\(.+?\\.(.+?)\\).*が違反しました"
+			, "foreignKeyErrorMessage": "整合性制約\\(.+?\\.(.+?)\\)に違反しました"
+		}
+		// SQLServer　データソースの設定例
+		, "sqlServer": {
+			"driverClassName": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+			, "url": "jdbc:sqlserver://dbserver:1433;databaseName=sample;user=dfuser;password=P@sow0rd;encrypt=false;"
+			, "user": ""
+			, "password": ""
+			, "initialSize": 5
+			, "maxTotal": 20
+			, "maxMaxIdle": 20
+			, "duplicateErrorMessage": "一意インデックス '(.+?)' を含むオブジェクト"
+			, "foreignKeyErrorMessage": "制約 \"(.+?)\" と競合しています。"
+		}
+	}
+}
+			</pre>
+		</div>
+		<p>	
+			dataSourceMapには、各種データソースの接続設定を記述します。
+			mainDataSourceにはアプリケーションが使用する、データソースの名称を記述します。
+			この設定では組み込みApache Derbyを使用し、データベースファイルはプロジェクトディレクトリ以下の./javadbに作成されます。
 		</p>
 		<p>
-			プロジェクト初期化処理では"/src/main/webapp/META-INF/context.xml"にデフォルトのJNDIデータソースが設定され、
-			その接続先はApache deby(URL:jdbc:derby:./javadb/blankdb;create=true)になっています。
-			PostgreSQL等のデータベースサーバを使用する場合、この接続設定を修正してください。
-			"/src/main/webapp/META-INF/context.xml"には各種データベースへの接続設定例が記載されているので、それを参考に修正してください。
-		</p>
-		<p>
-			プロジェクト内のcontex.xmlにJNDIデータソースを設定すると、warファイル内にDBの接続先が記録されてしまいます。
-			デプロイ先によってJNDIデータソースの接続先を変更したい場合、JDNIデータソースの設定を"/src/main/webapp/META-INF/context.xml"から
-			Servers/Tomcat10_Java21-config/context.xmlに移動してください。
+			組み込みApache Derbyを使用して開発するのであれば、この設定を変更する必要はありません。
+			PostgreSQL等、他のデータベースサーバを使用する場合、各種データベースの接続設定を環境に合わせて修正し、
+			mainDataSourceに使用するデータソースを記述してください。
 		</p>
 		<p>
 			Apache derbyは特にデータベースサーバを用意する必要がないため、手軽に開発を開始することがてきます。
 			dataforms3.jarのデータベースアクセスクラスは接続先のデータベースを自動的に判断し、適切なSQLを発行するようになっています。
-			そのため取りあえずApache derbyで開発を開始し、結合テスト以降はPostgreSQLに切り替えるような開発も可能です。
+			そのため取りあえずApache derbyで開発を開始し、結合テスト以降はPostgreSQL等に切り替えるような開発も可能です。
 			ただし、接続先のデータベースを切り替えた場合大半は動作しますが、
 			データベースの仕様の違いを完全に吸収出来ていない可能性があるため一通りのテストは行ってください。
+		</p>
+		<p>
+			以下の「データベース初期化」ページを使用してシステムで利用するデータベースを作成します。
+			dataforms3.jarのデータベースにはユーザ情報等を管理するテーブルが定義されています。
+			そのためシステムを開発権限を持ったユーザ"developer"のパスワードを指定します。
 		</p>
 		<figure>
 			<figcaption>データベース初期化</figcaption>
@@ -269,7 +363,6 @@
 			このページで開発者の情報を入力すると、データベースに必要なテーブルが作成され、開発者が登録されます。
 			データベースが作成されると、ログイン画面が表示されます。
 		</p>
-
 		<figure>
 			<figcaption>ログイン画面</figcaption>
 			<img src="initdb002.png" style="width:50%; height:50%;"/>
@@ -282,6 +375,18 @@
 			<figcaption>サイトマップ</figcaption>
 			<img src="initdb003.png" style="width:50%; height:50%;"/>
 		</figure>
+		<p class="topic">
+			dataforms3.jarの設定ファイル"/WEB-INF/dataforms.conf.jsonc"は最終的にsample.warの中のファイルです。
+			このwarファイルをTomcatにデプロイする場合、そのサーバー環境に合わせたデータベースの接続設定を記述する必要があります。
+			プロジェクト初期化処理では、"dataforms.conf.jsonc"中の設定項目serverConfigFileを"/etc/sample/dataforms.conf.jsonc"と設定するようになっています。
+			dataforms3.jarで作成したアプリは先ず、"/WEB-INF/dataforms.conf.jsonc"を読み込みます。
+			その後serverConfigFileに記述された設定ファイルをアクセスし、このファイルに記述された内容を読み込み設定を上書きます。
+			このプロジェクトの場合、/etc/sample/dataforms.conf.jsoncのapplication.dbcpConfigにサーバー環境用のDB接続を記述することがてきます。
+		</p>
+		<p class="topic">
+			プロジェクト初期化処理では"dataforms.conf.jsonc"中の設定項目serverConfigFileを"/etc/sample/log4j2.xml"と設定します。
+			dataforms3.jarは基本的にアプリ内のlog4j2.xmlの設定でログを出力しますが、"/etc/sample/log4j2.xml"が存在した場合この設定ファイルを読み込んで動作します。
+		</p>
 		<hr/>
 	</body>
 </html>

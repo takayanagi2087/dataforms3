@@ -1,0 +1,84 @@
+	<properties>
+		<derby.version>10.17.1.0</derby.version>
+	</properties>
+	<repositories>
+		<!--　リリースバージョンのリポジトリ -->
+		<repository>
+			<id>jp.dataforms.dataforms3</id>
+			<url>https://takayanagi2087.github.io/dataforms3/</url>
+		</repository>
+		<!--　開発中バージョンのリポジトリ -->
+		<repository>
+			<id>jp.dataforms</id>
+			<url>https://www.dataforms.jp/mvn/repository</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<!-- dataforms3 -->
+		<dependency>
+			<groupId>jp.dataforms</groupId>
+			<artifactId>dataforms3</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+		</dependency>
+		<!--　Apache derby JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyshared</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyLocale_ja_JP</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<!--　PostgreSQL JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<!--　MariaFB JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>${mariadb.version}</version>
+		</dependency>
+		<!--　MySQL JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<!--　Oracle Database JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8 -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>${oracle.version}</version>
+		</dependency>
+		<!--　MS SQL-Server JDBCドライバー　-->
+		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>${sqlserver.version}</version>
+		</dependency>
+	</dependencies>
