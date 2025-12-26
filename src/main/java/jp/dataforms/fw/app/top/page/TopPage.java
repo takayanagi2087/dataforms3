@@ -30,7 +30,37 @@ public class TopPage extends BasePage {
 		//this.addForm(new LoginForm());
 	}
 
+	/**
+	 * SAMLモジュールの存在チェック。
+	 * 
+	 * @return SAMLモジュールが存在する場合true。
+	 */
+	protected boolean existsSamlModule() {
+		boolean ret = false;
+		try {
+			Class<?> pageClass = Class.forName("jp.dataforms.fw.saml.page.SamlLoginPage");
+			if (pageClass != null) {
+				ret = true;
+			}
+		} catch (Exception ex) {
+			;
+		}
+		return ret;
+	}
 
+	/**
+	 * SAMLログインすべきかどうかを鑑定します。
+	 * <pre>
+	 * デフォルトではSAMLモジュールをリンクした場合SAMLログインを使用するようになっています。
+	 * 条件によってSAMLログインを使用する場合、このメソッドをオーバーライドしてください。
+	 * </pre>
+	 * @return SAMLログインすべき場合true。
+	 */
+	protected boolean isSamlLogin() {
+		return this.existsSamlModule();
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 * <pre>
@@ -46,17 +76,37 @@ public class TopPage extends BasePage {
 		String context = this.getRequest().getContextPath();
 		Boolean init = DataFormsServlet.getConf().getDevelopmentTool().getInitialized();
 		if (!init) {
+			// プロジェクト初期化前の場合、プロジェクト初期化ページを表示。
 			return new RedirectResponse(context + "/dataforms/devtool/init/page/InitDevelopmentToolPage." + this.getPageExt());
 		}
 		TableManagerDao dao = new TableManagerDao(this);
 		if (dao.isDatabaseInitialized()) {
+			// データベースの初期化済。
 			if (this.getUserInfo() == null) {
-				return new RedirectResponse(context + "/dataforms/app/login/page/LoginPage." + this.getPageExt());
+				return toLoginPage(context);
 			} else {
+				// ログイン済の場合サイトマップを表示。
 				return new RedirectResponse(context + "/dataforms/app/menu/page/SiteMapPage." + this.getPageExt());
 			}
 		} else {
+			// データベース初期化前の場合、データベースの初期化ページを表示。
 			return new RedirectResponse(context + "/dataforms/devtool/db/page/InitializeDatabasePage." + this.getPageExt());
+		}
+	}
+
+	/**
+	 * ログインページへリダイレクトします。
+	 * @param context コンテキストパス。
+	 * @return ログインページへのリダイレクトレスポンス。
+	 */
+	protected Response toLoginPage(String context) {
+		// ログインしていない場合。
+		if (this.isSamlLogin()) {
+			// SAML認証を表示。
+			return new RedirectResponse(context + "/dataforms/saml/page/SamlLoginPage." + this.getPageExt());
+		} else {
+			// dataforms認証を表示。
+			return new RedirectResponse(context + "/dataforms/app/login/page/LoginPage." + this.getPageExt());
 		}
 	}
 }
