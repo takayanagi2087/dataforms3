@@ -1,6 +1,10 @@
 package jp.dataforms.fw.app.top.page;
 
+import java.lang.reflect.Method;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.app.base.page.BasePage;
@@ -18,10 +22,11 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
  */
 public class TopPage extends BasePage {
 
-    /**
-     * Logger.
-     */
-//    private static Logger log = Logger.getLogger(TopPage.class.getName());
+	/**
+	 * Logger.
+	 */
+	private static Logger logger = LogManager.getLogger(TopPage.class.getName());
+
 	/**
 	 * コンストラクタ。
 	 */
@@ -48,6 +53,26 @@ public class TopPage extends BasePage {
 		return ret;
 	}
 
+	/**
+	 * IdPメタデータの存在チェック。
+	 * @return IdPメタデータが存在する場合true。
+	 */
+	protected boolean existsIdpMetadata() {
+		boolean ret = false;
+		try {
+			Class<?> clazz = Class.forName("jp.dataforms.fw.saml.util.IdPMetadata");
+			Method m = clazz.getMethod("getMetadata");
+			String metadata = (String) m.invoke(null);
+			logger.debug("IdP metadata=" + metadata);
+			if (metadata != null) {
+				ret = true;
+			}
+		} catch (Exception ex) {
+			;
+		}
+		return ret;
+	}
+	
 	/**
 	 * SAMLログインすべきかどうかを鑑定します。
 	 * <pre>
@@ -83,7 +108,7 @@ public class TopPage extends BasePage {
 		if (dao.isDatabaseInitialized()) {
 			// データベースの初期化済。
 			if (this.getUserInfo() == null) {
-				return toLoginPage(context);
+				return this.toLoginPage(context);
 			} else {
 				// ログイン済の場合サイトマップを表示。
 				return new RedirectResponse(context + "/dataforms/app/menu/page/SiteMapPage." + this.getPageExt());
@@ -101,7 +126,7 @@ public class TopPage extends BasePage {
 	 */
 	protected Response toLoginPage(String context) {
 		// ログインしていない場合。
-		if (this.isSamlLogin()) {
+		if (this.isSamlLogin() && this.existsIdpMetadata()) {
 			// SAML認証を表示。
 			return new RedirectResponse(context + "/dataforms/saml/page/SamlLoginPage." + this.getPageExt());
 		} else {
