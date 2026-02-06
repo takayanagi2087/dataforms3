@@ -42,7 +42,7 @@ public class UserQueryForm extends QueryForm {
 	 * コンストラクタ。
 	 */
 	public UserQueryForm() {
-		this.addField(new LoginIdField()).setMatchType(Field.MatchType.BEGIN);
+		this.addField(new LoginIdField()).setMatchType(Field.MatchType.PART);
 		this.addField(new UserNameField()).setMatchType(Field.MatchType.PART);
 		EditableHtmlTable at = new EditableHtmlTable("attTable",
 			new FieldList(
