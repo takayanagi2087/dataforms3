@@ -15,6 +15,7 @@ import { LongTapHandler } from './LongTapHandler.js';
 export class ContextMenuEventListener {
 	/**
 	 * コンストラクタ。
+	 * FIXME: http://ipaddress/app/　でアクセスすると動作しない問題がある。原因不明。
 	 * @param {jQuery} jqueryオブジェクト。
 	 * @param {Function} contextmenu contextmenuイベント処理メソッド。
 	 */
