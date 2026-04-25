@@ -127,10 +127,10 @@ export class StringUtil {
 	 * @returns {String} 変換結果。
 	 */
 	static fullToHalf(str) {
-		let v = str.replace( /[Ａ-Ｚａ-ｚ０-９－！”＃＄％＆’（）＝＜＞，．？＿［］｛｝＠＾～￥]/g, (s) => {
+		let v = str.replace(/　/g, " ");
+		v = v.replace( /[Ａ-Ｚａ-ｚ０-９－！”＃＄％＆’（）＝＜＞，．？＿［］｛｝＠＾～￥]/g, (s) => {
 			return String.fromCharCode(s.charCodeAt(0) - 65248);
 		});
-		v = v.replace("　", " ");
 		return StringUtil.fullToHalfKana(v);
 	}
 }
