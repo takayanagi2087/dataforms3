@@ -72,11 +72,23 @@ export class ContextMenu extends WebComponent {
 				y = ev.touches[0].pageY;
 			}
 		}
+		let height = $(document).height();
+
 		this.get().offset({
 			top: y,
 			left: x
 		});
 		this.get().show();
+		logger.log("height=" + height);
+		logger.log("y=" + y);
+		if (height < y + this.get().height()) {
+			logger.log("over");
+			y = height - this.get().height() - 30;
+			this.get().offset({
+				top: y,
+			});
+		}
+		
 		let ret = new Promise((resolv) => {
 			this.#resolv = resolv;
 		});
