@@ -3,8 +3,9 @@
 <Configuration status="off">
 	<Properties>
 		<Property name="format1">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-6p %c{10} %m%n</Property>
-		<Property name="logfile">${sys:catalina.base}/logs/dataforms3.log</Property>
-		<Property name="logfile-archive">${sys:catalina.base}/logs/dataforms3_%d{yyyy-MM-dd}-%i.log.gz</Property>
+		<Property name="application">dataforms3</Property>
+		<Property name="logfile">${sys:catalina.base}/logs/${application}.log</Property>
+		<Property name="logfile-archive">${sys:catalina.base}/logs/${application}_%d{yyyy-MM-dd}-%i.log.gz</Property>
 	</Properties>
 
 	<Appenders>
@@ -27,7 +28,7 @@
 			<DefaultRolloverStrategy>
 				<Delete basePath="${sys:catalina.base}/logs" maxDepth="1">
 					<!-- ファイル名が dataforms3- で始まるものを対象にする -->
-					<IfFileName glob="dataforms3_*.log.gz" />
+					<IfFileName glob="${application}_*.log.gz" />
 					<!-- 最終更新から10日（10d）経ったものを削除 -->
 					<IfLastModified age="10d" />
 				</Delete>
