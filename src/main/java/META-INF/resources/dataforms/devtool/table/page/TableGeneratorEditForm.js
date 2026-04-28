@@ -68,7 +68,7 @@ export class TableGeneratorEditForm extends EditForm {
 		let func = this.getFieldValue("functionSelect");
 		if (func != null && func.length > 0) {
 			let pkg = this.get("packageName").val();
-			pkg = pkg.replace(/dao$/, "field");
+			pkg = pkg.replace(/dao.table$/, "field");
 			let fieldList = this.getComponent("fieldList");
 			for (let i = 0; i < fieldList.getRowCount(); i++) {
 				let pkgf = fieldList.getRowField(i, "packageName");
