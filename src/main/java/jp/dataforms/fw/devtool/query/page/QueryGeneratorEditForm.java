@@ -149,7 +149,7 @@ public class QueryGeneratorEditForm extends EditForm {
 	 */
 	public QueryGeneratorEditForm() {
 		this.addField(new JavaSourcePathField());
-		((FunctionSelectField) this.addField(new FunctionSelectField())).setPackageOption("dao");
+		((FunctionSelectField) this.addField(new FunctionSelectField())).setPackageOption("dao.query");
 		this.addField(new PackageNameField()).addValidator(new RequiredValidator());
 		this.addField(new QueryClassNameField()).setAutocomplete(false).addValidator(new RequiredValidator());
 
