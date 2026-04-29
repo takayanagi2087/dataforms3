@@ -32,7 +32,11 @@ export class FieldListHtmlTable extends EditableHtmlTable {
 		let pkg = this.get(rowid + ".packageName");
 		let spkg = this.get(rowid + ".superPackageName");
 		if (pkg.val().length == 0) {
-			pkg.val(tpkgname.replace(".dao.table", ".field"));
+			if (/^.+\.dao\.table$/.test(tpkgname)) {
+				pkg.val(tpkgname.replace(/dao.table$/, "field"));
+			} else {
+				pkg.val(tpkgname.replace(/dao$/, "field"));
+			}
 		}
 		if (spkg.val().length == 0) {
 			spkg.val("jp.dataforms.fw");
