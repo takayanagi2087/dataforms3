@@ -17,6 +17,10 @@ export class ContextMenu extends WebComponent {
 	 * resolvメソッド。
 	 */
 	#resolv = null;
+	/**
+	 * メニューオープンフラグ
+	 */
+	#open = false;
 	
 	/**
 	 * HTMLエレメントとの対応付けを行います。
@@ -26,7 +30,7 @@ export class ContextMenu extends WebComponent {
 		logger.log("ContextMenu:", this);
 		this.getParentForm().get().append(this.getHtml());
 		this.find("li").click((ev) => {
-			if (this.#resolv != null) {
+			if (this.#open) {
 				let value = $(ev.target).data("value");
 				logger.log("value=" + value);
 				this.#resolv(value);
@@ -35,6 +39,7 @@ export class ContextMenu extends WebComponent {
 					left: 0
 				});
 				this.get().hide();
+				this.#open = false;
 			}
 		});
 		$("body").click(() => {
@@ -43,6 +48,10 @@ export class ContextMenu extends WebComponent {
 				left: 0
 			});
 			this.get().hide();
+			if (this.#resolv != null) {
+				this.#resolv(null);
+			}
+			this.#open = false;
 		});
 	}
 	
@@ -64,6 +73,7 @@ export class ContextMenu extends WebComponent {
 	 * @return メニューの選択値。
 	 */
 	async select(ev) {
+		this.#open = true;
 		let x = ev.clientX;
 		let y = ev.clientY;
 		if (ev.touches != null) {
@@ -93,7 +103,22 @@ export class ContextMenu extends WebComponent {
 			this.#resolv = resolv;
 		});
 		return ret;
-	}	
+	}
+	
+	/**
+	 * コンテキストメニューを閉じます。
+	 */
+	close() {
+		this.get().offset({
+			top: 0,
+			left: 0
+		});
+		this.get().hide();
+		if (this.#open) {
+			this.#resolv(null);
+		}
+		this.#open = false;
+	}
 }
 
 
