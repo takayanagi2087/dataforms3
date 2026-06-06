@@ -3,11 +3,18 @@ package jp.dataforms.fw.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * インポートクラスユーティリティ。
  *
  */
 public class ImportUtil {
+	/**
+	 * Log.
+	 */
+	private static Logger logger = LogManager.getLogger(ImportUtil.class);
 
 	/**
 	 * インポートコードを出力するソースのパッケージ。
@@ -41,7 +48,13 @@ public class ImportUtil {
 	 */
 	public void add(final String cls) {
 		if (this.currentPackage != null) {
-			if (cls.indexOf(this.currentPackage) == 0) {
+			String pkg = "";
+			int idx = cls.lastIndexOf('.');
+			if (idx >= 0) {
+				pkg = cls.substring(0, idx);
+			}
+			logger.debug("package:" + pkg + ", " + this.currentPackage);
+			if (pkg.equals(this.currentPackage)) {
 				return;
 			}
 		}
