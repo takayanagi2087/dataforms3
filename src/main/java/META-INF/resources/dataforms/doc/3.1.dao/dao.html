@@ -20,15 +20,105 @@
 		</p>
 		<h2>Tomcatのデータベース接続設定</h2>
 		<p>
-			テータベースの接続設定はTomcatのJNDIデータソース設定で行います。
+			テータベースの接続はアプリがDBCPを利用して直接接続する方法と、TOMCATのJNDIデータソース経由で接続する方法を選択することができます。
 		</p>
-		<h3>データベースの接続設定の記述場所</h3>
+		<h3>DBCPの接続設定</h3>
+		<p>
+			プロジェクト初期化画面を実行すると、WEB-INF/dataforms.conf.jsoncに以下のdbcpの接続設定が記載されます。
+			以下のdbcpConfigが設定されている場合、DBCPが優先されます。
+			以下の設定にはサポートされている全てのDBへの接続設定が記述されています。
+			初期状態ではDBサーバが不要なderbyEmbeddedを使用する設定になっています。
+			ターゲットのDBサーバが異なる場合mainDataSourceを変更してください。
+		</p>
+		<div class="filecaption">dataforms.conf.jsoncのDBCP接続設定</div>
+		<div class="wrappre">
+			<pre>
+"dbcpConfig": {
+  "mainDataSource": "derbyEmbedded",
+  "dataSourceMap": {
+    "derbyEmbedded": {
+      "driverClassName": "org.apache.derby.jdbc.EmbeddedDriver",
+      "url": "jdbc:derby:C:/eclipse/pleiades/workspace/sample/javadb;create\u003dtrue",
+      "user": "",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20
+    },
+    "derbyNetwork": {
+      "driverClassName": "org.apache.derby.jdbc.ClientDriver",
+      "url": "jdbc:derby://dbserver:1527/javadb/sample;create\u003dtrue",
+      "user": "",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20
+    },
+    "postgreSQL": {
+      "driverClassName": "org.postgresql.Driver",
+      "url": "jdbc:postgresql://dbserver:5432/sample",
+      "user": "postgres",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20,
+      "duplicateErrorMessage": "一意性制約\"(.+?)\"違反",
+      "foreignKeyErrorMessage": "外部キー制約\"(.+?)\"に違反"
+    },
+    "mariaDB": {
+      "driverClassName": "org.mariadb.jdbc.Driver",
+      "url": "jdbc:mariadb://dbserver:3306/sample?user\u003droot\u0026password\u003dsecret",
+      "user": "",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20,
+      "duplicateErrorMessage": "for key \u0027(.+?)\u0027$",
+      "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+    },
+    "mySQL": {
+      "driverClassName": "com.mysql.jdbc.Driver",
+      "url": "jdbc:mysql://dbserver/sample?zeroDateTimeBehavior\u003dCONVERT_TO_NULL\u0026amp;generateSimpleParameterMetadata\u003dtrue\u0026amp;useInformationSchema\u003dtrue\u0026amp;useOldAliasMetadataBehavior\u003dtrue\u0026amp;characterEncoding\u003dutf8",
+      "user": "",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20,
+      "duplicateErrorMessage": "for key \u0027(.+?)\u0027$",
+      "foreignKeyErrorMessage": "CONSTRAINT `(.+?)` FOREIGN KEY"
+    },
+    "oracle": {
+      "driverClassName": "oracle.jdbc.OracleDriver",
+      "url": "jdbc:oracle:thin:@dbserver:1521/FREEPDB1",
+      "user": "sample",
+      "password": "password",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20,
+      "duplicateErrorMessage": "一意制約\\(.+?\\.(.+?)\\).*が違反しました",
+      "foreignKeyErrorMessage": "整合性制約\\(.+?\\.(.+?)\\)に違反しました"
+    },
+    "sqlServer": {
+      "driverClassName": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+      "url": "jdbc:sqlserver://dbserver:1433;databaseName\u003dsample;user\u003ddfuser;password\u003dP@sow0rd;encrypt\u003dfalse;",
+      "user": "",
+      "password": "",
+      "initialSize": 5,
+      "maxTotal": 20,
+      "maxMaxIdle": 20,
+      "duplicateErrorMessage": "一意インデックス \u0027(.+?)\u0027 を含むオブジェクト",
+      "foreignKeyErrorMessage": "制約 \"(.+?)\" と競合しています。"
+    }
+  }
+			</pre>
+		</div>
+		<h3>JNDIデータソースの設定</h3>
 		<p>
 			プロジェクトの初期化画面を実行すると、src/main/webapp/META-INF/content.xmlが作成されます。
-			このファイルにはTomcatのJNDIデータソース等の設定が記述されています。
+			このファイルにはTomcatのJNDIデータソースの設定がコメント状態で記載されています。
+			この設定を有効にしdataforms.conf.jsoncのdbcpConfigを削除するとJNDIデータソースを利用するモードになります。
 			このファイルは*.warファイル中に含まれる設定ファイルです。
 			Webアプリケーションがデータベースの接続先を固定する場合は、このファイルにJNDIデータソースの設定を記述します。
-			embsv.jarで処理した*.warファイルでWebアプリケーションを運用する場合はこの設定のまま開発します。
 		</p>
 		<p>
 			Tomcatではデータベースの接続設定を&lt;TOMCATのインストールディレクトリ&gt;/conf/context.xmlにも記述することができます。
