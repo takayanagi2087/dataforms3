@@ -4,6 +4,11 @@
 		<meta charset="UTF-8">
 		<title>Table management</title>
 		<meta name="description" content="I make the table corresponding to the table Java class on DB.">
+		<style>
+			span.backupButtons {
+				padding-left: 10px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="mainDiv">
@@ -86,8 +91,8 @@
 								</td>
 								<td>
 									<span id="queryResult[0].backupTable"></span>&nbsp;
-									<span style="float: right;" class="backupButtons">
-										<button type="button" id="queryResult[0].dropButton" class="dropButton" >削除</button>
+									<span class="backupButtons">
+										<button type="button" id="queryResult[0].dropButton" class="dropButton" >Delete</button>
 									</span>
 								</td>
 								<td style="text-align: right;">
@@ -101,6 +106,7 @@
 					<input type="button" id="updateTableButton" class="largeButton" value="Update"/>&nbsp;
 					<input type="button" id="initTableButton" class="largeButton" value="Initialization"/>&nbsp;
 					<input type="button" id="dropTableButton" class="largeButton" value="Delete"/>&nbsp;
+					<input type="button" id="dropBackupTableButton" class="largeButton" value="Delete backup table"/>&nbsp;
 					<input type="button" id="exportAsInitialDataButton" class="largeButton" value="Export as initialization data"/>&nbsp;
 					<input type="button" id="exportTableButton" class="largeButton" value="Export"/>&nbsp;
 					<input type="button" id="importTableButton" class="largeButton" value="Import"/>&nbsp;
