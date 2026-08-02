@@ -340,6 +340,42 @@ public class WebResourceForm extends Form {
 		return template;
 	}
 
+	/**
+	 * Javascriptの相対パスを取得します。
+	 * @param script 生成スクリプトのバス。
+	 * @param clsインポート対象のクラス。
+	 * @return JSの相対パス。
+	 */
+	private String getJsPath(final String script, final Class<?> cls) {
+		FunctionMap conv = WebComponent.getFunctionMap();
+		String sscript = conv.getWebPath(cls.getName()) + ".js";
+		String jspath = PathUtil.getRelativePath(script, sscript);
+		return jspath;
+	}
+
+	/**
+	 * Javascriptのimport対象のクラスリスト。
+	 */
+	private static Class<?>[] importClassList = {
+		JsonResponse.class
+		, MessagesUtil.class
+		, ValidationError.class
+	};
+	
+	/**
+	 * Javascriptのimportコメントを作成します。
+	 * @param script 生成対象スクリプト。
+	 * @return Javascriptのimportコメント。
+	 */
+	private String getImportComment(final String script) {
+		StringBuilder sb = new StringBuilder();
+		for (Class<?> cls: WebResourceForm.importClassList) {
+			String jspath = this.getJsPath(script, cls);
+			String imp = "// import { " + cls.getSimpleName() + " } from '" + jspath + "';\n";
+			sb.append(imp);
+		}
+		return sb.toString();
+	}
 	
 	/**
 	 * Javascriptのモジュールインポートの構文を作成します。
@@ -355,10 +391,12 @@ public class WebResourceForm extends Form {
 		String script = conv.getWebPath(className) + ".js";
 		logger.debug("sscript=" + sscript);
 		logger.debug("script=" + script);
-		
+//		String msgutl = this.getJsPath(script, MessagesUtil.class);
+//		logger.debug("msgutl=" + msgutl);
+		String importComment = this.getImportComment(script);
 		String jspath = PathUtil.getRelativePath(script, sscript);
 		String ret = "import { " + cls.getSuperclass().getSimpleName() + " } from '" + jspath + "';";
-		return ret;
+		return importComment + ret;
 	}
 	
 	/**
