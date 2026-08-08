@@ -16,8 +16,13 @@ public class ${editFormClassName} extends EditForm {
 	 */
 	public ${editFormClassName}() {
 		${daoClassName} dao = new ${daoClassName}();
-		// 各フィールドの設定処理。
+		// 各フィールドのeditFormDisplayプロパティは開発ツールで対応するhtmlを生成する際に参照するプロパティです。
+		// html生成後は変更しても動作に影響はありません。
+		// 開発ツールで設定を変更した場合は有効なコードとなっており、
+		// デフォルト設定の場合コメントアウトされています。
+		// 各フィールドに特殊な設定を追加したい場合、このコードを参照し各フィールドのプロパティを設定してください。
 ${fieldConfig}
+		
 		// このメソッドでdaoに設定された編集対象取得問合せのフィールドをフォームに展開します。
 		// 複数レコード問合せを指定した場合、そのフィールドを持つHtmlTableフォームに配置します。
 		this.addFields(dao);

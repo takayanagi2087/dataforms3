@@ -291,7 +291,7 @@ public class SampleQueryForm extends QueryForm {
 		<div class="wrappre">
 			<pre>
 /**
- * &#21839;&#12356;&#21512;&#12431;&#12379;&#32080;&#26524;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
+ * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#32232;&#38598;&#29992;&#21839;&#21512;&#12379;&#32080;&#26524;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
  */
 public class SampleQueryResultForm extends QueryResultForm {
 	/**
@@ -301,13 +301,30 @@ public class SampleQueryResultForm extends QueryResultForm {
 		SampleDao dao = new SampleDao();
 		this.addPkFieldList(dao.getEditFormKeyList());
 		PageScrollHtmlTable htmltable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setSortable(true);
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setSortable(true);
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setSortable(true);
 
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;queryResultFormDisplay&#12503;&#12525;&#12497;&#12486;&#12451;&#12399;&#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#23550;&#24540;&#12377;&#12427;html&#12434;&#29983;&#25104;&#12377;&#12427;&#38555;&#12395;&#21442;&#29031;&#12377;&#12427;&#12503;&#12525;&#12497;&#12486;&#12451;&#12391;&#12377;&#12290;
+		// html&#29983;&#25104;&#24460;&#12399;&#22793;&#26356;&#12375;&#12390;&#12418;&#21205;&#20316;&#12395;&#24433;&#38911;&#12399;&#12354;&#12426;&#12414;&#12379;&#12435;&#12290;
+		// &#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#35373;&#23450;&#12434;&#22793;&#26356;&#12375;&#12383;&#22580;&#21512;&#12399;&#26377;&#21177;&#12394;&#12467;&#12540;&#12489;&#12392;&#12394;&#12387;&#12390;&#12362;&#12426;&#12289;
+		// &#12487;&#12501;&#12457;&#12523;&#12488;&#35373;&#23450;&#12398;&#22580;&#21512;&#12467;&#12513;&#12531;&#12488;&#12450;&#12454;&#12488;&#12373;&#12428;&#12390;&#12356;&#12414;&#12377;&#12290;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#12524;&#12467;&#12540;&#12489;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setQueryResultFormDisplay(Display.SPAN); // &#25991;&#23383;&#21015;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setQueryResultFormDisplay(Display.SPAN); // &#25968;&#23383;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setQueryResultFormDisplay(Display.SPAN); // &#26085;&#20184;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_CREATE_USER_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#32773;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_CREATE_TIMESTAMP).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#26085;&#26178;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_UPDATE_USER_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#32773;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_UPDATE_TIMESTAMP).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#26085;&#26178;
+
+		
+		// &#20197;&#19979;&#12395;&#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12477;&#12540;&#12488;&#27231;&#33021;&#12434;&#35373;&#23450;&#12375;&#12390;&#12354;&#12426;&#12414;&#12377;&#12290;
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#29305;&#27530;&#12394;&#35373;&#23450;&#12434;&#36861;&#21152;&#12375;&#12383;&#12356;&#22580;&#21512;&#12289;&#12371;&#12398;&#12467;&#12540;&#12489;&#12434;&#21442;&#29031;&#12375;&#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12503;&#12525;&#12497;&#12486;&#12451;&#12434;&#35373;&#23450;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setSortable(true); // &#25991;&#23383;&#21015;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setSortable(true); // &#25968;&#23383;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setSortable(true); // &#26085;&#20184;
+
+		
 		this.addHtmlTable(htmltable);
 	}
-
 				・
 				・
 				・
@@ -333,7 +350,7 @@ public class SampleQueryResultForm extends QueryResultForm {
 			<pre>
 
 /**
- * &#21839;&#12356;&#21512;&#12431;&#12379;&#32080;&#26524;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
+ * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#32232;&#38598;&#29992;&#21839;&#21512;&#12379;&#32080;&#26524;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
  */
 public class SampleQueryResultForm extends QueryResultForm {
 	/**
@@ -343,13 +360,30 @@ public class SampleQueryResultForm extends QueryResultForm {
 		SampleDao dao = new SampleDao();
 		this.addPkFieldList(dao.getEditFormKeyList());
 		PageScrollHtmlTable htmltable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setSortable(true);
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setSortable(true);
-		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setSortable(true, <b>SortOrder.DESC</b>);
 
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;queryResultFormDisplay&#12503;&#12525;&#12497;&#12486;&#12451;&#12399;&#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#23550;&#24540;&#12377;&#12427;html&#12434;&#29983;&#25104;&#12377;&#12427;&#38555;&#12395;&#21442;&#29031;&#12377;&#12427;&#12503;&#12525;&#12497;&#12486;&#12451;&#12391;&#12377;&#12290;
+		// html&#29983;&#25104;&#24460;&#12399;&#22793;&#26356;&#12375;&#12390;&#12418;&#21205;&#20316;&#12395;&#24433;&#38911;&#12399;&#12354;&#12426;&#12414;&#12379;&#12435;&#12290;
+		// &#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#35373;&#23450;&#12434;&#22793;&#26356;&#12375;&#12383;&#22580;&#21512;&#12399;&#26377;&#21177;&#12394;&#12467;&#12540;&#12489;&#12392;&#12394;&#12387;&#12390;&#12362;&#12426;&#12289;
+		// &#12487;&#12501;&#12457;&#12523;&#12488;&#35373;&#23450;&#12398;&#22580;&#21512;&#12467;&#12513;&#12531;&#12488;&#12450;&#12454;&#12488;&#12373;&#12428;&#12390;&#12356;&#12414;&#12377;&#12290;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#12524;&#12467;&#12540;&#12489;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setQueryResultFormDisplay(Display.SPAN); // &#25991;&#23383;&#21015;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setQueryResultFormDisplay(Display.SPAN); // &#25968;&#23383;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setQueryResultFormDisplay(Display.SPAN); // &#26085;&#20184;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_CREATE_USER_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#32773;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_CREATE_TIMESTAMP).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#26085;&#26178;
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_UPDATE_USER_ID).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#32773;ID
+// 		htmltable.getFieldList().get(SampleTable.Entity.ID_UPDATE_TIMESTAMP).setQueryResultFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#26085;&#26178;
+
+		
+		// &#20197;&#19979;&#12395;&#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12477;&#12540;&#12488;&#27231;&#33021;&#12434;&#35373;&#23450;&#12375;&#12390;&#12354;&#12426;&#12414;&#12377;&#12290;
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#29305;&#27530;&#12394;&#35373;&#23450;&#12434;&#36861;&#21152;&#12375;&#12383;&#12356;&#22580;&#21512;&#12289;&#12371;&#12398;&#12467;&#12540;&#12489;&#12434;&#21442;&#29031;&#12375;&#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12503;&#12525;&#12497;&#12486;&#12451;&#12434;&#35373;&#23450;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_TEXT).setSortable(true); // &#25991;&#23383;&#21015;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_NUMERIC).setSortable(true); // &#25968;&#23383;
+		htmltable.getFieldList().get(SampleTable.Entity.ID_SAMPLE_DATE).setSortable(true, <b>SortOrder.DESC</b>); // &#26085;&#20184;
+
+		
 		this.addHtmlTable(htmltable);
 	}
-
 				・
 				・
 				・
@@ -380,7 +414,7 @@ public class SampleQueryResultForm extends QueryResultForm {
 		<div class="wrappre">
 			<pre>
 /**
- * &#32232;&#38598;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
+ * &#12469;&#12531;&#12503;&#12523;&#12486;&#12540;&#12502;&#12523;&#32232;&#38598;&#29992;&#32232;&#38598;&#12501;&#12457;&#12540;&#12512;&#12463;&#12521;&#12473;&#12290;
  */
 public class SampleEditForm extends EditForm {
 	/**
@@ -388,7 +422,22 @@ public class SampleEditForm extends EditForm {
 	 */
 	public SampleEditForm() {
 		SampleDao dao = new SampleDao();
-		<b>dao.getSampleTable().getSampleTextField().addValidator(new RequiredValidator());</b>
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;editFormDisplay&#12503;&#12525;&#12497;&#12486;&#12451;&#12399;&#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#23550;&#24540;&#12377;&#12427;html&#12434;&#29983;&#25104;&#12377;&#12427;&#38555;&#12395;&#21442;&#29031;&#12377;&#12427;&#12503;&#12525;&#12497;&#12486;&#12451;&#12391;&#12377;&#12290;
+		// html&#29983;&#25104;&#24460;&#12399;&#22793;&#26356;&#12375;&#12390;&#12418;&#21205;&#20316;&#12395;&#24433;&#38911;&#12399;&#12354;&#12426;&#12414;&#12379;&#12435;&#12290;
+		// &#38283;&#30330;&#12484;&#12540;&#12523;&#12391;&#35373;&#23450;&#12434;&#22793;&#26356;&#12375;&#12383;&#22580;&#21512;&#12399;&#26377;&#21177;&#12394;&#12467;&#12540;&#12489;&#12392;&#12394;&#12387;&#12390;&#12362;&#12426;&#12289;
+		// &#12487;&#12501;&#12457;&#12523;&#12488;&#35373;&#23450;&#12398;&#22580;&#21512;&#12467;&#12513;&#12531;&#12488;&#12450;&#12454;&#12488;&#12373;&#12428;&#12390;&#12356;&#12414;&#12377;&#12290;
+		// &#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12395;&#29305;&#27530;&#12394;&#35373;&#23450;&#12434;&#36861;&#21152;&#12375;&#12383;&#12356;&#22580;&#21512;&#12289;&#12371;&#12398;&#12467;&#12540;&#12489;&#12434;&#21442;&#29031;&#12375;&#21508;&#12501;&#12451;&#12540;&#12523;&#12489;&#12398;&#12503;&#12525;&#12497;&#12486;&#12451;&#12434;&#35373;&#23450;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;
+// 		dao.getSampleTable().getSampleIdField().setEditFormDisplay(Display.INPUT_HIDDEN); // &#12524;&#12467;&#12540;&#12489;ID
+ 		dao.getSampleTable().getSampleTextField().setEditFormDisplay(Display.INPUT).<b>addValidator(new RequiredValidator())</b>; // &#25991;&#23383;&#21015;
+// 		dao.getSampleTable().getSampleNumericField().setEditFormDisplay(Display.INPUT); // &#25968;&#23383;
+// 		dao.getSampleTable().getSampleDateField().setEditFormDisplay(Display.INPUT); // &#26085;&#20184;
+// 		dao.getSampleTable().getCreateUserIdField().setEditFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#32773;ID
+// 		dao.getSampleTable().getCreateTimestampField().setEditFormDisplay(Display.INPUT_HIDDEN); // &#20316;&#25104;&#26085;&#26178;
+// 		dao.getSampleTable().getUpdateUserIdField().setEditFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#32773;ID
+// 		dao.getSampleTable().getUpdateTimestampField().setEditFormDisplay(Display.INPUT_HIDDEN); // &#26356;&#26032;&#26085;&#26178;
+		
+		// &#12371;&#12398;&#12513;&#12477;&#12483;&#12489;&#12391;dao&#12395;&#35373;&#23450;&#12373;&#12428;&#12383;&#32232;&#38598;&#23550;&#35937;&#21462;&#24471;&#21839;&#21512;&#12379;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#12501;&#12457;&#12540;&#12512;&#12395;&#23637;&#38283;&#12375;&#12414;&#12377;&#12290;
+		// &#35079;&#25968;&#12524;&#12467;&#12540;&#12489;&#21839;&#21512;&#12379;&#12434;&#25351;&#23450;&#12375;&#12383;&#22580;&#21512;&#12289;&#12381;&#12398;&#12501;&#12451;&#12540;&#12523;&#12489;&#12434;&#25345;&#12388;HtmlTable&#12501;&#12457;&#12540;&#12512;&#12395;&#37197;&#32622;&#12375;&#12414;&#12377;&#12290;
 		this.addFields(dao);
 	}
 
@@ -396,7 +445,8 @@ public class SampleEditForm extends EditForm {
 	・
 	・
 
-}			</pre>
+}
+			</pre>
 		</div>
 		<p>
 			上のコードは、編集フォームに配置されたSampleTextFieldに、RequiredValidatorを追加しています。

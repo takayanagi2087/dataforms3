@@ -41,20 +41,27 @@ public class QueryResultFormGenerator extends FormSrcGenerator {
 		return formClassName;
 	}
 
-
+	/**
+	 * 問合せ結果フォームのコンポーネントを配置します。
+	 * @param htmlSetting HTML出力設定コード。
+	 * @param soetSetting ソート設定コード。
+	 * @param implist インポートパッケージリスト。
+	 */
+	private record FieldSetting(String htmlSetting	, String sortSetting, ImportUtil implist) {}
 
 	/**
 	 * 問い合わせ結果フォームのソートカラム指定コードを生成します。
 	 * @param data フィールドリスト。
-	 * @param implist フィールドのインポートリスト。
 	 * @return 生成されたコード。
 	 * @throws Exception 例外。
 	 */
-	private String getQueryResultFormFieldList(final Map<String, Object> data, final ImportUtil implist) throws Exception {
+	private FieldSetting getQueryResultFormFieldList(final Map<String, Object> data) throws Exception {
 		FieldList flist = this.getQueryFormFieldList(data);
 		StringBuilder sb = new StringBuilder();
+		StringBuilder ssb = new StringBuilder();
 		String packageName = (String) data.get(DaoAndPageGeneratorEditForm.ID_LIST_QUERY_PACKAGE_NAME);
 		String queryClass = (String) data.get(DaoAndPageGeneratorEditForm.ID_LIST_QUERY_CLASS_NAME);
+		ImportUtil implist = new ImportUtil();
 		implist.add(packageName + "." + queryClass);
 		for (Field<?> f : flist) {
 //			Table tbl = f.getTable();
@@ -62,28 +69,32 @@ public class QueryResultFormGenerator extends FormSrcGenerator {
 			if (f instanceof DeleteFlagField) {
 				continue;
 			}
-			if (f.getQueryResultFormDisplay() == Display.INPUT_HIDDEN) {
-				String text = "\t\thtmltable.getFieldList().get(" + queryClass + ".Entity.ID_" + StringUtil.camelToUpperCaseSnake(f.getId()) + ")."
-						+ "setQueryResultFormDisplay(Display." + f.getQueryResultFormDisplay().toString() + ");\n";
+			if (f.getQueryResultFormDefaultDisplay() == f.getQueryResultFormDisplay()) {
+				String text = "// \t\thtmltable.getFieldList().get(" + queryClass + ".Entity.ID_" + StringUtil.camelToUpperCaseSnake(f.getId()) + ")."
+						+ "setQueryResultFormDisplay(Display." + f.getQueryResultFormDisplay().toString() + "); // " + f.getComment() + "\n";
 				sb.append(text);
 			} else {
 				String text = "\t\thtmltable.getFieldList().get(" + queryClass + ".Entity.ID_" + StringUtil.camelToUpperCaseSnake(f.getId()) + ")."
-						+ "setQueryResultFormDisplay(Display." + f.getQueryResultFormDisplay().toString() + ")."
-						+ "setSortable(true);\n";
+						+ "setQueryResultFormDisplay(Display." + f.getQueryResultFormDisplay().toString() + "); // " + f.getComment() + "\n";
 				sb.append(text);
 			}
+			if (f.getQueryResultFormDisplay() != Display.INPUT_HIDDEN) {
+				String src = "\t\thtmltable.getFieldList().get(" + queryClass + ".Entity.ID_" + StringUtil.camelToUpperCaseSnake(f.getId()) + ")."
+						+ "setSortable(true); // " + f.getComment() + "\n";
+				ssb.append(src);
+			} 
 		}
-		return sb.toString();
+		return new FieldSetting(sb.toString(), ssb.toString(), implist);
 	}
 
 
 	@Override
 	protected void setFormComponent(Template tmp, String formClassName, Map<String, Object> data) throws Exception {
 		tmp.replace(DaoAndPageGeneratorEditForm.ID_QUERY_RESULT_FORM_CLASS_NAME, formClassName);
-		ImportUtil implist = new ImportUtil();
-		String queryFormFieldList = this.getQueryResultFormFieldList(data, implist);
-		tmp.replace("queryResultFieldSetting", queryFormFieldList);
-		tmp.replace("queryResultFormImportList", implist.getImportText());
+		FieldSetting fieldSetting = this.getQueryResultFormFieldList(data);
+		tmp.replace("queryResultFieldSetting", fieldSetting.htmlSetting());
+		tmp.replace("queryResultFieldSortSetting", fieldSetting.sortSetting());
+		tmp.replace("queryResultFormImportList", fieldSetting.implist().getImportText());
 
 	}
 

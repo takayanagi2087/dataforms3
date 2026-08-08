@@ -48,9 +48,12 @@ ${addMultiRecordQueryList}
 
 	//
 	// 特殊な検索条件を設定する場合、以下のメソッドをオーバーライドしてください。
-	//
+	// 
 	/**
 	 * QueryFormから入力された条件からテーブルを検索し、QueryResultFormに表示する情報を返します。
+	 * <pre> 
+	 *	このメソッドはQueryFormに指定された条件に応じた標準的に条件式を生成して検索する処理になっています。
+	 * </pre>
 	 * @param data 条件データ。
 	 * @param flist 条件フィールドリスト。
 	 * @return 検索結果。
@@ -59,7 +62,9 @@ ${addMultiRecordQueryList}
 /*
 	@Override
 	public Map<String, Object> queryPage(final Map<String, Object> data, final FieldList flist) throws Exception {
+		// ListQueryに設定した問い合わせを取得します。テーブルを指定した場合、そのテーブルのSingleTableQueryを返します。
 		Query query = this.getListQuery();
+		// dataの内容を調整したり、 query.setCondition("...");　等で特殊な条件を指定してください。
 		query.setConditionFieldList(flist);
 		query.setConditionData(data);
 		String sortOrder = (String) data.get("sortOrder");
@@ -73,7 +78,9 @@ ${addMultiRecordQueryList}
 
 	/**
 	 * QueryFormから入力された条件から、テーブルを検索し、マッチするすべてのデータを返します。
+	 * <pre>
 	 * データをエクスポートするタイミングで呼び出されます。
+	 * </pre>
 	 * @param data 条件データ。
 	 * @param flist 条件フィールドリスト。
 	 * @return 検索結果。
@@ -91,7 +98,9 @@ ${addMultiRecordQueryList}
 
 	/**
 	 * PKでレコードを限定し、データを取得します。
+	 * <pre>
 	 * EditFormで編集データを取得式に呼び出されます。
+	 * </pre>
 	 * @param data 条件データ PKの情報をすべて含むマップ。
 	 * @return ヒットしたレコード。
 	 * @throws Exception 例外。

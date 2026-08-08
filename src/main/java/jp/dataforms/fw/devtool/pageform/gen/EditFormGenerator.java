@@ -54,10 +54,13 @@ public class EditFormGenerator extends FormSrcGenerator {
 	 * @param cls 問合せクラス。
 	 * @param conf 問合せクラスのフィールド設定情報。
 	 * @return フィールド設定コード。
+	 * @throws Exception 例外。
 	 */
-	private String getFieldConfig(final String cls, final String conf) {
+	private String getFieldConfig(final String cls, final String conf) throws Exception {
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> list = (List<Map<String, Object>>) JsonUtil.decode(conf, ArrayList.class);
+		String json = JsonUtil.encode(list, true);
+		logger.info("*** json=" + json);
 		StringBuilder sb = new StringBuilder();
 		for (Map<String, Object> m: list) {
 			if (sb.length() > 0) {
@@ -66,22 +69,29 @@ public class EditFormGenerator extends FormSrcGenerator {
 			String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
 			String fid = fieldId.substring(0, 1).toUpperCase() + fieldId.substring(1);
 			String disp = (String) m.get(SelectFieldHtmlTable.ID_EDIT_FIELD_DISPLAY);
-			String fcfg = "\t\tdao.get" + cls + "().get" + fid + "Field().setEditFormDisplay(Display." + disp + ");";
-			sb.append(fcfg);
+			String comment = (String) m.get(SelectFieldHtmlTable.ID_COMMENT);
+			if (this.isDefaultType(m)) {
+				String fcfg = "// \t\tdao.get" + cls + "().get" + fid + "Field().setEditFormDisplay(Display." + disp + "); // " + comment;
+				sb.append(fcfg);
+			} else {
+				String fcfg = "\t\tdao.get" + cls + "().get" + fid + "Field().setEditFormDisplay(Display." + disp + "); // " + comment;
+				sb.append(fcfg);
+			}
 		}
 		return sb.toString();
 	}
 
 	/**
-	 * 複数レコード編集モードのキーフィールドの設定。
+	 * 複数レコード編集モード場合、キーフィールドを展開します。
 	 * @param data POSTされたデータ。
 	 * @return フィールド設定コード。
+	 * @throws Exception 例外。
 	 */
-	private String getMultiRecordFieldConfig(final Map<String, Object> data) {
+	private String getMultiRecordFieldConfig(final Map<String, Object> data) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		String pagePattern = (String) data.get(DaoAndPageGeneratorEditForm.ID_PAGE_PATTERN);
 		String ef = PagePatternSelectField.getEditFormFlag(pagePattern);
-		if ("2".equals(ef)) {
+		if ("2".equals(ef)) { // EditFormで複数レコード編集モードの場合
 			String conf = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CONFIG);
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> list = (List<Map<String, Object>>) JsonUtil.decode(conf, ArrayList.class);
@@ -94,8 +104,14 @@ public class EditFormGenerator extends FormSrcGenerator {
 					String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
 					String fid = fieldId.substring(0, 1).toUpperCase() + fieldId.substring(1);
 					String disp = (String) m.get(SelectFieldHtmlTable.ID_EDIT_FIELD_DISPLAY);
-					String fcfg = "\t\tdao.get" + fid + "Field().setEditFormDisplay(Display." + disp + ");";
-					sb.append(fcfg);
+					String comment = (String) m.get(SelectFieldHtmlTable.ID_COMMENT);
+					if (this.isDefaultType(m)) {
+						String fcfg = "// \t\tdao.get" + fid + "Field().setEditFormDisplay(Display." + disp + "); // " + comment;
+						sb.append(fcfg);
+					} else {
+						String fcfg = "\t\tdao.get" + fid + "Field().setEditFormDisplay(Display." + disp + "); // " + comment;
+						sb.append(fcfg);
+					}
 				}
 			}
 		}
@@ -107,8 +123,9 @@ public class EditFormGenerator extends FormSrcGenerator {
 	 * フィールド設定コードを生成します。
 	 * @param data POSTされたデータ。
 	 * @return フィールド設定コード。
+	 * @throws Exception 例外。
 	 */
-	private String getFieldConfig(final Map<String, Object> data) {
+	private String getFieldConfig(final Map<String, Object> data) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		String cls = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CLASS_NAME);
 		String conf = (String) data.get(DaoAndPageGeneratorEditForm.ID_EDIT_QUERY_CONFIG);
@@ -121,15 +138,18 @@ public class EditFormGenerator extends FormSrcGenerator {
 			}
 			sb.append(this.getFieldConfig(cls, conf));
 		}
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(DaoAndPageGeneratorEditForm.ID_MULTI_RECORD_QUERY_LIST);
-		for (Map<String, Object> m: list) {
-			String qcls = (String) m.get(DaoAndPageGeneratorEditForm.ID_QUERY_CLASS_NAME);
-			String qconf = (String) m.get(DaoAndPageGeneratorEditForm.ID_QUERY_CONFIG);
-			if (sb.length() > 0) {
-				sb.append("\n\t\t//\n");
+		String ef = PagePatternSelectField.getEditFormFlag(pagePattern);
+		if (!"2".equals(ef)) { // EditFormで複数レコード編集モードでない場合
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(DaoAndPageGeneratorEditForm.ID_MULTI_RECORD_QUERY_LIST);
+			for (Map<String, Object> m: list) {
+				String qcls = (String) m.get(DaoAndPageGeneratorEditForm.ID_QUERY_CLASS_NAME);
+				String qconf = (String) m.get(DaoAndPageGeneratorEditForm.ID_QUERY_CONFIG);
+				if (sb.length() > 0) {
+					sb.append("\n\t\t//\n");
+				}
+				sb.append(this.getFieldConfig(qcls, qconf));
 			}
-			sb.append(this.getFieldConfig(qcls, qconf));
 		}
 		return sb.toString();
 	}

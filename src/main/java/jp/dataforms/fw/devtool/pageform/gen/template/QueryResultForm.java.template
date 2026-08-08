@@ -21,7 +21,17 @@ public class ${queryResultFormClassName} extends QueryResultForm {
 		${daoClassName} dao = new ${daoClassName}();
 		this.addPkFieldList(dao.getEditFormKeyList());
 		PageScrollHtmlTable htmltable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT, dao.getListFieldList());
+
+		// 各フィールドのqueryResultFormDisplayプロパティは開発ツールで対応するhtmlを生成する際に参照するプロパティです。
+		// html生成後は変更しても動作に影響はありません。
+		// 開発ツールで設定を変更した場合は有効なコードとなっており、
+		// デフォルト設定の場合コメントアウトされています。
 ${queryResultFieldSetting}
+		
+		// 以下に各フィールドのソート機能を設定してあります。
+		// 各フィールドに特殊な設定を追加したい場合、このコードを参照し各フィールドのプロパティを設定してください。
+${queryResultFieldSortSetting}
+		
 		this.addHtmlTable(htmltable);
 	}
 
