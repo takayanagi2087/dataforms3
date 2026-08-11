@@ -98,7 +98,7 @@ export class Form extends WebComponent {
 	 * フォームデータを設定します。
 	 * @param {Object} formData フォームデータ。
 	 */
-	 setFormData(formData) {
+	setFormData(formData) {
 		this.formData = formData;
 		for (let i = 0; i < this.htmlTables.length; i++) {
 			let tbl = this.htmlTables[i];
@@ -111,6 +111,24 @@ export class Form extends WebComponent {
 		}
 		this.onCalc(null);
 	}
+
+	/**
+	 * フォームデータを設定します。
+	 * @return {Object} フォームデータ。
+	 */
+	getFormData() {
+		let ret = {};
+		for (let i = 0; i <this.fields.length; i++) {
+			let field = this.fields[i];
+			ret[field.id] = field.getValue();
+		}
+		for (let i = 0; i < this.htmlTables.length; i++) {
+			let tbl = this.htmlTables[i];
+			ret[tbl.id] = tbl.getTableData();
+		}
+		return ret;
+	}
+
 
 	/**
 	 * フォームのフィールドに対して、値を設定します。
