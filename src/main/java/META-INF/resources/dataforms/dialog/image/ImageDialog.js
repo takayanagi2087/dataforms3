@@ -4,6 +4,8 @@
 
 'use strict';
 
+import { Dialog } from '../../controller/Dialog.js';
+
 /**
  * @class ImageDialog 画像表示ダイアログクラス。
  *
