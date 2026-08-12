@@ -8,6 +8,7 @@ import jp.dataforms.fw.controller.Page;
 import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.devtool.webres.page.RangeFieldPair;
 import jp.dataforms.fw.devtool.webres.page.TableFieldSetGenerator;
+import jp.dataforms.fw.dialog.okcancel.OkCancelForm;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.Field.MatchType;
 import jp.dataforms.fw.field.common.DeleteFlagField;
@@ -122,6 +123,9 @@ public class FormHtmlGenerator extends HtmlGenerator {
 		} else if (Page.ID_EDIT_FORM.equals(form.getId())) {
 			gen = new EditFormHtmlGenerator(form, indent);
 			gen.setFieldLayout(fl);
+		} else if (form instanceof OkCancelForm) {
+			gen = new OkCancelFormHtmlGenerator(form, indent);
+			gen.setFieldLayout(fl);
 		} else {
 			gen = new FormHtmlGenerator(form, indent);
 			gen.setFieldLayout(fl);
@@ -151,7 +155,7 @@ public class FormHtmlGenerator extends HtmlGenerator {
 	 * フォームのボタンのHTMLを取得します。
 	 * @return フォームのボタンのHTML。
 	 */
-	protected String getFormButtionHtml() {
+	protected String getFormButtonHtml() {
 		return "";
 	}
 
@@ -329,7 +333,7 @@ public class FormHtmlGenerator extends HtmlGenerator {
 			this.generateVisibleField(f, sb);
 			sb.append(gen.getEndTag(tabs));
 			this.generateTable(f, sb);
-			sb.append(this.getFormButtionHtml());
+			sb.append(this.getFormButtonHtml());
 		}
 		sb.append(tabs + "</form>\n");
 		return sb.toString();

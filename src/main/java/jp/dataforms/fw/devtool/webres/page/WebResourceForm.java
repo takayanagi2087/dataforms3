@@ -149,7 +149,7 @@ public class WebResourceForm extends Form {
 					continue;
 				}
 				if ("0".equals(outputFormHtml)) {
-//					String srcpath = sourcePath + "/" + f.getClass().getName().replaceAll("\\.", "/") + ".html";
+					// フォームを別ファイルに出力しない場合フォームのhtmlが存在したら削除する。
 					String srcpath = sourcePath + "/" + this.getWebResourcePath(f.getClass()) + ".html";
 					File srcfile = new File(srcpath);
 					srcfile.delete();
@@ -246,6 +246,7 @@ public class WebResourceForm extends Form {
 		String htmlPath = (String) data.get("htmlPath");
 		String gensrc = "";
 		if ("page".equals(webComponentType) || "dialog".equals(webComponentType)) {
+			// ページまたはダイアログのHTML出力
 			gensrc = this.getDataformsHtml(fullClassName, sourcePath, outputFormHtml, fieldLayout);
 			logger.debug("outputFormHtml=" + outputFormHtml);
 			if ("1".equals(outputFormHtml)) {

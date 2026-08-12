@@ -31,14 +31,29 @@ export class OkCancelDialog extends Dialog {
 		super.attach();
 		logger.info("OkCancelDialog.attach()");
 	}
+	
+	/**
+	 * OkCancelFormのインスタンスを取得します。
+	 * @return {OkCancelForm} OkCancelFormのインスタンス。
+	 */
+	getOkCancelForm() {
+		let formId = Object.keys(this.formMap)[0];
+		logger.log("form = " + formId);
+		let frm = this.getComponent(formId);
+		return frm;	
+	}
 
 	/**
 	 * フォームの初期化処理を行います。
-	 * @param {Object} data フォームデータ。
+	 * @param {Object} p フォームデータ。
+	 * <pre>
+	 * p.formDataの内容をフォームに設定します。
+	 * </pre>
 	 */
-	setFormData(data) {
-		logger.log("initForm data = ", data);
-		
+	setFormData(p) {
+		let frm = this.getOkCancelForm();
+		logger.log("initForm data = ", p);
+		frm.setFormData(p.formData);
 	}
 	
 	/**
@@ -60,7 +75,12 @@ export class OkCancelDialog extends Dialog {
 	 * @return {Obejct} フォームの処理結果。
 	 */	
 	getFormData() {
-		return {};
+		let frm = this.getOkCancelForm();
+		if (frm.ok) {
+			return frm.getFormData();
+		} else {
+			return null;
+		}
 	}
 	
 	/**
