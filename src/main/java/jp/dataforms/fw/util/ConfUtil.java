@@ -462,6 +462,15 @@ public class ConfUtil {
 		public ContentType() {
 			
 		}
+		
+		/**
+		 * 指定されたファイル名がマッチするかどうか判定ます。
+		 * @param fileName　ファイル名。
+		 * @return マッチした場合true。
+		 */
+		public boolean match(final String fileName) {
+			return fileName.matches(this.fnPattern);
+		}
 	}
 	
 	/**
