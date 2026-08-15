@@ -54,6 +54,13 @@ public class UploadFile {
 	private Type type = Type.FILE;
 	
 	/**
+	 * POSTしたフィールドID。
+	 */
+	@Getter
+	@Setter
+	private String fieldId = null;
+	
+	/**
 	 * ファイル名。
 	 */
 	@Getter
@@ -165,7 +172,8 @@ public class UploadFile {
 		this.serverFile = null;
 		this.type = Type.FILE;
 		if (part != null) {
-			this.fileName = part.getName();
+			this.fieldId = part.getName();
+			this.fileName = part.getSubmittedFileName();
 			this.size = part.getSize();
 			if (this.fileName != null) {
 				this.type = this.getType(this.fileName);
