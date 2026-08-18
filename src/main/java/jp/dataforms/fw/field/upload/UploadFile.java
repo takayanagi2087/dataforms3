@@ -25,7 +25,7 @@ public class UploadFile {
 	/**
 	 * Logger.
 	 */
-	// private static Logger logger = LogManager.getLogger(UploadFile.class);
+//	private static Logger logger = LogManager.getLogger(UploadFile.class);
 	
 	/**
 	 *　このサイズを以下の場合ファイルを一時ファイルに保存する。
@@ -265,4 +265,24 @@ public class UploadFile {
 		}
 		return ret;
 	}
+	
+	/**
+	 * アップロードファイルの情報を取得します。
+	 * @return アップロードファイルの情報。
+	 */
+	public String getInfoColumnData() {
+		String ufinfo = this.getFileName() + "\t" + this.getSize();
+		return ufinfo;
+	}
+
+	/**
+	 * 情報カラムの情報を設定します。
+	 * @param info 情報カラムのjsonテキスト。
+	 */
+	public void setInfoColumnData(String info) {
+		String[] sp = info.split("\t");
+		this.setFileName(sp[0]);
+		this.setSize(Long.parseLong(sp[1]));
+	}
+	
 }

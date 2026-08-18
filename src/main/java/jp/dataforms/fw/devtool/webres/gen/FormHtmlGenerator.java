@@ -18,6 +18,7 @@ import jp.dataforms.fw.field.common.MultiSelectField;
 import jp.dataforms.fw.field.common.SingleSelectField;
 import jp.dataforms.fw.field.sqltype.ClobField;
 import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 
 /**
@@ -286,7 +287,7 @@ public class FormHtmlGenerator extends HtmlGenerator {
 				} else if (c instanceof ClobField) {
 					// textareaを展開
 					sb.append(gen.getTextareaFieldHtml(field, tabs));
-				} else if (c instanceof FileField) {
+				} else if (c instanceof FileField || c instanceof UploadField) {
 					// fileを展開
 					sb.append(gen.getFileFieldHtml(field, tabs));
 				} else if (c instanceof DateField) {

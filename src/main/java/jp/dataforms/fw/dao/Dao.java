@@ -56,6 +56,7 @@ import jp.dataforms.fw.field.sqltype.SmallintField;
 import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
@@ -505,6 +506,13 @@ public class Dao implements JDBCConnectableObject {
 		}
 		return ret;
 	}
+	
+	protected UploadFile readInfoColumnValue(final ResultSet rset, final int idx) throws Exception {
+		String info = (String) rset.getObject(idx);
+		UploadFile obj = new UploadFile();
+		obj.setInfoColumnData(info);
+		return obj;
+	}
 
 	/**
 	 * Queryを実行し、その結果の各レコードをRecordProcessorに渡します。
@@ -528,7 +536,11 @@ public class Dao implements JDBCConnectableObject {
 					for (int i = 1; i <= meta.getColumnCount(); i++) {
 //						String name = meta.getColumnName(i);
 						String name = this.sqlGenerator.getColumnName(meta, i);
-						if (meta.getColumnType(i) == Types.BLOB) {
+						if (Field.isFileInfoColumn(name)) {
+							UploadFile obj = this.readInfoColumnValue(rset, i);
+							m.put(StringUtil.snakeToCamel(name), obj);
+							i++;
+						} else if (meta.getColumnType(i) == Types.BLOB) {
 							Blob blob = rset.getBlob(i);
 							FileObject obj = null;
 							if (blob != null) {

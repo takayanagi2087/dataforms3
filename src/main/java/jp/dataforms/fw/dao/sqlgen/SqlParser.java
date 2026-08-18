@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.dao.file.FileObject;
+import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -172,6 +174,34 @@ public class SqlParser {
 		}
 	}
 
+	/**
+	 * UploadFieldのパラメータ設定を行います。
+	 * <pre>
+	 * パラメータメタデータがサポートされていないOracle JDBCのドライバの場合組み直して使用します。
+	 * </pre>
+	 * @param st SQLステートメント。
+	 * @param idx パラメータインデックス。
+	 * @param v 値。
+	 * @param meta パラメータメタデータ。
+	 * @throws Exception 例外。
+	 */
+	protected void setBlobData(final PreparedStatement st, final int idx, final UploadFile v, final ParameterMetaData meta) throws Exception {
+		InputStream is = v.getInputStream();
+		if (is != null) {
+			this.blobIsList.add(is);
+			// FIXME: oracleはParameterMetaDataがサポートされていないので対策を行う。
+			int type = meta.getParameterType(idx);
+			if (type == java.sql.Types.BLOB) {
+				st.setBlob(idx, is);
+			} else {
+				st.setBinaryStream(idx, is, is.available());
+			}
+		} else {
+			int type = meta.getParameterType(idx);
+			st.setNull(idx, type);
+		}
+		
+	}
 
 	/**
 	 * statementにパラメータを設定します。
@@ -183,10 +213,29 @@ public class SqlParser {
 		if (this.paramnames != null && param != null) {
 			int idx = 1;
 			ParameterMetaData meta = getParameterMetaData(st);
-			for (String p : this.paramnames) {
+//			for (String p : this.paramnames) {
+			for (int i = 0; i < this.paramnames.size(); i++) {
+				String p = this.paramnames.get(i);
 				Object v = this.getParam(p, param);
 				if (logger.isDebugEnabled()) {
 					logger.debug(idx + " :" + p + "=" + v);
+				}
+				if (Field.isFileInfoColumn(p)) {
+					// UploadFileフィールドの処理
+					// field_id_ufinfoにファイル名とそのサイズを設定し、field_idにバイナリデータを設定します。
+					Object uf = this.getParam(Field.removeFileInfoSuffix(p), param);
+					logger.debug("uf=" + uf);
+					if (uf == null) {
+						st.setObject(idx++, null);
+						st.setNull(idx, this.getParameterType(meta, idx));
+						idx++;
+					} else {
+						UploadFile ufile = (UploadFile) uf;
+						st.setObject(idx++, ufile.getInfoColumnData());
+						this.setBlobData(st, idx++, (UploadFile) ufile, meta);
+					}
+					i++;
+					continue;
 				}
 				if (v == null) {
 					st.setNull(idx, this.getParameterType(meta, idx));

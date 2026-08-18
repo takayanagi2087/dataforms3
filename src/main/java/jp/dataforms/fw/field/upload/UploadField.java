@@ -7,10 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.Part;
+import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
+import jp.dataforms.fw.dao.sqlgen.mysql.MysqlSqlGenerator;
+import jp.dataforms.fw.dao.sqlgen.pgsql.PgsqlSqlGenerator;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.field.base.Field;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * アップロードフィールド。
@@ -19,29 +20,34 @@ import lombok.Setter;
  * 最終的にFielField階層は非推奨(Deprecated)にしたい。
  * </pre>
  */
-public class UploadField extends Field<UploadFile> {
+public class UploadField extends Field<UploadFile> implements SqlBlob {
 	/**
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(UploadField.class);
 	
 	/**
+	 * アップロードファイル情報カラム。
+	 */
+//	public static final String UFINFO = "ufinfo";
+	
+	/**
 	 * 保存先。
 	 */
-	public enum Store {
-		/** サーバー上のファイル。 */
-		FILE
-		/** DB上のBLOBフィールド。 */
-		, BLOB
-	}
+//	public enum Store {
+//		/** サーバー上のファイル。 */
+//		FILE
+//		/** DB上のBLOBフィールド。 */
+//		, BLOB
+//	}
 
 	
 	/**
 	 * 保存先。
 	 */
-	@Getter
-	@Setter
-	private Store store = null;
+//	@Getter
+//	@Setter
+//	private Store store = Store.BLOB;
 	
 	
 	/**
@@ -50,6 +56,8 @@ public class UploadField extends Field<UploadFile> {
 	 */
 	public UploadField(final String fieldId) {
 		super(fieldId);
+		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "bytea");
+		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longblob");
 	}
 	
 	
@@ -113,5 +121,49 @@ public class UploadField extends Field<UploadFile> {
 		}
 	}
 	
+	/**
+	 * 原作条件に使用しない。
+	 */
+	@Override
+	public jp.dataforms.fw.field.base.Field.MatchType getDefaultMatchType() {
+		return MatchType.NONE;
+	}
+
 	
+	@Override
+	public String getBlobDownloadParameter(Map<String, Object> m) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	
+	/**
+	 * 対応するblobフィールドにはファイルの内容のみを記録します。
+	 * さらに情報カラムを別途作成し、ファイル名とそのサイズを記録します。
+	 */
+	@Override
+	public boolean hasFileInfoColumn() {
+		return true;
+	}
+	/**
+	 * 情報カラムの接尾語を指定します。
+	 * <pre>
+	 * UploadFieldはそのファイルの内容を記録するBLOBフィールドに対応しますが、
+	 * そのファイル名とファイルサイズを記録するための情報フィールドを生成します。
+	 * </pre>
+	 * @return 情報カラムの接尾語。
+     */
+/*	@Override
+	public String infoColumnSuffix() {
+		return UFINFO;
+	}
+*/	
+	/**
+	 * アップロードファイル情報カラムかどうかを判定します。
+	 * @param colname カラム名。
+	 * @return アップロードファイル情報カラムの場合true。
+	 */
+/*	public static boolean isUfInfo(final String colname) {
+		return colname.matches(".+_" + UploadField.UFINFO + "$");
+	}*/
 }

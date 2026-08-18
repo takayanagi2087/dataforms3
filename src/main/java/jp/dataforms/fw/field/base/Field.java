@@ -1783,5 +1783,60 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 		return (Field<?>) cns.newInstance(p);
 	}
 
+	//
+	// UploadField対応のメソッド。
+	// BlobStoreFileFieldはFileObjectクラスのインスタンスを使用し、ファイル名+ファイルサイズ+ファイルの内容をまとめてBLOBに保身するため複雑なクラス構成になっていました。
+	// それに対しUploadFieldはBlobのほかにファイル情報フィールドを用意して、そこにファイル名とファイルサイズを記録します。
+	// 以下はUploadFieldクラスに対応する定数やメソッドです。
+	
+	/**
+	 * ファイル情報カラムの接尾後。
+	 */
+	public static final String FILE_INFO_SUFFIX = "xxxfinfoxxx";
+	
+	
+	/**
+	 * ファイル情報カラムの有無を返します。。
+	 * <pre>
+	 * 通常のフィールドではfalseを返します。
+	 * このメソッドがtrue以外の文字列を返す場合、テーブル中に対応するフィールドの他に、
+	 * 接尾後("_xxxfinfoxxx")をつけた情報フィールドを生成します。
+	 * </pre>
+	 * @return 情報カラムの接尾語。
+	 */
+	public boolean hasFileInfoColumn() {
+		return false;
+	}
+	
+	
+	/**
+	 * アップロードファイル情報カラムかどうかを判定します。
+	 * @param colname カラム名。
+	 * @return アップロードファイル情報カラムの場合true。
+	 */
+	public static boolean isFileInfoColumn(final String colname) {
+		return colname.matches(".+_" + Field.FILE_INFO_SUFFIX + "$");
+	}
 
+	/**
+	 * 情報カラムの接尾後を除去します。
+	 * @param infoColumnName 情報カラム名。
+	 * @return 情報カラムの接尾後を除去した名称。
+	 */
+	public static String removeFileInfoSuffix(final String infoColumnName) {
+		return infoColumnName.replaceAll("_" + Field.FILE_INFO_SUFFIX + "$", "");
+	}
+	
+	/**
+	 * 情報カラムの名称を取得します。
+	 * @return 情報カラム名称。
+	 */
+	public String getFileInfoColumnName() {
+		String ret = null;
+		if (this.hasFileInfoColumn()) {
+			ret = this.getDbColumnName() + "_" + Field.FILE_INFO_SUFFIX;
+		}
+		return ret;
+	}
+	
 }

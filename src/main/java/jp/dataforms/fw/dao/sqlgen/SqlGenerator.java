@@ -443,10 +443,19 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			if (cols.length() > 0) {
 				cols.append(",");
 			}
-			String sqltype = this.getDatabaseType(f);
-			cols.append(f.getDbColumnName());
-			cols.append(" ");
-			cols.append(sqltype);
+			if (f.hasFileInfoColumn()) {
+				// UploadFieldのフィールド展開
+				cols.append(f.getFileInfoColumnName() + " varchar(1024)");
+				String sqltype = this.getDatabaseType(f);
+				cols.append("\n," + f.getDbColumnName());
+				cols.append(" ");
+				cols.append(sqltype);
+			} else {
+				String sqltype = this.getDatabaseType(f);
+				cols.append(f.getDbColumnName());
+				cols.append(" ");
+				cols.append(sqltype);
+			}
 			if (f instanceof RecordIdField) {
 				if (!this.isSequenceSupported() && table.isAutoIncrementId()) {
 					// SequenceがサポートされていないDBMSでシーケンスを使用する場合
@@ -771,6 +780,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
 		sb.append(") values (");
@@ -784,6 +797,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(":");
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			if (f instanceof CreateTimestampField || f instanceof UpdateTimestampField) {
 				sb.append(this.generateSysTimestampSql());
 			} else {
@@ -1390,7 +1408,12 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		} else {
 			//String t = query.getFieldTableAliasMap().get(field.getId());
 			if (t != null) {
-				String ret = t + "." + field.getDbColumnName() + this.getAsAliasSql()  + field.getDbColumnName() + "\n";
+				String ret = "";
+				if (field.hasFileInfoColumn()) {
+					// 情報カラムがあるフィールドの場合はそれを検索する。
+					ret = t + "." + field.getFileInfoColumnName() + " as " + field.getFileInfoColumnName() + ", ";
+				}
+				ret += t + "." + field.getDbColumnName() + this.getAsAliasSql()  + field.getDbColumnName() + "\n";
 				return ret;
 			}
 		}
