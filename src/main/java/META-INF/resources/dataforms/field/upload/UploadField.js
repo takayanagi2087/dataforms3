@@ -150,6 +150,7 @@ export class UploadField extends Field {
 	 * @param {Object} value 値。
 	 */
 	setValue(value) {
+		logger.log("UploadField value=", value);
 		let comp = this.get();
 		let tag = comp.prop("tagName");
 		let linkid = this.id + "_link";

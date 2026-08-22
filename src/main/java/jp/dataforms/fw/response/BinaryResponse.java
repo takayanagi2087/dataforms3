@@ -16,6 +16,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jp.dataforms.fw.dao.file.FileObject;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.HttpRangeInfo;
 
@@ -168,6 +169,17 @@ public class BinaryResponse extends FileResponse {
 		this.setContentType(fobj.getContentType());
 		this.setFileName(fobj.getFileName());
 		this.inputStream = fobj.openInputStream();
+	}
+
+	/**
+	 * コンストラクタ。
+	 * @param fobj ファイルオブジェクト。
+	 * @throws Exception 例外。
+	 */
+	public BinaryResponse(final UploadFile fobj) throws Exception {
+		this.setContentType(fobj.getContentType());
+		this.setFileName(fobj.getFileName());
+		this.inputStream = fobj.getInputStream();
 	}
 
 

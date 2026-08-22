@@ -7,16 +7,21 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
+import jp.dataforms.fw.annotation.WebMethod;
+import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
 import jp.dataforms.fw.dao.sqlgen.mysql.MysqlSqlGenerator;
 import jp.dataforms.fw.dao.sqlgen.pgsql.PgsqlSqlGenerator;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
+import jp.dataforms.fw.util.StringUtil;
 
 /**
  * アップロードフィールド。
@@ -107,8 +112,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 				ret = new HashMap<String, Object>();
 				ret.put("fileName", v.getFileName());
 				ret.put("size", v.getSize());
-				// FIXME: ダウンロードパラメータの作成を実装。
-				ret.put("downloadParameter", "");
+				ret.put("downloadParameter", v.getDownloadParameter());
 			}
 		}
 		return ret;
@@ -177,10 +181,28 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	}
 
 	
+	/**
+	 * ダウンロードパラメータの解読を行います。
+	 * @param key キー。
+	 * @return ダウンロードパラメータ。
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> decryptDownloadParameter(final String key) {
+		Map<String, Object> ret = null;
+		try {
+			String json = CryptUtil.decrypt(key, DataFormsServlet.getQueryStringCryptPassword());
+			logger.debug("json=" + json);
+			ret = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
 	@Override
 	public String getBlobDownloadParameter(Map<String, Object> m) {
 		Map<String, Object> p = this.getDownloadInfoMap(m);
-		return this.encryptDownloadParameter(p);
+		return "key=" + this.encryptDownloadParameter(p);
 	}
 
 	
@@ -194,4 +216,80 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	}
 
 
+	/**
+	 * UploadFileをDBから読み込みます。
+	 * @param param パラメータ。
+	 * @return UploadFileのオブジェクト。
+	 * @throws Exception 例外。
+	 */
+	public UploadFile readUploadFile(final Map<String, Object> param) throws Exception {
+		String downloadingFile = (String) param.get("downloadingFile");
+		logger.debug(() -> "downloadingFile=" + downloadingFile);
+		Dao dao = new Dao(this);
+		String tblclass = (String) param.get("table");
+		@SuppressWarnings("unchecked")
+		Class<? extends Table> cls = (Class<? extends Table>) Class.forName(tblclass);
+		Table table = cls.getDeclaredConstructor().newInstance();
+		Map<String, Object> data = table.getPkFieldList().convertClientToServer(param);
+		UploadFile fobj = null;
+		if (!StringUtil.isBlank(downloadingFile)) {
+//			fobj = dao.queryBlobFileInfo(table, (String) param.get("fieldId"), data);
+//			fobj.setTempFile(new File(downloadingFile));
+		} else {
+			fobj = dao.queryBlobUploadFile(table, (String) param.get("fieldId"), data);
+		}
+		return fobj;
+	}
+
+
+	/**
+	 * ファイルをダウンロードします。
+	 * @param p パラメータ。
+	 * @return 画像応答。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod(useDB = true)
+	public BinaryResponse download(final Map<String, Object> p) throws Exception {
+		HttpServletRequest req = this.getPage().getRequest();
+		Map<String, Object> param = p;
+		String key = (String) p.get("key");
+		logger.debug(() -> "key=" + key);
+		if (key != null) {
+			param = this.decryptDownloadParameter(key);
+			// FIXME:ストリーミング対応。
+			
+			// Rangeヘッダが指定されていた場合、送信中ファイルがあればそれをセットする。
+/*			if (!StringUtil.isBlank(req.getHeader("Range"))) {
+				String sessionKey = DOWNLOADING_FILE + key;
+				logger.debug(() -> "*sessionKey=" + sessionKey);
+				String downloadingFile = (String) req.getSession().getAttribute(sessionKey);
+				if (downloadingFile != null) {
+					File tf = new File(downloadingFile);
+					if (tf.exists()) {
+						param.put("downloadingFile", downloadingFile);
+					}
+				}
+			}
+*/
+			logger.debug("param={}", param);
+		}
+
+		UploadFile fobj = this.readUploadFile(param);
+		BinaryResponse resp = new BinaryResponse(fobj);
+		resp.setRequest(req);
+//		resp.setTempFile(store.getTempFile(fobj));
+//		resp.setContentDisposition(this.contentDisposition);
+/*		if (key != null) {
+			if (!store.isSeekingSupported()) {
+				// BLOBでRangeヘッダが指定されていた場合、一時ファイルのパスをセッションに記録する。
+				if (!StringUtil.isBlank(req.getHeader("Range"))) {
+					req.getSession().setAttribute(DOWNLOADING_FILE + key, fobj.getTempFile().getAbsolutePath());
+					resp.setTempFile(null); // 転送終了時にファイルを削除しないようにする。
+				}
+			}
+		}
+*/		return resp;
+	}
+
+	
 }

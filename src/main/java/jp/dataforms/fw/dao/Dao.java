@@ -532,14 +532,29 @@ public class Dao implements JDBCConnectableObject {
 	 * @throws Exception 例外。
 	 */
 	protected UploadFile readUploadFile(final ResultSet rset, final int idx) throws Exception {
+		ResultSetMetaData meta = rset.getMetaData();
 		UploadFile ret = this.readInfoColumnValue(rset, idx);
 		if (this.getBlobReadMode() == BlobReadMode.FOR_DOWNLOAD) {
 			// ファイルを読み込むと遅いので、ダウンロードモードの時のみ読み込む。
 			if (ret != null) {
-				Blob blob = rset.getBlob(idx + 1);
-				if (blob != null) {
-					try (InputStream is = blob.getBinaryStream()) {
-						ret.setContents(is);
+				int type = meta.getColumnType(idx + 1);
+				if (type == Types.BLOB) {
+					Blob blob = rset.getBlob(idx + 1);
+					if (blob != null) {
+						try (InputStream is = blob.getBinaryStream()) {
+							ret.setContents(is);
+						}
+					}
+				} else if (meta.getColumnType(idx + 1) == Types.BINARY
+						 || meta.getColumnType(idx + 1) == Types.LONGVARBINARY
+						 || meta.getColumnType(idx + 1) == Types.VARBINARY) {
+					InputStream is = rset.getBinaryStream(idx + 1);
+					if (is != null) {
+						try {
+							ret.setContents(is);
+						} finally {
+							is.close();
+						}
 					}
 				}
 			}
@@ -2118,6 +2133,22 @@ public class Dao implements JDBCConnectableObject {
 		Map<String, Object> ret = (Map<String, Object>) this.executeRecordQuery(query);
 		this.setBlobReadMode(BlobReadMode.FOR_DISPLAY_FILE_INFO);
 		return (FileObject) ret.get(fieldId);
+	}
+
+	/**
+	 * BLOBデータを取得します。
+	 * @param table テーブル。
+	 * @param fieldId BLOBフィールドID。
+	 * @param data パラメータ。
+	 * @return BLOBデータ。
+	 * @throws Exception 例外。
+	 */
+	public UploadFile queryBlobUploadFile(final Table table, final String fieldId, final Map<String, Object> data) throws Exception {
+		this.setBlobReadMode(BlobReadMode.FOR_DOWNLOAD);
+		FileObjectQuery query = new FileObjectQuery(table, fieldId, data);
+		Map<String, Object> ret = (Map<String, Object>) this.executeRecordQuery(query);
+		this.setBlobReadMode(BlobReadMode.FOR_DISPLAY_FILE_INFO);
+		return (UploadFile) ret.get(fieldId);
 	}
 
 

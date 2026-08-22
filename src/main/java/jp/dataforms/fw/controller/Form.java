@@ -425,6 +425,7 @@ public  class Form extends WebComponent {
 		if (obj instanceof UploadFile) {
 			UploadFile v = (UploadFile) m.get(field.getId());
 			v.setDownloadParameter(field.getBlobDownloadParameter(m));
+			logger.debug("UploadFile v.downloadParameter=" + v.getDownloadParameter());
 		} else if (obj instanceof FileObject) {
 			FileObject v = (FileObject) m.get(field.getId());
 			v.setDownloadParameter(field.getBlobDownloadParameter(m));
