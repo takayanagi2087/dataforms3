@@ -507,13 +507,46 @@ public class Dao implements JDBCConnectableObject {
 		return ret;
 	}
 	
+	/**
+	 * UploadFieldの情報カラムから情報を読み込みます。
+	 * @param rset 結果セット。
+	 * @param idx ラカムインデックス。
+	 * @return　情報を読み込んだアップロードファイルのインスタンス。
+	 * @throws Exception 例外。
+	 */
 	protected UploadFile readInfoColumnValue(final ResultSet rset, final int idx) throws Exception {
+		UploadFile obj = null;
 		String info = (String) rset.getObject(idx);
-		UploadFile obj = new UploadFile();
-		obj.setInfoColumnData(info);
+		if (info != null) {
+			obj = new UploadFile();
+			obj.setInfoColumnData(info);
+		}
 		return obj;
 	}
 
+	/**
+	 * UploadFieldの情報カラムからUploadFileを読み込みます。
+	 * @param rset 結果セット。
+	 * @param idx ラカムインデックス。
+	 * @return　情報を読み込んだアップロードファイルのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	protected UploadFile readUploadFile(final ResultSet rset, final int idx) throws Exception {
+		UploadFile ret = this.readInfoColumnValue(rset, idx);
+		if (this.getBlobReadMode() == BlobReadMode.FOR_DOWNLOAD) {
+			// ファイルを読み込むと遅いので、ダウンロードモードの時のみ読み込む。
+			if (ret != null) {
+				Blob blob = rset.getBlob(idx + 1);
+				if (blob != null) {
+					try (InputStream is = blob.getBinaryStream()) {
+						ret.setContents(is);
+					}
+				}
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Queryを実行し、その結果の各レコードをRecordProcessorに渡します。
 	 * @param sql SQL。
@@ -534,11 +567,10 @@ public class Dao implements JDBCConnectableObject {
 				while (rset.next()) {
 					Map<String, Object> m = new HashMap<String, Object>();
 					for (int i = 1; i <= meta.getColumnCount(); i++) {
-//						String name = meta.getColumnName(i);
 						String name = this.sqlGenerator.getColumnName(meta, i);
 						if (Field.isFileInfoColumn(name)) {
-							UploadFile obj = this.readInfoColumnValue(rset, i);
-							m.put(StringUtil.snakeToCamel(name), obj);
+							UploadFile obj = this.readUploadFile(rset, i);
+							m.put(StringUtil.snakeToCamel(Field.removeFileInfoSuffix(name)), obj);
 							i++;
 						} else if (meta.getColumnType(i) == Types.BLOB) {
 							Blob blob = rset.getBlob(i);

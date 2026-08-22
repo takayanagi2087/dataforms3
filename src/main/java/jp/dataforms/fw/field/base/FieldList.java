@@ -12,6 +12,7 @@ import jp.dataforms.fw.dao.file.FileObject;
 import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
 import jp.dataforms.fw.field.base.Field.SortOrder;
 import jp.dataforms.fw.field.sqlfunc.FunctionField;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.util.StringUtil;
 
 /**
@@ -222,14 +223,27 @@ public class FieldList extends ArrayList<Field<?>> {
 			f.setDBValue(data.get(f.getId()));
 			if (f instanceof SqlBlob) {
 				// ダウンロードパラメータを設定する。
-				FileObject v = (FileObject) f.getValue();;
-				if (v != null) {
-					SqlBlob blobf = (SqlBlob) f;
-					if (v.getFileName() != null) {
-						v.setDownloadParameter(blobf.getBlobDownloadParameter(data));
+				logger.debug("SqlBlob Field Class" + f.getClass().getName());
+				if (f.getValue() instanceof UploadFile) {
+					logger.debug("SqlBlob Field Value Class" + f.getValue().getClass().getName());
+					UploadFile v = (UploadFile) f.getValue();
+					if (v != null) {
+						if (v.getFileName() != null) {
+							SqlBlob blobf = (SqlBlob) f;
+							v.setDownloadParameter(blobf.getBlobDownloadParameter(data));
+						}
+					}
+				} else if (f.getValue() instanceof FileObject) {
+					FileObject v = (FileObject) f.getValue();
+					if (v != null) {
+						SqlBlob blobf = (SqlBlob) f;
+						if (v.getFileName() != null) {
+							v.setDownloadParameter(blobf.getBlobDownloadParameter(data));
+						}
 					}
 				}
 			}
+			// FIXME:UploadFileのダウンロードパラメータの設定処理を実装。
 			ret.put(f.getId(), f.getValue());
 		}
 		return ret;

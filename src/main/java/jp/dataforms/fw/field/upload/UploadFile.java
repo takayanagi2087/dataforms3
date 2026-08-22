@@ -89,6 +89,13 @@ public class UploadFile {
 	@Getter
 	@Setter
 	private Long size = null;
+
+	/**
+	 * ダウンロードパラメータ。
+	 */
+	@Getter
+	@Setter
+	private String downloadParameter = null;
 	
 	/**
 	 * コンストラクタ。
@@ -218,19 +225,27 @@ public class UploadFile {
 		this.fileName = fileName;
 		this.size = size;
 		if (is != null) {
-			if (size < FILE_SIZE_THRESHOLD) {
-				this.contents = FileUtil.readInputStream(is);
-				this.serverFile = null;
-			} else {
-				this.serverFile = this.makeTempFile();
-				try (FileOutputStream os = new FileOutputStream(this.serverFile)) {
-					FileUtil.copyStream(is, os);
-				}
-				this.contents = null;
-			}
+			this.setContents(is);
 		}
 	}
 	
+	/**
+	 * 入力ストリームからファイルの内容を設定します。
+	 * @param is 入力ストリーム。
+	 * @throws Exception 例外。
+	 */
+	public void setContents(final InputStream is) throws Exception {
+		if (size < FILE_SIZE_THRESHOLD) {
+			this.contents = FileUtil.readInputStream(is);
+			this.serverFile = null;
+		} else {
+			this.serverFile = this.makeTempFile();
+			try (FileOutputStream os = new FileOutputStream(this.serverFile)) {
+				FileUtil.copyStream(is, os);
+			}
+			this.contents = null;
+		}
+	}
 	
 	/**
 	 * ファイルのバイト列を取得します。
