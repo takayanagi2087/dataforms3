@@ -180,6 +180,13 @@ export class UploadField extends Field {
 	}
 	
 	/**
+	 * プレビューを非表示にします。
+	 */
+	hideAllPreview() {
+		this.parent.get(this.id + "_pv").find("div.preview").hide();
+	}
+	
+	/**
 	 * ローカルファイルのプレビューを設定します。
 	 * <pre>
 	 * 画像ファイルの場合はそのサムネイルを設定。
@@ -189,6 +196,7 @@ export class UploadField extends Field {
 	 * @param {String} filename ファイル名。
 	 */
 	setLocalFilePreview(fld, filename) {
+		this.hideAllPreview();
 		let ct = this.getContentType(filename);
 		logger.log("contentType=" + ct);
 		// 
@@ -237,6 +245,7 @@ export class UploadField extends Field {
 	 * @param {Object} value ファイル情報。
 	 */
 	setServerFilePreview(value) {
+		this.hideAllPreview();
 		if (value != null) {
 			logger.log("setServerFilePreview value=", value);
 			let ct = this.getContentType(value.fileName);
@@ -318,6 +327,7 @@ export class UploadField extends Field {
 		fnlink.attr("data-size", "");
 		fnlink.attr("data-dlparam", "");
 		comp.val("");
+		this.hideAllPreview();
 	}
 
 	/**
