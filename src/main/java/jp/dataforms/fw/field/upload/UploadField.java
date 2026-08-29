@@ -22,6 +22,8 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * アップロードフィールド。
@@ -59,6 +61,26 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 //	@Setter
 //	private Store store = Store.BLOB;
 	
+	/**
+	 * Previewを行うかどうかを設定します。
+	 */
+	@Setter
+	@Getter
+	private Boolean preview = true;
+	
+	/**
+	 * プレビュー枠の幅。
+	 */
+	@Setter
+	@Getter
+	private int previewWidth = 128;
+
+	/**
+	 * プレビュー枠の高さ。
+	 */
+	@Setter
+	@Getter
+	private int previewHeight = 128;
 	
 	/**
 	 * コンストラクタ。
@@ -291,5 +313,14 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 */		return resp;
 	}
 
+	@Override
+	public Map<String, Object> getProperties() throws Exception {
+		Map<String, Object> prop = super.getProperties();
+		prop.put("contentTypeList", DataFormsServlet.getConf().getApplication().getContentTypeList());
+		prop.put("preview", this.preview);
+		prop.put("previewWidth", 128);
+		prop.put("previewHeight", 128);
+		return prop;
+	}
 	
 }

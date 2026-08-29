@@ -59,6 +59,22 @@ export class UploadField extends Field {
 			let r = new FileReceiver(this);
 			r.attach();
 		}*/
+		logger.log("contentTypeList=", this.contentTypeList);
+		// preview領域の設定。
+		{
+			let pvid = this.id + "_pv"; // preview領域.
+			let pvdiv = this.parent.get(pvid);
+			if (this.preview) {
+				pvdiv.show();
+			} else {
+				pvdiv.hide();
+			}
+			let thmid = this.id + "_thm";
+			let thmdiv = this.parent.get(thmid);
+			thmdiv.width(this.previewWidth);
+			thmdiv.height(this.previewHeight);
+			thmdiv.css("line-height", this.previewHeight + "px");
+		}
 	}
 	
 	/**
@@ -77,6 +93,29 @@ export class UploadField extends Field {
 		}
 	}
 	
+	
+	/**
+	 * 画像ファイル指定時のprevie表示。
+	 * @param {jQuery} inputFile ファイルフィールド。
+	 * @param {jQuery} thumb サムネイル。
+	 */
+	async previewImage(inputFile, thumb) {
+		let fileList = inputFile.get()[0].files;
+		if (fileList.length > 0) {
+			const dataUri = await new Promise((resolve, reject) => {
+				const fileReader = new FileReader();
+				fileReader.onload = () => {
+					resolve(fileReader.result);
+				};
+				fileReader.onerror = () => {
+					reject(fileReader.error);
+				};
+				fileReader.readAsDataURL(fileList[0]);
+			});
+			thumb.attr("src", dataUri);
+		}
+	}
+	
 	/**
 	 * ファイルの選択処理。
 	 * @param {jQuery} fld ファイルフィールド。
@@ -85,12 +124,11 @@ export class UploadField extends Field {
 		let selfileid = this.id + "_selfile"; // 選択ボタンID.
 		let selfile = this.parent.get(selfileid);
 		let el = this.get().get()[0];
-		let filelist = "";
-		for (let i = 0; i < el.files.length; i++) {
-			filelist += "<br/>";
-			filelist += el.files[i].name;
+		let filename = "";
+		if (el.files.length > 0) {
+			filename = el.files[0].name;
 		}
-		selfile.html(filelist);
+		selfile.html(filename);
 			
 		let linkid = this.id + "_link"; // ダウンロードリンク.
 		let fnlink = this.parent.get(linkid);
@@ -106,6 +144,36 @@ export class UploadField extends Field {
 		fnhidden.val(fnlink.attr("data-value"));
 		this.id = fld.attr(this.getIdAttribute());
 		this.showDelCheckbox();
+		let ct = this.getContentType(filename);
+		logger.log("contentType=" + ct);
+		// 
+		if (ct.indexOf("image/") == 0) {
+			logger.log("image");
+			let thumbid = this.id + "_thm"; // サムネイルID.
+			this.parent.get(thumbid).show();
+			let thumb = this.parent.find("#" + this.selectorEscape(thumbid) + " img");
+			this.previewImage(fld, thumb);
+		}
+	}
+	
+	/**
+	 * 指定されたファイル名に対応するContent-Typeを取得します。
+	 * @param {String} fn ファイル名。
+	 * @returns {String} Content-Type。
+	 */
+	getContentType(fn) {
+		let ret = null;
+		if (this.contentTypeList != null) {
+			for (let i = 0; i < this.contentTypeList.length; i++) {
+				let pat = this.contentTypeList[i].fnPattern.replace("(?i)", ""); // (?i) はjavascriptでエラーする。
+				let regexp = new RegExp(pat, "i");
+				if (regexp.test(fn)) {
+					ret = this.contentTypeList[i].contentType;
+					break;
+				}	
+			}
+		}
+		return ret;
 	}
 	
 	/**
