@@ -177,6 +177,7 @@ public class BinaryResponse extends FileResponse {
 	 * @throws Exception 例外。
 	 */
 	public BinaryResponse(final UploadFile fobj) throws Exception {
+		logger.debug("content-Type:" + fobj.getContentType());
 		this.setContentType(fobj.getContentType());
 		this.setFileName(fobj.getFileName());
 		this.inputStream = fobj.getInputStream();

@@ -74,7 +74,70 @@ export class UploadField extends Field {
 			thmdiv.width(this.previewWidth);
 			thmdiv.height(this.previewHeight);
 			thmdiv.css("line-height", this.previewHeight + "px");
+			
+			this.setThumbnailEvent();
 		}
+	}
+	
+	/**
+	 * 指定されたURLの画像を表示します。
+	 * @param img イメージ。
+	 */
+	showImage(img) {
+		logger.log("img=" + JSON.stringify(img));
+		if (this.parent.id == "imageForm") {
+			return;
+		}
+//		let dlg = currentPage.getComponent("imageDialog");
+//		if (dlg == null) {
+			if (img != null) {
+				if (img.url != null) {
+					window.open(img.url, "_image");
+				} else {
+					let url = location.pathname + "?dfMethod=" + encodeURIComponent(this.getUniqId()) + ".download"  + "&" + img.downloadParameter + "&mode=inline";
+					if (currentPage.csrfToken != null) {
+						url += "&csrfToken=" + currentPage.csrfToken;
+					}
+					window.open(url, "_image");
+				}
+			}
+//		} else {
+//			let imgfrm = dlg.getComponent("imageForm");
+//			let imgfld = imgfrm.getComponent("image");
+//			logger.dir(imgfld);
+//			imgfld.setValue(img);
+//			dlg.showModal();
+//		}
+	}
+
+	
+	/**
+	 * サムネイルのイベントを設定します。
+	 */
+	setThumbnailEvent() {
+		let linkid = this.id + "_link";
+		let link = this.parent.get(linkid);
+		let thumbid = this.id + "_thm"; // サムネイルID.
+		let thumb = this.parent.get(thumbid);
+		thumb.click(() => {
+			let fval = this.get().val();
+			let val = {};
+			if (fval.length == 0) {
+				val.fileName = link.attr("data-value");
+				val.size = link.attr("data-size");
+				val.downloadParameter = link.attr("data-dlparam");
+			} else {
+				let fl = this.get().get()[0].files[0];
+				let url = URL.createObjectURL(fl);
+				val.fileName = fl.name;
+				val.size = fl.size;
+				val.url = url;
+				logger.log("url=" + url);
+			}
+			if (val.fileName.length > 0) {
+				this.showImage(val);
+			}
+		});
 	}
 	
 	/**
@@ -117,6 +180,76 @@ export class UploadField extends Field {
 	}
 	
 	/**
+	 * ローカルファイルのプレビューを設定します。
+	 * <pre>
+	 * 画像ファイルの場合はそのサムネイルを設定。
+	 * 動画、音声の場合はそのプレーヤーを表示します。
+	 * </pre>
+	 * @param {jQuery} fld ファイルフィールド。
+	 * @param {String} filename ファイル名。
+	 */
+	setLocalFilePreview(fld, filename) {
+		let ct = this.getContentType(filename);
+		logger.log("contentType=" + ct);
+		// 
+		if (ct.indexOf("image/") == 0) {
+			logger.log("image");
+			let thumbid = this.id + "_thm"; // サムネイルID.
+			this.parent.get(thumbid).show();
+			let thumb = this.parent.find("#" + this.selectorEscape(thumbid) + " img");
+			this.previewImage(fld, thumb);
+		}
+	}
+
+	/**
+	 * サーバー画像のサムネイルを設定します。
+	 * @param {Object} value ファイル情報。
+	 */
+	setServerImageThumbnail(value) {
+		let thumbid = this.id + "_thm"; // サムネイルID.
+		let thumb = this.parent.get(thumbid);
+		this.downloadUrl = null;
+		if (value != null) {
+			let linkid = this.id + "_link";
+			let fnlink = this.parent.get(linkid);
+			if (value.url == null) {
+				let func = ".downloadThumbnail";
+				let url = location.pathname + "?dfMethod=" + encodeURIComponent(this.getUniqId()) + func  + "&" + value.downloadParameter;
+				if (currentPage.csrfToken != null) {
+					url += "&csrfToken=" + currentPage.csrfToken;
+				}
+				thumb.find("img").attr("src", url);
+				this.downloadUrl = url;
+			} else {
+				thumb.find("img").attr("src", value.url);
+				fnlink.attr("href", "javascript:void(0);");
+				this.downloadUrl = value.url;
+			}
+		} else {
+			thumb.find("img").removeAttr("src");
+			thumb.find("img").attr("alt", "");
+			this.downloadUrl = null;
+		}
+	}
+		
+	/**
+	 * サーバーファイルのプレビューを設定します。
+	 * @param {Object} value ファイル情報。
+	 */
+	setServerFilePreview(value) {
+		if (value != null) {
+			logger.log("setServerFilePreview value=", value);
+			let ct = this.getContentType(value.fileName);
+			logger.log("contentType=" + ct);
+			if (ct.indexOf("image/") == 0) {
+				let thid = this.id + "_thm";
+				this.parent.get(thid).show();
+				this.setServerImageThumbnail(value);
+			}
+		}
+	}
+	
+	/**
 	 * ファイルの選択処理。
 	 * @param {jQuery} fld ファイルフィールド。
 	 */
@@ -144,16 +277,7 @@ export class UploadField extends Field {
 		fnhidden.val(fnlink.attr("data-value"));
 		this.id = fld.attr(this.getIdAttribute());
 		this.showDelCheckbox();
-		let ct = this.getContentType(filename);
-		logger.log("contentType=" + ct);
-		// 
-		if (ct.indexOf("image/") == 0) {
-			logger.log("image");
-			let thumbid = this.id + "_thm"; // サムネイルID.
-			this.parent.get(thumbid).show();
-			let thumb = this.parent.find("#" + this.selectorEscape(thumbid) + " img");
-			this.previewImage(fld, thumb);
-		}
+		this.setLocalFilePreview(fld, filename);
 	}
 	
 	/**
@@ -266,6 +390,7 @@ export class UploadField extends Field {
 		if ("INPUT" == tag) {
 			comp.val("");
 		}
+		this.setServerFilePreview(value);
 	}
 
 	/**

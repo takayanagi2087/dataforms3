@@ -1,8 +1,14 @@
 package jp.dataforms.fw.field.upload;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,12 +18,16 @@ import jakarta.servlet.http.Part;
 import jp.dataforms.fw.annotation.WebMethod;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.Table;
+import jp.dataforms.fw.dao.file.FileStore;
+import jp.dataforms.fw.dao.file.ImageData;
 import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
 import jp.dataforms.fw.dao.sqlgen.mysql.MysqlSqlGenerator;
 import jp.dataforms.fw.dao.sqlgen.pgsql.PgsqlSqlGenerator;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.response.BinaryResponse;
+import jp.dataforms.fw.response.BinaryResponse.Disposition;
+import jp.dataforms.fw.response.ImageResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
@@ -272,6 +282,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 */
 	@WebMethod(useDB = true)
 	public BinaryResponse download(final Map<String, Object> p) throws Exception {
+		String mode = (String) p.get("mode");
 		HttpServletRequest req = this.getPage().getRequest();
 		Map<String, Object> param = p;
 		String key = (String) p.get("key");
@@ -299,6 +310,9 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		UploadFile fobj = this.readUploadFile(param);
 		BinaryResponse resp = new BinaryResponse(fobj);
 		resp.setRequest(req);
+		if ("inline".equals(mode)) {
+			resp.setContentDisposition(Disposition.INLINE);
+		}
 //		resp.setTempFile(store.getTempFile(fobj));
 //		resp.setContentDisposition(this.contentDisposition);
 /*		if (key != null) {
@@ -312,6 +326,122 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		}
 */		return resp;
 	}
+	
+	
+	/**
+	 * 画像データを読み込みます。
+	 * @param p 読み込みのパラメータ。
+	 * @return 読み込み結果。
+	 * @throws Exception 例外。
+	 */
+	protected UploadFile readImageData(final Map<String, Object> p) throws Exception {
+		Map<String, Object> param = p;
+		String key = (String) p.get("key");
+		if (key != null) {
+			 param = FileStore.decryptDownloadParameter(key);
+		}
+		UploadFile ret = this.readUploadFile(param);
+		return ret;
+	}
+	
+	/**
+	 * 画像データを読み込みます。
+	 * @param buf 画像データ。
+	 * @return イメージ。
+	 * @throws Exception 例外。
+	 */
+	public BufferedImage readImage(final byte[] buf) throws Exception {
+		BufferedImage image = null;
+		ByteArrayInputStream is = new ByteArrayInputStream(buf);
+		try {
+			image = ImageIO.read(is);
+		} finally {
+			is.close();
+		}
+		return image;
+	}
+
+	/**
+	 * PNGのコンテントタイプ。
+	 */
+	public static final String CONTENT_TYPE_PNG = "image/png";
+
+	/**
+	 * 画像データを書き出します。
+	 * @param img イメージ。
+	 * @return 出力されたバイト列。
+	 * @throws Exception 例外。
+	 */
+	public byte[] writeImage(final BufferedImage img) throws Exception {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try {
+			ImageWriter writer = ImageIO.getImageWritersByMIMEType(CONTENT_TYPE_PNG).next();
+			try {
+				writer.setOutput(ImageIO.createImageOutputStream(os));
+				writer.write(img);
+			} finally {
+				writer.dispose();
+			}
+		} finally {
+			os.close();
+		}
+		byte[] ret = os.toByteArray();
+//		this.setContents(ret);
+		return ret;
+	}
+
+
+
+	/**
+	 * 画像を縮小します。
+	 * @param uf 画像データ。
+	 * @param w 幅。
+	 * @param h 高さ。
+	 * @return 画像データ。
+	 * @throws Exception 例外。
+	 */
+	public ImageData getReducedImage(final UploadFile uf, final int w, final int h) throws Exception {
+		ImageData ret = new ImageData();
+		BufferedImage img = this.readImage(uf.getContents());
+		int width = w;
+		int height = h;
+		double iw = img.getWidth();
+		double ih = img.getHeight();
+		if (iw > ih) {
+			width = w;
+			height = (int) (ih * (w / iw));
+		} else {
+			width = (int) (iw * (h / ih));
+			height = h;
+		}
+		logger.debug("width,height={},{}", width, height);
+		// なぜかPNGのタイプが0で返される。(JDKのBUGと思われる)
+		int type = img.getType();
+		if (type == 0) {
+			type = 5;
+		}
+		BufferedImage thumb = new BufferedImage(width, height, type);
+		thumb.getGraphics().drawImage(img.getScaledInstance(width, height, java.awt.Image.SCALE_AREA_AVERAGING), 0, 0, width, height, null);
+		ret.setContents(this.writeImage(thumb));
+		ret.setFileName("thumb.png");
+		return ret;
+	}
+
+
+	
+	/**
+	 * サムネイル画像をダウンロードします。
+	 * @param param パラメータ。
+	 * @return 画像応答。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod(useDB = true)
+	public ImageResponse downloadThumbnail(final Map<String, Object> param) throws Exception {
+		UploadFile image = this.readImageData(param);
+		ImageResponse resp = new ImageResponse(this.getReducedImage(image, this.previewWidth, this.previewHeight));
+		return resp;
+	}
+
 
 	@Override
 	public Map<String, Object> getProperties() throws Exception {
