@@ -58,6 +58,7 @@ import jp.dataforms.fw.field.sqlfunc.CountField;
 import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
 import jp.dataforms.fw.field.sqlfunc.SqlField;
+import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -1568,6 +1569,26 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		return ret;
 	}
 
+	/**
+	 * UploadField用の更新用SQLを作成します。
+	 * <pre>
+	 * 既にファイルが登録されており、ファイルが送信されない場合は、そのままの値を保持するSQLを生成します。
+	 * </pre>
+	 * @param f フィールド.
+	 * @return SQL.
+	 */
+	protected String generateUpdateUploadFileSql(final Field<?> f) {
+		String pid = StringUtil.camelToSnake(f.getId());
+		StringBuilder usb = new StringBuilder();
+		usb.append(f.getFileInfoColumnName());
+		usb.append(" = ");
+		usb.append(" case when :" + pid + "_kf = '1' then " + f.getFileInfoColumnName() + " else :" + f.getFileInfoColumnName() + " end, ");
+		usb.append(pid);
+		usb.append(" = ");
+		usb.append(" case when :" + pid + "_kf = '1' then " + pid + " else :" + pid + " end ");
+		return usb.toString();
+	}
+
 
 	/**
 	 * テーブル更新SQLを作成します。
@@ -1661,6 +1682,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				usb.append(" = ");
 				usb.append(this.generateUpdateFileFieldSql(f.getId()));
 				usb.append("\n");
+			} else if (f instanceof UploadField) {
+				usb.append(this.generateUpdateUploadFileSql(f));
 			} else {
 				usb.append(StringUtil.camelToSnake(f.getId()));
 				usb.append(" = :");

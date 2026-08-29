@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.dao.file.FileObject;
-import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -211,37 +210,19 @@ public class SqlParser {
 	 */
 	public void setParameter(final PreparedStatement st, final  Map<String, Object> param) throws Exception {
 		if (this.paramnames != null && param != null) {
+			logger.debug("setParameter param = {}", param);
 			int idx = 1;
 			ParameterMetaData meta = getParameterMetaData(st);
-//			for (String p : this.paramnames) {
 			for (int i = 0; i < this.paramnames.size(); i++) {
 				String p = this.paramnames.get(i);
 				Object v = this.getParam(p, param);
-				if (logger.isDebugEnabled()) {
-					logger.debug(idx + " :" + p + "=" + v);
-				}
-				if (Field.isFileInfoColumn(p)) {
-					// UploadFileフィールドの処理
-					// field_id_ufinfoにファイル名とそのサイズを設定し、field_idにバイナリデータを設定します。
-					Object uf = this.getParam(Field.removeFileInfoSuffix(p), param);
-					logger.debug("uf=" + uf);
-					if (uf == null) {
-						st.setObject(idx++, null);
-						st.setNull(idx, this.getParameterType(meta, idx));
-						idx++;
-					} else {
-						UploadFile ufile = (UploadFile) uf;
-						st.setObject(idx++, ufile.getInfoColumnData());
-						this.setBlobData(st, idx++, (UploadFile) ufile, meta);
-					}
-					i++;
-					continue;
-				}
+				logger.debug("{}:{}={}", idx, p , v);
 				if (v == null) {
 					st.setNull(idx, this.getParameterType(meta, idx));
 				} else {
-					if (v instanceof FileObject) {
-						logger.debug(() -> "valueClass=" + v.getClass().getName());
+					if (v instanceof UploadFile) {
+						this.setBlobData(st, idx, (UploadFile) v, meta);
+					} else if (v instanceof FileObject) {
 						this.setBlobData(st, idx, (FileObject) v, meta);
 					} else {
 						st.setObject(idx, v);
