@@ -28,6 +28,7 @@ import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.response.BinaryResponse.Disposition;
 import jp.dataforms.fw.response.ImageResponse;
+import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
@@ -43,6 +44,11 @@ import lombok.Setter;
  * </pre>
  */
 public class UploadField extends Field<UploadFile> implements SqlBlob {
+	/**
+	 * ダウンロードファイル一時ファイルを記録するセッションキー。
+	 */
+	public static final String DOWNLOADING_UPLOAD_FILE = "downloadingUploadFile_";
+
 	/**
 	 * Logger.
 	 */
@@ -270,22 +276,14 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 * @throws Exception 例外。
 	 */
 	public UploadFile readUploadFile(final Map<String, Object> param) throws Exception {
-		String downloadingFile = (String) param.get("downloadingFile");
-		logger.debug(() -> "downloadingFile=" + downloadingFile);
 		Dao dao = new Dao(this);
 		String tblclass = (String) param.get("table");
 		@SuppressWarnings("unchecked")
 		Class<? extends Table> cls = (Class<? extends Table>) Class.forName(tblclass);
 		Table table = cls.getDeclaredConstructor().newInstance();
 		Map<String, Object> data = table.getPkFieldList().convertClientToServer(param);
-		UploadFile fobj = null;
-		if (!StringUtil.isBlank(downloadingFile)) {
-//			fobj = dao.queryBlobFileInfo(table, (String) param.get("fieldId"), data);
-//			fobj.setTempFile(new File(downloadingFile));
-		} else {
-			fobj = dao.queryBlobUploadFile(table, (String) param.get("fieldId"), data);
-		}
-		return fobj;
+		UploadFile uploadFile = dao.queryBlobUploadFile(table, (String) param.get("fieldId"), data);
+		return uploadFile;
 	}
 
 	/**
@@ -301,44 +299,35 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		Map<String, Object> param = p;
 		String key = (String) p.get("key");
 		logger.debug(() -> "key=" + key);
+		UploadFile uploadFile = null;
 		if (key != null) {
 			param = this.decryptDownloadParameter(key);
-			// FIXME:ストリーミング対応。
-			
-			// Rangeヘッダが指定されていた場合、送信中ファイルがあればそれをセットする。
-/*			if (!StringUtil.isBlank(req.getHeader("Range"))) {
-				String sessionKey = DOWNLOADING_FILE + key;
-				logger.debug(() -> "*sessionKey=" + sessionKey);
-				String downloadingFile = (String) req.getSession().getAttribute(sessionKey);
-				if (downloadingFile != null) {
-					File tf = new File(downloadingFile);
-					if (tf.exists()) {
-						param.put("downloadingFile", downloadingFile);
-					}
-				}
-			}
-*/
 			logger.debug("param={}", param);
+			if (!StringUtil.isBlank(req.getHeader("Range"))) {
+				// Rangeヘッダが指定されていた場合、ダウンロード中ファイルがあればそれをセッションから取得する。
+				String sessionKey = DOWNLOADING_UPLOAD_FILE + key;
+				logger.debug(() -> "*sessionKey=" + sessionKey);
+				uploadFile = (UploadFile) req.getSession().getAttribute(sessionKey);
+			}
 		}
-
-		UploadFile fobj = this.readUploadFile(param);
-		BinaryResponse resp = new BinaryResponse(fobj);
+		if (uploadFile == null) {
+			// ダウンロード中のファイルが無ければ、DBからファイルを取得する。
+			uploadFile = this.readUploadFile(param);
+		}
+		BinaryResponse resp = new BinaryResponse(uploadFile);
 		resp.setRequest(req);
+		resp.setTempFile(uploadFile.getServerFile()); // 通常のダウンロードの場合、送信後一時ファイルを削除する。
 		if ("inline".equals(mode)) {
 			resp.setContentDisposition(Disposition.INLINE);
 		}
-//		resp.setTempFile(store.getTempFile(fobj));
-//		resp.setContentDisposition(this.contentDisposition);
-/*		if (key != null) {
-			if (!store.isSeekingSupported()) {
-				// BLOBでRangeヘッダが指定されていた場合、一時ファイルのパスをセッションに記録する。
-				if (!StringUtil.isBlank(req.getHeader("Range"))) {
-					req.getSession().setAttribute(DOWNLOADING_FILE + key, fobj.getTempFile().getAbsolutePath());
-					resp.setTempFile(null); // 転送終了時にファイルを削除しないようにする。
-				}
+		if (key != null) {
+			if (!StringUtil.isBlank(req.getHeader("Range"))) {
+				// Rangeヘッダがある場合、セッションにアップロードファイルを記録する。
+				req.getSession().setAttribute(DOWNLOADING_UPLOAD_FILE + key, uploadFile);
+				resp.setTempFile(null); // ストリーミング送信の場合送信が終了しても、一時ファイルを削除しない。
 			}
 		}
-*/		return resp;
+		return resp;
 	}
 	
 	/**
@@ -468,4 +457,27 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return prop;
 	}
 	
+	/**
+	 * ダウンロード中のファイルを削除します。
+	 * @param p パラメータ。
+	 * @return 処理結果。
+	 * @throws Exception 例外。
+	 */
+	@WebMethod
+	public JsonResponse deleteDownloadingFile(final Map<String, Object> p) throws Exception {
+		String key = (String) p.get("key");
+		logger.debug(() -> "key=" + key);
+		if (key != null) {
+			String sessionKey = DOWNLOADING_UPLOAD_FILE + key;
+			logger.debug("deleteDownloadingFile session=" + sessionKey);
+			UploadFile uploadFile = (UploadFile) this.getPage().getRequest().getSession().getAttribute(sessionKey);
+			if (uploadFile != null) {
+				uploadFile.deleteServerFile();
+				this.getPage().getRequest().getSession().removeAttribute(sessionKey);
+			}
+		}
+		JsonResponse resp = new JsonResponse(JsonResponse.SUCCESS, "");
+		return resp;
+	}
+
 }

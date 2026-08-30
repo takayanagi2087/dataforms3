@@ -72,7 +72,7 @@ export class UploadField extends Field {
 			logger.log("UploadField:", this);
 			this.setupThumbnai();
 			this.setupVideoPlayer();
-			this.setupPlayerEvent(this.getAudioPlayer());
+			this.setupAudioPlayer();
 		}
 	}
 
@@ -141,6 +141,27 @@ export class UploadField extends Field {
 		}
 		this.setupPlayerEvent(this.getVideoPlayer());
 	}
+
+	/**
+	 * ビデオプレーヤーの設定を行います。
+	 */
+	setupAudioPlayer() {
+		let apid = this.id + "_ap";
+		let apdiv = this.parent.get(apid);
+		apdiv.width(this.audioPlayerWidth);
+		apdiv.find("audio").width(this.audioPlayerWidth);
+		if (this.audioPlayerHeight != null) {
+			apdiv.height(this.audioPlayerHeight);
+			apdiv.find("audio").css("height", "auto");
+			apdiv.css("line-height", this.audioPlayerHeight + "px");
+		}　else {
+			// サムネイルの高さがnullの場合自動調整。
+			apdiv.css("height", "auto");
+		}
+		this.setupPlayerEvent(this.getAudioPlayer());
+	}
+	
+	
 	/**
 	 * プレーヤーのイベントを設定します。
 	 * @param {jQuery} player プレーヤー。
@@ -149,26 +170,26 @@ export class UploadField extends Field {
 		player.on("abort", (ev) => {
 			logger.log("abort");
 			setTimeout(() => {
-				this.deleteTempFile(ev);
+				this.deleteDownloadingFile(ev);
 			}, 3000);
 		});
 		player.on("ended", (ev) => {
 			logger.log("ended");
 			setTimeout(() => {
-				this.deleteTempFile(ev);
+				this.deleteDownloadingFile(ev);
 			}, 3000);
 		});
 	}
 	
 	/**
-	 * サーバ中のストリーミングデータの一時ファイルを削除します。
+	 * ダウンロード中のファイルを削除します。
 	 */
-	async deleteTempFile(ev) {
+	async deleteDownloadingFile(ev) {
 		try {
 			let player = $(ev.currentTarget);
 			let key = player.attr("data-key");
 			logger.log("key=" + key);
-			let m = this.getWebMethod("deleteTempFile");
+			let m = this.getWebMethod("deleteDownloadingFile");
 			await m.execute(key);
 		} catch (e) {
 			currentPage.reportError(e);
@@ -285,6 +306,13 @@ export class UploadField extends Field {
 			vp.attr("src", url);
 		} else if (ct.indexOf("audio/") == 0) {
 			logger.log("audio");
+			let vpid = this.id + "_ap"; // サムネイルID.
+			this.parent.get(vpid).show();
+			let vp = this.parent.find("#" + this.selectorEscape(vpid) + " audio");
+			let f = fld.get()[0];
+			let url = URL.createObjectURL(f.files[0])
+			logger.log("url=" + url);
+			vp.attr("src", url);
 		}
 	}
 
@@ -318,7 +346,20 @@ export class UploadField extends Field {
 			this.downloadUrl = null;
 		}
 	}
-		
+	
+	/**
+	 * ダウンロードURLを取得します。
+	 * @param {Object} value ファイル情報。
+	 */
+	getDownloadUrl(value) {
+		let url = location.pathname + "?dfMethod=" + encodeURIComponent(this.getUniqId()) + ".download"  + "&" + value.downloadParameter;
+		if (currentPage.csrfToken != null) {
+			url += "&csrfToken=" + currentPage.csrfToken;
+		}
+		return url;
+	}
+	
+	
 	/**
 	 * サーバーファイルのプレビューを設定します。
 	 * @param {Object} value ファイル情報。
@@ -333,6 +374,24 @@ export class UploadField extends Field {
 				let thid = this.id + "_thm";
 				this.parent.get(thid).show();
 				this.setServerImageThumbnail(value);
+			} else if (ct.indexOf("video/") == 0) {
+				let vpid = this.id + "_vp";
+				this.parent.get(vpid).show();
+				let video = this.parent.get(vpid).find("video");
+				this.downloadParameter = value.downloadParameter;
+				let url = this.getDownloadUrl(value);
+				video.attr("src", url);
+				video.attr("data-key", value.downloadParameter);
+				this.downloadUrl = url;
+			} else if (ct.indexOf("audio/") == 0) {
+				let apid = this.id + "_ap";
+				this.parent.get(apid).show();
+				let audio = this.parent.get(apid).find("audio");
+				this.downloadParameter = value.downloadParameter;
+				let url = this.getDownloadUrl(value);
+				audio.attr("src", url);
+				audio.attr("data-key", value.downloadParameter);
+				this.downloadUrl = url;
 			}
 		}
 	}
@@ -534,7 +593,7 @@ export class UploadField extends Field {
 	 */
 	getAudioPlayer() {
 		let playerid = this.id + "_ap"; 
-		let player = this.parent.get(playerid).find("video");
+		let player = this.parent.get(playerid).find("audio");
 		return player;
 	}
 

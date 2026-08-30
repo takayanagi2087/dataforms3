@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.Part;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -21,12 +25,18 @@ import lombok.Setter;
  * FileObjectが複雑になったため作り直し。
  * </pre>
  */
-public class UploadFile {
+public class UploadFile implements Serializable {
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 8175309329781854657L;
+	
 	/**
 	 * Logger.
 	 */
-//	private static Logger logger = LogManager.getLogger(UploadFile.class);
+	private static Logger logger = LogManager.getLogger(UploadFile.class);
 	
+
 	/**
 	 *　このサイズを以下の場合ファイルを一時ファイルに保存する。
 	 */
@@ -80,6 +90,7 @@ public class UploadFile {
 	 * DBにファイルパスを記録する場合はそのパスを設定する。
 	 * </pre>
 	 */
+	@Getter
 	private File serverFile = null;
 	
 	
@@ -299,5 +310,15 @@ public class UploadFile {
 		this.setFileName(sp[0]);
 		this.setSize(Long.parseLong(sp[1]));
 	}
-	
+
+	/**
+	 * サーバーに保存されたファイルが存在する場合削除します。
+	 * @throws Exception 例外。
+	 */
+	public void deleteServerFile() {
+		if (this.serverFile != null) {
+			logger.debug("deleteServerFile=" + this.serverFile.getAbsolutePath());
+			this.serverFile.delete();
+		}
+	}
 }
