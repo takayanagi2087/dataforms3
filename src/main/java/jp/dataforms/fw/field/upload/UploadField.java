@@ -95,6 +95,23 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	@Getter
 	private Integer thumbnailHeight = null;
 	
+	
+	/**
+	 * ビデオプレーヤー幅。
+	 */
+	@Setter
+	@Getter
+	private Integer videoPlayerWidth = 420;
+	/**
+	 * ビデオプレーヤー高さ。
+	 */
+	@Setter
+	@Getter
+	private Integer videoPlayerHeight = null;
+	
+
+	
+	
 	/**
 	 * コンストラクタ。
 	 * @param fieldId フィールドID。
@@ -104,7 +121,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "bytea");
 		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longblob");
 	}
-	
 	
 	@Override
 	public void init() throws Exception {
@@ -131,7 +147,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 			throw new ApplicationError(e);
 		}
 	}
-	
 	
 	/**
 	 * {@inheritDoc}
@@ -215,7 +230,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return ret;
 	}
 
-	
 	/**
 	 * ダウンロードパラメータの解読を行います。
 	 * @param key キー。
@@ -240,7 +254,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return "key=" + this.encryptDownloadParameter(p);
 	}
 
-	
 	/**
 	 * 対応するblobフィールドにはファイルの内容のみを記録します。
 	 * さらに情報カラムを別途作成し、ファイル名とそのサイズを記録します。
@@ -249,7 +262,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	public boolean hasFileInfoColumn() {
 		return true;
 	}
-
 
 	/**
 	 * UploadFileをDBから読み込みます。
@@ -275,7 +287,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		}
 		return fobj;
 	}
-
 
 	/**
 	 * ファイルをダウンロードします。
@@ -329,7 +340,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		}
 */		return resp;
 	}
-	
 	
 	/**
 	 * 画像データを読み込みます。
@@ -393,8 +403,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return ret;
 	}
 
-
-
 	/**
 	 * 画像を縮小します。
 	 * @param uf 画像データ。
@@ -430,8 +438,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return ret;
 	}
 
-
-	
 	/**
 	 * サムネイル画像をダウンロードします。
 	 * @param param パラメータ。
@@ -450,7 +456,6 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return resp;
 	}
 
-
 	@Override
 	public Map<String, Object> getProperties() throws Exception {
 		Map<String, Object> prop = super.getProperties();
@@ -458,6 +463,8 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		prop.put("preview", this.preview);
 		prop.put("thumbnailWidth", this.thumbnailWidth);
 		prop.put("thumbnailHeight", this.thumbnailHeight);
+		prop.put("videoPlayerWidth", this.videoPlayerWidth);
+		prop.put("videoPlayerHeight", this.videoPlayerHeight);
 		return prop;
 	}
 	

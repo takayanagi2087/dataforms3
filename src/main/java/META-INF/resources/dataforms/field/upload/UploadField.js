@@ -71,7 +71,7 @@ export class UploadField extends Field {
 			}
 			logger.log("UploadField:", this);
 			this.setupThumbnai();
-			this.setupPlayerEvent(this.getVideoPlayer());
+			this.setupVideoPlayer();
 			this.setupPlayerEvent(this.getAudioPlayer());
 		}
 	}
@@ -123,6 +123,24 @@ export class UploadField extends Field {
 		this.setupThumbnailEvent();
 	}
 	
+	/**
+	 * ビデオプレーヤーの設定を行います。
+	 */
+	setupVideoPlayer() {
+		let vpid = this.id + "_vp";
+		let vpdiv = this.parent.get(vpid);
+		vpdiv.width(this.videoPlayerWidth);
+		vpdiv.find("video").width(this.videoPlayerWidth);
+		if (this.videoPlayerHeight != null) {
+			vpdiv.height(this.videoPlayerHeight);
+			vpdiv.find("video").css("height", "auto");
+			vpdiv.css("line-height", this.videoPlayerHeight + "px");
+		}　else {
+			// サムネイルの高さがnullの場合自動調整。
+			vpdiv.css("height", "auto");
+		}
+		this.setupPlayerEvent(this.getVideoPlayer());
+	}
 	/**
 	 * プレーヤーのイベントを設定します。
 	 * @param {jQuery} player プレーヤー。
@@ -256,6 +274,17 @@ export class UploadField extends Field {
 			this.parent.get(thumbid).show();
 			let thumb = this.parent.find("#" + this.selectorEscape(thumbid) + " img");
 			this.previewImage(fld, thumb);
+		} else if (ct.indexOf("video/") == 0) {
+			logger.log("video");
+			let vpid = this.id + "_vp"; // サムネイルID.
+			this.parent.get(vpid).show();
+			let vp = this.parent.find("#" + this.selectorEscape(vpid) + " video");
+			let f = fld.get()[0];
+			let url = URL.createObjectURL(f.files[0])
+			logger.log("url=" + url);
+			vp.attr("src", url);
+		} else if (ct.indexOf("audio/") == 0) {
+			logger.log("audio");
 		}
 	}
 
