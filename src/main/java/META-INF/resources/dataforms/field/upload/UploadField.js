@@ -170,23 +170,23 @@ export class UploadField extends Field {
 		player.on("abort", (ev) => {
 			logger.log("abort");
 			setTimeout(() => {
-				this.deleteDownloadingFile(ev);
+				this.deleteDownloadingFile($(ev.currentTarget));
 			}, 3000);
 		});
 		player.on("ended", (ev) => {
 			logger.log("ended");
 			setTimeout(() => {
-				this.deleteDownloadingFile(ev);
+				this.deleteDownloadingFile($(ev.currentTarget));
 			}, 3000);
 		});
 	}
 	
 	/**
 	 * ダウンロード中のファイルを削除します。
+	 * @param {jQuery} player プレーヤー。
 	 */
-	async deleteDownloadingFile(ev) {
+	async deleteDownloadingFile(player) {
 		try {
-			let player = $(ev.currentTarget);
 			let key = player.attr("data-key");
 			logger.log("key=" + key);
 			let m = this.getWebMethod("deleteDownloadingFile");

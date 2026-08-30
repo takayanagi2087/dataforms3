@@ -495,5 +495,18 @@ export class Form extends WebComponent {
 		}
 		hid.val(val);
 	}
+	
+	/**
+	 * フォームが隠れた場合の処理を行います。
+	 */
+	onHide() {
+		logger.log("onHide form=" + this.id);
+		this.find("video").each((_, v) => {
+			v.pause();
+		});
+		this.find("audio").each((_, a) => {
+			a.pause();
+		});
+	}
 }
 

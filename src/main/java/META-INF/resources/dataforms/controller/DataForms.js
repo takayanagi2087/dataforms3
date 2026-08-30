@@ -107,6 +107,32 @@ export class DataForms extends WebComponent {
 			// 編集フォームがない場合
 			this.get("newButton").hide();
 		}
+		this.setupFormHideEvent();	// フォームが隠れた場合のイベントを登録。
+	}
+	
+	/**
+	 * フォームが隠れた場合のイベントを登録します。
+	 */
+	setupFormHideEvent() {
+		const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+				// 監視対象のフォームが非表示になったとき
+				if (!entry.isIntersecting) {
+					// 非表示になったフォーム自体を jQuery オブジェクトとして取得
+					const currentForm = $(entry.target);
+					// どのフォームが非表示になったか区別するために、IDやname属性を取得
+					const formId = currentForm.attr("data-id");
+					logger.log("フォーム（" + formId + "）が非表示になりました");
+					let f = this.getComponent(formId);
+					f.onHide();
+				}
+			});
+		}, { threshold: 0 });
+		// 2. ページ内のすべてのフォームにループ処理で監視を設定
+		this.find("form").each((_, f) => {
+			// fは現在のループにある生のフォーム要素（DOM）
+			observer.observe(f);
+		 });		
 	}
 
 	/**
