@@ -461,8 +461,21 @@ export class Page extends DataForms {
 		});
 		$(window).resize(() => { this.onResize(); });
 		this.resolveIdAttr();
+		$(window).on("pagehide", () => {
+			this.onPageHide();
+		});
 	}
 
+	/**
+	 * ページが閉じたときのイベント処理。
+	 */
+	async onPageHide() {
+		let url = this.contextPath + "/dataforms/api/DeleteDownloadingApi.api";
+//		navigator.sendBeacon(url, {});
+		await fetch(url);
+//		alert(url);
+	}
+	
 	/**
 	 * 指定したコンポーネント以下の要素にrealIdを設定します。
 	 * @param {WebComponent} cmp 親コンポーネント。

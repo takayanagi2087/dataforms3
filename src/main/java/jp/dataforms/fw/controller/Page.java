@@ -1420,5 +1420,4 @@ public class Page extends DataForms implements WebEntryPoint {
 	public String getPageDescription() {
 		return "";
 	}
-	
 }

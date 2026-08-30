@@ -313,12 +313,26 @@ public class UploadFile implements Serializable {
 
 	/**
 	 * サーバーに保存されたファイルが存在する場合削除します。
+	 * @return 削除に成功した場合true。
 	 * @throws Exception 例外。
 	 */
-	public void deleteServerFile() {
-		if (this.serverFile != null) {
-			logger.debug("deleteServerFile=" + this.serverFile.getAbsolutePath());
-			this.serverFile.delete();
+	public Boolean deleteServerFile() {
+		Boolean ret = false;
+		try {
+			if (this.serverFile != null) {
+				// 他スレッドでロックされていることがあるのでリトライする。
+				for (int i = 0; i < 10; i++) {
+					if (this.serverFile.delete()) {
+						logger.debug("deleted=" + this.serverFile.getAbsolutePath());
+						ret = true;
+						break;
+					}
+					Thread.sleep(200);
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(e.getMessage(), e);
 		}
+		return ret;
 	}
 }
