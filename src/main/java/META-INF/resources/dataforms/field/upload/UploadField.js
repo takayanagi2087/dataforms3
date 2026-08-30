@@ -69,15 +69,95 @@ export class UploadField extends Field {
 			} else {
 				pvdiv.hide();
 			}
-			let thmid = this.id + "_thm";
-			let thmdiv = this.parent.get(thmid);
-			thmdiv.width(this.previewWidth);
-			thmdiv.height(this.previewHeight);
-			thmdiv.css("line-height", this.previewHeight + "px");
-			
-			this.setThumbnailEvent();
+			logger.log("UploadField:", this);
+			this.setupThumbnai();
+			this.setupPlayerEvent(this.getVideoPlayer());
+			this.setupPlayerEvent(this.getAudioPlayer());
 		}
 	}
+
+	/**
+	 * サムネイルのイベントを設定します。
+	 */
+	setupThumbnailEvent() {
+		let linkid = this.id + "_link";
+		let link = this.parent.get(linkid);
+		let thumbid = this.id + "_thm"; // サムネイルID.
+		let thumb = this.parent.get(thumbid);
+		thumb.click(() => {
+			let fval = this.get().val();
+			let val = {};
+			if (fval.length == 0) {
+				val.fileName = link.attr("data-value");
+				val.size = link.attr("data-size");
+				val.downloadParameter = link.attr("data-dlparam");
+			} else {
+				let fl = this.get().get()[0].files[0];
+				let url = URL.createObjectURL(fl);
+				val.fileName = fl.name;
+				val.size = fl.size;
+				val.url = url;
+				logger.log("url=" + url);
+			}
+			if (val.fileName.length > 0) {
+				this.showImage(val);
+			}
+		});
+	}
+
+	
+	/**
+	 * サムネイルの設定を行います。
+	 */
+	setupThumbnai() {
+		let thmid = this.id + "_thm";
+		let thmdiv = this.parent.get(thmid);
+		thmdiv.width(this.thumbnailWidth);
+		if (this.thumbnailHeight != null) {
+			thmdiv.height(this.thumbnailHeight);
+			thmdiv.css("line-height", this.thumbnaiHeight + "px");
+		}　else {
+			// サムネイルの高さがnullの場合自動調整。
+			thmdiv.css("height", "auto");
+		}
+		this.setupThumbnailEvent();
+	}
+	
+	/**
+	 * プレーヤーのイベントを設定します。
+	 * @param {jQuery} player プレーヤー。
+	 */	
+	setupPlayerEvent(player) {
+		player.on("abort", (ev) => {
+			logger.log("abort");
+			setTimeout(() => {
+				this.deleteTempFile(ev);
+			}, 3000);
+		});
+		player.on("ended", (ev) => {
+			logger.log("ended");
+			setTimeout(() => {
+				this.deleteTempFile(ev);
+			}, 3000);
+		});
+	}
+	
+	/**
+	 * サーバ中のストリーミングデータの一時ファイルを削除します。
+	 */
+	async deleteTempFile(ev) {
+		try {
+			let player = $(ev.currentTarget);
+			let key = player.attr("data-key");
+			logger.log("key=" + key);
+			let m = this.getWebMethod("deleteTempFile");
+			await m.execute(key);
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+
+	
 	
 	/**
 	 * 指定されたURLの画像を表示します。
@@ -110,36 +190,6 @@ export class UploadField extends Field {
 //		}
 	}
 
-	
-	/**
-	 * サムネイルのイベントを設定します。
-	 */
-	setThumbnailEvent() {
-		let linkid = this.id + "_link";
-		let link = this.parent.get(linkid);
-		let thumbid = this.id + "_thm"; // サムネイルID.
-		let thumb = this.parent.get(thumbid);
-		thumb.click(() => {
-			let fval = this.get().val();
-			let val = {};
-			if (fval.length == 0) {
-				val.fileName = link.attr("data-value");
-				val.size = link.attr("data-size");
-				val.downloadParameter = link.attr("data-dlparam");
-			} else {
-				let fl = this.get().get()[0].files[0];
-				let url = URL.createObjectURL(fl);
-				val.fileName = fl.name;
-				val.size = fl.size;
-				val.url = url;
-				logger.log("url=" + url);
-			}
-			if (val.fileName.length > 0) {
-				this.showImage(val);
-			}
-		});
-	}
-	
 	/**
 	 * ファイルフィールドに付随する各種コンポーネントを配置します。
 	 * @param comp ファイルフィールド。
@@ -438,4 +488,25 @@ export class UploadField extends Field {
 		}
 		return null;
 	}
+	
+	/**
+	 * ビデオプレーヤーを取得します。
+	 * @returns {jQuery} ビデオプレーヤー。
+	 */
+	getVideoPlayer() {
+		let playerid = this.id + "_vp";
+		let player = this.parent.get(playerid).find("video");
+		return player;
+	}
+	
+	/**
+	 * 音声プレーヤーを取得します。
+	 * @returns {jQuery} 音声プレーヤー。
+	 */
+	getAudioPlayer() {
+		let playerid = this.id + "_ap"; 
+		let player = this.parent.get(playerid).find("video");
+		return player;
+	}
+
 }

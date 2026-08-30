@@ -83,14 +83,17 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 */
 	@Setter
 	@Getter
-	private int previewWidth = 128;
+	private Integer thumbnailWidth = 128;
 
 	/**
 	 * プレビュー枠の高さ。
+	 * <pre>
+	 * nullを指定すると画像の比率に合わせて高さを調整します。
+	 * </pre>
 	 */
 	@Setter
 	@Getter
-	private int previewHeight = 128;
+	private Integer thumbnailHeight = null;
 	
 	/**
 	 * コンストラクタ。
@@ -438,7 +441,12 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	@WebMethod(useDB = true)
 	public ImageResponse downloadThumbnail(final Map<String, Object> param) throws Exception {
 		UploadFile image = this.readImageData(param);
-		ImageResponse resp = new ImageResponse(this.getReducedImage(image, this.previewWidth, this.previewHeight));
+		Integer h = this.thumbnailHeight;
+		if (h == null) {
+			// 高さがnullの場合widthと同じに設定で縮小する。
+			h = this.thumbnailWidth;
+		}
+		ImageResponse resp = new ImageResponse(this.getReducedImage(image, this.thumbnailWidth, h));
 		return resp;
 	}
 
@@ -448,8 +456,8 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		Map<String, Object> prop = super.getProperties();
 		prop.put("contentTypeList", DataFormsServlet.getConf().getApplication().getContentTypeList());
 		prop.put("preview", this.preview);
-		prop.put("previewWidth", 128);
-		prop.put("previewHeight", 128);
+		prop.put("thumbnailWidth", this.thumbnailWidth);
+		prop.put("thumbnailHeight", this.thumbnailHeight);
 		return prop;
 	}
 	
