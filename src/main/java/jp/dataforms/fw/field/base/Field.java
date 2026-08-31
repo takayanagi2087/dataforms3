@@ -1792,7 +1792,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	/**
 	 * ファイル情報カラムの接尾後。
 	 */
-	public static final String FILE_INFO_SUFFIX = "xxxfinfoxxx";
+	public static final String FILE_INFO_SUFFIX = "finfo";
 	
 	
 	/**
