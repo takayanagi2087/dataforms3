@@ -471,9 +471,7 @@ export class Page extends DataForms {
 	 */
 	async onPageHide() {
 		let url = this.contextPath + "/dataforms/api/DeleteDownloadingApi.api";
-//		navigator.sendBeacon(url, {});
-		await fetch(url);
-//		alert(url);
+		navigator.sendBeacon(url, {});
 	}
 	
 	/**
