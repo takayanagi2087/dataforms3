@@ -355,6 +355,16 @@ div.audioPlayer {
 	border: 2px solid #0B85A1;
 }
 
+.uploadReceiver {
+	width: auto;
+	border: 2px dotted #0B85A1;
+}
+
+.uploadReceiverActive {
+	border: 2px solid #0B85A1;
+}
+
+
 /**
  * カレンダーテーブルのスタイル。
  */

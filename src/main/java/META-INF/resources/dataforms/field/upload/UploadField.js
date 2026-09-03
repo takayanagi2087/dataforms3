@@ -4,9 +4,81 @@
 
 'use strict';
 
-// import { MessagesUtil } from '../../util/MessagesUtil.js';
-// import { ValidationError } from '../../validator/ValidationError.js';
+import { MessagesUtil } from '../../util/MessagesUtil.js';
+import { ValidationError } from '../../validator/ValidationError.js';
 import { Field } from '../base/Field.js';
+
+
+ /**
+ * @class FileReceiver
+ * ファイルDrag&Drop受付領域。
+ * @extends Field
+ */
+class UploadReceiver {
+
+	/**
+	 * UploadField.
+	 */
+	#uploadField = null;
+	
+	/**
+	 * コンストラクタ。
+	 * @param {UploadField} uploadField ファイルフィールド。
+	 */
+	constructor(uploadField) {
+		this.#uploadField = uploadField;
+	}
+
+	/**
+	 * HTMLエレメントとの対応付けを行います。
+	 * <pre>
+	 * ファイルのドロップイベントの設定を行います。
+	 * </pre>
+	 */
+	attach() {
+		let msg = MessagesUtil.getMessage("message.uploadreceiver")
+		logger.log("realId=" + this.#uploadField.realId);
+		let rdiv = this.#uploadField.parent.find("[data-id='" + this.#uploadField.id + "_rcv']");
+		rdiv.text(msg);
+		rdiv.show();
+
+		rdiv.on("dragenter", (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			$(ev.target).addClass("uploadReceiverActive");
+		});
+
+		rdiv.on("dragover", (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+		});
+
+		rdiv.on("drop", (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			$(ev.target).removeClass("uploadReceiverActive");
+			this.setFile(ev.originalEvent.dataTransfer.files);
+		});
+
+		rdiv.on("dragleave", (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			$(ev.target).removeClass("uploadReceiverActive");
+		});
+
+	}
+
+	/**
+	 * ファイルを設定します。
+	 * @param {Array} ファイルリスト。
+	 */
+	setFile(files) {
+		let el = this.#uploadField.get().get()[0];
+		el.files = files;
+		this.#uploadField.selectFile(this.#uploadField.get());
+	}
+}
+
 
 /**
  * @class UploadField
@@ -55,10 +127,12 @@ export class UploadField extends Field {
 		} else {
 			this.parent.get(selid).hide();
 		}
-/*		if (this.enableFileReceiver) {
-			let r = new FileReceiver(this);
-			r.attach();
-		}*/
+		if (this.enableReceiver) {
+			if (this.get().prop("tagName") == "INPUT") {
+				let r = new UploadReceiver(this);
+				r.attach();
+			}
+		}
 		logger.log("contentTypeList=", this.contentTypeList);
 		// preview領域の設定。
 		{

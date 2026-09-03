@@ -116,7 +116,14 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	private Integer videoPlayerHeight = null;
 	
 
+	/**
+	 * レシーバーの有効/無効を設定します。
+	 */
+	@Getter
+	@Setter
+	private Boolean enableReceiver = Boolean.FALSE;
 	
+
 	
 	/**
 	 * コンストラクタ。
@@ -454,6 +461,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		prop.put("thumbnailHeight", this.thumbnailHeight);
 		prop.put("videoPlayerWidth", this.videoPlayerWidth);
 		prop.put("videoPlayerHeight", this.videoPlayerHeight);
+		prop.put("enableReceiver", this.enableReceiver);
 		return prop;
 	}
 	
