@@ -33,6 +33,7 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.CryptUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,20 +63,44 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	/**
 	 * 保存先。
 	 */
-//	public enum Store {
-//		/** サーバー上のファイル。 */
-//		FILE
-//		/** DB上のBLOBフィールド。 */
-//		, BLOB
-//	}
+	public enum Store {
+		/** 
+		 * サーバー上のファイル。 
+		 * <pre>
+		 * varcharに保存したファイルのパスを保存します。
+		 * </pre>
+		 */
+		FILE
+		/** 
+		 * DB上のBLOBフィールド。
+		 * <pre> 
+		 * ファイルをBLOBに記録します。
+		 * </pre>
+		 */
+		, BLOB
+	}
 
 	
 	/**
 	 * 保存先。
 	 */
-//	@Getter
-//	@Setter
-//	private Store store = Store.BLOB;
+	@Getter(AccessLevel.PROTECTED)
+	private Store store = Store.BLOB;
+
+	/**
+	 * DB保存先を設定します。
+	 * @param store 保存先。
+	 */
+	protected void setStore(Store store) {
+		this.store = store;
+		if (store == Store.FILE) {
+			this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, null);
+			this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, null);
+		} else {
+			this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "bytea");
+			this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longblob");
+		}
+	}
 	
 	/**
 	 * Previewを行うかどうかを設定します。
@@ -131,8 +156,9 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 */
 	public UploadField(final String fieldId) {
 		super(fieldId);
-		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "bytea");
-		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longblob");
+//		this.setDbDependentType(PgsqlSqlGenerator.DATABASE_PRODUCT_NAME, "bytea");
+//		this.setDbDependentType(MysqlSqlGenerator.DATABASE_PRODUCT_NAME, "longblob");
+		this.setStore(Store.BLOB);
 	}
 	
 	@Override
@@ -141,6 +167,18 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		this.setAdditionalHtml(this.getPage().getPageFramePath() + "/UploadField.html");
 	}
 
+	/**
+	 * データベースの型を取得します。
+	 * @return データベースの型。
+	 */
+	public String getDatabaseType() {
+		if (this.getStore() == UploadField.Store.BLOB) {
+			return "blob";
+		} else {
+			return "varchar(1024)";
+		}
+	}
+	
 	/**
 	 * クライアントからPostされたファイルを設定します。
 	 * @param v Postされたファイルに対応するPartクラスのインスタンス。

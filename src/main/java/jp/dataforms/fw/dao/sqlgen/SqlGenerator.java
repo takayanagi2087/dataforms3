@@ -363,6 +363,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			ret = "time";
 		} else if (field instanceof SqlTimestamp) {
 			ret = "timestamp";
+		} else if (field instanceof UploadField) {
+			// UploadFieldの場合はstoreプロパティで、Blobを使うかどうかを判定する。
+			UploadField uf = (UploadField) field;
+			String type = uf.getDatabaseType();
+			ret = type;
 		} else if (field instanceof SqlBlob) {
 			ret = "blob";
 		} else if (field instanceof SqlClob) {
@@ -817,6 +822,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 
 	/**
 	 * 指定したテーブルのInsert文を作成します。
+	 * <pre>
+	 * データのインポート用のSQLを生成します。
+	 * CreateTimestampField,UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
+	 * </pre>
 	 * @param table テーブル。
 	 * @return insert文。
 	 */
@@ -1714,6 +1723,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * <pre>
 	 * dataがnullの場合condFieldに指定されたフィールドに完全一致する条件式が作成されます。
 	 * dataかnot nullの場合、generateQuerySqlと同様にcondFieldに対応するデータが存在するフィールド条件のみ作成されます。
+	 * データのインポート用のSQLを生成します。
+	 * UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
 	 * </pre>
 	 * @return sql。
 	 */
@@ -1774,6 +1785,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 
 	/**
 	 * 標準的な更新SQLを取得します。
+	 * <pre>
+	 * データのインポート用のSQLを生成します。
+	 * UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
+	 * </pre>
 	 * @param table テーブル。
 	 * @return sql。
 	 */
