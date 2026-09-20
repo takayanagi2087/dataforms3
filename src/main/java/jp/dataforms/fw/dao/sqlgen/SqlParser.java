@@ -189,7 +189,8 @@ public class SqlParser {
 		if (is != null) {
 			this.blobIsList.add(is);
 			// FIXME: oracleはParameterMetaDataがサポートされていないので対策を行う。
-			int type = meta.getParameterType(idx);
+//			int type = meta.getParameterType(idx);
+			int type = this.getParameterType(meta, idx);
 			if (type == java.sql.Types.BLOB) {
 				st.setBlob(idx, is);
 			} else {
