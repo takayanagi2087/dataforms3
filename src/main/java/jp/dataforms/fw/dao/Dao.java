@@ -592,7 +592,7 @@ public class Dao implements JDBCConnectableObject {
 				while (rset.next()) {
 					Map<String, Object> m = new HashMap<String, Object>();
 					for (int i = 1; i <= meta.getColumnCount(); i++) {
-						String name = this.sqlGenerator.getColumnName(meta, i);
+						String name = this.sqlGenerator.getColumnName(meta, i).toLowerCase();
 						if (Field.isFileInfoColumn(name)) {
 							UploadFile obj = this.readUploadFile(rset, i);
 							m.put(StringUtil.snakeToCamel(Field.removeFileInfoSuffix(name)), obj);
