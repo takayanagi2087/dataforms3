@@ -221,8 +221,16 @@ public class SqlParser {
 					st.setNull(idx, this.getParameterType(meta, idx));
 				} else {
 					if (v instanceof UploadFile) {
-						this.setBlobData(st, idx, (UploadFile) v, meta);
+						UploadFile uf = (UploadFile) v;
+						if (uf.getSavedFilePath() != null) {
+							// フォルダーにファイルが保存されている場合。
+							st.setObject(idx, uf.getSavedFilePath());
+						} else {
+							// BLOBにファイルを保存。
+							this.setBlobData(st, idx, (UploadFile) v, meta);
+						}
 					} else if (v instanceof FileObject) {
+						// 将来的には非推奨
 						this.setBlobData(st, idx, (FileObject) v, meta);
 					} else {
 						st.setObject(idx, v);

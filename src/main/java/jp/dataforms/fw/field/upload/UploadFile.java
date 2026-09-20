@@ -109,6 +109,13 @@ public class UploadFile implements Serializable {
 	private String downloadParameter = null;
 	
 	/**
+	 * 保存されたファイルのパス。
+	 */
+	@Getter
+	@Setter
+	private String savedFilePath = null;
+	
+	/**
 	 * コンストラクタ。
 	 */
 	public UploadFile() {

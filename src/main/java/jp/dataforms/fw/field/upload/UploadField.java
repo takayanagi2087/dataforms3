@@ -3,6 +3,14 @@ package jp.dataforms.fw.field.upload;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +38,12 @@ import jp.dataforms.fw.response.BinaryResponse.Disposition;
 import jp.dataforms.fw.response.ImageResponse;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.ConfUtil.Conf;
 import jp.dataforms.fw.util.CryptUtil;
+import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
+import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.util.StringUtil;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -84,7 +94,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	/**
 	 * 保存先。
 	 */
-	@Getter(AccessLevel.PROTECTED)
+	@Getter
 	private Store store = Store.BLOB;
 
 	/**
@@ -233,6 +243,30 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	}
 	
 	/**
+	 * DBに記録する値を取得します。
+	 * @return DBに記録する値。
+	 */
+	@Override
+	public Object getDBValue() {
+		Object ret = super.getDBValue();
+		if (ret != null) {
+			if (this.getStore() != Store.FILE) {
+				// ファイルに展開する。
+				return super.getDBValue();
+			} else {
+				// ファイルに展開する。
+				try {
+					this.saveFileStore();
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+					throw new ApplicationError(e);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	/**
 	 * 原作条件に使用しない。
 	 */
 	@Override
@@ -255,8 +289,19 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
 			java.util.Date now = new java.util.Date();
 			m.put("ts", fmt.format(now));
-			for (Field<?> f : table.getPkFieldList()) {
-				m.put(f.getId(), d.get(f.getId()).toString());
+			if (this.getStore() == Store.BLOB) {
+				for (Field<?> f : table.getPkFieldList()) {
+					m.put(f.getId(), d.get(f.getId()).toString());
+				}
+				m.put("store", "blob");
+			} else {
+				UploadFile uf = (UploadFile) d.get(this.getId());
+				if (uf != null) {
+					m.put("savedFilePath", uf.getSavedFilePath());
+					m.put("fileName", uf.getFileName());
+					m.put("size", uf.getSize());
+				}
+				m.put("store", "file");
 			}
 		} else {
 			logger.warn(() -> "Table not found. field ID=" + this.getId());
@@ -315,22 +360,55 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	}
 
 	/**
-	 * UploadFileをDBから読み込みます。
-	 * @param param パラメータ。
+	 * UploadFileをBLOBから読み込みます。
+	 * @param p パラメータ。
 	 * @return UploadFileのオブジェクト。
 	 * @throws Exception 例外。
 	 */
-	public UploadFile readUploadFile(final Map<String, Object> param) throws Exception {
+	public UploadFile readUploadFileFromBlob(final Map<String, Object> p) throws Exception {
 		Dao dao = new Dao(this);
-		String tblclass = (String) param.get("table");
+		String tblclass = (String) p.get("table");
 		@SuppressWarnings("unchecked")
 		Class<? extends Table> cls = (Class<? extends Table>) Class.forName(tblclass);
 		Table table = cls.getDeclaredConstructor().newInstance();
-		Map<String, Object> data = table.getPkFieldList().convertClientToServer(param);
-		UploadFile uploadFile = dao.queryBlobUploadFile(table, (String) param.get("fieldId"), data);
+		Map<String, Object> data = table.getPkFieldList().convertClientToServer(p);
+		UploadFile uploadFile = dao.queryBlobUploadFile(table, (String) p.get("fieldId"), data);
 		return uploadFile;
 	}
+	
+	/**
+	 * UploadFileをFileから読み込みます。
+	 * @param p パラメータ。
+	 * @return UploadFileのオブジェクト。
+	 * @throws Exception 例外。
+	 */
+	public UploadFile readUploadFileFromFile(final Map<String, Object> p) throws Exception {
+		UploadFile ret = new UploadFile();
+		String basePath = DataFormsServlet.getConf().getApplication().getUploadDataFolder();
+		String fileName = (String) p.get("fileName");
+		Long size = NumberUtil.longValue(p.get("size"));
+		String savedFilePath = basePath + (String) p.get("savedFilePath");
+		ret.setFileName(fileName);
+		ret.setSize(size);
+		try (InputStream is = new FileInputStream(savedFilePath)) {
+			ret.setContents(is);
+		}
+		return ret;
+	}
 
+	/**
+	 * ファイルストアからアップロードファイルを読み込みます。
+	 * @param p パラメータ。
+	 * @return UploadFileのオブジェクト。
+	 */
+	protected UploadFile readUploadFile(final Map<String, Object> p) throws Exception {
+		if (this.getStore() == Store.BLOB) {
+			return this.readUploadFileFromBlob(p);
+		} else {
+			return this.readUploadFileFromFile(p);
+		}
+	}
+	
 	/**
 	 * ファイルをダウンロードします。
 	 * @param p パラメータ。
@@ -361,7 +439,8 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		}
 		BinaryResponse resp = new BinaryResponse(uploadFile);
 		resp.setRequest(req);
-		resp.setTempFile(uploadFile.getServerFile()); // 通常のダウンロードの場合、送信後一時ファイルを削除する。
+		// ダウンロードの場合、送信後一時ファイルを削除する。
+		resp.setTempFile(uploadFile.getServerFile()); 
 		if ("inline".equals(mode)) {
 			resp.setContentDisposition(Disposition.INLINE);
 		}
@@ -526,4 +605,78 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		return resp;
 	}
 
+	/**
+	 * アップロードされたファイルを保存するファイル名を作成します。
+	 * <pre>
+	 * デフォルトではdataforms.conf.jsoncのuploadDataFolderに指定されたフォルダ中に
+	 * 以下の形式のファイルをFiles.createTempFileで作成します。
+	 * /table名/yyyyMM/uploadFilexxxxxxxxxxxx.bin
+	 * 
+	 * 1フォルダ中のファイルの登録数で問題が発生する場合、このメソッドをオーバーライドして適切に修正してください。
+	 * </pre>
+	 * 
+	 * @param upBase　アップロードデータフォルダー。
+	 * @param tableName テーブル名。
+	 * @return　保存先のファイル名。
+	 * @throws Exception　例外。
+	 */
+	protected Path getUniqFile(final String upBase, final String tableName) throws Exception {
+		java.util.Date today = new java.util.Date();
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMM");
+		String path = upBase + File.separator + tableName  + File.separator + fmt.format(today);
+		logger.debug("getUniqFile path=" + path);
+		File dir = new File(path);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		Path directory = Paths.get(path); 
+		Path uniqueFile = Files.createTempFile(directory, "uploadFile", ".bin");
+		logger.debug("getUniqFile uniqueFile=" + uniqueFile);
+		return uniqueFile;
+	}
+	
+	/**
+	 * アップロードされたファイルを保存します。
+	 * @param table テーブル。
+	 * @param uf　アップロードファイル。
+	 * @return　保存先ファイルのパス。
+	 * @throws Exception　例外。
+	 */
+	private String saveUniqFile(final Table table, final UploadFile uf) throws Exception {
+		Conf conf = DataFormsServlet.getConf();
+		String upBase = conf.getApplication().getUploadDataFolder();
+		logger.debug("upBase = " + upBase);
+		Path path = this.getUniqFile(upBase, table.getTableName());
+		try (InputStream is = uf.getInputStream()) {
+			try (OutputStream os = new FileOutputStream(path.toFile())) {
+				FileUtil.copyStream(is, os);
+			}
+		}
+		String strPath = path.toString();
+		String ret = strPath.substring(upBase.length());
+		uf.setSavedFilePath(ret);
+		return ret;
+	}
+	
+	/**
+	 * アップロードされたファイルをOSのファイルシステムに保存ます。
+	 * @throws Exception 例外。
+	 */
+	
+	public void saveFileStore() throws Exception {
+		logger.debug("saveFileStore");
+		if (this.getStore() == Store.FILE) {
+			// 保存先はOSのファイル。
+			Table table = this.getTable();
+			if (table != null) {
+				logger.debug("table=" + table.getTableName());
+				// テーブルに配置されたフィールド
+				UploadFile uf = this.getValue();
+				if (uf != null) {
+					// アップロードされている
+					this.saveUniqFile(table, uf);
+				}
+			}
+		}
+	}
 }

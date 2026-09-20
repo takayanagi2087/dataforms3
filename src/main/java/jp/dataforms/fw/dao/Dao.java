@@ -56,6 +56,8 @@ import jp.dataforms.fw.field.sqltype.SmallintField;
 import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.Store;
 import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
@@ -556,6 +558,14 @@ public class Dao implements JDBCConnectableObject {
 							is.close();
 						}
 					}
+				} 
+			}
+		} else {
+			if (ret != null) {
+				int type = meta.getColumnType(idx + 1);
+				if (type == Types.VARCHAR) {
+					ret.setSavedFilePath(rset.getString(idx + 1));
+					logger.debug("ret savedFilePath = " + ret.getSavedFilePath());
 				}
 			}
 		}
@@ -1003,6 +1013,24 @@ public class Dao implements JDBCConnectableObject {
 	}
 
 	/**
+	 * OS中のフォルダーに記録されたファイルフィールドであるかを判定します。
+	 * @param f フィールド。
+	 * @return OS中のフォルダーに記録されたファイルフィールドである場合true。
+	 */
+	private Boolean isFolderFile(final Field<?> f) {
+		Boolean ret = false;
+		if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			ret = true;
+		} else if (f instanceof UploadField) {
+			UploadField uf = (UploadField) f;
+			if (uf.getStore() == Store.FILE) {
+				ret = true;
+			}
+		}
+		return ret;
+	}
+	
+	/**
 	 * 削除ファイルリスト。
 	 * @param table テーブル。
 	 * @param data データ。
@@ -1013,17 +1041,29 @@ public class Dao implements JDBCConnectableObject {
 	private List<String> getOldFileList(final Table table, final Map<String, Object> data, final boolean forDelete) throws Exception {
 		List<String> ret = new ArrayList<String>();
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			// if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			if (this.isFolderFile(f)) {
 				String kf = (String) data.get(f.getId() + "Kf");
 				if ("0".equals(kf) || forDelete) {
 					FileObjectQuery query = new FileObjectQuery(table, f.getId(), data);
 					Map<String, Object> map = this.executeRecordQuery(query);
-					FileObject oldfile = (FileObject) map.get(f.getId());
-					if (oldfile != null) {
-						File tf = oldfile.getTempFile();
-						if (tf != null) {
-							ret.add(tf.getAbsolutePath());
-							logger.info(() -> "deleteFile=" + tf.getAbsolutePath() + "," + kf);
+					Object o = map.get(f.getId());
+					if (o instanceof UploadFile) {
+						UploadFile oldfile = (UploadFile) map.get(f.getId());
+						if (oldfile != null) {
+							String upBase = DataFormsServlet.getConf().getApplication().getUploadDataFolder();
+							String path = upBase + oldfile.getSavedFilePath();
+							ret.add(path);
+							logger.info(() -> "deleteFile=" + path + "," + kf);
+						}
+					} else if (o instanceof FileObject) {
+						FileObject oldfile = (FileObject) map.get(f.getId());
+						if (oldfile != null) {
+							File tf = oldfile.getTempFile();
+							if (tf != null) {
+								ret.add(tf.getAbsolutePath());
+								logger.info(() -> "deleteFile=" + tf.getAbsolutePath() + "," + kf);
+							}
 						}
 					}
 				}
@@ -1234,7 +1274,7 @@ public class Dao implements JDBCConnectableObject {
 	private boolean folderStoreFileExists(final Table table) {
 		boolean ret = false;
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			if (this.isFolderFile(f)) {
 				ret = true;
 				break;
 			}
