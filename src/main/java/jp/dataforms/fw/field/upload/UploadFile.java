@@ -47,13 +47,13 @@ public class UploadFile implements Serializable {
 	 */
 	public enum Type {
 		/** 任意のファイル。 */
-		FILE
+		FILE, 
 		/** 画像のファイル。 */
-		, IMAGE
+		IMAGE, 
 		/** 音声。 */
-		, AUDIO
+		AUDIO,
 		/** 動画。 */
-		, VIDEO
+		VIDEO
 	}
 
 	/**
@@ -188,10 +188,8 @@ public class UploadFile implements Serializable {
 	
 	/**
 	 * ファイルを含むPartクラスのインスタンス。を設定します。
-	 * <pre>
-	 * Webからアップロードされたファイルの情報を設定します。
-	 * </pre>
-	 * @param part　ファイルPart。
+	 * @param part ファイルPart。
+	 * @throws Exception 例外。
 	 */
 	public void setPart(final Part part) throws Exception {
 		this.serverFile = null;
@@ -321,7 +319,6 @@ public class UploadFile implements Serializable {
 	/**
 	 * サーバーに保存されたファイルが存在する場合削除します。
 	 * @return 削除に成功した場合true。
-	 * @throws Exception 例外。
 	 */
 	public Boolean deleteServerFile() {
 		Boolean ret = false;

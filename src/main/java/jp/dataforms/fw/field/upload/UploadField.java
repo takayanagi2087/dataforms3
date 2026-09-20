@@ -76,18 +76,14 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	public enum Store {
 		/** 
 		 * サーバー上のファイル。 
-		 * <pre>
 		 * varcharに保存したファイルのパスを保存します。
-		 * </pre>
 		 */
-		FILE
+		FILE, 
 		/** 
 		 * DB上のBLOBフィールド。
-		 * <pre> 
 		 * ファイルをBLOBに記録します。
-		 * </pre>
 		 */
-		, BLOB
+		BLOB
 	}
 
 	
@@ -400,6 +396,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 * ファイルストアからアップロードファイルを読み込みます。
 	 * @param p パラメータ。
 	 * @return UploadFileのオブジェクト。
+	 * @throws Exception 例外。
 	 */
 	protected UploadFile readUploadFile(final Map<String, Object> p) throws Exception {
 		if (this.getStore() == Store.BLOB) {
@@ -617,8 +614,8 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	 * 
 	 * @param upBase　アップロードデータフォルダー。
 	 * @param tableName テーブル名。
-	 * @return　保存先のファイル名。
-	 * @throws Exception　例外。
+	 * @return 保存先のファイル名。
+	 * @throws Exception 例外。
 	 */
 	protected Path getUniqFile(final String upBase, final String tableName) throws Exception {
 		java.util.Date today = new java.util.Date();
