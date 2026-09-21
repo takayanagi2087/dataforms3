@@ -154,7 +154,7 @@
 				// MySQL　データソースの設定例
 				, "mySQL": {
 					"driverClassName": "com.mysql.jdbc.Driver"
-					, "url": "jdbc:mysql://dbserver/${dbname}?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
+					, "url": "jdbc:mysql://dbserver/${dbname}?zeroDateTimeBehavior=CONVERT_TO_NULL&generateSimpleParameterMetadata=true&useInformationSchema=true&useOldAliasMetadataBehavior=true&characterEncoding=utf8"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5
