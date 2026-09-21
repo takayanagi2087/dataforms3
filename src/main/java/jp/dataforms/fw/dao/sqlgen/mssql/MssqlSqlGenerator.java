@@ -17,6 +17,8 @@ import jp.dataforms.fw.dao.sqldatatype.SqlTimestamp;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.Store;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -285,6 +287,13 @@ public class MssqlSqlGenerator extends SqlGenerator {
 		String type = super.getDatabaseType(field);
 		if (field instanceof SqlTimestamp) {
 			type = "datetime";
+		} else if (field instanceof UploadField) {
+			UploadField uf = (UploadField) field;
+			if (uf.getStore() == Store.BLOB) {
+				type = "varbinary(max)";
+			} else {
+				type = "varchar(1024)";
+			}
 		} else if (field instanceof SqlBlob) {
 			type = "varbinary(max)";
 		} else if (field instanceof SqlClob) {
