@@ -300,7 +300,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 				m.put("store", "file");
 			}
 		} else {
-			logger.warn(() -> "Table not found. field ID=" + this.getId());
+			m = null;
 		}
 		return m;
 	}
@@ -343,7 +343,11 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 	@Override
 	public String getBlobDownloadParameter(Map<String, Object> m) {
 		Map<String, Object> p = this.getDownloadInfoMap(m);
-		return "key=" + this.encryptDownloadParameter(p);
+		if (p != null) {
+			return "key=" + this.encryptDownloadParameter(p);
+		} else {
+			return null;
+		}
 	}
 
 	/**

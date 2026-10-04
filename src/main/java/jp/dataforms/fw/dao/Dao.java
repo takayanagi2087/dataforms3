@@ -42,7 +42,6 @@ import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.exception.ConstraintViolationException;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
-import jp.dataforms.fw.field.common.BlobStoreFileField;
 import jp.dataforms.fw.field.common.FileObjectField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
 import jp.dataforms.fw.field.sqltype.BigintField;
@@ -382,18 +381,25 @@ public class Dao implements JDBCConnectableObject {
 		private int scale = 0;
 
 		/**
+		 * UploadFileフラグ。
+		 */
+		private Boolean uploadField = null;
+		
+		/**
 		 * コンストラクタ。
 		 * @param id フィールドID。
 		 * @param type データタイプ。
 		 * @param precision データタイプ。
 		 * @param scale データタイプ。
+		 * @param uf UploadFieldフラグ。
 		 *
 		 */
-		public ColumnInfo(final String id, final int type, final int precision, final int scale) {
+		public ColumnInfo(final String id, final int type, final int precision, final int scale, final boolean uf) {
 			this.id = StringUtil.snakeToCamel(id);
 			this.type = type;
 			this.precision = precision;
 			this.scale = scale;
+			this.uploadField = uf;
 		}
 
 		/**
@@ -435,13 +441,15 @@ public class Dao implements JDBCConnectableObject {
 		 */
 		public Field<?> getDefaultFieldInstance() {
 			Field<?> ret = null;
-			if (this.getType() == Types.BIGINT) {
+			if (this.uploadField) {
+				ret = new UploadField(this.getId());
+			} else if (this.getType() == Types.BIGINT) {
 				ret = new BigintField(this.getId());
 			} else if (this.getType() == Types.BLOB
 					 || this.getType() == Types.BINARY
 					 || this.getType() == Types.LONGVARBINARY
 					 || this.getType() == Types.VARBINARY) {
-				ret = new BlobStoreFileField(this.getId());
+//				ret = new BlobStoreFileField(this.getId());
 			} else if (this.getType() == Types.CHAR) {
 				ret = new CharField(this.getId(), this.getPrecision());
 			} else if (this.getType() == Types.CLOB) {
@@ -482,10 +490,16 @@ public class Dao implements JDBCConnectableObject {
 	private void setResultSetMetaData(final ResultSetMetaData meta) throws Exception {
 		this.resultSetColumnList = new ArrayList<ColumnInfo>();
 		for (int i = 1; i <= meta.getColumnCount(); i++) {
-//			String name = meta.getColumnName(i);
 			String name = this.sqlGenerator.getColumnName(meta, i);
 			int type = meta.getColumnType(i);
-			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i));
+			boolean uf = false;
+			if (type == Types.VARCHAR && Field.isFileInfoColumn(name.toLowerCase())) {
+				uf = true;
+				i++;
+				name = this.sqlGenerator.getColumnName(meta, i);
+				logger.debug("upload column name=" + name);
+			}
+			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i), uf);
 			this.resultSetColumnList.add(ci);
 		}
 	}

@@ -21,9 +21,9 @@ import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.NumericField;
 import jp.dataforms.fw.field.sqltype.SmallintField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
+import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
-import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
 
 
@@ -55,6 +55,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		this.addField(new NumericField("dummyNumeric", 16, 2));
 		this.addField(new CharField("dummyChar", 1));
 		this.addField(new SortOrderField("dummySortOrder"));
+		this.addField(new UploadField("dummyUpload"));
 		
 		this.htmlTable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT);
 //		this.htmlTable.setFixedColumns(2);
@@ -111,7 +112,6 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		}
 		this.htmlTable.getFieldList().getOrderByFieldList(sortOrder);
 		ret.put("htmlTable", htmlTable.getProperties());
-		logger.debug("result=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 

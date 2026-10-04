@@ -441,31 +441,37 @@ export class UploadField extends Field {
 	setServerFilePreview(value) {
 		this.hideAllPreview();
 		if (value != null) {
-			logger.log("setServerFilePreview value=", value);
-			let ct = this.getContentType(value.fileName);
-			logger.log("contentType=" + ct);
-			if (ct.indexOf("image/") == 0) {
-				let thid = this.id + "_thm";
-				this.parent.get(thid).show();
-				this.setServerImageThumbnail(value);
-			} else if (ct.indexOf("video/") == 0) {
-				let vpid = this.id + "_vp";
-				this.parent.get(vpid).show();
-				let video = this.parent.get(vpid).find("video");
-				this.downloadParameter = value.downloadParameter;
-				let url = this.getDownloadUrl(value);
-				video.attr("src", url);
-				video.attr("data-key", value.downloadParameter);
-				this.downloadUrl = url;
-			} else if (ct.indexOf("audio/") == 0) {
-				let apid = this.id + "_ap";
-				this.parent.get(apid).show();
-				let audio = this.parent.get(apid).find("audio");
-				this.downloadParameter = value.downloadParameter;
-				let url = this.getDownloadUrl(value);
-				audio.attr("src", url);
-				audio.attr("data-key", value.downloadParameter);
-				this.downloadUrl = url;
+			if (value.downloadParameter != null) {
+				logger.log("setServerFilePreview value=", value);
+				let ct = this.getContentType(value.fileName);
+				logger.log("contentType=" + ct);
+				if (ct.indexOf("image/") == 0) {
+					let thid = this.id + "_thm";
+					this.parent.get(thid).show();
+					this.setServerImageThumbnail(value);
+				} else if (ct.indexOf("video/") == 0) {
+					let vpid = this.id + "_vp";
+					this.parent.get(vpid).show();
+					let video = this.parent.get(vpid).find("video");
+					this.downloadParameter = value.downloadParameter;
+					let url = this.getDownloadUrl(value);
+					video.attr("src", url);
+					video.attr("data-key", value.downloadParameter);
+					this.downloadUrl = url;
+				} else if (ct.indexOf("audio/") == 0) {
+					let apid = this.id + "_ap";
+					this.parent.get(apid).show();
+					let audio = this.parent.get(apid).find("audio");
+					this.downloadParameter = value.downloadParameter;
+					let url = this.getDownloadUrl(value);
+					audio.attr("src", url);
+					audio.attr("data-key", value.downloadParameter);
+					this.downloadUrl = url;
+				}
+			} else {
+				let linkid = this.id + "_link";
+				let fnlink = this.parent.get(linkid);
+				fnlink.removeAttr("href");
 			}
 		}
 	}
