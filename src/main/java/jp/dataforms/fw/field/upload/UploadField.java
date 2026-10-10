@@ -33,6 +33,7 @@ import jp.dataforms.fw.dao.sqlgen.mysql.MysqlSqlGenerator;
 import jp.dataforms.fw.dao.sqlgen.pgsql.PgsqlSqlGenerator;
 import jp.dataforms.fw.exception.ApplicationError;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.response.BinaryResponse.Disposition;
 import jp.dataforms.fw.response.ImageResponse;
@@ -247,7 +248,7 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		Object ret = super.getDBValue();
 		if (ret != null) {
 			if (this.getStore() != Store.FILE) {
-				// ファイルに展開する。
+				// BLOBの場合
 				return super.getDBValue();
 			} else {
 				// ファイルに展開する。
@@ -679,5 +680,71 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * エクスボードファイル情報。
+	 */
+	public record ExpFileInfo(String filenamem, Long length, String saveFile) {}
+	
+	/**
+	 * 保存ファイル名を作成します。
+	 * @param filename ファイル名。
+	 * @param data レコードマップ。
+	 * @return 保存ファイル名。
+	 */
+	private String getSaveFile(final String filename, final Map<String, Object> data) {
+		String ret = null;
+		Table t = this.getTable();
+		if (t != null) {
+			FieldList pklist = t.getPkFieldList();
+			StringBuilder sb = new StringBuilder();
+			for (Field<?> f: pklist) {
+				if (sb.length() > 0) {
+					sb.append("_");
+				}
+				sb.append(data.get(f.getId()).toString());
+			}
+			sb.append("_");
+			sb.append(this.getId());
+			sb.append("_");
+			sb.append(filename);
+			ret = sb.toString();
+		}
+		return ret;
+	}
+	
+	/**
+	 * エクスボードファイル情報を取得します。
+	 * @param data レコードデータ。
+	 * @param filePath ファイルパス。
+	 * @return エクスボードファイル情報。
+	 * @throws Exception 例外。
+	 */
+	public ExpFileInfo getExpFileInfo(final Map<String, Object> data, final String filePath) throws Exception {
+		ExpFileInfo ret = null;
+		UploadFile v = (UploadFile) data.get(this.getId());
+		if (v != null) {
+			String filename = v.getFileName();
+			Long size = v.getSize();
+			String saveFile = this.getSaveFile(filename, data);
+			ret = new ExpFileInfo(filename, size, saveFile);
+//			uploadFile = this.readUploadFile(param);
+			Map<String, Object> dlmap = this.getDownloadInfoMap(data);
+			logger.debug("dlmap=" + dlmap);
+			UploadFile uf = this.readUploadFile(dlmap);
+			File savePath = new File(filePath);
+			if (!savePath.exists()) {
+				savePath.mkdirs();
+			}
+			try (FileOutputStream os = new FileOutputStream(savePath + File.separator + saveFile)) {
+				try (InputStream is = uf.getInputStream()) {
+					FileUtil.copyStream(is, os);
+				}
+			} finally {
+				uf.deleteServerFile();
+			}
+		}
+		return ret;
 	}
 }

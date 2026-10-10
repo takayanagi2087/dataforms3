@@ -274,7 +274,10 @@ public class SqlParser {
 			for (String p : this.paramnames) {
 				Object v = this.getParam(p, param);
 				if (v != null) {
-					if (v instanceof FileObject) {
+					if (v instanceof UploadFile) {
+						UploadFile uf = (UploadFile) v;
+						uf.deleteServerFile();
+					} else if (v instanceof FileObject) {
 						logger.debug(() -> "removeBlobTempFile class=" + v.getClass().getName());
 						FileObject f = (FileObject) v;
 						if (f.getTempFile() != null) {

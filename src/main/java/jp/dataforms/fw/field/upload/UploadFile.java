@@ -324,6 +324,7 @@ public class UploadFile implements Serializable {
 		Boolean ret = false;
 		try {
 			if (this.serverFile != null) {
+				logger.debug("delete server file=" + this.serverFile);
 				// 他スレッドでロックされていることがあるのでリトライする。
 				for (int i = 0; i < 10; i++) {
 					if (this.serverFile.delete()) {

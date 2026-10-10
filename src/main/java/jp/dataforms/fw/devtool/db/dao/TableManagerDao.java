@@ -46,6 +46,8 @@ import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.ExpFileInfo;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
@@ -437,7 +439,23 @@ public class TableManagerDao extends Dao {
 										String id = fld.getId();
 										Object value = m.get(id);
 										logger.debug("id=" + id + ", value=" + value + ", class=" + fld.getClass().getName());
-										if (fld instanceof FileField) {
+										if (fld instanceof UploadField) {
+											UploadField uff = (UploadField) fld;
+											ExpFileInfo finfo = uff.getExpFileInfo(m, filePath);
+											if (finfo != null) {
+												writer.name(id);
+												writer.beginObject();
+												try {
+													writer.name("filename").value(finfo.filenamem());
+													writer.name("length").value(finfo.length());
+													writer.name("saveFile").value(finfo.saveFile());
+												} finally {
+													writer.endObject();
+												}
+											} else {
+												writer.name(id).nullValue();
+											}
+										} else if (fld instanceof FileField) {
 											if (value != null) {
 												writer.name(id);
 												Map<String, Object> finfo = TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m);
