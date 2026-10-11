@@ -747,4 +747,24 @@ public class UploadField extends Field<UploadFile> implements SqlBlob {
 		}
 		return ret;
 	}
+	
+	/**
+	 * インポートデータからファイルオブジェクトを取得します。
+	 * @param map インポートフィールドマップ。
+	 * @param filePath ファイルの保存パス。
+	 * @return FileObject形式のデータ。
+	 * @throws Exception 例外。
+	 */
+	public UploadFile getFileObjectFromImportMap(final Map<String, Object> map, final String filePath) throws Exception {
+		UploadFile ret = new UploadFile();
+		ret.setFileName((String) map.get("filename"));
+		File f = new File(filePath + "/" + (String) map.get("saveFile"));
+		logger.debug("getFileObjectFromImportMap f=" + f.getAbsolutePath());
+		ret.setSize(f.length());
+		try (InputStream is = new FileInputStream(f)) {
+			ret.setContents(is);
+		}
+		return ret;
+	}
+
 }

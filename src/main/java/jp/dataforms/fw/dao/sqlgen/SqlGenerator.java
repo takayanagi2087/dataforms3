@@ -850,6 +850,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
 		sb.append(") values (");
@@ -863,6 +867,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(":");
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(":");
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
@@ -1749,6 +1758,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				usb.append(" = ");
 				usb.append(this.generateUpdateFileFieldSql(f.getId()));
 				usb.append("\n");
+			} else if (f instanceof UploadField) {
+				usb.append(this.generateUpdateUploadFileSql(f));
 			} else {
 				usb.append(StringUtil.camelToSnake(f.getId()));
 				usb.append(" = :");

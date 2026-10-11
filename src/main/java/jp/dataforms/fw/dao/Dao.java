@@ -997,6 +997,7 @@ public class Dao implements JDBCConnectableObject {
 	public int executeInsert0(final Table table, final Map<String, Object> data) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
 		String sql = gen.generateInsertSql0(table);
+		logger.debug("executeInsert0 sql=" + sql);
 		this.setNewSequenceValue(table, data);
 		int ret = this.executeUpdate(sql, this.convertToDBValue(table.getFieldList(), data));
 		this.getAutoIncrementValue(table, data);

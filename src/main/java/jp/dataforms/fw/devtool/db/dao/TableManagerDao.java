@@ -48,6 +48,7 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.field.upload.UploadField.ExpFileInfo;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
@@ -525,7 +526,17 @@ public class TableManagerDao extends Dao {
 	private void convertImportData(final Map<String, Object> data, final String datadir, final Table table) throws Exception {
 		String filePath = datadir + "/" + table.getClass().getName().replaceAll("\\.", "/");
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileField) {
+			if (f instanceof UploadField) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> m = (Map<String, Object>) data.get(f.getId());
+				if (m != null) {
+					UploadField uf = (UploadField) f;
+					UploadFile obj = uf.getFileObjectFromImportMap(m, filePath);
+					data.put(f.getId(), obj);
+					String fid = StringUtil.snakeToCamel(f.getFileInfoColumnName());
+					data.put(fid, obj.getInfoColumnData());
+				}
+			} else if (f instanceof FileField) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> m = (Map<String, Object>) data.get(f.getId());
 				if (m != null) {
