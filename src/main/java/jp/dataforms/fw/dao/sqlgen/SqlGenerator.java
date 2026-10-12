@@ -1222,6 +1222,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		}
 		String spexp = query.getConditonExpression(f, p);
 		if (spexp != null) {
+			// 特殊なフィールド条件が返ってきた場合それをそのまま返す。
 			return spexp;
 		}
 		//logger.debug("field id=" + id + ",matchType=" + f.getMatchType() + ",v=" + v.toString());

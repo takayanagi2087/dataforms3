@@ -986,4 +986,23 @@ public class ConfUtil {
 		}
 		
 	}
+	
+	/**
+	 * DB再構築SQLを取得します。
+	 * 
+	 * @param dbname データベース名。
+	 * @param sqlfile SQLファイル名。
+	 * 
+	 * @return sqlファイルの内容。
+	 * @throws Exception 例外。
+	 */
+	public String getDbRebuildScript(final String dbname, final String sqlfile) throws Exception {
+		Class<?> cls = this.getClass();
+		InputStream is = cls.getResourceAsStream("./conf/dbRebuild/" + dbname + "/" + sqlfile);
+		String ret = new String(FileUtil.readInputStream(is), "utf-8");
+		logger.debug("sql = \n" + ret);
+		return ret;
+	}
+	
+
 }

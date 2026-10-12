@@ -21,6 +21,8 @@ import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.FieldValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * フィールドの基本クラス。
@@ -113,6 +115,10 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 		 * </pre>
 		 */
 		IN,
+		/**
+		 * 正規表現マッチング。
+		 */
+		REGEXP_LIKE
 	}
 
 
@@ -172,6 +178,13 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	 */
 	private MatchType matchType = Field.MatchType.FULL;
 
+	/**
+	 * matchTypeにREGEXP_LIKEが指定された場合の正規表現フラグ。
+	 */
+	@Getter
+	@Setter
+	private int regexpFlags = 0;
+	
 	/**
 	 * 問合せ結果フォームのフィールドタグ生成方法。
 	 */
@@ -297,7 +310,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	}
 
 	/**
-	 * 問合せ時のNot条件フラグを取得します。
+	 * 問合せ時のNot条件フラグを設定します。
 	 * @param notConditon 問合せ時のNot条件フラグ。
 	 * @return 設定したフィールド。
 	 */

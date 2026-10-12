@@ -315,6 +315,37 @@ public class InitDevelopmentToolForm extends EditForm {
 		fopdir.mkdirs();
 		FileUtil.writeTextFile(webSrcPath + "/WEB-INF/apachefop/fop.xconf", conf, "utf-8");
 	}
+
+	/**
+	 * データベースの構築スクリプトのコピー。
+	 * @param webSrcPath Webソースのパス。
+	 * @param dbname データベース名。
+	 * @throws Exception 例外。
+	 */
+	private void copyDbScript(final String webSrcPath, final String dbname) throws Exception {
+		ConfUtil util = new ConfUtil();
+		String beforeSql = util.getDbRebuildScript(dbname, "before.sql");
+		String afterSql = util.getDbRebuildScript(dbname, "after.sql");
+		File dir = new File(webSrcPath + "/WEB-INF/dbRebuild/" + dbname);
+		dir.mkdirs();
+		FileUtil.writeTextFile(dir.getAbsolutePath() + "/before.sql", beforeSql, "utf-8");
+		FileUtil.writeTextFile(dir.getAbsolutePath() + "/after.sql", afterSql, "utf-8");
+	}
+	
+	/**
+	 * データベースの構築スクリプトのコピー。
+	 * @param webSrcPath Webソースのパス。
+	 * @throws Exception 例外。
+	 */
+	private void copyDbScript(final String webSrcPath) throws Exception {
+		this.copyDbScript(webSrcPath, "derby");
+		this.copyDbScript(webSrcPath, "mariadb");
+		this.copyDbScript(webSrcPath, "mssql");
+		this.copyDbScript(webSrcPath, "mysql");
+		this.copyDbScript(webSrcPath, "oracle");
+		this.copyDbScript(webSrcPath, "pgsql");
+	}
+	
 	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
@@ -340,7 +371,7 @@ public class InitDevelopmentToolForm extends EditForm {
 		this.copyConfFile(webSrcPath, javaSrcPath, jndiPrefix, dataSource, derbyDbPath, projectName);
 
 		this.copyApacheFopXconf(webSrcPath);
-
+		this.copyDbScript(webSrcPath);
 	}
 	
 	@Override

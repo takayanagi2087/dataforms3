@@ -42,6 +42,7 @@ import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.exception.ConstraintViolationException;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FileObjectField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
 import jp.dataforms.fw.field.sqltype.BigintField;
@@ -470,8 +471,10 @@ public class Dao implements JDBCConnectableObject {
 				ret = new TimeField(this.getId());
 			} else if (this.getType() == Types.TIMESTAMP) {
 				ret = new TimestampField(this.getId());
-			} else if (this.getType() == Types.VARCHAR) {
+			} else if (this.getType() == Types.VARCHAR || this.getType() == Types.LONGVARCHAR) {
 				ret = new VarcharField(this.getId(), this.getPrecision());
+			} else if (this.getType() == Types.BOOLEAN) {
+				ret = new TextField(this.getId());
 			}
 			return ret;
 		}
@@ -497,8 +500,8 @@ public class Dao implements JDBCConnectableObject {
 				uf = true;
 				i++;
 				name = this.sqlGenerator.getColumnName(meta, i);
-				logger.debug("upload column name=" + name);
 			}
+			logger.debug("setResultSetMetaData name=" + name + ", type=" + type);
 			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i), uf);
 			this.resultSetColumnList.add(ci);
 		}
