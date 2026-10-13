@@ -54,9 +54,9 @@ public class DerbyFunctions {
 			if (lowerFlags.contains("m")) {
 				compileFlags |= Pattern.MULTILINE;
 			}
-			if (lowerFlags.contains("s")) {
+/*			if (lowerFlags.contains("s")) {
 				compileFlags |= Pattern.DOTALL;
-			}
+			}*/
 		}
 
 		try {

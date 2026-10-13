@@ -1214,10 +1214,12 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		String id = f.getId();
 		Object v = p.get(id);
 		if (v == null) {
+			// 入力されていない項目の条件は生成しない。
 			return ex;
 		}
 		String sv = v.toString();
 		if (StringUtil.isBlank(sv)) {
+			// 入力されていない項目の条件は生成しない。
 			return ex;
 		}
 		String spexp = query.getConditonExpression(f, p);
@@ -1227,73 +1229,172 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		}
 		//logger.debug("field id=" + id + ",matchType=" + f.getMatchType() + ",v=" + v.toString());
 		if (f.getMatchType() == MatchType.FULL) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (!f.isCaseInsensitive()) {
-					if (!f.isNotConditon()) {
-						ex = colname + " = :" + StringUtil.camelToSnake(id);
-					} else {
-						ex = colname + " <> :" + StringUtil.camelToSnake(id);
-					}
-				} else {
-					String lower = this.getLowerMethod();
-					if (!f.isNotConditon()) {
-						ex = lower + "(" + colname + ") = " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
-					} else {
-						ex = lower + "(" + colname + ") <> " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
-					}
-				}
-			}
+			ex = this.getFullMatchCondition(query, f);
 		} else if (f.getMatchType() == MatchType.BEGIN
 				|| f.getMatchType() == MatchType.END
 				|| f.getMatchType() == MatchType.PART) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (!f.isCaseInsensitive()) {
-					if (!f.isNotConditon()) {
-						ex = colname + " like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
-					} else {
-						ex = colname + " not like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+			ex = this.getLikeCondition(query, f);
+		} else if (f.getMatchType() == MatchType.RANGE_FROM) {
+			ex = this.getRengeFromCondition(query, f);
+		} else if (f.getMatchType() == MatchType.RANGE_TO) {
+			ex = this.getRangeToCondition(query, f);
+		} else if (f.getMatchType() == MatchType.IN) {
+			ex = this.getInCondition(query, f, v);
+		} else if (f.getMatchType() == MatchType.REGEXP_LIKE) {
+			// 正規表現マッチング
+			ex = this.getRegexpLikeCondition(query, f);
+		}
+		return ex;
+	}
+	
+	/**
+	 * 正規表現マッチングの条件式。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 例外。
+	 */
+	protected String getRegexpLikeCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			int flags = f.getRegexpFlags();
+			String flg = "";
+			if ((flags & Pattern.CASE_INSENSITIVE) != 0) {
+				flg += "i";
+			}
+			if ((flags & Pattern.MULTILINE) != 0) {
+				flg += "m";
+			}
+/*			if ((flags | Pattern.DOTALL) != 0) {
+				flg += "s";
+			}*/
+			if (flg.length() == 0) {
+				flg = "c";
+			}
+			ex = "regexp_like(" + colname + ", :" + StringUtil.camelToSnake(id)+ ", '" + flg + "')";
+		}
+		return ex;
+	}
+
+	/**
+	 * INの条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @param v　値リスト>
+	 * @return　INの条件式。
+	 */
+	protected String getInCondition(Query query, Field<?> f, Object v) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (v instanceof List) {
+				@SuppressWarnings("rawtypes")
+				List l = (List) v;
+				if (l.size() > 0) {
+					StringBuilder ary = new StringBuilder();
+					for (int i = 0; i < l.size(); i++) {
+						if (ary.length() > 0) {
+							ary.append(",");
+						}
+						ary.append(":" + StringUtil.camelToSnake(id) + "[" + i + "]");
 					}
-				} else {
-					String lower = this.getLowerMethod();
 					if (!f.isNotConditon()) {
-						ex = lower + "(" + colname + ") like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+						ex = colname + " in (" + ary.toString() + ")";
 					} else {
-						ex = lower + "(" + colname + ") not like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+						ex = colname + " not in (" + ary.toString() + ")";
 					}
 				}
 			}
-		} else if (f.getMatchType() == MatchType.RANGE_FROM) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				ex = colname + " >= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * 範囲終了の条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 範囲終了の条件式。
+	 */
+	protected String getRangeToCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			ex = colname + " <= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * 範囲開始の条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 範囲開始の条件式。
+	 */
+	protected String getRengeFromCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			ex = colname + " >= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * LIKE条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return LIKE条件式。
+	 */
+	protected String getLikeCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (!f.isCaseInsensitive()) {
+				if (!f.isNotConditon()) {
+					ex = colname + " like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+				} else {
+					ex = colname + " not like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+				}
+			} else {
+				String lower = this.getLowerMethod();
+				if (!f.isNotConditon()) {
+					ex = lower + "(" + colname + ") like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+				} else {
+					ex = lower + "(" + colname + ") not like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+				}
 			}
-		} else if (f.getMatchType() == MatchType.RANGE_TO) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				ex = colname + " <= :" + StringUtil.camelToSnake(id);
-			}
-		} else if (f.getMatchType() == MatchType.IN) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (v instanceof List) {
-					@SuppressWarnings("rawtypes")
-					List l = (List) v;
-					if (l.size() > 0) {
-						StringBuilder ary = new StringBuilder();
-						for (int i = 0; i < l.size(); i++) {
-							if (ary.length() > 0) {
-								ary.append(",");
-							}
-							ary.append(":" + StringUtil.camelToSnake(id) + "[" + i + "]");
-						}
-						if (!f.isNotConditon()) {
-							ex = colname + " in (" + ary.toString() + ")";
-						} else {
-							ex = colname + " not in (" + ary.toString() + ")";
-						}
-					}
+		}
+		return ex;
+	}
+
+	/**
+	 * 完全一致の条件式を作成します。
+	 * @param query　問い合わせクラス。
+	 * @param f フィールド。
+	 * @return　完全一致の条件式。
+	 */
+	protected String getFullMatchCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (!f.isCaseInsensitive()) {
+				if (!f.isNotConditon()) {
+					ex = colname + " = :" + StringUtil.camelToSnake(id);
+				} else {
+					ex = colname + " <> :" + StringUtil.camelToSnake(id);
+				}
+			} else {
+				String lower = this.getLowerMethod();
+				if (!f.isNotConditon()) {
+					ex = lower + "(" + colname + ") = " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
+				} else {
+					ex = lower + "(" + colname + ") <> " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
 				}
 			}
 		}

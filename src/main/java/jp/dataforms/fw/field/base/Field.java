@@ -180,6 +180,9 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 
 	/**
 	 * matchTypeにREGEXP_LIKEが指定された場合の正規表現フラグ。
+	 * <pre>
+	 * Pattern.CASE_INSENSITIVEとPattern.MULTILINEが有効。
+	 * </pre>
 	 */
 	@Getter
 	@Setter
