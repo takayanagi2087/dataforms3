@@ -20,6 +20,7 @@ import jp.dataforms.fw.field.sqltype.DateField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.NumericField;
 import jp.dataforms.fw.field.sqltype.SmallintField;
+import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
@@ -49,6 +50,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		// TODO: jsでimportを利用して改善したい。
 		this.addField(new DateField("dummyDate"));
 		this.addField(new TimestampField("dummyTimestamp"));
+		this.addField(new TimeField("dummyTime"));
 		this.addField(new SmallintField("dummySmallint"));
 		this.addField(new IntegerField("dummyInteger"));
 		this.addField(new BigintField("dummyBigint"));
