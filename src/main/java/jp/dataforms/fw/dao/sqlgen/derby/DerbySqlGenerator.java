@@ -12,6 +12,12 @@ import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 
+
+//日付の部分取得
+//select extract_field('month',timestamp(test_date, '00:00:00')) y from data_type
+//日付の加算
+//select date({fn timestampadd(sql_tsi_day, 3, timestamp(current_date, '00:00:00'))}) from sysibm.sysdummy1
+
 /**
  * Apache Derby用SQL Generator.
  *

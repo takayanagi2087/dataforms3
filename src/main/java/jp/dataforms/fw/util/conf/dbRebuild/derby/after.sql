@@ -26,3 +26,10 @@ NO SQL
 LANGUAGE JAVA
 EXTERNAL NAME 'jp.dataforms.fw.dao.sqlgen.derby.DerbyFunctions.regexpReplace';
 
+--　日付フィールドの取得関数
+CREATE FUNCTION EXTRACT_FIELD(unit VARCHAR(10), target TIMESTAMP)
+RETURNS INTEGER
+PARAMETER STYLE JAVA
+NO SQL
+LANGUAGE JAVA
+EXTERNAL NAME 'jp.dataforms.fw.dao.sqlgen.derby.DerbyFunctions.extractField';

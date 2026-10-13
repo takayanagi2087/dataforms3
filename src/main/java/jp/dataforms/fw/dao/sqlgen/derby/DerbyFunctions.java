@@ -1,10 +1,17 @@
 package jp.dataforms.fw.dao.sqlgen.derby;
 
+import java.util.Calendar;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+// 日付の部分取得
+// select extract_field('month',timestamp(test_date, '00:00:00')) y from data_type
+//　日付の加算
+// select date({fn timestampadd(sql_tsi_day, 3, timestamp(current_date, '00:00:00'))}) from sysibm.sysdummy1
+
 
 /**
  * Apache derbyがサポートしていない関数提供クラス。
@@ -79,10 +86,43 @@ public class DerbyFunctions {
 			// $1, $2 だけでなく Oracle互換の \1, \2 も自動置換
 			// String javaRep = replacement.replaceAll("\\\\([0-9])", "\\$$1");
 			String ret = source.replaceAll(pattern, replacement);
-			logger.debug("ret=" + ret);
 			return ret;
 		} catch (Exception e) {
 			return source;
+		}
+	}
+	
+	/**
+	 * Apache Derby用：日時から特定の要素を抽出するカスタム関数。
+	 * 
+	 * @param unit 抽出したい単位 ('YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND')
+	 * @param target 対象の日時データ
+	 * @return 抽出された数値（対象または単位が空なら null）
+	 */
+	public static Integer extractField(String unit, java.sql.Timestamp target) {
+		if (target == null || unit == null) {
+			return null;
+		}
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(target);
+
+		switch (unit.toUpperCase()) {
+			case "YEAR":
+				return cal.get(Calendar.YEAR);
+			case "MONTH":
+				// Calendar.MONTHは0から始まるため、SQLの仕様(1〜12)に合わせて+1する
+				return cal.get(Calendar.MONTH) + 1;
+			case "DAY":
+				return cal.get(Calendar.DAY_OF_MONTH);
+			case "HOUR":
+				return cal.get(Calendar.HOUR_OF_DAY);
+			case "MINUTE":
+				return cal.get(Calendar.MINUTE);
+			case "SECOND":
+				return cal.get(Calendar.SECOND);
+			default:
+				throw new IllegalArgumentException("Unsupported unit: " + unit);
 		}
 	}
 }
