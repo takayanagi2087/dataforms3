@@ -91,6 +91,31 @@ public class H2SqlGenerator extends SqlGenerator {
 
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String converTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.converTypeNameForDatabaseMetaData(type);
+		if ("character varying".equals(ret)) {
+			return "varchar";
+		} else if ("character".equals(ret)) {
+			return "char";
+		} else if ("character large object".equals(ret)) {
+			return "clob";
+		} else if ("binary large object".equals(ret)) {
+			return "blob";
+		}
+		
+		/*else if ("float".equals(ret)) {
+			return "real";
+		} else if (ret.indexOf("timestamp") == 0) {
+			return "timestamp";
+		}*/
+		return ret;
+	}
+
+	
+	/**
 	 * カラム名を取得します。
 	 * <pre>
 	 * 一般的なJDBCドライバーのgetColumnNameメソッドは以下のSQLのcollabelを返す。
@@ -141,7 +166,7 @@ public class H2SqlGenerator extends SqlGenerator {
 
 	@Override
 	public String generateRenameTableSql(final String oldname, final String newname) {
-		String sql = "RENAME TABLE " + oldname + " TO " + newname;
+		String sql = "ALTER TABLE " + oldname + " RENAME TO " + newname;
 		return sql;
 	}
 
