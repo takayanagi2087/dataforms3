@@ -339,6 +339,7 @@ public class InitDevelopmentToolForm extends EditForm {
 	 */
 	private void copyDbScript(final String webSrcPath) throws Exception {
 		this.copyDbScript(webSrcPath, "derby");
+		this.copyDbScript(webSrcPath, "h2");
 		this.copyDbScript(webSrcPath, "mariadb");
 		this.copyDbScript(webSrcPath, "mssql");
 		this.copyDbScript(webSrcPath, "mysql");

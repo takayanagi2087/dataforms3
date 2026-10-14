@@ -5,7 +5,7 @@ import jp.dataforms.fw.field.base.Field;
 /**
  * SQLフィールドクラス。
  * <pre>
- * QueryのfieldListにnew SqlField("yyy", "to_char(x.fuge_hoge)")を追加すると、以下のようなsqlを作成します。
+ * QueryのfieldListにnew SqlField(new CharField("yyy"), "to_char(x.fuge_hoge)")を追加すると、以下のようなsqlを作成します。
  * select to_char(x.fuge_hoge) as yyy ...
  * 任意の関数やサブクエリでフィールド値を取得するときに使用します。
  * </pre>
