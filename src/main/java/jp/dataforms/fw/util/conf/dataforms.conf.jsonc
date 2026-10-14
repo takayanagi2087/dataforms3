@@ -126,6 +126,8 @@
 					, "initialSize": 5
 					, "maxTotal": 20
 					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "INDEX .+\\.(.+?) ON"
+					, "foreignKeyErrorMessage": "violation: \"(.+?):"
 				}
 				// ネットワーク　Apache derby データソースの設定例
 				, "derbyNetwork": {

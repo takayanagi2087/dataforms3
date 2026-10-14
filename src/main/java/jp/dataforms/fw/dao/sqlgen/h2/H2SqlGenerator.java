@@ -5,13 +5,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
-import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
+import jp.dataforms.fw.servlet.DataFormsServlet;
 
 
 //日付の部分取得
@@ -205,19 +205,31 @@ public class H2SqlGenerator extends SqlGenerator {
 
 	@Override
 	public String getRebildSqlFolder() {
-		return "/WEB-INF/dbRebuild/derby";
+		return "/WEB-INF/dbRebuild/h2";
 	}
 
 	@Override
 	public String getConstraintViolationException(SQLException ex) {
+		logger.error("getConstraintViolationException:" + ex.getMessage(), ex);
+		String ret = null;
 		if (ex instanceof SQLIntegrityConstraintViolationException) {
-			if ("org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException".equals(ex.getClass().getName())) {
-				DerbySQLIntegrityConstraintViolationException dex = (DerbySQLIntegrityConstraintViolationException) ex;
-				logger.debug(() -> "dex.getTableName()=" + dex.getTableName());
-				logger.debug(() -> "dex.getConstraintName()=" + dex.getConstraintName());
-				return dex.getConstraintName();
+			String msg = ex.getMessage();
+			{
+				String pat = "INDEX .+\\.(.+?) ON";
+				if (DataFormsServlet.getDuplicateErrorMessage() != null) {
+					pat = DataFormsServlet.getDuplicateErrorMessage();
+				}
+				ret = this.getConstraintName(pat, msg);
+			}
+			{
+				String pat = "violation: \"(.+?):";
+				if (DataFormsServlet.getForeignKeyErrorMessage() != null) {
+					pat = DataFormsServlet.getForeignKeyErrorMessage();
+				}
+				logger.debug("pat=" + pat);
+				ret = this.getConstraintName(pat, msg);
 			}
 		}
-		return null;
+		return ret;
 	}
 }
