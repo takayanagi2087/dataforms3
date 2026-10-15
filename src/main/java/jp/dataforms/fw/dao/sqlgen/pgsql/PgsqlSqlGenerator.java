@@ -200,9 +200,9 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 	public String generateGetPageSql(final QueryPager qp) {
 		String orgsql = this.getOrgSql(qp);
 //		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
-		Integer rowFrom = qp.getRowFrom();
-		Integer rowTo = qp.getRowTo();
-		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset " + rowFrom.intValue() + " limit " + (rowTo.intValue() - rowFrom.intValue() + 1);
+//		Integer rowFrom = qp.getRowFrom();
+//		Integer rowTo = qp.getRowTo();
+		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset :row_from limit :limit_count";
 		return sql;
 	}
 
