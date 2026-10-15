@@ -2102,7 +2102,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @param qp QueryPager。
 	 * @return SQL。
 	 */
-	public abstract String generateGetPageSql(final QueryPager qp);
+	public String generateGetPageSql(final QueryPager qp) {
+		String orgsql = this.getOrgSql(qp);
+		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset :row_from rows fetch next :limit_count rows only";
+		return sql;
+	}
 
 	/**
 	 * 指定項目の指定条件での最大値を作成します。

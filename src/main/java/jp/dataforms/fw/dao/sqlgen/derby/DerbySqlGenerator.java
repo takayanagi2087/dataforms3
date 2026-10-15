@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
-import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 
 
@@ -137,14 +136,6 @@ public class DerbySqlGenerator extends SqlGenerator {
 	public String generateSysTimestampSql() {
 		return "current_timestamp";
 	}
-
-	@Override
-	public String generateGetPageSql(final QueryPager qp) {
-		String orgsql = this.getOrgSql(qp);
-		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
-		return sql;
-	}
-
 
 	@Override
 	public String getRebildSqlFolder() {

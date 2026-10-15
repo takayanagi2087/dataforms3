@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
-import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 
@@ -193,13 +192,6 @@ public class H2SqlGenerator extends SqlGenerator {
 	@Override
 	public String generateSysTimestampSql() {
 		return "current_timestamp";
-	}
-
-	@Override
-	public String generateGetPageSql(final QueryPager qp) {
-		String orgsql = this.getOrgSql(qp);
-		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset :row_from rows fetch next (:row_to - :row_from + 1) rows only";
-		return sql;
 	}
 
 

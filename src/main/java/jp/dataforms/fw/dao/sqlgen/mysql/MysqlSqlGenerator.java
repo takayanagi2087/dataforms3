@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.Index;
+import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.sqldatatype.SqlTimestamp;
@@ -178,8 +179,14 @@ public class MysqlSqlGenerator extends SqlGenerator {
 
 	@Override
 	public String generateGetPageSql(final QueryPager qp) {
+		String orderBy = "";
+		Query query = qp.getQuery();
+		if (query != null) {
+			orderBy = this.getOrderBySql(query).trim();
+		}
 		String orgsql = this.getOrgSql(qp);
-		String sql = "select * from (select  @i:=@i+1 as row_no, m.* from (select @i:=0) as r,(" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
+//		String sql = "select * from (select  @i:=@i+1 as row_no, m.* from (select @i:=0) as r,(" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
+		String sql = "select * from (select row_number() over(" + orderBy + ") as row_no, m.* from (" + orgsql + ") as m where 1=1) as m offset :row_from rows fetch next :limit_count rows only";
 		return sql;
 	}
 
