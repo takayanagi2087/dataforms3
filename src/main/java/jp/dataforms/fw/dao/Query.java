@@ -13,6 +13,8 @@ import jp.dataforms.fw.field.sqlfunc.AliasField;
 import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
 import jp.dataforms.fw.field.sqlfunc.SqlField;
 import jp.dataforms.fw.util.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -86,6 +88,13 @@ public class Query {
 	 */
 	private boolean autoFieldCondition = true;
 
+	/**
+	 * Having条件式。
+	 */
+	@Getter
+	@Setter
+	private String having = null;
+	
 	/**
 	 * ソートフィールドリスト。
 	 */

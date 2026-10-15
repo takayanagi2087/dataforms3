@@ -1583,12 +1583,16 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @return Group By 句。
 	 */
 	protected String getGroupBySql(final Query query) {
+		String ret = "";
 		FieldList flist = query.getGroupByFieldList();
 		if (flist.size() > 0) {
-			return " group by " + this.getFieldSequence(query, flist, false);
-		} else {
-			return "";
+			ret = " group by " + this.getFieldSequence(query, flist, false);
+			String having = query.getHaving();
+			if (having != null) {
+				ret += " having " + having;
+			}
 		}
+		return ret;
 	}
 
 	/**
