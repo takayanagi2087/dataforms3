@@ -145,9 +145,9 @@ public class H2SqlGenerator extends SqlGenerator {
 		String sql = """
 			select count(*) as table_exists
 			from information_schema.tables 
-			where lower(table_schema) = 'public' and lower(table_name) = :table_name;
+			where lower(table_schema) = '%s' and lower(table_name) = :table_name;
 		""";
-		return sql;
+		return String.format(sql, this.getSchema().toLowerCase());
 	}
 
 	/**
@@ -159,9 +159,9 @@ public class H2SqlGenerator extends SqlGenerator {
 		String sql = """
 			select count(*) as sequence_exists
 			from information_schema.sequences 
-			where lower(sequence_schema) = 'public' and lower(sequence_name) = :sequence_name	
+			where lower(sequence_schema) = '%s' and lower(sequence_name) = :sequence_name	
 		""";
-		return sql;
+		return String.format(sql, this.getSchema().toLowerCase());
 	}
 
 	@Override
