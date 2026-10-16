@@ -53,6 +53,7 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.field.common.RecordIdField;
 import jp.dataforms.fw.field.common.UpdateTimestampField;
 import jp.dataforms.fw.field.common.UpdateUserIdField;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
 import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
 import jp.dataforms.fw.field.upload.UploadField;
@@ -2504,5 +2505,20 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 */
 	public String getColumnName(final ResultSetMetaData meta, final int idx) throws Exception {
 		return meta.getColumnName(idx);
+	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getDbColumnName();
+		if (field.getTable() != null) {
+			tf = field.getTable().getAlias() + "." + tf;
+		}
+		String sql = "extract(" + type + " from " + tf + ")";
+		return sql;
 	}
 }

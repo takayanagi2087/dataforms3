@@ -17,6 +17,7 @@ import jp.dataforms.fw.dao.sqldatatype.SqlTimestamp;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
 import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.field.upload.UploadField.Store;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -329,4 +330,20 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	public String generateDropUniqueSql(Table table, String idxName) {
 		return null;
 	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getDbColumnName();
+		if (field.getTable() != null) {
+			tf = field.getTable().getAlias() + "." + tf;
+		}
+		String sql = "datepart(" + type + ", " + tf + ")";
+		return sql;
+	}
+
 }

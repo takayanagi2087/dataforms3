@@ -10,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
+import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.TimeField;
 
 
 //日付の部分取得
@@ -153,5 +156,25 @@ public class DerbySqlGenerator extends SqlGenerator {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getDbColumnName();
+		if (field.getTable() != null) {
+			tf = field.getTable().getAlias() + "." + tf;
+		}
+		if (field.getTargetField() instanceof DateField) {
+			tf = "timestamp(" + tf + " || ' 00:00:00')";
+		} else if (field.getTargetField() instanceof TimeField) {
+			tf = "timestamp(current_date || ' ' || " + tf + ")";
+		}
+		String sql = "extract_field('" + type + "', " + tf + ")";
+		return sql;
 	}
 }
