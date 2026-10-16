@@ -2,6 +2,7 @@ package jp.dataforms.fw.field.sqlfunc;
 
 import java.util.List;
 
+import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.validator.FieldValidator;
 
@@ -53,5 +54,10 @@ public interface FunctionField {
 		return field;
 	}
 	
-
+	/**
+	 * 関数SQLを作成します。
+	 * @param gen SQL Generator。
+	 * @return 関数SQL.
+	 */
+	String getFunctionSql(final SqlGenerator gen);
 }

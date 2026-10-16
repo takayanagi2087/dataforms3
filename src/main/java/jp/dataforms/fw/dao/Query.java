@@ -51,18 +51,6 @@ public class Query {
 	 * 結合元のテーブル。
 	 */
 	private Table mainTable = null;
-	/**
-	 * 内部結合テーブルリスト。
-	 */
-	private TableList joinTableList = null;
-	/**
-	 * 左外部結合テーブルリスト。
-	 */
-	private TableList leftJoinTableList = null;
-	/**
-	 * 右外部結合テーブルリスト。
-	 */
-	private TableList rightJoinTableList = null;
 
 	/**
 	 * 問い合わせフォームフィールドリスト。
@@ -89,6 +77,12 @@ public class Query {
 	private boolean autoFieldCondition = true;
 
 	/**
+	 * Group byに指定するフィールドリスト。
+	 */
+	@Setter
+	private FieldList groupByFieldList = null;
+	
+	/**
 	 * Having条件式。
 	 */
 	@Getter
@@ -106,7 +100,7 @@ public class Query {
 	private List<JoinInfo> joinInfoList = null;
 
 	/**
-	 * フィールドとテーブル別名とのマップ。
+	 * フィールドIDととテーブル別名とのマップ。
 	 */
 	private Map<String, String> fieldTableAliasMap = null;
 
@@ -464,31 +458,6 @@ public class Query {
 	}
 
 	/**
-	 * 旧形式のjoinTableListをjoinInfoListに展開する。
-	 * @param type 結合タイプ。
-	 * @param tlist テーブルリスト。
-	 */
-	private void addJoinTableList(final String type, final TableList tlist) {
-		if (tlist != null) {
-			for (Table t: tlist) {
-				this.addJoinInfo(new JoinInfo(type, t, (JoinConditionInterface) null));
-			}
-		}
-	}
-
-	/**
-	 * setXXXJoinTableListで設定した、結合情報をjoinInfoListに転記する。
-	 */
-	public void buildJoinInfoList() {
-		this.addJoinTableList(JoinInfo.INNER_JOIN, this.joinTableList);
-		this.addJoinTableList(JoinInfo.LEFT_JOIN, this.leftJoinTableList);
-		this.addJoinTableList(JoinInfo.RIGHT_JOIN, this.rightJoinTableList);
-		this.joinTableList = null;
-		this.leftJoinTableList = null;
-		this.rightJoinTableList = null;
-	}
-
-	/**
 	 * 結合情報リストを取得します。
 	 * @return 結合情報リスト。
 	 */
@@ -694,10 +663,14 @@ public class Query {
 	 */
 	public String getGroupByFieldSql(final Field<?> field) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(field.getTable().getAlias());
-		sb.append(".");
-		if (field instanceof AliasField) {
-			sb.append(StringUtil.camelToSnake(((AliasField) field).getTargetField().getId()));
+		if (field.getTable() != null) {
+			sb.append(field.getTable().getAlias());
+			sb.append(".");
+			if (field instanceof AliasField) {
+				sb.append(StringUtil.camelToSnake(((AliasField) field).getTargetField().getId()));
+			} else {
+				sb.append(StringUtil.camelToSnake(field.getId()));
+			}
 		} else {
 			sb.append(StringUtil.camelToSnake(field.getId()));
 		}
@@ -727,6 +700,7 @@ public class Query {
 	 */
 	public FieldList getGroupByFieldList() {
 		FieldList ret = new FieldList();
+		// Group byが必要なQueryか判定する。
 		boolean flg = false;
 		for (Field<?> f : this.fieldList) {
 			if (f instanceof GroupSummaryField) {
@@ -735,10 +709,17 @@ public class Query {
 			}
 		}
 		if (flg) {
-			for (Field<?> f : this.fieldList) {
-				if (!(f instanceof GroupSummaryField)) {
-					ret.add(f);
+			// Group byが必要な場合
+			if (this.groupByFieldList == null) {
+				// 集計関数以外のフィールドのリストを作成する。
+				for (Field<?> f : this.fieldList) {
+					if (!(f instanceof GroupSummaryField)) {
+						ret.add(f);
+					}
 				}
+			} else {
+				// Group Byが指定されていた場合それを優先する。
+				ret = this.groupByFieldList;
 			}
 		}
 		return ret;
@@ -942,5 +923,27 @@ public class Query {
 			}
 		}
 		return table;
+	}
+	
+	/**
+	 * 指定されたIDに対応するフィールドを取得します。
+	 * @param id フィールドID。
+	 * @return フィールド。
+	 */
+	public Field<?> findField(final String id) {
+		Field<?> ret = null;
+		ret = this.fieldList.get(id);
+		if (ret == null) {
+			if (this.joinInfoList != null) {
+				for (JoinInfo joinInfo: this.joinInfoList) {
+					var t = joinInfo.getJoinTable();
+					ret = t.getFieldList().get(id);
+					if (ret != null) {
+						break;
+					}
+				}
+			}
+		}
+		return ret;
 	}
 }

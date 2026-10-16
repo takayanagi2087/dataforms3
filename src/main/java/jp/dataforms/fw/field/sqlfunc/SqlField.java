@@ -1,5 +1,6 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 
 /**
@@ -10,7 +11,7 @@ import jp.dataforms.fw.field.base.Field;
  * 任意の関数やサブクエリでフィールド値を取得するときに使用します。
  * </pre>
  */
-public class SqlField extends Field<Object>  implements FunctionField {
+public class SqlField extends Field<Object> implements FunctionField {
 	/**
 	 * SQL。
 	 */
@@ -70,4 +71,8 @@ public class SqlField extends Field<Object>  implements FunctionField {
 		return ret;
 	}
 
+	@Override
+	public String getFunctionSql(SqlGenerator gen) {
+		return this.getSql();
+	}
 }

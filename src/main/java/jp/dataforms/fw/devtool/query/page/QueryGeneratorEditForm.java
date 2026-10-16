@@ -231,7 +231,7 @@ public class QueryGeneratorEditForm extends EditForm {
 			@SuppressWarnings("unchecked")
 			Class<? extends Query> clazz  = (Class<? extends Query>) Class.forName(packageName + "." + queryClassName);
 			q = clazz.getDeclaredConstructor().newInstance();
-			q.buildJoinInfoList();
+//			q.buildJoinInfoList();
 			Dao dao = new Dao(this);
 			dao.getSqlGenerator().generateQuerySql(q);
 		} catch (ClassNotFoundException e) {

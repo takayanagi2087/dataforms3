@@ -53,11 +53,8 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.field.common.RecordIdField;
 import jp.dataforms.fw.field.common.UpdateTimestampField;
 import jp.dataforms.fw.field.common.UpdateUserIdField;
-import jp.dataforms.fw.field.sqlfunc.AliasField;
-import jp.dataforms.fw.field.sqlfunc.CountField;
-import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
+import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
-import jp.dataforms.fw.field.sqlfunc.SqlField;
 import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.StringUtil;
@@ -1504,35 +1501,18 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		if (field.getTable() != null) {
 			 t = field.getTable().getAlias();
 		}
-		if (field instanceof GroupSummaryField) {
-			GroupSummaryField<?> gsf = (GroupSummaryField<?>) field;
-			//String t = query.getFieldTableAliasMap().get(gsf.getTargetField().getId());
-			if (t != null) {
-				boolean distinct = false;
-				if (gsf instanceof CountField) {
-					CountField cf = (CountField) gsf;
-					distinct = cf.isDistinct();
-				}
-				String ret = gsf.getFunctionName() + "(" + (distinct ? "distinct " : "") + t + "." + gsf.getTargetField().getDbColumnName() + ")" + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-				return ret;
+		if (field instanceof FunctionField) {
+			FunctionField ff = (FunctionField) field;
+			String ret = ff.getFunctionSql(this);
+			if (ret != null) {
+				return ret + this.getAsAliasSql() + field.getDbColumnName() + "\n";
 			}
-		} else if (field instanceof AliasField) {
-			AliasField af = (AliasField) field;
-			if (t != null) {
-				String ret = t + "." + af.getTargetField().getDbColumnName() + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-				return ret;
-			}
-		} else if (field instanceof SqlField) {
-			SqlField sqlf = (SqlField) field;
-			String ret = sqlf.getSql() + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-			return ret;
 		} else {
-			//String t = query.getFieldTableAliasMap().get(field.getId());
 			if (t != null) {
 				String ret = "";
 				if (field.hasFileInfoColumn()) {
 					// 情報カラムがあるフィールドの場合はそれを検索する。
-					ret = t + "." + field.getFileInfoColumnName() + " as " + field.getFileInfoColumnName() + ", ";
+					ret = t + "." + field.getFileInfoColumnName() + this.getAsAliasSql() + field.getFileInfoColumnName() + ", ";
 				}
 				ret += t + "." + field.getDbColumnName() + this.getAsAliasSql()  + field.getDbColumnName() + "\n";
 				return ret;
@@ -1578,6 +1558,67 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	}
 
 	/**
+	 * 条件フィールドを変換します。
+	 * @param query 問い合わせ。
+	 * @param field フィールドID。
+	 * @return　フィールド変換結果。
+	 */
+	private String convertConditionField(final Query query, final String field) {
+		String type = "f";
+		String id = field;
+		// {x:fieldId}からxとfieldIdを取得する。
+		Pattern p = Pattern.compile("\\{([fp]):([^}]+)\\}");
+		Matcher m = p.matcher(field);
+		if (m.find()) {
+			type = m.group(1).trim();
+			id = m.group(2).trim();
+		}
+		String fld = "";
+		Field<?> f = query.findField(id);
+		if (f != null) {
+			if ("f".equals(type)) {
+				if (f instanceof FunctionField) {
+					FunctionField ff = (FunctionField) f;
+					fld = ff.getFunctionSql(this);
+				} else {
+					fld = f.getDbColumnName();
+				}
+			} else if ("p".equals(type)) {
+				fld = ":" + f.getDbColumnName();
+			}
+		}
+		return fld;
+	}
+	
+	/**
+	 * 条件式を変換します。
+	 * @param query 問い合わせ。
+	 * @param cond 条件式。
+	 * @return 変換した条件式。
+	 */
+	protected String convertCondition(final Query query, final String cond) {
+		StringBuilder sb = new StringBuilder();
+		Pattern p = Pattern.compile("'[^']*'|(\\{[fp]:([^}]+)\\})");
+		Matcher m = p.matcher(cond);
+		int idx = 0;
+		while (m.find()) {
+			var g = m.group(1);
+			if (g != null) {
+				logger.debug("find group = " + g);
+				int srart = m.start(1);
+				sb.append(cond.subSequence(idx, srart));
+				sb.append(this.convertConditionField(query, g));
+				idx = m.end(1);
+			}
+		}
+		if (idx < cond.length()) {
+			sb.append(cond.substring(idx));
+		}
+		return sb.toString();
+	}
+	
+	
+	/**
 	 * Group by 句を取得します。
 	 * @param query 問い合わせ・
 	 * @return Group By 句。
@@ -1589,7 +1630,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			ret = " group by " + this.getFieldSequence(query, flist, false);
 			String having = query.getHaving();
 			if (having != null) {
-				ret += " having " + having;
+				ret += " having " + this.convertCondition(query, having);
 			}
 		}
 		return ret;
@@ -1635,7 +1676,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 */
 	public String generateQuerySql(final Query query, final boolean orderBy) {
 //		String joinTable = this.generateJoinTableSql(query);
-		query.buildJoinInfoList();
+//		query.buildJoinInfoList();
 		String joinTable = this.generateJoinTableSql(query);
 		FieldList flist = query.getFieldList();
 		StringBuilder collist = new StringBuilder();
