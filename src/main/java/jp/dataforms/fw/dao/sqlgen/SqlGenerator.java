@@ -226,7 +226,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
      * @param type データタイプ。
      * @return 変換結果。
      */
-    public String converTypeNameForDatabaseMetaData(final String type) {
+    public String convertTypeNameForDatabaseMetaData(final String type) {
     	return type.toLowerCase();
     }
 

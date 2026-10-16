@@ -94,8 +94,8 @@ public class OracleSqlGenerator extends SqlGenerator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		/*if ("varchar2".equals(ret)) {
 			return "varchar";
 		} else*/ if ("char".equals(ret)) {

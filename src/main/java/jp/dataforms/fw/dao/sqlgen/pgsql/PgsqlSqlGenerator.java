@@ -92,8 +92,8 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 	 * </pre>
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		if ("int2".equals(ret)) {
 			return "smallint";
 		} else if ("int4".equals(ret)) {

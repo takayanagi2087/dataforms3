@@ -992,7 +992,7 @@ public class TableManagerDao extends Dao {
 		int scale = rs.getInt("DECIMAL_DIGITS");
 		int t = rs.getInt("DATA_TYPE");
 		String remarks = rs.getString("REMARKS");
-		String dataType = gen.converTypeNameForDatabaseMetaData(type);
+		String dataType = gen.convertTypeNameForDatabaseMetaData(type);
 		if (t == Types.CHAR) {
 			colinfo.put("superSimpleClassName", "CharField");
 			colinfo.put("fieldLength", size);

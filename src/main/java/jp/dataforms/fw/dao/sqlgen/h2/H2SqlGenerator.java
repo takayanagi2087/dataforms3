@@ -93,8 +93,8 @@ public class H2SqlGenerator extends SqlGenerator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		if ("character varying".equals(ret)) {
 			return "varchar";
 		} else if ("character".equals(ret)) {

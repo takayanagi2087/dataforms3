@@ -141,8 +141,8 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	 * </pre>
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		if ("int".equals(ret)) {
 			return "integer";
 		} else if ("varbinary".equals(ret)) {

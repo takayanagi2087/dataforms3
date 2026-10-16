@@ -1415,7 +1415,7 @@ public class Dao implements JDBCConnectableObject {
 		int size = rs.getInt("COLUMN_SIZE");
 		int scale = rs.getInt("DECIMAL_DIGITS");
 		int nullable = rs.getInt("NULLABLE");
-		String dataType = gen.converTypeNameForDatabaseMetaData(type);
+		String dataType = gen.convertTypeNameForDatabaseMetaData(type);
 		if ("char".equals(dataType) || "nchar".equals(dataType) || "varchar".equals(dataType) || "varchar2".equals(dataType) || "nvarchar".equals(dataType) || "nvarchar2".equals(dataType)) {
 			dataType += "(" + gen.convertColumnSize(size) + ")";
 		} else if ("numeric".equals(dataType) || "number".equals(dataType)) {
