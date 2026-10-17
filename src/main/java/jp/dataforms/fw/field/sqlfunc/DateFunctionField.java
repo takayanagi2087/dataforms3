@@ -7,7 +7,7 @@ public interface DateFunctionField extends FunctionField {
 	/**
 	 * 抽出するフィールドの種類。
 	 */
-	public enum FieldType {
+	enum FieldType {
 		/**
 		 * 年。
 		 */
@@ -32,5 +32,19 @@ public interface DateFunctionField extends FunctionField {
 		 * 秒。
 		 */
 		, SECOND
+	}
+	
+	/**
+	 * フィールドタイプを取得します。
+	 * @return フィールドタイプ。
+	 */
+	FieldType getType();
+	
+	/**
+	 * フィールドタイプの名称を取得します。
+	 * @return フィールドタイプの名称。
+	 */
+	default String getTypeName() {
+		return this.getType().name().toLowerCase();
 	}
 }

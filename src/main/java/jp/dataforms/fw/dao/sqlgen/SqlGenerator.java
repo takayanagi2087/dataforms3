@@ -53,6 +53,7 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.field.common.RecordIdField;
 import jp.dataforms.fw.field.common.UpdateTimestampField;
 import jp.dataforms.fw.field.common.UpdateUserIdField;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.field.sqlfunc.ExtractField;
 import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
@@ -2513,12 +2514,23 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @return Extract関数。
 	 */
 	public String generateExtractFunction(final ExtractField field) {
-		String type = field.getType().name().toLowerCase();
-		String tf = field.getTargetField().getDbColumnName();
-		if (field.getTable() != null) {
-			tf = field.getTable().getAlias() + "." + tf;
-		}
+		String type = field.getTypeName();
+		String tf = field.getTargetField().getQueryColumnName();
 		String sql = "extract(" + type + " from " + tf + ")";
 		return sql;
 	}
+	
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = tf + " + interval " + field.getAddValue().toString() + " " + type;
+		return sql;
+	}
+
 }

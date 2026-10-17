@@ -163,6 +163,7 @@ public class DerbySqlGenerator extends SqlGenerator {
 	 * @param field ExtractField。
 	 * @return Extract関数。
 	 */
+	@Override
 	public String generateExtractFunction(final ExtractField field) {
 		String type = field.getType().name().toLowerCase();
 		String tf = field.getTargetField().getDbColumnName();

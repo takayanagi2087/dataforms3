@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 
 
@@ -224,4 +225,18 @@ public class H2SqlGenerator extends SqlGenerator {
 		}
 		return ret;
 	}
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = tf + " + interval '" + field.getAddValue().toString() + "' " + type;
+		return sql;
+	}
+
 }
