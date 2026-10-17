@@ -9,38 +9,8 @@ import lombok.Getter;
 /**
  * 日付フィールド取得フィールド。
  */
-public class ExtractField extends IntegerField implements FunctionField {
+public class ExtractField extends IntegerField implements DateFunctionField {
 
-	/**
-	 * 抽出するフィールドの種類。
-	 */
-	public enum FieldType {
-		/**
-		 * 年。
-		 */
-		YEAR
-		/**
-		 * 月。
-		 */
-		, MONTH
-		/**
-		 * 日。
-		 */
-		, DAY
-		/**
-		 * 時。
-		 */
-		, HOUR
-		/**
-		 * 分。
-		 */
-		, MINUTE
-		/**
-		 * 秒。
-		 */
-		, SECOND
-	}
-	
 	/**
 	 * 抽出する日付フィールドの種類。
 	 */
