@@ -1173,7 +1173,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		StringBuilder sb = new StringBuilder();
 		Map<String, Object> p = query.getConditionData();
 		if (query.getCondition() != null) {
-			sb.append(query.getCondition());
+			sb.append(this.convertCondition(query, query.getCondition()));
 		}
 		if (query.isAutoFieldCondition()) {
 			ConditionExpression ce = query.getConditionExpression();
@@ -1582,7 +1582,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 					FunctionField ff = (FunctionField) f;
 					fld = ff.getFunctionSql(this);
 				} else {
-					fld = f.getDbColumnName();
+					fld = f.getQueryColumnName();
 				}
 			} else if ("p".equals(type)) {
 				fld = ":" + f.getDbColumnName();
