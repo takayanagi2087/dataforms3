@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
+import jp.dataforms.fw.field.sqlfunc.DateAddField;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.field.sqlfunc.ExtractField;
 import jp.dataforms.fw.field.sqltype.DateField;
 import jp.dataforms.fw.field.sqltype.TimeField;
@@ -176,6 +178,25 @@ public class DerbySqlGenerator extends SqlGenerator {
 			tf = "timestamp(current_date || ' ' || " + tf + ")";
 		}
 		String sql = "extract_field('" + type + "', " + tf + ")";
+		return sql;
+	}
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = null;
+		if (field instanceof DateAddField) {
+			tf = "timestamp(" + tf + " || ' 00:00:00')";
+			sql = "date(date_add_field('" + type + "', " + field.getAddValue().toString() + ", " + tf + "))";
+		} else {
+			sql = "date_add_field('" + type + "', " + field.getAddValue().toString() + ", " + tf + ")";
+		}
 		return sql;
 	}
 }

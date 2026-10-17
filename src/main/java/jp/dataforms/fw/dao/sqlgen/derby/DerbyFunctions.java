@@ -1,5 +1,6 @@
 package jp.dataforms.fw.dao.sqlgen.derby;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -125,4 +126,47 @@ public class DerbyFunctions {
 				throw new IllegalArgumentException("Unsupported unit: " + unit);
 		}
 	}
+	
+	/**
+	 * Apache Derby用：日時に特定の期間を加減算するカスタム関数。
+	 * 
+	 * @param unit  単位 ('YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND')
+	 * @param value 加算する量（負の数であれば減算）
+	 * @param target 対象の日時データ
+	 * @return 計算後のTimestamp（入力がnullならnull）
+	 */
+	public static Timestamp dateAdd(String unit, Integer value, Timestamp target) {
+		if (target == null || unit == null || value == null) {
+			return null;
+		}
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(target);
+
+		switch (unit.toUpperCase()) {
+		case "YEAR":
+			cal.add(Calendar.YEAR, value);
+			break;
+		case "MONTH":
+			cal.add(Calendar.MONTH, value);
+			break;
+		case "DAY":
+			cal.add(Calendar.DATE, value);
+			break;
+		case "HOUR":
+			cal.add(Calendar.HOUR_OF_DAY, value);
+			break;
+		case "MINUTE":
+			cal.add(Calendar.MINUTE, value);
+			break;
+		case "SECOND":
+			cal.add(Calendar.SECOND, value);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported unit: " + unit);
+		}
+
+		return new Timestamp(cal.getTimeInMillis());
+	}
+	
 }

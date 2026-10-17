@@ -33,3 +33,12 @@ PARAMETER STYLE JAVA
 NO SQL
 LANGUAGE JAVA
 EXTERNAL NAME 'jp.dataforms.fw.dao.sqlgen.derby.DerbyFunctions.extractField';
+
+--　日付加算関数
+CREATE FUNCTION DATE_ADD_FIELD(unit VARCHAR(10), value INTEGER, target TIMESTAMP)
+RETURNS TIMESTAMP
+PARAMETER STYLE JAVA
+NO SQL
+LANGUAGE JAVA
+EXTERNAL NAME 'jp.dataforms.fw.dao.sqlgen.derby.DerbyFunctions.dateAdd';
+
