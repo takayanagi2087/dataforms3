@@ -10,6 +10,7 @@ import jp.dataforms.fw.annotation.SqlGeneratorImpl;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.sqlfunc.DateAddField;
 import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
@@ -263,6 +264,9 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 		String type = field.getType().name().toLowerCase();
 		String tf = field.getTargetField().getQueryColumnName();
 		String sql = tf + " + interval '" + field.getAddValue().toString() + " " + type + "'";
+		if (field instanceof DateAddField) {
+			sql = "date(" + sql + ")";
+		}
 		return sql;
 	}
 
