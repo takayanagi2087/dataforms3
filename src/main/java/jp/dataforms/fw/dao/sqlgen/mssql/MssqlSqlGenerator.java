@@ -217,6 +217,9 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	 * @return order by句。
 	 */
 	private String getRowNumberOrderBy(final Query query) {
+		if (query == null) {
+			return "order by (select null)";
+		}
 		FieldList flist = query.getOrderByFieldList();
 		if (flist == null || flist.size() == 0) {
 			// order byが無かった場合はPK順。

@@ -175,6 +175,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 			r.put("htmlTable", this.htmlTable.getProperties());
 			return ret;
 		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			Map<String, Object> einfo = new HashMap<String, Object>();
 			einfo.put("message", e.getMessage());
 			JsonResponse ret = new JsonResponse(JsonResponse.APPLICATION_EXCEPTION, einfo);
