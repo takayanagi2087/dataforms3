@@ -1598,7 +1598,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @param cond 条件式。
 	 * @return 変換した条件式。
 	 */
-	protected String convertCondition(final Query query, final String cond) {
+	public String convertCondition(final Query query, final String cond) {
 		StringBuilder sb = new StringBuilder();
 		Pattern p = Pattern.compile("'[^']*'|(\\{[fp]:([^}]+)\\})");
 		Matcher m = p.matcher(cond);

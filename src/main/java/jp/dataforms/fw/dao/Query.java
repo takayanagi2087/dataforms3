@@ -194,6 +194,13 @@ public class Query {
 	 */
 	public void setFieldList(final FieldList fieldList) {
 		this.fieldList = fieldList;
+		// SQLフィールドにはQueryへの参照を設定する。
+		for (Field<?> f: this.fieldList) {
+			if (f instanceof SqlField) {
+				SqlField sqlf = (SqlField) f;
+				sqlf.setQuery(this);
+			}
+		}
 	}
 
 	/**

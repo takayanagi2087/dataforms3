@@ -1,7 +1,9 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
+import lombok.Setter;
 
 /**
  * SQLフィールドクラス。
@@ -22,6 +24,11 @@ public class SqlField extends Field<Object> implements FunctionField {
 	 */
 	private Field<?> targetField = null;
 
+	/**
+	 * このフィールドを保持する問い合わせ。
+	 */
+	@Setter
+	private Query query = null;
 	/**
 	 * コンストラクタ。
 	 * @param field フィールド。
@@ -73,6 +80,7 @@ public class SqlField extends Field<Object> implements FunctionField {
 
 	@Override
 	public String getFunctionSql(SqlGenerator gen) {
-		return this.getSql();
+		String sql = this.getSql();
+		return gen.convertCondition(this.query, sql);
 	}
 }
