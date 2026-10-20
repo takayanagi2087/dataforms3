@@ -110,6 +110,12 @@ public class Page extends DataForms implements WebEntryPoint {
      */
     private static List<String[]> preloadMediaCssList = new ArrayList<String[]>();
 
+	/**
+     * 事前に読み込むjsのリスト。
+     */
+    private List<String> preloadJsList = new ArrayList<String>();
+
+    
     /**
      * ブラウザの戻るボタンの設定。
      */
@@ -433,9 +439,14 @@ public class Page extends DataForms implements WebEntryPoint {
 				sb.append("\t\t<link type=\"text/css\" href=\"" + context + csspath + "?t=" + DataFormsServlet.getAppUpdateTime() + "\" rel=\"stylesheet\" />\n");
 			}
 		}
-
+		
 		this.getBasicJsCache();
 		this.addScriptTag(context, this.getPageFramePath() + "/Frame.js", sb);
+
+		// 事前に読み込むJSを展開
+		for (String js: this.preloadJsList) {
+			this.addScriptTag(context, js, sb);
+		}
 		return sb.toString();
 	}
 
@@ -481,6 +492,16 @@ public class Page extends DataForms implements WebEntryPoint {
     	ent[1] = media;
     	Page.preloadMediaCssList.add(ent);
     }
+
+    
+	/**
+	 * 事前にロードするjsを追加します。
+	 * @param js jsファイルのパス。
+	 */
+    protected void addPreloadJs(final String js) {
+    	this.preloadJsList.add(js);
+    }
+
 
     /**
      * フォーム初期化メソッド0。
