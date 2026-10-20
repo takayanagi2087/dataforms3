@@ -124,7 +124,9 @@ export class DataForms extends WebComponent {
 					const formId = currentForm.attr("data-id");
 					logger.log("フォーム（" + formId + "）が非表示になりました");
 					let f = this.getComponent(formId);
-					f.onHide();
+					if (f != null) {
+						f.onHide();
+					}
 				}
 			});
 		}, { threshold: 0 });
