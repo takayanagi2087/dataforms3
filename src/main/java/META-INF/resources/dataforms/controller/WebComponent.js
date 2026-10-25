@@ -533,8 +533,8 @@ export class WebComponent {
 			t = t.parent;
 		}
 		sel = "#" + this.selectorEscape(t.id) + " " + sel;
-//		let ret = sel.trim();
-		let ret = $.trim(sel);
+		let ret = sel.trim();
+//		let ret = $.trim(sel);
 		return ret;
 	}
 

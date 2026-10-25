@@ -17,7 +17,7 @@
 		<!-- Java VMのパス　-->
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-		<log4j.version>2.25.2</log4j.version>
+		<log4j.version>2.26.1</log4j.version>
 		<poi.version>5.5.1</poi.version>
 	</properties>
 	<repositories>
