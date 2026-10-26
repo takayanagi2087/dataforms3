@@ -967,4 +967,14 @@ public class Query {
 		}
 		return ret;
 	}
+	
+	/**
+	 * 条件式を生成します。
+	 * @param ex 条件式のフォーマット。
+	 * @param arg 条件式の引数。
+	 * @return 条件式。
+	 */
+	public static String cond(final String ex, String ...arg) {
+		return String.format(ex, (Object[]) arg);
+	}
 }
