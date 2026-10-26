@@ -1575,7 +1575,14 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 
 		qcb.setCondition(query, id, data, ids);
 		Dao dao = new Dao(this);
-		List<Map<String, Object>> list = dao.executeQuery(query);
+		List<Map<String, Object>> dlist = dao.executeQuery(query);
+		FieldList flist = query.getFieldList();
+		// データをサニタイズする。
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (Map<String, Object> m: dlist) {
+			list.add(flist.convertServerToClient(m));
+		}
+		// labelとvalueを作成。
 		for (Map<String, Object> m: list) {
 			m.put("label", lb.getLabel(m, ids));
 		}
