@@ -125,6 +125,20 @@ public class Query {
 	private Operator conditionOperator = Operator.AND;
 
 	/**
+	 * 取得開始位置。
+	 */
+	@Getter
+	@Setter
+	private Integer offset = null;
+	
+	/**
+	 * 取得件数。
+	 */
+	@Getter
+	@Setter
+	private Integer limit = null;
+	
+	/**
 	 * コンストラクタ。
 	 */
 	public Query() {

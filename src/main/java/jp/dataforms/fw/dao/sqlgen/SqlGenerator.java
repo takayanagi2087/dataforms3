@@ -1647,7 +1647,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		FieldList flist = query.getOrderByFieldList();
 		if (flist != null) {
 			if (flist.size() > 0) {
-				return " order by " + this.getFieldSequence(query, flist, true);
+				return "\n order by " + this.getFieldSequence(query, flist, true);
 			}
 		}
 		return "";
@@ -1670,6 +1670,25 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		}
 	}
 
+	/**
+	 * Limit/offsetの設定。
+	 * @param query 問い合わせ。
+	 * @return offset limit 構文。
+	 */
+	protected String getLimitOffsetSql(final Query query) {
+		StringBuilder sb = new StringBuilder();
+		Integer offset = query.getOffset();
+		if (offset == null) {
+			offset = Integer.valueOf(0);
+		}
+		sb.append("\n offset " + offset + " rows");
+		Integer limit = query.getLimit();
+		if (limit != null) {
+			sb.append("\n fetch next " + limit + " rows only");
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * 問い合わせのSQLを取得します。
 	 * @param query 問い合わせ。
@@ -1705,6 +1724,9 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		sb.append(this.getGroupBySql(query));
 		if (orderBy) {
 			sb.append(this.getOrderBySql(query));
+		}
+		if (query.getOffset() != null || query.getLimit() != null) {
+			sb.append(this.getLimitOffsetSql(query));
 		}
 		// UNIONが設定されいる場合それを展開する。
 		if (query.getUnionQueryList() != null) {
