@@ -81,6 +81,6 @@ public class SqlField extends Field<Object> implements FunctionField {
 	@Override
 	public String getFunctionSql(SqlGenerator gen) {
 		String sql = this.getSql();
-		return gen.convertCondition(this.query, sql);
+		return gen.convertSqlExp(this.query, sql);
 	}
 }

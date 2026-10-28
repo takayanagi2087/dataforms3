@@ -969,12 +969,31 @@ public class Query {
 	}
 	
 	/**
-	 * 条件式を生成します。
+	 * SQL式を生成します。
+	 * <pre>
+	 * JavaのフィールドIDは"fieldId"のようなキャメル形式ですがSQLのカラム名は"field_id"のようなスネーク形式になるため、
+	 * setConditionメソッドに記述する条件式は以下のようになります。
+	 * query.setConditon("m.field_id = :field_id");
+	 * これをキャメル形式で記述するには以下のように記述します。
+	 * query.setConditon("{f:fieldId}: = {p:fieldId}");
+	 * {f:fieldId}はQueryクラス知友のフィールドを検索し、その内容を展開します。
+	 * 単純なフィールドの場合"m.field_id"のように展開されます。
+	 * またSqlFieldのようなフィル度の場合、その式に展開されます。
+	 * {p:fieldId}は条件パラメータを指定する形式で":field_id"のようにパラメータとして展開されます。
+	 * TableやQueryのソースを生成すると、自動的にEntityクラスにフィールドIDの定数が定義されます。
+	 * "fieldId"を手打ちするとミスタイプでエラーする可能性があるので、この定数を使用したい場合このメソッドを以下の様に使用します。
+	 * 
+	 * String cond = Query.sqlExp("{f:%s}: = {p:%s}", XxxTable.Entity.ID_FIELD_ID, XxxTable.Entity.ID_FIELD_ID);
+	 * query.setConditon(cond);
+	 * 
+	 * このメソッドはString.formatを利用しています。
+	 * 
+	 * </pre>
 	 * @param ex 条件式のフォーマット。
 	 * @param arg 条件式の引数。
 	 * @return 条件式。
 	 */
-	public static String cond(final String ex, String ...arg) {
+	public static String sqlExp(final String ex, String ...arg) {
 		return String.format(ex, (Object[]) arg);
 	}
 }

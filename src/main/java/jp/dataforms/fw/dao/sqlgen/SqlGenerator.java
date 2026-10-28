@@ -1174,7 +1174,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		StringBuilder sb = new StringBuilder();
 		Map<String, Object> p = query.getConditionData();
 		if (query.getCondition() != null) {
-			sb.append(this.convertCondition(query, query.getCondition()));
+			sb.append(this.convertSqlExp(query, query.getCondition()));
 		}
 		if (query.isAutoFieldCondition()) {
 			ConditionExpression ce = query.getConditionExpression();
@@ -1593,12 +1593,12 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	}
 	
 	/**
-	 * 条件式を変換します。
+	 * SQL式を変換します。
 	 * @param query 問い合わせ。
 	 * @param cond 条件式。
 	 * @return 変換した条件式。
 	 */
-	public String convertCondition(final Query query, final String cond) {
+	public String convertSqlExp(final Query query, final String cond) {
 		StringBuilder sb = new StringBuilder();
 		Pattern p = Pattern.compile("'[^']*'|(\\{[fp]:([^}]+)\\})");
 		Matcher m = p.matcher(cond);
@@ -1632,7 +1632,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			ret = " group by " + this.getFieldSequence(query, flist, false);
 			String having = query.getHaving();
 			if (having != null) {
-				ret += " having " + this.convertCondition(query, having);
+				ret += " having " + this.convertSqlExp(query, having);
 			}
 		}
 		return ret;
