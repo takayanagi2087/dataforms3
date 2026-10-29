@@ -8,6 +8,7 @@ import jp.dataforms.fw.controller.WebComponent;
 import jp.dataforms.fw.field.common.SelectField;
 import jp.dataforms.fw.field.common.VarcharSingleSelectField;
 
+
 /**
  * 集計フィールド選択フィールドクラス。
  *
