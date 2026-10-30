@@ -136,10 +136,8 @@
 					<thead>
 						<tr>
 							<th class="buttonColumn" nowrap>
-
 							</th>
 							<th class="buttonColumn" nowrap>
-
 							</th>
 							<th nowrap>
 								No.
@@ -206,9 +204,12 @@
 					</tfoot>
 				</table>
 				<div style="display: flex; flex-flow: row;">
-					<div style="width: calc(50% - 4px);">
-						<h2>テーブルフィールドリスト</h2>
-						<table id="selectFieldList" style="height: 320px;">
+					<div style="width: calc(50% - 4px); display: grid; grid-template-columns: 1fr 1fr;">
+						<h2 style="width: calc(100% - 100px);">テーブルフィールドリスト</h2>
+						<div style="text-align: right;">
+							<button type="button" id="referButton" style="margin-top: 20px; margin-right: 32px;"> 選択 → </button>
+						</div>
+						<table id="tableFieldList" style="height: 320px; grid-column: span 2;">
 							<thead>
 								<tr>
 									<th>
@@ -231,22 +232,22 @@
 							<tbody>
 								<tr>
 									<td style="width: 32px; text-align: center;">
-										<input type="checkbox" id="selectFieldList[0].sel" />
-										<input type="hidden" id="selectFieldList[0].fieldFullClassName" />
-										<input type="hidden" id="selectFieldList[0].tableFullClassName" />
+										<input type="checkbox" id="tableFieldList[0].sel" value="1" class="fieldSelect" />
+										<input type="hidden" id="tableFieldList[0].fieldFullClassName" />
+										<input type="hidden" id="tableFieldList[0].tableFullClassName" />
 									</td>
 									<td style="width: 140px;">
-										<span id="selectFieldList[0].fieldId"></span>
+										<span id="tableFieldList[0].fieldId"></span>
 									</td>
 									<td style="width: 200px;">
-										<span id="selectFieldList[0].fieldClassName" ></span>
+										<span id="tableFieldList[0].fieldClassName" ></span>
 									</td>
 									<td style="width: 200px;">
-										<span id="selectFieldList[0].tableClassName" ></span>
-										(<span id="selectFieldList[0].tableAlias"></span>)
+										<span id="tableFieldList[0].tableClassName" ></span>
+										(<span id="tableFieldList[0].tableAlias"></span>)
 									</td>
 									<td style="width: 200px;">
-										<span id="selectFieldList[0].comment"></span>
+										<span id="tableFieldList[0].comment"></span>
 									</td>
 								</tr>
 							</tbody>

@@ -24,15 +24,30 @@ export class QueryGenEditForm extends EditForm {
 			if (this.mode == "confirm") {
 				return false;
 			}
-			let selectFieldList = this.getComponent("selectFieldList");
+			let tableFieldList = this.getComponent("tableFieldList");
 			let ck = $(ev.currentTarget).prop("checked");
-			selectFieldList.checkAll(ck);
+			tableFieldList.checkAll(ck);
+			this.#setSelectButtonStatus();
 		});
 		this.get("notUpdateConstractor").click((ev) => {
 			this.lockStructer(ev);
 		});
+		this.#setSelectButtonStatus();
 	}
 
+	/**
+	 * フィールド選択ボタンの状態の設定。
+	 */
+	#setSelectButtonStatus() {
+		let cb = this.find("input.fieldSelect:checked");
+		logger.log("cb=", cb);
+		if (cb.length > 0) {
+			this.get("referButton").prop("disabled", false);
+		} else {
+			this.get("referButton").prop("disabled", true);
+		}
+	}
+	
 	/**
 	 * テーブル構造を元に戻す。
 	 * @param ev イベント情報。
@@ -115,12 +130,12 @@ export class QueryGenEditForm extends EditForm {
 	 */
 	getSelFlag() {
 		let ret = {};
-		let selectFieldList = this.getComponent("selectFieldList");
-		for (let i = 0; i < selectFieldList.getRowCount(); i++) {
-			let sel = selectFieldList.getRowField(i, "sel").getValue();
-			let fieldId = selectFieldList.getRowField(i, "fieldId").getValue();
-			let fieldClassName = selectFieldList.getRowField(i, "fieldClassName").getValue();
-			let tableClassName = selectFieldList.getRowField(i, "tableClassName").getValue();
+		let tableFieldList = this.getComponent("tableFieldList");
+		for (let i = 0; i < tableFieldList.getRowCount(); i++) {
+			let sel = tableFieldList.getRowField(i, "sel").getValue();
+			let fieldId = tableFieldList.getRowField(i, "fieldId").getValue();
+			let fieldClassName = tableFieldList.getRowField(i, "fieldClassName").getValue();
+			let tableClassName = tableFieldList.getRowField(i, "tableClassName").getValue();
 			let key = tableClassName + "," + fieldClassName + "," + fieldId;
 			ret[key] = sel;
 		}
@@ -131,15 +146,15 @@ export class QueryGenEditForm extends EditForm {
 	 * 選択フラグの再設定。
 	 */
 	setSelFlag(selmap) {
-		let selectFieldList = this.getComponent("selectFieldList");
-		for (let i = 0; i < selectFieldList.getRowCount(); i++) {
-			let fieldId = selectFieldList.getRowField(i, "fieldId").getValue();
-			let fieldClassName = selectFieldList.getRowField(i, "fieldClassName").getValue();
-			let tableClassName = selectFieldList.getRowField(i, "tableClassName").getValue();
+		let tableFieldList = this.getComponent("tableFieldList");
+		for (let i = 0; i < tableFieldList.getRowCount(); i++) {
+			let fieldId = tableFieldList.getRowField(i, "fieldId").getValue();
+			let fieldClassName = tableFieldList.getRowField(i, "fieldClassName").getValue();
+			let tableClassName = tableFieldList.getRowField(i, "tableClassName").getValue();
 			let key = tableClassName + "," + fieldClassName + "," + fieldId;
 			let v = selmap[key];
 			if (v != null) {
-				selectFieldList.getRowField(i, "sel").setValue(v);
+				tableFieldList.getRowField(i, "sel").setValue(v);
 			}
 		}
 	}
@@ -156,7 +171,7 @@ export class QueryGenEditForm extends EditForm {
 			if (r.status == JsonResponse.SUCCESS) {
 				this.get("selectAll").prop("checked", false);
 				logger.log("field list=" + JSON.stringify(r.result));
-				let ftbl = this.getComponent("selectFieldList");
+				let ftbl = this.getComponent("tableFieldList");
 				ftbl.setTableData(r.result);
 				this.setSelFlag(selmap);
 				let cr = await this.submit("getJoinCondition");
@@ -165,6 +180,9 @@ export class QueryGenEditForm extends EditForm {
 					logger.log("field list=" + JSON.stringify(cr.result));
 					this.setJoinCondition(cr.result);
 				}
+				this.find("input.fieldSelect").click(() => {
+					this.#setSelectButtonStatus();
+				});
 			}
 		} catch (e) {
 			currentPage.reportError(e);

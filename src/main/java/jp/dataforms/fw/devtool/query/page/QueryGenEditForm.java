@@ -121,7 +121,7 @@ public class QueryGenEditForm extends EditForm {
 	/**
 	 * 選択フィールドリストのID。
 	 */
-	private static final String ID_SELECT_FIELD_LIST = "selectFieldList";
+	private static final String ID_TABLE_FIELD_LIST = "tableFieldList";
 
 	/**
 	 * SQLフィールドリストのID。
@@ -169,7 +169,7 @@ public class QueryGenEditForm extends EditForm {
 		EditableHtmlTable joinTableList = new JoinHtmlTable(ID_JOIN_TABLE_LIST);
 		joinTableList.setCaption("JOINするテーブルリスト");
 		this.addHtmlTable(joinTableList);
-		TableFieldHtmlTable slectFieldList = new TableFieldHtmlTable(ID_SELECT_FIELD_LIST);
+		TableFieldHtmlTable slectFieldList = new TableFieldHtmlTable(ID_TABLE_FIELD_LIST);
 		slectFieldList.setCaption("テーブルフィールドリスト");
 		this.addHtmlTable(slectFieldList);
 		FieldListHtmlTable fieldListTable = new FieldListHtmlTable("fieldList");
@@ -348,7 +348,7 @@ public class QueryGenEditForm extends EditForm {
 			m.put(TableFieldHtmlTable.ID_SEL, "0");
 			selflist.add(m);
 		}
-		ret.put(ID_SELECT_FIELD_LIST, selflist);
+		ret.put(ID_TABLE_FIELD_LIST, selflist);
 //		ret.put(ID_SQL_FIELD_LIST, sflist);
 
 
@@ -401,7 +401,7 @@ public class QueryGenEditForm extends EditForm {
 		List<ValidationError> ret = new ArrayList<ValidationError>();
 		{
 			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_SELECT_FIELD_LIST);
+			List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_TABLE_FIELD_LIST);
 			for (int i = 0; i < sellist.size(); i++) {
 				Map<String, Object> m = sellist.get(i);
 				String sel = (String) m.get(TableFieldHtmlTable.ID_SEL);
@@ -414,7 +414,7 @@ public class QueryGenEditForm extends EditForm {
 						if (!set.contains(fieldId)) {
 							set.add(fieldId);
 						} else {
-							String fid = ID_SELECT_FIELD_LIST + "[" + i + "].fieldId";
+							String fid = ID_TABLE_FIELD_LIST + "[" + i + "].fieldId";
 							ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
 						}
 					}
@@ -973,7 +973,7 @@ public class QueryGenEditForm extends EditForm {
 	private String generateSelectFieldList(final Map<String, Object> data, final ImportUtil implist, final List<Map<String, Object>> fieldList) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_SELECT_FIELD_LIST);
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_TABLE_FIELD_LIST);
 		fieldList.addAll(this.genSelectFieldList(sellist, sb, implist));
 		return "\t\tthis.setFieldList(new FieldList(\n" + sb.toString() + "\t\t));";
 	}

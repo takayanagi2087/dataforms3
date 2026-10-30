@@ -2,6 +2,7 @@ package jp.dataforms.fw.devtool.query.page;
 
 import jp.dataforms.fw.devtool.field.FieldClassSelectField;
 import jp.dataforms.fw.devtool.field.FieldIdField;
+import jp.dataforms.fw.devtool.field.FieldSingleSelectField;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
@@ -41,7 +42,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 		FieldList flist = new FieldList();
 		flist.addField(new FieldClassSelectField(ID_FIELD_CLASS)); // 参照フィールドクラス。
 		flist.addField(new FieldIdField());	// フィールドID(fieldのAlias)。
-		flist.addField(new FieldIdField(ID_REF_FIELD_ID)); // 参照フィールドID。
+		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)); // 参照フィールドID。
 		flist.addField(new TextField(ID_OPTION_JSON)).setHidden(true); // option
 		flist.addField(new TextField(ID_OPTION_TEXT)); // option表示
 		flist.addField(new TextField(ID_COMMENT)); // option表示
