@@ -1,5 +1,5 @@
 /**
- * @fileOverview {@link ExtractForm}クラスを記述したファイルです。
+ * @fileOverview {@link DateFunctionFieldForm}クラスを記述したファイルです。
  */
 
 'use strict';
@@ -10,11 +10,15 @@
 import { OkCancelForm } from '../../../dialog/okcancel/OkCancelForm.js';
 
 /**
- * @class ExtractForm
+ * @class DateFunctionFieldForm
  *
  * @extends OkCancelForm
  */
-export class ExtractForm extends OkCancelForm {
+export class DateFunctionFieldForm extends OkCancelForm {
+	/**
+	 * フィールドクラス。
+	 */
+	#fclass = null;
 	/**
 	 * コンストラクタ。
 	 */
@@ -34,6 +38,25 @@ export class ExtractForm extends OkCancelForm {
 			return false;
 		});
 */
+	}
+	
+	/**
+	 * フィールドクラス。
+	 * @param {String} fclass フィールドクラス名。
+	 */
+	setFieldMode(fclass) {
+		this.#fclass = fclass;
+		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == this.#fclass) {
+			this.find("div.addValue").hide();
+		} else {
+			this.find("div.addValue").show();
+		}
+	}
+	
+	onOkButton() {
+		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == this.#fclass) {
+			this.get("addValue").val("");
+		}
 	}
 
 	// 独自のWebメソッドを呼び出す場合は、以下のコードを参考にしてください。

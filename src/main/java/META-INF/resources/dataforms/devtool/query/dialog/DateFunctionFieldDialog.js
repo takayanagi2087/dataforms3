@@ -14,7 +14,7 @@ import { OkCancelDialog } from '../../../dialog/okcancel/OkCancelDialog.js';
  *
  * @extends OkCancelDialog
  */
-export class ExtractDialog extends OkCancelDialog {
+export class DateFunctionFieldDialog extends OkCancelDialog {
 	/**
 	 * コンストラクタ。
 	 */
@@ -31,6 +31,7 @@ export class ExtractDialog extends OkCancelDialog {
 	
 	async doModal(p) {
 		let frm = this.getOkCancelForm();
+		frm.setFieldMode(p.fclass);
 		let fldsel = frm.getComponent("refFieldId");
 		fldsel.setOptionList(p.optlist);
 		return await super.doModal(p);

@@ -46,8 +46,13 @@ export class QueryGenEditForm extends EditForm {
 		this.#setSelectButtonStatus();
 	}
 
-	async #doExtractFieldDDialog(rowIndex) {
-		let dlg = currentPage.getComponent("extractDialog");
+	/**
+	 * 日付日時フィールド設定関数。
+	 * @param {Integer} rowIndex 行インデックス。
+	 * @param {String} fclass フィールドクラス。
+	 */
+	async #doDateFunctionFieldDialog(rowIndex, fclass) {
+		let dlg = currentPage.getComponent("dateFunctionFieldDialog");
 		let tbl = this.getComponent("fieldList");
 
 		let fieldId = tbl.getRowField(rowIndex, "fieldId").getValue();
@@ -62,23 +67,45 @@ export class QueryGenEditForm extends EditForm {
 		
 		let flist = this.getComponent("tableFieldList");
 		p.optlist = flist.getFieldSelectOption((data) => {
-			if (data.dateTimeType.length > 0) {
-				return true;
-			} else {
-				return false;
+			if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
+				if (data.dateTimeType.length > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if ("jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass) {
+				if (data.dateTimeType == "date") {
+					return true;
+				} else {
+					return false;
+				}
+			} else if ("jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
+				if (data.dateTimeType == "timestamp") {
+					return true;
+				} else {
+					return false;
+				}
 			}
+			return false;
 		});
+		p.fclass = fclass;
 		p.formData = {};
 		p.formData.fieldId = fieldId;
 		p.formData.refFieldId = refFieldId;
 		p.formData.dateFieldType = opt.dateFieldType;
+		p.formData.addValue = opt.addValue;
 		let ret = await dlg.doModal(p);
 		logger.log("ret = ", ret);
 		if (ret != null) {
 			tbl.getRowField(rowIndex, "fieldId").setValue(ret.fieldId);
 			tbl.getRowField(rowIndex, "refFieldId").setValue(ret.refFieldId);
 			tbl.getRowField(rowIndex, "optionJson").setValue(JSON.stringify(ret));
-			tbl.getRowField(rowIndex, "optionText").setValue(ret.dateFieldType);
+			let otext = ret.dateFieldType;
+			if (ret.addValue != null) {
+				otext += " + " + ret.addValue;
+			}
+			tbl.getRowField(rowIndex, "optionText").setValue(otext);
+			
 		}
 		return ret;
 	}
@@ -94,8 +121,10 @@ export class QueryGenEditForm extends EditForm {
 		let tbl = this.getComponent("fieldList");
 		let fclass = tbl.getRowField(rowIndex, "fieldClass").getValue();
 		logger.log("fclass = " + fclass);
-		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
-			let ret = await this.#doExtractFieldDDialog(rowIndex);
+		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass
+			|| "jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass
+			|| "jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
+			let ret = await this.#doDateFunctionFieldDialog(rowIndex, fclass);
 			logger.log("ret = ", ret);
 		}
 	}

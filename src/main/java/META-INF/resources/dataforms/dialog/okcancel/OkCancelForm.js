@@ -62,9 +62,11 @@ export class OkCancelForm extends Form {
 	}
 	
 	#onOkButton() {
-		this.#ok = true;
-		this.onOkButton();
-		this.parent.close();
+		if (this.validate()) {
+			this.#ok = true;
+			this.onOkButton();
+			this.parent.close();
+		}
 	}
 	
 	/**
