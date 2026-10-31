@@ -68,19 +68,21 @@ export class QueryGenEditForm extends EditForm {
 		let flist = this.getComponent("tableFieldList");
 		p.optlist = flist.getFieldSelectOption((data) => {
 			if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
-				if (data.dateTimeType.length > 0) {
+				if (data.fieldType == "date" 
+					|| data.fieldType == "time"
+					|| data.fieldType == "timestamp") {
 					return true;
 				} else {
 					return false;
 				}
 			} else if ("jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass) {
-				if (data.dateTimeType == "date") {
+				if (data.fieldType == "date") {
 					return true;
 				} else {
 					return false;
 				}
 			} else if ("jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
-				if (data.dateTimeType == "timestamp") {
+				if (data.fieldType == "timestamp") {
 					return true;
 				} else {
 					return false;
@@ -113,6 +115,7 @@ export class QueryGenEditForm extends EditForm {
 	
 	/**
 	 * 各種OptionDialogの動作。
+	 * @param {Event} ev イベント情報。
 	 */
 	async #doOptionDialog(ev) {
 		logger.log("#doOptionDialog ev = ", ev);
