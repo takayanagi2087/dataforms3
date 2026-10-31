@@ -37,19 +37,19 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 	 * 選択肢。
 	 */
 	private static final String[][] OPTIONS = {
-		{"1", " - "} // 単純に出力する。
+		{"1", " - ", null} // 単純に出力する。
 		// 集計フィールドクラス
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.TimestampAddField", "日時加算(TimestampAddField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CaseField", "条件分岐(CaseField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SqlField", "SQL式(SqlField)"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)", null}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)", null}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.TimestampAddField", "日時加算(TimestampAddField)", null}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CaseField", "条件分岐(CaseField)", null}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SqlField", "SQL式(SqlField)", null}
 		// 集計フィールドクラス
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "カウント(CountField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "平均値(AvgField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MaxField", "最大値(MaxField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MinField", "最小値(MinField)"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SumField", "合計値(SumField)"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "カウント(CountField)", "summary"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "平均値(AvgField)", "summary"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MaxField", "最大値(MaxField)", "summary"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MinField", "最小値(MinField)", "summary"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SumField", "合計値(SumField)", "summary"}
 	};
 
 	/**
@@ -62,6 +62,11 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 			SelectField.OptionEntity e = new SelectField.OptionEntity();
 			e.setValue(opt[0]);
 			e.setName(opt[1]);
+			if (opt[2] != null) {
+				e.getMap().put("summary", true);
+			} else {
+				e.getMap().put("summary", false);
+			}
 			list.add(e.getMap());
 		}
 		return list;

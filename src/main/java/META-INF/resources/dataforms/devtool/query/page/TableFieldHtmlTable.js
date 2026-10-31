@@ -80,6 +80,7 @@ export class TableFieldHtmlTable extends HtmlTable {
 			let opt = {};
 			opt.value = list[i].tableAlias + "." + value;
 			opt.name = list[i].tableAlias + "." + value + "(" + list[i].comment + ")";
+			opt.fieldType = list[i].fieldType;
 			optlist.push(opt);
 		}
 		return optlist;

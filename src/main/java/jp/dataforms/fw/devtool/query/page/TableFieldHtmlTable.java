@@ -19,7 +19,6 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RecordIdField;
-import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
 import jp.dataforms.fw.field.sqltype.DateField;
 import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
@@ -225,8 +224,6 @@ public class TableFieldHtmlTable extends HtmlTable {
 				ent.put(ID_FIELD_TYPE, "time");
 			} else if (f instanceof TimestampField) {
 				ent.put(ID_FIELD_TYPE, "timestamp");
-			} else if (f instanceof GroupSummaryField) {
-				ent.put(ID_FIELD_TYPE, "summry");
 			}
 			ent.put(ID_FIELD_CLASS_NAME, f.getClass().getSimpleName());
 			ent.put(ID_TABLE_ALIAS, alias);

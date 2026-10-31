@@ -43,9 +43,32 @@ export class QueryGenEditForm extends EditForm {
 		this.get("fieldList").on("click", "td.option", (ev) => {
 			this.#doOptionDialog(ev);
 		});
+		this.get("fieldList").on("change", "select.fieldClass", (ev) => {
+			this.#onChangeFieldClass(ev);
+		});
 		this.#setSelectButtonStatus();
 	}
 
+	
+	#onChangeFieldClass(ev) {
+		let rowIndex = $(ev.currentTarget).closest('tr').index();
+		logger.log("#onChangeFieldClass rowIndex = " + rowIndex);
+		let flist = this.getComponent("fieldList");
+		let fld = flist.getRowField(rowIndex, "fieldClass");
+		let sidx = fld.get().prop("selectedIndex");
+		logger.log("sidx = " + sidx);
+		logger.log("fieldType = " + fld.optionList[sidx].summary);
+		let rfld = flist.getRowField(rowIndex, "refFieldId");
+		logger.log("rfld = ", rfld);
+		if (fld.optionList[sidx].summary) {
+			logger.log("unlock");
+			rfld.lock(false);
+		} else {
+			logger.log("lock");
+			rfld.lock(true);
+		}
+	}
+	
 	/**
 	 * 日付日時フィールド設定関数。
 	 * @param {Integer} rowIndex 行インデックス。
