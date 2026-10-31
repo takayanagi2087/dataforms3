@@ -19,6 +19,9 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.common.RecordIdField;
+import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.TimeField;
+import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.RequiredValidator;
@@ -53,6 +56,12 @@ public class TableFieldHtmlTable extends HtmlTable {
 	 * フィールドクラス名。
 	 */
 	public static final String ID_FIELD_CLASS_NAME = "fieldClassName";
+
+	/**
+	 * date or timestamp。
+	 */
+	public static final String ID_DATE_TIME_TYPE = "dateTimeType";
+
 
 	/**
 	 * 一覧フォームのフィールド表示設定。
@@ -116,6 +125,7 @@ public class TableFieldHtmlTable extends HtmlTable {
 			, new TextField(ID_ALIAS)
 			, new FieldFullClassNameField(ID_FIELD_FULL_CLASS_NAME).setReadonly(true)
 			, new TextField(ID_FIELD_CLASS_NAME).setReadonly(true)
+			, new TextField(ID_DATE_TIME_TYPE).setHidden(true)
 			, new TableFullClassNameField(ID_TABLE_FULL_CLASS_NAME).setReadonly(true)
 			, new TableOrSubQueryClassNameField(ID_TABLE_CLASS_NAME).setReadonly(true)
 			, new MatchTypeSelectField(ID_MATCH_TYPE)
@@ -207,6 +217,14 @@ public class TableFieldHtmlTable extends HtmlTable {
 			ent.put(ID_SEL, "0");
 			ent.put(ID_FIELD_ID, f.getId());
 			ent.put(ID_FIELD_FULL_CLASS_NAME, f.getClass().getName());
+			// 日時フィールドは印をつけておく
+			if (f instanceof DateField) {
+				ent.put(ID_DATE_TIME_TYPE, "date");
+			} else if (f instanceof TimeField) {
+				ent.put(ID_DATE_TIME_TYPE, "time");
+			} else if (f instanceof TimestampField) {
+				ent.put(ID_DATE_TIME_TYPE, "timestamp");
+			}
 			ent.put(ID_FIELD_CLASS_NAME, f.getClass().getSimpleName());
 			ent.put(ID_TABLE_ALIAS, alias);
 			ent.put(ID_COMMENT, f.getComment());

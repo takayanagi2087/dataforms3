@@ -204,10 +204,10 @@
 					</tfoot>
 				</table>
 				<div style="display: flex; flex-flow: row;">
-					<div style="width: calc(50% - 4px); display: grid; grid-template-columns: 1fr 1fr;">
+					<div style="width: calc(40% - 4px); display: grid; grid-template-columns: 1fr 1fr;">
 						<h2 style="width: calc(100% - 100px);">テーブルフィールドリスト</h2>
 						<div style="text-align: right;">
-							<button type="button" id="referButton" style="margin-top: 20px; margin-right: 32px;"> 選択 → </button>
+							<button type="button" id="selectButton" style="margin-top: 20px; margin-right: 32px;"> 選択 → </button>
 						</div>
 						<table id="tableFieldList" style="height: 320px; grid-column: span 2;">
 							<thead>
@@ -234,6 +234,7 @@
 									<td style="width: 32px; text-align: center;">
 										<input type="checkbox" id="tableFieldList[0].sel" value="1" class="fieldSelect" />
 										<input type="hidden" id="tableFieldList[0].fieldFullClassName" />
+										<input type="hidden" id="tableFieldList[0].dateTimeType" />
 										<input type="hidden" id="tableFieldList[0].tableFullClassName" />
 									</td>
 									<td style="width: 140px;">
@@ -253,7 +254,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div style="width: calc(50% - 4px);">
+					<div style="width: calc(60% - 4px);">
 						<h2>出力フィールドリスト</h2>
 						<table id="fieldList" class="editableTable" style="height: 320px;">
 							<thead>
@@ -262,7 +263,7 @@
 										
 									</th>
 									<th>
-										フィールドクラス
+										タイプ
 									</th>
 									<th>
 										出力フィールドID
@@ -271,7 +272,7 @@
 										参照フィールドID
 									</th>
 									<th>
-										フィールドオプション
+										オプション
 									</th>
 									<th>
 										コメント
@@ -286,20 +287,20 @@
 									<td class="buttonColumn">
 										<input type="button" id="fieldList[0].deleteButton" value="-"/>
 									</td>
-									<td style="width: 200px;">
+									<td style="width: 120px;">
 										<select id="fieldList[0].fieldClass"></select>
 									</td>
 									<td style="width: 140px;">
 										<input type="text" id="fieldList[0].fieldId"/>
 									</td>
-									<td style="width: 140px;">
+									<td style="width: 200px;" class="option">
 										<select id="fieldList[0].refFieldId"></select>
 									</td>
-									<td style="width: 200px;">
+									<td style="width: 200px;" class="option">
 										<span id="fieldList[0].optionText"></span>
 										<input type="hidden" id="fieldList[0].optionJson" />
 									</td>
-									<td style="width: 200px;">
+									<td style="width: 200px;" class="option">
 										<span id="fieldList[0].comment" ></span>
 									</td>
 								</tr>

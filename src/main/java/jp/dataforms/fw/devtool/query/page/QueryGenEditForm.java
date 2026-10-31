@@ -396,7 +396,7 @@ public class QueryGenEditForm extends EditForm {
 	 * @param data フォームデータ。
 	 * @return チェック結果。
 	 */
-	private List<ValidationError> validateFieldId(final Map<String, Object> data) {
+/*	private List<ValidationError> validateFieldId(final Map<String, Object> data) {
 		Set<String> set = new HashSet<String>();
 		List<ValidationError> ret = new ArrayList<ValidationError>();
 		{
@@ -423,7 +423,7 @@ public class QueryGenEditForm extends EditForm {
 		}
 		return ret;
 	}
-
+*/
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<ValidationError> validateForm(final Map<String, Object> data) throws Exception {
@@ -433,7 +433,7 @@ public class QueryGenEditForm extends EditForm {
 			ret.add(new ValidationError(ID_MAIN_TABLE_CLASS_NAME, MessagesUtil.getMessage(this.getPage(), "error.tableclassnotfound", "{0}", mtClass)));
 		}
 		ret.addAll(this.validateJoinTable(ID_JOIN_TABLE_LIST, (List<Map<String, Object>>) data.get(ID_JOIN_TABLE_LIST)));
-		ret.addAll(this.validateFieldId(data));
+//		ret.addAll(this.validateFieldId(data));
 		// 問合せソースファイルの存在チェック
 		String packageName = (String) data.get(ID_PACKAGE_NAME);
 		String queryClassName = (String) data.get(ID_QUERY_CLASS_NAME);

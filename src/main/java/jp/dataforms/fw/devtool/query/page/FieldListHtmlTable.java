@@ -15,7 +15,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	/**
 	 * 参照フィールドID。
 	 */
-	private static final String ID_REF_FIELD_ID = "refFieldId";
+	public static final String ID_REF_FIELD_ID = "refFieldId";
 	/**
 	 * フィールドクラス。
 	 */
@@ -42,7 +42,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 		FieldList flist = new FieldList();
 		flist.addField(new FieldClassSelectField(ID_FIELD_CLASS)); // 参照フィールドクラス。
 		flist.addField(new FieldIdField());	// フィールドID(fieldのAlias)。
-		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)); // 参照フィールドID。
+		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)).setReadonly(true); // 参照フィールドID。
 		flist.addField(new TextField(ID_OPTION_JSON)).setHidden(true); // option
 		flist.addField(new TextField(ID_OPTION_TEXT)); // option表示
 		flist.addField(new TextField(ID_COMMENT)); // option表示

@@ -32,9 +32,95 @@ export class QueryGenEditForm extends EditForm {
 		this.get("notUpdateConstractor").click((ev) => {
 			this.lockStructer(ev);
 		});
+		this.get("selectButton").click(() => {
+			this.#selectField();
+		});
+		
+		this.get("tableFieldList").on("click", "input.fieldSelect", () => {
+			this.#setSelectButtonStatus();
+		});
+
+		this.get("fieldList").on("click", "td.option", (ev) => {
+			this.#doOptionDialog(ev);
+		});
 		this.#setSelectButtonStatus();
 	}
 
+	async #doExtractFieldDDialog(rowIndex) {
+		let dlg = currentPage.getComponent("extractDialog");
+		let tbl = this.getComponent("fieldList");
+
+		let fieldId = tbl.getRowField(rowIndex, "fieldId").getValue();
+		let refFieldId = tbl.getRowField(rowIndex, "refFieldId").getValue();
+		let optionJson = tbl.getRowField(rowIndex, "optionJson").getValue();
+		let opt = {};
+		if (optionJson != null && optionJson.length > 0) {
+			opt = JSON.parse(optionJson);
+		}
+		
+		let p = {};
+		
+		let flist = this.getComponent("tableFieldList");
+		p.optlist = flist.getFieldSelectOption((data) => {
+			if (data.dateTimeType.length > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		p.formData = {};
+		p.formData.fieldId = fieldId;
+		p.formData.refFieldId = refFieldId;
+		p.formData.dateFieldType = opt.dateFieldType;
+		let ret = await dlg.doModal(p);
+		logger.log("ret = ", ret);
+		if (ret != null) {
+			tbl.getRowField(rowIndex, "fieldId").setValue(ret.fieldId);
+			tbl.getRowField(rowIndex, "refFieldId").setValue(ret.refFieldId);
+			tbl.getRowField(rowIndex, "optionJson").setValue(JSON.stringify(ret));
+			tbl.getRowField(rowIndex, "optionText").setValue(ret.dateFieldType);
+		}
+		return ret;
+	}
+	
+	
+	/**
+	 * 各種OptionDialogの動作。
+	 */
+	async #doOptionDialog(ev) {
+		logger.log("#doOptionDialog ev = ", ev);
+		let rowIndex = $(ev.currentTarget).closest('tr').index();
+		logger.log("rowIndex = " + rowIndex);
+		let tbl = this.getComponent("fieldList");
+		let fclass = tbl.getRowField(rowIndex, "fieldClass").getValue();
+		logger.log("fclass = " + fclass);
+		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
+			let ret = await this.#doExtractFieldDDialog(rowIndex);
+			logger.log("ret = ", ret);
+		}
+	}
+	
+	/**
+	 * フィールドの選択処理。
+	 */
+	#selectField() {
+		let tbl = this.getComponent("tableFieldList");
+		let list = tbl.getTableData();
+		logger.log("#selectField = ", list);
+		let slist = [];
+		for (let i = 0; i < list.length; i++) {
+			let m  = {};
+			m.fieldId = list[i].fieldId;
+			m.refFieldId = list[i].tableAlias + "." + list[i].fieldId;
+			m.fieldClass = "1";
+			m.comment = list[i].comment;
+			slist.push(m);
+		}
+		logger.log("#selectField = ", slist);
+		let ftbl = this.getComponent("fieldList");
+		ftbl.setTableData(slist);
+	}
+	
 	/**
 	 * フィールド選択ボタンの状態の設定。
 	 */
@@ -42,9 +128,9 @@ export class QueryGenEditForm extends EditForm {
 		let cb = this.find("input.fieldSelect:checked");
 		logger.log("cb=", cb);
 		if (cb.length > 0) {
-			this.get("referButton").prop("disabled", false);
+			this.get("selectButton").prop("disabled", false);
 		} else {
-			this.get("referButton").prop("disabled", true);
+			this.get("selectButton").prop("disabled", true);
 		}
 	}
 	
@@ -180,9 +266,6 @@ export class QueryGenEditForm extends EditForm {
 					logger.log("field list=" + JSON.stringify(cr.result));
 					this.setJoinCondition(cr.result);
 				}
-				this.find("input.fieldSelect").click(() => {
-					this.#setSelectButtonStatus();
-				});
 			}
 		} catch (e) {
 			currentPage.reportError(e);
@@ -197,7 +280,8 @@ export class QueryGenEditForm extends EditForm {
 	onCalc(f) {
 		super.onCalc(f);
 		if (f != null) {
-			logger.log("onCalc=" + f.attr("id"));
+			let fid = f.attr("id");
+			logger.log("onCalc=" + fid);
 			this.getFieldList();
 		}
 	}

@@ -60,5 +60,29 @@ export class TableFieldHtmlTable extends HtmlTable {
 			}
 		}
 	}
+	
+	/**
+	 * フィールドの選択選択肢リストを作成します。
+	 * @param {Function} func 追加判定関数。
+	 * @return {Object} 選択肢リスト。
+	 */
+	getFieldSelectOption(func) {
+		let list = this.getTableData();
+		let optlist = [];
+		logger.log("tableFieldList=", list);
+		for (let i = 0; i < list.length; i++) {
+			if (func != null) {
+				if (func(list[i]) == false) {
+					continue;
+				}
+			}
+			let value = list[i].fieldId;
+			let opt = {};
+			opt.value = list[i].tableAlias + "." + value;
+			opt.name = list[i].tableAlias + "." + value + "(" + list[i].comment + ")";
+			optlist.push(opt);
+		}
+		return optlist;
+	}
 }
 

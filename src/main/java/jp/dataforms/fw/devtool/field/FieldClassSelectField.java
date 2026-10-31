@@ -37,7 +37,7 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 	 * 選択肢。
 	 */
 	private static final String[][] OPTIONS = {
-		{"1", "参照"} // 単純に出力する。
+		{"1", " - "} // 単純に出力する。
 		// 集計フィールドクラス
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)"}
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)"}

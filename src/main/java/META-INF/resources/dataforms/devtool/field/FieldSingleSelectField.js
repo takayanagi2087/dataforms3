@@ -27,9 +27,15 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 	 */
 	attach() {
 		super.attach();
-		this.get().focus(() => {
-			this.setOption();
-		});
+		if (this.autoOption) {
+			this.get().focus(() => {
+				let v = this.getValue();
+				this.setOption();
+				if (v != null) {
+					super.setValue(v);
+				}
+			});
+		}
 	}
 
 	/**
@@ -38,17 +44,18 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 	setOption() {
 		let tbl = this.getParentForm().getComponent("tableFieldList");
 		logger.log("tbl=", tbl);
-		let list = tbl.getTableData();
-		let optlist = [];
-		logger.log("tableFieldList=", list);
-		for (let i = 0; i < list.length; i++) {
-			let value = list[i].fieldId;
-			let opt = {};
-			opt.value = value;
-			opt.name = list[i].tableAlias + "." + value + "(" + list[i].comment + ")";
-			optlist.push(opt);
-		}
+		let optlist = tbl.getFieldSelectOption();
 		this.setOptionList(optlist);
+	}
+	
+	/**
+	 * 値の設定。
+	 */
+	setValue(v) {
+		if (this.autoOption) {
+			this.setOption();
+		}
+		super.setValue(v);
 	}
 	
 	// 独自のWebメソッドを呼び出す場合は、以下のコメントを参考にしてください。
