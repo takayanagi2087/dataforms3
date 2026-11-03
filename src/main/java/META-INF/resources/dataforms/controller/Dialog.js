@@ -101,6 +101,7 @@ export class Dialog extends DataForms {
 				m[k] = p[k];
 			}
 		}
+		logger.log("m = ", m);
 		dlgdiv.dialog(m);
 	}
 

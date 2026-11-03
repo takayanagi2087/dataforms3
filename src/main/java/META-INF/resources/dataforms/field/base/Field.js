@@ -276,9 +276,9 @@ export class Field extends WebComponent {
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			this.setInputValue(comp, value);
 			if ("SELECT" == tag) {
-				if (this.readonly) {
+				let span = this.addSpan(comp);
+				if (this.readonly || this.get().css("display") == "none") {
 					let v = this.find("option:selected").text()
-					let span = this.addSpan(comp);
 					span.text(v);
 				}
 			}

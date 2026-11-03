@@ -134,7 +134,36 @@ export class QueryGenEditForm extends EditForm {
 		}
 		return ret;
 	}
-	
+
+	/**
+	 * 日付日時フィールド設定関数。
+	 * @param {Integer} rowIndex 行インデックス。
+	 */
+	async #doSqlFieldDialog(rowIndex) {
+		let dlg = currentPage.getComponent("sqlFieldDialog");
+		let tbl = this.getComponent("fieldList");
+		let p = { width: 600 };
+		let fieldId = tbl.getRowField(rowIndex, "fieldId").getValue();
+		let optionJson = tbl.getRowField(rowIndex, "optionJson").getValue();
+		let opt = {};
+		if (optionJson != null && optionJson.length > 0) {
+			opt = JSON.parse(optionJson);
+		}
+		opt.fieldId = fieldId;
+		p.formData = opt;
+		logger.log("p = ", p);
+		let ret = await dlg.doModal(p);
+		if (ret != null) {
+			tbl.getRowField(rowIndex, "fieldId").setValue(ret.fieldId);
+			tbl.getRowField(rowIndex, "optionJson").setValue(JSON.stringify(ret));
+			let otext = ret.sqlFieldType;
+			if (ret.fieldClassName != null) {
+				otext += ", " + ret.fieldClassName;
+			}
+			tbl.getRowField(rowIndex, "optionText").setValue(otext);
+		}
+		return ret;
+	}
 	
 	/**
 	 * 各種OptionDialogの動作。
@@ -151,6 +180,9 @@ export class QueryGenEditForm extends EditForm {
 			|| "jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass
 			|| "jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
 			let ret = await this.#doDateFunctionFieldDialog(rowIndex, fclass);
+			logger.log("ret = ", ret);
+		} else if ("jp.dataforms.fw.field.sqlfunc.SqlField" == fclass) {
+			let ret = await this.#doSqlFieldDialog(rowIndex);
 			logger.log("ret = ", ret);
 		}
 	}
