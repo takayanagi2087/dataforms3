@@ -29,6 +29,17 @@ public class SqlField extends Field<Object> implements FunctionField {
 	 */
 	@Setter
 	private Query query = null;
+
+	/**
+	 * コンストラクタ。
+	 * @param field フィールド。
+	 */
+	public SqlField(final Field<?> field) {
+		super(field.getId());
+		this.targetField = field;
+		this.sql = null;
+	}
+
 	/**
 	 * コンストラクタ。
 	 * @param field フィールド。

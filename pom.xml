@@ -189,6 +189,16 @@
 			<artifactId>totp</artifactId>
 			<version>1.7.1</version>
 		</dependency>
+		<!-- Source:
+		https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-core</artifactId>
+			<version>3.28.2</version>
+			<!--
+			<scope>compile</scope>
+			-->
+		</dependency>		
 		<dependency>
 			<groupId>jp.dataforms</groupId>
 			<artifactId>ExcelToXSLFO</artifactId>

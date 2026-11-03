@@ -42,8 +42,8 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)", null}
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)", null}
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.TimestampAddField", "日時加算(TimestampAddField)", null}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CaseField", "条件分岐(CaseField)", null}
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SqlField", "SQL式(SqlField)", null}
+//		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CaseField", "条件分岐(CaseField)", null}
 		// 集計フィールドクラス
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "カウント(CountField)", "summary"}
 		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "平均値(AvgField)", "summary"}

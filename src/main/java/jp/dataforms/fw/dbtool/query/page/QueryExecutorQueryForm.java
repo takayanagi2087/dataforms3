@@ -16,7 +16,7 @@ import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.devtool.field.FunctionSelectField;
 import jp.dataforms.fw.devtool.field.PackageNameField;
 import jp.dataforms.fw.devtool.field.QueryClassNameField;
-import jp.dataforms.fw.devtool.field.SqlField;
+import jp.dataforms.fw.devtool.field.SqlTextField;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.response.JsonResponse;
@@ -47,7 +47,7 @@ public class QueryExecutorQueryForm extends QueryForm {
 		};
 		fld.addBaseClass(Table.class);
 		this.addField(fld).setAutocomplete(true).setRelationDataAcquisition(true);
-		this.addField(new SqlField("sql")).addValidator(new RequiredValidator());
+		this.addField(new SqlTextField("sql")).addValidator(new RequiredValidator());
 	}
 
 	@Override

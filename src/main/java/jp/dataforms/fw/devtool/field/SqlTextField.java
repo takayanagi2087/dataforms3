@@ -7,11 +7,11 @@ import jp.dataforms.fw.field.sqltype.ClobField;
  * 更新SQLフィールド。
  *
  */
-public class SqlField extends ClobField {
+public class SqlTextField extends ClobField {
 	/**
 	 * コンストラクタ。
 	 */
-	public SqlField() {
+	public SqlTextField() {
 		this(null);
 	}
 
@@ -19,7 +19,7 @@ public class SqlField extends ClobField {
 	 * コンストラクタ。
 	 * @param id フィールドID。
 	 */
-	public SqlField(final String id) {
+	public SqlTextField(final String id) {
 		super(id);
 	}
 

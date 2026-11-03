@@ -29,6 +29,10 @@ export class FieldListHtmlTable extends EditableHtmlTable {
 		super.attach();
 	}
 	
+	/**
+	 * データの設定状況に応じたフィールド制御を行います。
+	 * @param {Array} data テーブルデータ。
+	 */
 	setTableData(data) {
 		super.setTableData(data);
 		for (let i = 0; i < this.getRowCount(); i++) {
