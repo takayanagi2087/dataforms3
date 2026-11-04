@@ -49,7 +49,11 @@ export class QueryGenEditForm extends EditForm {
 		this.#setSelectButtonStatus();
 	}
 
-	
+
+	/**
+	 * 出力フィールドリストのタイプ変更時の処理。
+	 * @param {Event} ev イベント情報。
+	 */	
 	#onChangeFieldClass(ev) {
 		let rowIndex = $(ev.currentTarget).closest('tr').index();
 		logger.log("#onChangeFieldClass rowIndex = " + rowIndex);
@@ -61,10 +65,9 @@ export class QueryGenEditForm extends EditForm {
 		let rfld = flist.getRowField(rowIndex, "refFieldId");
 		logger.log("rfld = ", rfld);
 		if (fld.optionList[sidx].summary) {
-			logger.log("unlock");
+			// 集計フィールドの場合参照フィールドを選択できるように修正。
 			rfld.lock(false);
 		} else {
-			logger.log("lock");
 			rfld.lock(true);
 		}
 	}
