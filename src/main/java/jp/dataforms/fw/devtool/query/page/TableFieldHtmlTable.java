@@ -24,7 +24,6 @@ import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.util.StringUtil;
-import jp.dataforms.fw.validator.RequiredValidator;
 
 /**
  * テーブルフィールドテーブルクラス。
@@ -121,7 +120,7 @@ public class TableFieldHtmlTable extends HtmlTable {
 		super(id);
 		FieldList flist = new FieldList(
 			(daoflg ? new FlagField(ID_SEL): new SummerySelectField(ID_SEL))
-			, new QueryFieldIdField(ID_FIELD_ID).addValidator(new RequiredValidator()).setReadonly(daoflg)
+			, new QueryFieldIdField(ID_FIELD_ID).setReadonly(daoflg)
 			, new TextField(ID_ALIAS)
 			, new FieldFullClassNameField(ID_FIELD_FULL_CLASS_NAME).setReadonly(true)
 			, new TextField(ID_FIELD_CLASS_NAME).setReadonly(true)
