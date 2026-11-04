@@ -275,13 +275,6 @@ export class Field extends WebComponent {
 		let tag = comp.prop("tagName");
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			this.setInputValue(comp, value);
-			if ("SELECT" == tag) {
-				let span = this.addSpan(comp);
-				if (this.readonly || this.get().css("display") == "none") {
-					let v = this.find("option:selected").text()
-					span.text(v);
-				}
-			}
 		} else {
 			this.setTextValue(comp, value);
 		}
@@ -468,15 +461,21 @@ export class Field extends WebComponent {
 	 */
 	lockSelect(lk) {
 		let comp = this.get();
-		let v = this.find("option:selected").text();
-		let span = this.addSpan(comp);
 		if (lk) {
-			comp.hide();
-			span.show();
-			span.text(v);
+			comp.css("border-style", "none");
+			comp.css("outline", "none");
+			comp.css("pointer-events", "none");
+			comp.css("appearance", "none");
+			comp.on("keydown keypress keyup", (event) => {
+				event.preventDefault();
+				return false;
+			});
 		} else {
-			comp.show();
-			span.hide();
+			comp.css("border-style", "");
+			comp.css("outline", "");
+			comp.css("pointer-events", "auto");
+			comp.css("appearance", "auto");
+			comp.off("keydown keypress keyup");
 		}
 	}
 
