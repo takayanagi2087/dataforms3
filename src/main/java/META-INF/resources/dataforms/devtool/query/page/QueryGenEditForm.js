@@ -59,15 +59,12 @@ export class QueryGenEditForm extends EditForm {
 		logger.log("#onChangeFieldClass rowIndex = " + rowIndex);
 		let flist = this.getComponent("fieldList");
 		let fld = flist.getRowField(rowIndex, "fieldClass");
-		let sidx = fld.get().prop("selectedIndex");
-		logger.log("sidx = " + sidx);
-		logger.log("fieldType = " + fld.optionList[sidx].summary);
 		let rfld = flist.getRowField(rowIndex, "refFieldId");
 		logger.log("rfld = ", rfld);
-		if (fld.optionList[sidx].summary) {
-			// 集計フィールドの場合参照フィールドを選択できるように修正。
+		if (fld.isRefFieldSelectable()) {
 			rfld.lock(false);
 		} else {
+			rfld.setValue(null);
 			rfld.lock(true);
 		}
 	}

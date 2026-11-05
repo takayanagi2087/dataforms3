@@ -14,6 +14,18 @@ import jp.dataforms.fw.field.common.VarcharSingleSelectField;
  */
 public class FieldClassSelectField extends VarcharSingleSelectField {
 	/**
+	 * 日付関数フィールド。
+	 */
+	public static final String DATEFUNC = "datefunc";
+	/**
+	 * SQL関数フィールド。
+	 */
+	public static final String SQLFUNC = "sqlfunc";
+	/**
+	 * 集計関数フィールド。
+	 */
+	public static final String SUMMARY = "summary";
+	/**
 	 * 項目長。
 	 */
 	private static final int LENGTH = 1024;
@@ -39,17 +51,16 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 	private static final String[][] OPTIONS = {
 		{"1", " - ", null} // 単純に出力する。
 		// 集計フィールドクラス
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)", null}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)", null}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.TimestampAddField", "日時加算(TimestampAddField)", null}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SqlField", "SQL式(SqlField)", null}
-//		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CaseField", "条件分岐(CaseField)", null}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.ExtractField", "日時要素抽出(ExtractField)", DATEFUNC}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.DateAddField", "日付加算(DateAddField)", DATEFUNC}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.TimestampAddField", "日時加算(TimestampAddField)", DATEFUNC}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SqlField", "SQL式(SqlField)", SQLFUNC}
 		// 集計フィールドクラス
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "カウント(CountField)", "summary"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "平均値(AvgField)", "summary"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MaxField", "最大値(MaxField)", "summary"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MinField", "最小値(MinField)", "summary"}
-		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SumField", "合計値(SumField)", "summary"}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField", "カウント(CountField)", SUMMARY}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.AvgField", "平均値(AvgField)", SUMMARY}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MaxField", "最大値(MaxField)", SUMMARY}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.MinField", "最小値(MinField)", SUMMARY}
+		, {WebComponent.BASE_PACKAGE + ".field.sqlfunc.SumField", "合計値(SumField)", SUMMARY}
 	};
 
 	/**
@@ -62,11 +73,13 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 			SelectField.OptionEntity e = new SelectField.OptionEntity();
 			e.setValue(opt[0]);
 			e.setName(opt[1]);
-			if (opt[2] != null) {
-				e.getMap().put("summary", true);
+			e.getMap().put("type", opt[2]);
+
+/*			if (SUMMARY.equals(opt[2])) {
+				e.getMap().put(SUMMARY, true);
 			} else {
-				e.getMap().put("summary", false);
-			}
+				e.getMap().put(SUMMARY, false);
+			}*/
 			list.add(e.getMap());
 		}
 		return list;
@@ -78,4 +91,19 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 		this.setOptionList(this.queryOptionList());
 	}
 
+	/**
+	 * フィールドタイプを取得します。
+	 * @param cls フィールドクラス。
+	 * @return フィールドタイプ。
+	 */
+	public static String getFieldType(final String cls) {
+		String ret = null;
+		for (String[] opt: FieldClassSelectField.OPTIONS) {
+			if (cls.equals(opt[0])) {
+				ret = opt[2];
+				break;
+			}
+		}
+		return ret;
+	}
 }

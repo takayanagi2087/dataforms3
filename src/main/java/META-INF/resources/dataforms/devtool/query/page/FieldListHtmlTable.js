@@ -38,10 +38,10 @@ export class FieldListHtmlTable extends EditableHtmlTable {
 		for (let i = 0; i < this.getRowCount(); i++) {
 			let fld = this.getRowField(i, "fieldClass");
 			let rfld = this.getRowField(i, "refFieldId");
-			let sidx = fld.get().prop("selectedIndex");
-			if (fld.optionList[sidx].summary) {
+			if (fld.isRefFieldSelectable()) {
 				rfld.lock(false);
 			} else {
+				rfld.setValue(null);
 				rfld.lock(true);
 			}
 		}

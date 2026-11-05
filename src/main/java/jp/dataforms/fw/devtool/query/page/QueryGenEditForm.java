@@ -24,6 +24,7 @@ import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.devtool.base.page.DeveloperPage;
 import jp.dataforms.fw.devtool.entity.EntityGenerator;
 import jp.dataforms.fw.devtool.field.AliasNameField;
+import jp.dataforms.fw.devtool.field.FieldClassSelectField;
 import jp.dataforms.fw.devtool.field.FunctionSelectField;
 import jp.dataforms.fw.devtool.field.JavaSourcePathField;
 import jp.dataforms.fw.devtool.field.JoinTypeField;
@@ -139,6 +140,11 @@ public class QueryGenEditForm extends EditForm {
 	private static final String ID_TABLE_PROP = "tableProp";
 
 	/**
+	 * 問い合わせクラスのフィールドリストテーブルID。
+	 */
+	private static final String ID_FIELD_LIST = "fieldList";
+
+	/**
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(QueryGeneratorEditForm.class);
@@ -172,7 +178,7 @@ public class QueryGenEditForm extends EditForm {
 		TableFieldHtmlTable slectFieldList = new TableFieldHtmlTable(ID_TABLE_FIELD_LIST);
 		slectFieldList.setCaption("テーブルフィールドリスト");
 		this.addHtmlTable(slectFieldList);
-		FieldListHtmlTable fieldListTable = new FieldListHtmlTable("fieldList");
+		FieldListHtmlTable fieldListTable = new FieldListHtmlTable(ID_FIELD_LIST);
 		this.addHtmlTable(fieldListTable);
 		this.addField(new FlagField(ID_NOT_UPDATE_CONSTRACTOR));
 		this.addField(new FlagField(ID_NOT_GENERATE_ENTITY));
@@ -396,34 +402,115 @@ public class QueryGenEditForm extends EditForm {
 	 * @param data フォームデータ。
 	 * @return チェック結果。
 	 */
-/*	private List<ValidationError> validateFieldId(final Map<String, Object> data) {
+	private List<ValidationError> validateFieldId(final Map<String, Object> data) {
 		Set<String> set = new HashSet<String>();
 		List<ValidationError> ret = new ArrayList<ValidationError>();
-		{
-			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_TABLE_FIELD_LIST);
-			for (int i = 0; i < sellist.size(); i++) {
-				Map<String, Object> m = sellist.get(i);
-				String sel = (String) m.get(TableFieldHtmlTable.ID_SEL);
-				if (!StringUtil.isBlank(sel)) {
-					if ((!"0".equals(sel))) {
-						String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
-						if (!StringUtil.isBlank(m.get(TableFieldHtmlTable.ID_ALIAS))) {
-							fieldId = (String) m.get(TableFieldHtmlTable.ID_ALIAS);
-						}
-						if (!set.contains(fieldId)) {
-							set.add(fieldId);
-						} else {
-							String fid = ID_TABLE_FIELD_LIST + "[" + i + "].fieldId";
-							ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
-						}
-					}
-				}
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
+		for (int i = 0; i < sellist.size(); i++) {
+			Map<String, Object> m = sellist.get(i);
+			String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
+			if (!set.contains(fieldId)) {
+				set.add(fieldId);
+			} else {
+				String fid = ID_FIELD_LIST + "[" + i + "].fieldId";
+				ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
 			}
 		}
 		return ret;
 	}
-*/
+
+	/**
+	 * 日付関数フィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkDateFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
+					)
+				);
+			}
+		}
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * SQLフィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkSqlFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * 日付関数フィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkSummaryFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * フィールドタイプ毎のチェックを実装。
+	 * @param data　フォームデータ。
+	 * @return チェック結果。
+	 */
+	private List<ValidationError> validateFieldType(final Map<String, Object> data) {
+		List<ValidationError> ret = new ArrayList<ValidationError>();
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
+		for (int i = 0; i < sellist.size(); i++) {
+			Map<String, Object> m = sellist.get(i);
+			String fieldClass = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
+			String type = FieldClassSelectField.getFieldType(fieldClass);
+			if (FieldClassSelectField.DATEFUNC.equals(type)) {
+				this.checkDateFunc(ret, i, m);
+			} else if (FieldClassSelectField.SQLFUNC.equals(type)) {
+				this.checkSqlFunc(ret, i, m);
+			} else if (FieldClassSelectField.SUMMARY.equals(type)) {
+				this.checkSummaryFunc(ret, i, m);
+			}
+		}
+		return ret;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<ValidationError> validateForm(final Map<String, Object> data) throws Exception {
@@ -433,7 +520,8 @@ public class QueryGenEditForm extends EditForm {
 			ret.add(new ValidationError(ID_MAIN_TABLE_CLASS_NAME, MessagesUtil.getMessage(this.getPage(), "error.tableclassnotfound", "{0}", mtClass)));
 		}
 		ret.addAll(this.validateJoinTable(ID_JOIN_TABLE_LIST, (List<Map<String, Object>>) data.get(ID_JOIN_TABLE_LIST)));
-//		ret.addAll(this.validateFieldId(data));
+		ret.addAll(this.validateFieldId(data));
+		ret.addAll(this.validateFieldType(data));
 		// 問合せソースファイルの存在チェック
 		String packageName = (String) data.get(ID_PACKAGE_NAME);
 		String queryClassName = (String) data.get(ID_QUERY_CLASS_NAME);
