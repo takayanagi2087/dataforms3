@@ -81,9 +81,29 @@ export class TableFieldHtmlTable extends HtmlTable {
 			opt.value = list[i].tableAlias + "." + value;
 			opt.name = list[i].tableAlias + "." + value + "(" + list[i].comment + ")";
 			opt.fieldType = list[i].fieldType;
+			opt.fieldClassName = list[i].fieldFullClassName;
+			opt.tableClassName = list[i].tableClassName;
 			optlist.push(opt);
 		}
 		return optlist;
+	}
+	
+	/**
+	 * テーブル参照IDからテーブルフィールド情報を取得します。
+	 * @param {String} refId 参照フィールドID。
+	 * @return {Object} テーブルフィールド情報。
+	 */
+	getTableFieldInfo(refId) {
+		let ret = null;
+		let list = this.getTableData();
+		for (let i = 0; i < list.length; i++) {
+			let id = list[i].tableAlias + "." + list[i].fieldId;
+			if (id == refId) {
+				ret = list[i];
+				break;
+			}
+		}
+		return ret;
 	}
 }
 

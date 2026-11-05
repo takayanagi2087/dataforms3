@@ -39,6 +39,15 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 	}
 
 	/**
+	 * 対応するテーブルフィールド情報を取得します。
+	 */
+	getTableFieldInfo() {
+		let tbl = this.getParentForm().getComponent("tableFieldList");
+		logger.log("tbl=", tbl);
+		return tbl.getTableFieldInfo(this.get().val());
+	}
+		
+	/**
 	 * テーブルフィールドの選択肢を設定します。
 	 */
 	setOption() {

@@ -875,7 +875,9 @@ public class QueryGenEditForm extends EditForm {
 	}
 
 	/**
-	 * プロパティ名称マップ。
+	 * テーブルのインスタンスを記録した変数マップ。
+	 * キーはTableのクラス名(パッケージ無)+Alias
+	 * 値は変数名。
 	 */
 	private Map<String, String> propertyMap = new HashMap<String, String>();
 
@@ -940,7 +942,7 @@ public class QueryGenEditForm extends EditForm {
 
 
 	private String getCommentCode(final Map<String, Object> m) throws Exception {
-		String fieldClassName = (String) m.get("fieldClassName");
+		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
 		@SuppressWarnings("unchecked")
 		Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
 		Field<?> f = Field.newFieldInstance(cls);
@@ -955,6 +957,29 @@ public class QueryGenEditForm extends EditForm {
 	}
 
 	/**
+	 * 参照フィールド。
+	 * @param tableAlias テーブル別名。
+	 * @param fieldId フィールドID。
+	 */
+	private record RefField(String tableAlias, String fieldId) {}
+
+	/**
+	 * 参照フィールドIDを分解します。
+	 * @param refFieldId 参照フィールドID。
+	 * @return　分解した参照フィールドID。
+	 */
+	private RefField getRefField(final String refFieldId) {
+		RefField ret = null;
+		if (refFieldId != null) {
+			String[] sp = refFieldId.split("\\.");
+			if (sp.length == 2) {
+				ret = new RefField(sp[0], sp[1]);
+			}
+		}
+		return ret;
+	}
+	
+	/**
 	 * フィールドリストの作成します。
 	 * @param list 選択フィールドリスト。
 	 * @param sb ソースを展開する文字列バッファ。
@@ -966,50 +991,52 @@ public class QueryGenEditForm extends EditForm {
 		logger.debug("this.propertyMap={}", this.propertyMap);
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
-			String sel = (String) m.get(TableFieldHtmlTable.ID_SEL);
-			if (sel != null && (!"0".equals(sel))) {
-				String fieldClassName = (String) m.get(TableFieldHtmlTable.ID_FIELD_CLASS_NAME);
-				if (sel.length() <= 1) {
-					implist.add(fieldClassName);
-				}
-				ret.add(m);
-				if (sb.length() > 0) {
-					sb.append("\t\t\t, ");
+			String sel = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			String fieldClassName = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
+			if (sel.length() <= 1) {
+				implist.add(fieldClassName);
+			}
+			ret.add(m);
+			if (sb.length() > 0) {
+				sb.append("\t\t\t, ");
+			} else {
+				sb.append("\t\t\t");
+			}
+			String tableClassName = (String) m.get(FieldListHtmlTable.ID_TABLE_CLASS_NAME);
+			RefField rf = this.getRefField(refFieldId);
+			String tableAlias = rf.tableAlias();
+			String propName = this.propertyMap.get(tableClassName + tableAlias);
+			logger.debug("propName={}", propName);
+			if (propName == null) {
+				propName = tableClassName;
+			}
+			String alias = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+			if ("1".equals(sel)) {
+				// テーブルフィールドの参照の展開。
+				if (alias.equals(rf.fieldId())) {
+					// そのまま転記した場合
+					String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+					sb.append(this.getTableVariableName(propName) + ".");
+					sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + "\n");
 				} else {
-					sb.append("\t\t\t");
+					// フィールドIDとテーブルフィールドのIDが異なる場合はAliasFieldを展開
+					// String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+					implist.add(AliasField.class.getName());
+					sb.append("new AliasField(\"" + alias + "\", ");
+					sb.append(this.getTableVariableName(propName) + ".");
+					sb.append(this.getFieldMethod(rf.fieldId()) + this.getCommentCode(m) + ")\n");
 				}
-				String tableClassName = (String) m.get(TableFieldHtmlTable.ID_TABLE_CLASS_NAME);
-				String tableAlias = (String) m.get(TableFieldHtmlTable.ID_TABLE_ALIAS);
-				String propName = this.propertyMap.get(tableClassName + tableAlias);
-				logger.debug("propName={}", propName);
-				if (propName == null) {
-					propName = tableClassName;
+			} else {
+				String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
+				if (alias.length() > 0) {
+					fieldId = alias;
 				}
-				String alias = (String) m.get(TableFieldHtmlTable.ID_ALIAS);
-				if ("1".equals(sel)) {
-					logger.debug("alias=" + alias);
-					if (StringUtil.isBlank(alias)) {
-						String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
-						sb.append(this.getTableVariableName(propName) + ".");
-						sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + "\n");
-					} else {
-						String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
-						implist.add(AliasField.class.getName());
-						sb.append("new AliasField(\"" + alias + "\", ");
-						sb.append(this.getTableVariableName(propName) + ".");
-						sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + ")\n");
-					}
-				} else {
-					String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
-					if (alias.length() > 0) {
-						fieldId = alias;
-					}
-					Class<?> cls = Class.forName(sel);
-					implist.add(cls.getName());
-					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
-						+ "." + this.getFieldMethod((String) m.get(TableFieldHtmlTable.ID_FIELD_ID)) + ")"
-						+ this.getCommentCode(m) + "\n");
-				}
+				Class<?> cls = Class.forName(sel);
+				implist.add(cls.getName());
+				sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
+					+ "." + this.getFieldMethod((String) m.get(TableFieldHtmlTable.ID_FIELD_ID)) + ")"
+					+ this.getCommentCode(m) + "\n");
 			}
 		}
 		return ret;
@@ -1061,7 +1088,7 @@ public class QueryGenEditForm extends EditForm {
 	private String generateSelectFieldList(final Map<String, Object> data, final ImportUtil implist, final List<Map<String, Object>> fieldList) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_TABLE_FIELD_LIST);
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
 		fieldList.addAll(this.genSelectFieldList(sellist, sb, implist));
 		return "\t\tthis.setFieldList(new FieldList(\n" + sb.toString() + "\t\t));";
 	}
@@ -1199,8 +1226,10 @@ public class QueryGenEditForm extends EditForm {
 					return this.getFieldId(m);
 				}
 				, (Map<String, Object> m) -> {
-					String fcls =  (String) m.get(TableFieldHtmlTable.ID_FIELD_CLASS_NAME);
-					String sel = (String) m.get(TableFieldHtmlTable.ID_SEL);
+					String fcls =  (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
+					// FIXME:後でフィールド名を修正FieldListHtmlTable.ID_FIELD_CLASS,FieldListHtmlTable.ID_REF_FIELD_CLASS_NAMEの名称を修正。
+					m.put("fieldClassName", fcls);
+					String sel = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
 					if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(sel)) {
 						fcls = WebComponent.BASE_PACKAGE + ".field.sqltype.BigintField";
 					}

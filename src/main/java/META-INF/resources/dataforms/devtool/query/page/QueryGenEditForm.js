@@ -46,10 +46,28 @@ export class QueryGenEditForm extends EditForm {
 		this.get("fieldList").on("change", "select.fieldClass", (ev) => {
 			this.#onChangeFieldClass(ev);
 		});
+		this.get("fieldList").on("change", "select.refFieldId", (ev) => {
+			this.#onChangeRefFieldId(ev);
+		});
 		this.#setSelectButtonStatus();
 	}
 
-
+	/**
+	 * 参照フィールドID変更時の処理。
+	 * @param {Event} ev イベント情報。
+	 */
+	#onChangeRefFieldId(ev) {
+		let rowIndex = $(ev.currentTarget).closest('tr').index();
+		logger.log("#onChangeRefFieldId rowIndex = " + rowIndex);
+		let tbl = this.getComponent("fieldList");
+		let rfld = tbl.getRowField(rowIndex, "refFieldId");
+		let tfield = rfld.getTableFieldInfo();
+		logger.log("field info = ", tfield);
+		tbl.getRowField(rowIndex, "refFieldClassName").setValue(tfield.fieldFullClassName);
+		tbl.getRowField(rowIndex, "tableClassName").setValue(tfield.tableClassName);
+	}
+	
+	
 	/**
 	 * 出力フィールドリストのタイプ変更時の処理。
 	 * @param {Event} ev イベント情報。
@@ -200,6 +218,8 @@ export class QueryGenEditForm extends EditForm {
 			m.fieldId = list[i].fieldId;
 			m.refFieldId = list[i].tableAlias + "." + list[i].fieldId;
 			m.fieldClass = "1";
+			m.refFieldClassName = list[i].fieldFullClassName;
+			m.tableClassName = list[i].tableClassName;
 			m.comment = list[i].comment;
 			slist.push(m);
 		}
