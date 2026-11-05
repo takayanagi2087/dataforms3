@@ -45,7 +45,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 		flist.addField(new FieldIdField()).addValidator(new RequiredValidator());	// フィールドID(fieldのAlias)。
 		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)); // 参照フィールドID。
 		flist.addField(new TextField(ID_OPTION_JSON)).setHidden(true); // option
-		flist.addField(new TextField(ID_OPTION_TEXT)); // option表示
+		flist.addField(new TextField(ID_OPTION_TEXT)).setReadonly(true); // option表示
 		flist.addField(new TextField(ID_COMMENT)); // フィールドコメント
 		this.setFieldList(flist);
 		this.setFixedColumns(4);

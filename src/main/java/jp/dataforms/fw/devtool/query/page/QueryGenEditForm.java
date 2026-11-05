@@ -431,7 +431,7 @@ public class QueryGenEditForm extends EditForm {
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
 			if (StringUtil.isBlank(refFieldId)) {
 				list.add(new ValidationError(
-						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_REF_FIELD_ID
 						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
 					)
 				);
@@ -441,7 +441,7 @@ public class QueryGenEditForm extends EditForm {
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
 			if (StringUtil.isBlank(refFieldId)) {
 				list.add(new ValidationError(
-						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_OPTION_TEXT
 						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
 					)
 				);
@@ -460,7 +460,7 @@ public class QueryGenEditForm extends EditForm {
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
 			if (StringUtil.isBlank(refFieldId)) {
 				list.add(new ValidationError(
-						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_OPTION_TEXT
 						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
 					)
 				);
@@ -479,7 +479,7 @@ public class QueryGenEditForm extends EditForm {
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
 			if (StringUtil.isBlank(refFieldId)) {
 				list.add(new ValidationError(
-						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_FIELD_CLASS
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_REF_FIELD_ID
 						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
 					)
 				);
