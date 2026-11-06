@@ -36,7 +36,7 @@ export class FieldListHtmlTable extends EditableHtmlTable {
 	setTableData(data) {
 		super.setTableData(data);
 		for (let i = 0; i < this.getRowCount(); i++) {
-			let fld = this.getRowField(i, "fieldClass");
+			let fld = this.getRowField(i, "funcFieldClassName");
 			let rfld = this.getRowField(i, "refFieldId");
 			if (fld.isRefFieldSelectable()) {
 				rfld.lock(false);

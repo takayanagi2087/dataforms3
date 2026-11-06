@@ -498,7 +498,7 @@ public class QueryGenEditForm extends EditForm {
 		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
 		for (int i = 0; i < sellist.size(); i++) {
 			Map<String, Object> m = sellist.get(i);
-			String fieldClass = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
+			String fieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
 			String type = FieldClassSelectField.getFieldType(fieldClass);
 			if (FieldClassSelectField.DATEFUNC.equals(type)) {
 				this.checkDateFunc(ret, i, m);
@@ -942,7 +942,7 @@ public class QueryGenEditForm extends EditForm {
 
 
 	private String getCommentCode(final Map<String, Object> m) throws Exception {
-		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
+		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
 		@SuppressWarnings("unchecked")
 		Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
 		Field<?> f = Field.newFieldInstance(cls);
@@ -991,9 +991,9 @@ public class QueryGenEditForm extends EditForm {
 		logger.debug("this.propertyMap={}", this.propertyMap);
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
-			String sel = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
+			String sel = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
-			String fieldClassName = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
+			String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
 			if (sel.length() <= 1) {
 				implist.add(fieldClassName);
 			}
@@ -1226,10 +1226,8 @@ public class QueryGenEditForm extends EditForm {
 					return this.getFieldId(m);
 				}
 				, (Map<String, Object> m) -> {
-					String fcls =  (String) m.get(FieldListHtmlTable.ID_REF_FIELD_CLASS_NAME);
-					// FIXME:後でフィールド名を修正FieldListHtmlTable.ID_FIELD_CLASS,FieldListHtmlTable.ID_REF_FIELD_CLASS_NAMEの名称を修正。
-					m.put("fieldClassName", fcls);
-					String sel = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS);
+					String fcls =  (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
+					String sel = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
 					if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(sel)) {
 						fcls = WebComponent.BASE_PACKAGE + ".field.sqltype.BigintField";
 					}

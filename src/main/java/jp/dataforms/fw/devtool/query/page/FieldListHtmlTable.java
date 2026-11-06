@@ -15,7 +15,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	/**
 	 * フィールド変換クラス。
 	 */
-	public static final String ID_FIELD_CLASS = "fieldClass";
+	public static final String ID_FUNC_FIELD_CLASS_NAME = "funcFieldClassName";
 	/**
 	 * フィールドID。
 	 */
@@ -27,7 +27,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	/**
 	 * 参照フィールドID。
 	 */
-	public static final String ID_REF_FIELD_CLASS_NAME = "refFieldClassName";
+	public static final String ID_FIELD_CLASS_NAME = "fieldClassName";
 	/**
 	 * 参照フィールドID。
 	 */
@@ -52,10 +52,10 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	public FieldListHtmlTable(String id) {
 		super(id);
 		FieldList flist = new FieldList();
-		flist.addField(new FieldClassSelectField(ID_FIELD_CLASS)); // 参照フィールドクラス。
+		flist.addField(new FieldClassSelectField(ID_FUNC_FIELD_CLASS_NAME)); // 機能フィールドクラス。
 		flist.addField(new FieldIdField()).addValidator(new RequiredValidator());	// フィールドID(fieldのAlias)。
 		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)); // 参照フィールドID。
-		flist.addField(new TextField(ID_REF_FIELD_CLASS_NAME)).setHidden(true); // 参照フィールドクラス。
+		flist.addField(new TextField(ID_FIELD_CLASS_NAME)).setHidden(true); // 参照フィールドクラス。
 		flist.addField(new TextField(ID_TABLE_CLASS_NAME)).setHidden(true); // 参照フィールドクラス。
 		flist.addField(new TextField(ID_OPTION_JSON)).setHidden(true); // option
 		flist.addField(new TextField(ID_OPTION_TEXT)).setReadonly(true); // option表示

@@ -43,8 +43,8 @@ export class QueryGenEditForm extends EditForm {
 		this.get("fieldList").on("click", "td.option", (ev) => {
 			this.#doOptionDialog(ev);
 		});
-		this.get("fieldList").on("change", "select.fieldClass", (ev) => {
-			this.#onChangeFieldClass(ev);
+		this.get("fieldList").on("change", "select.funcFieldClassName", (ev) => {
+			this.#onChangeFuncFieldClassName(ev);
 		});
 		this.get("fieldList").on("change", "select.refFieldId", (ev) => {
 			this.#onChangeRefFieldId(ev);
@@ -63,7 +63,7 @@ export class QueryGenEditForm extends EditForm {
 		let rfld = tbl.getRowField(rowIndex, "refFieldId");
 		let tfield = rfld.getTableFieldInfo();
 		logger.log("field info = ", tfield);
-		tbl.getRowField(rowIndex, "refFieldClassName").setValue(tfield.fieldFullClassName);
+		tbl.getRowField(rowIndex, "fieldClassName").setValue(tfield.fieldFullClassName);
 		tbl.getRowField(rowIndex, "tableClassName").setValue(tfield.tableClassName);
 	}
 	
@@ -72,11 +72,11 @@ export class QueryGenEditForm extends EditForm {
 	 * 出力フィールドリストのタイプ変更時の処理。
 	 * @param {Event} ev イベント情報。
 	 */	
-	#onChangeFieldClass(ev) {
+	#onChangeFuncFieldClassName(ev) {
 		let rowIndex = $(ev.currentTarget).closest('tr').index();
-		logger.log("#onChangeFieldClass rowIndex = " + rowIndex);
+		logger.log("#onChangeFuncFieldClassName rowIndex = " + rowIndex);
 		let flist = this.getComponent("fieldList");
-		let fld = flist.getRowField(rowIndex, "fieldClass");
+		let fld = flist.getRowField(rowIndex, "funcFieldClassName");
 		let rfld = flist.getRowField(rowIndex, "refFieldId");
 		logger.log("rfld = ", rfld);
 		if (fld.isRefFieldSelectable()) {
@@ -192,7 +192,7 @@ export class QueryGenEditForm extends EditForm {
 		let rowIndex = $(ev.currentTarget).closest('tr').index();
 		logger.log("rowIndex = " + rowIndex);
 		let tbl = this.getComponent("fieldList");
-		let fclass = tbl.getRowField(rowIndex, "fieldClass").getValue();
+		let fclass = tbl.getRowField(rowIndex, "funcFieldClassName").getValue();
 		logger.log("fclass = " + fclass);
 		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass
 			|| "jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass
@@ -217,8 +217,8 @@ export class QueryGenEditForm extends EditForm {
 			let m  = {};
 			m.fieldId = list[i].fieldId;
 			m.refFieldId = list[i].tableAlias + "." + list[i].fieldId;
-			m.fieldClass = "1";
-			m.refFieldClassName = list[i].fieldFullClassName;
+			m.funcFieldClassName = "1";
+			m.fieldClassName = list[i].fieldFullClassName;
 			m.tableClassName = list[i].tableClassName;
 			m.comment = list[i].comment;
 			slist.push(m);
