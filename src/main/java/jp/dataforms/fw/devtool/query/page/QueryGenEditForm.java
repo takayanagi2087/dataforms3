@@ -980,6 +980,35 @@ public class QueryGenEditForm extends EditForm {
 	}
 	
 	/**
+	 * 日付機能オプション。
+	 * @param dateFieldType 操作する日付フィールド。
+	 * @param addValue 加算値。
+	 */
+	private record DateFuncOption(String dateFieldType, Integer addValue) {}
+	
+	/**
+	 * 日付関数のオプションを取得します。
+	 * @param json JSON形式のオプション。
+	 * @return　日付関数のオプション。
+	 */
+	private DateFuncOption getDateFuncOption(final String json) {
+		DateFuncOption ret = null;
+		if (!StringUtil.isBlank(json)) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+			String fieldType = (String) map.get("dateFieldType");
+			Double addValue = (Double) map.get("addValue");
+			if (addValue == null) {
+				ret = new DateFuncOption(fieldType, null);
+			} else {
+				ret = new DateFuncOption(fieldType, addValue.intValue());
+			}
+		}
+		return ret;
+	}
+	
+	
+	/**
 	 * フィールドリストの作成します。
 	 * @param list 選択フィールドリスト。
 	 * @param sb ソースを展開する文字列バッファ。
@@ -1031,14 +1060,33 @@ public class QueryGenEditForm extends EditForm {
 			} else if (FieldClassSelectField.SUMMARY.equals(funcFieldType)) {
 				// 集計フィールドの出力処理
 				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
-				if (alias.length() > 0) {
-					fieldId = alias;
-				}
 				Class<?> cls = Class.forName(funcFieldClass);
 				implist.add(cls.getName());
 				sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
 					+ "." + this.getFieldMethod((String) m.get(FieldListHtmlTable.ID_FIELD_ID)) + ")"
 					+ this.getCommentCode(m) + "\n");
+			} else if (FieldClassSelectField.DATEFUNC.equals(funcFieldType)) {
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+				String optionJson = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+				DateFuncOption opt = this.getDateFuncOption(optionJson);
+				Class<?> cls = Class.forName(funcFieldClass);
+				implist.add(cls.getName());
+				implist.add("jp.dataforms.fw.field.sqlfunc.DateFunctionField.FieldType");
+				if (funcFieldClass.indexOf("ExtractField") >= 0) {
+					// 日時フィールド抽出
+					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId 
+							+ "\", FieldType." + opt.dateFieldType() 
+							+ ", " + this.getTableVariableName(propName) + "." + this.getFieldMethod(rf.fieldId()) 
+							+ ")" + this.getCommentCode(m) + "\n");
+					
+				} else {
+					// 日時要素加算
+					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId 
+							+ "\", FieldType." + opt.dateFieldType() 
+							+ ", " + this.getTableVariableName(propName) + "." + this.getFieldMethod(rf.fieldId()) 
+							+ ", " + opt.addValue() 
+							+ ")" + this.getCommentCode(m) + "\n");
+				}
 			}
 		}
 		return ret;
