@@ -943,15 +943,20 @@ public class QueryGenEditForm extends EditForm {
 
 	private String getCommentCode(final Map<String, Object> m) throws Exception {
 		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
-		@SuppressWarnings("unchecked")
-		Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
-		Field<?> f = Field.newFieldInstance(cls);
-		String comment0 = f.getComment();
-		String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
-		if (!StringUtil.isBlank(comment0)) {
-			if (!comment0.equals(comment)) {
-				return ".setComment(\"" + comment + "\")";
+		if (!StringUtil.isBlank(fieldClassName)) {
+			@SuppressWarnings("unchecked")
+			Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
+			Field<?> f = Field.newFieldInstance(cls);
+			String comment0 = f.getComment();
+			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
+			if (!StringUtil.isBlank(comment0)) {
+				if (!comment0.equals(comment)) {
+					return ".setComment(\"" + comment + "\")";
+				}
 			}
+		} else {
+			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
+			return ".setComment(\"" + comment + "\")";
 		}
 		return "";
 	}
@@ -1007,6 +1012,34 @@ public class QueryGenEditForm extends EditForm {
 		return ret;
 	}
 	
+	/**
+	 * SqlFieldのオプション。
+	 * @param sqlFieldType フィールドの基本クラス。
+	 * @param fieldClassName 生成するインナークラス名。
+	 */
+	private record SqlFieldOption(String sqlFieldType, String fieldClassName) {}
+
+	/**
+	 * Sqlフィールドのオプションを取得します。
+	 * @param json JSON形式のオプション。
+	 * @return　Sqlフィールドのオプションのオプション。
+	 */
+	private SqlFieldOption getSqlFieldOption(final String json) {
+		SqlFieldOption ret = null;
+		if (!StringUtil.isBlank(json)) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+			String sqlFieldType = (String) map.get("sqlFieldType");
+			String fieldClassName = (String) map.get("fieldClassName");
+			ret = new SqlFieldOption(sqlFieldType, fieldClassName);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Sqlフィールドのサブクラスリスト。
+	 */
+	private List<SqlFieldOption> sqlFieldOptionList = null;
 	
 	/**
 	 * フィールドリストの作成します。
@@ -1018,6 +1051,7 @@ public class QueryGenEditForm extends EditForm {
 	 */
 	private List<Map<String, Object>> genSelectFieldList(List<Map<String, Object>> list, StringBuilder sb, final ImportUtil implist) throws Exception {
 		logger.debug("this.propertyMap={}", this.propertyMap);
+		this.sqlFieldOptionList = new ArrayList<SqlFieldOption>();
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
 			String funcFieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
@@ -1035,8 +1069,8 @@ public class QueryGenEditForm extends EditForm {
 			}
 			String tableClassName = (String) m.get(FieldListHtmlTable.ID_TABLE_CLASS_NAME);
 			RefField rf = this.getRefField(refFieldId);
-			String tableAlias = rf.tableAlias();
-			String propName = this.propertyMap.get(tableClassName + tableAlias);
+			String tableAlias = (rf != null ? rf.tableAlias() : null);
+			String propName = (rf != null ? this.propertyMap.get(tableClassName + tableAlias) : null);
 			logger.debug("propName={}", propName);
 			if (propName == null) {
 				propName = tableClassName;
@@ -1087,6 +1121,12 @@ public class QueryGenEditForm extends EditForm {
 							+ ", " + opt.addValue() 
 							+ ")" + this.getCommentCode(m) + "\n");
 				}
+			} else if (FieldClassSelectField.SQLFUNC.equals(funcFieldType)) {
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+				String optionJson = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+				SqlFieldOption opt = this.getSqlFieldOption(optionJson);
+				sb.append("new " + opt.fieldClassName() + "(\"" + fieldId + "\")" + this.getCommentCode(m) + "\n");
+				this.sqlFieldOptionList.add(opt);
 			}
 		}
 		return ret;

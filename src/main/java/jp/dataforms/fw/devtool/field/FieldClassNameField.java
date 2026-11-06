@@ -10,7 +10,7 @@ public class FieldClassNameField extends SimpleClassNameField {
 	/**
 	 * autocompleteの例外文字列。
 	 */
-	private static final String EXCEPTION_PATTERN = "dataforms\\.field\\.sqlfunc";
+	private static final String EXCEPTION_PATTERN = "jp\\.dataforms\\.fw\\.field\\.sqlfunc";
 	/**
 	 * フィールドコメント。
 	 */
@@ -30,6 +30,7 @@ public class FieldClassNameField extends SimpleClassNameField {
 		this.addBaseClass(Field.class);
 		this.setComment(COMMENT);
 		this.addExceptionPattern(EXCEPTION_PATTERN);
+		this.setAutocomplete(true);
 	}
 
 	@Override

@@ -17,9 +17,28 @@
 						<div class="field"><select id="sqlFieldType"></select></div>
 					</div>
 					<div class="fieldDiv">
-						<div class="label"><label for="fieldClassName">フィールドクラス名</label></div>
+						<div class="label"><label for="newFieldClassName">生成フィールドクラス名</label></div>
+						<div class="field"><input type="text" id="newFieldClassName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="functionSelect">機能</label></div>
+						<div class="field"><select id="functionSelect"></select></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="packageName">パッケージ名</label></div>
+						<div class="field"><input type="text" id="packageName" /></div>
+					</div>
+					<div class="fieldDiv">
+						<div class="label"><label for="fieldClassName">出力フィールドクラス</label></div>
 						<div class="field"><input type="text" id="fieldClassName" /></div>
 					</div>
+				</div>
+				<div>
+					基本クラスから派生した生成フィールドクラスを問い合わせクラス内のインナークラスとして生成します。
+					生成したインナークラスの機能はソース中のコメントを参考に記述してください。<br/>
+					インナークラスを修正した後、問い合わせクラスを上書きしてもインナークラスの内容は保持されます。<br/>
+					SqlFieldクラスは返す値の型が決まりません。
+					そのため型を指定するために出力フィールドクラスを指定する必要があります。
 				</div>
 				<div class="buttnDiv">
 					<button type="button" id="okButton" class="largeButton">ＯＫ</button>

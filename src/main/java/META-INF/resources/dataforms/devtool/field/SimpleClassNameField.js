@@ -17,6 +17,7 @@ export class SimpleClassNameField extends VarcharField {
 	 */
 	attach() {
 		super.attach();
+		logger.log("SimpleClassNameField this = ", this);
 	}
 }
 

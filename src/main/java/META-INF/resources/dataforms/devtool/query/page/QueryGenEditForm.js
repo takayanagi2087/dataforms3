@@ -58,6 +58,14 @@ export class QueryGenEditForm extends EditForm {
 	 */
 	#onChangeRefFieldId(ev) {
 		let rowIndex = $(ev.currentTarget).closest('tr').index();
+		this.#onChangeRefFieldIdRow(rowIndex);
+	}
+	
+	/**
+	 * 参照フィールドID変更時の処理 行インデックス指定版。
+	 * @param {Number} rowIndex 行インデックス。
+	 */
+	#onChangeRefFieldIdRow(rowIndex) {
 		logger.log("#onChangeRefFieldId rowIndex = " + rowIndex);
 		let tbl = this.getComponent("fieldList");
 		let rfld = tbl.getRowField(rowIndex, "refFieldId");
@@ -66,7 +74,6 @@ export class QueryGenEditForm extends EditForm {
 		tbl.getRowField(rowIndex, "fieldClassName").setValue(tfield.fieldFullClassName);
 		tbl.getRowField(rowIndex, "tableClassName").setValue(tfield.tableClassName);
 	}
-	
 	
 	/**
 	 * 出力フィールドリストのタイプ変更時の処理。
@@ -160,7 +167,7 @@ export class QueryGenEditForm extends EditForm {
 	async #doSqlFieldDialog(rowIndex) {
 		let dlg = currentPage.getComponent("sqlFieldDialog");
 		let tbl = this.getComponent("fieldList");
-		let p = { width: 600 };
+		let p = { width: 660 };
 		let fieldId = tbl.getRowField(rowIndex, "fieldId").getValue();
 		let optionJson = tbl.getRowField(rowIndex, "optionJson").getValue();
 		let opt = {};
@@ -176,7 +183,7 @@ export class QueryGenEditForm extends EditForm {
 			tbl.getRowField(rowIndex, "optionJson").setValue(JSON.stringify(ret));
 			let otext = ret.sqlFieldType;
 			if (ret.fieldClassName != null) {
-				otext += ", " + ret.fieldClassName;
+				otext = ret.newFieldClassName + " -> " + otext;
 			}
 			tbl.getRowField(rowIndex, "optionText").setValue(otext);
 		}
@@ -198,9 +205,11 @@ export class QueryGenEditForm extends EditForm {
 			|| "jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass
 			|| "jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
 			let ret = await this.#doDateFunctionFieldDialog(rowIndex, fclass);
+			this.#onChangeRefFieldIdRow(rowIndex);
 			logger.log("ret = ", ret);
 		} else if ("jp.dataforms.fw.field.sqlfunc.SqlField" == fclass) {
 			let ret = await this.#doSqlFieldDialog(rowIndex);
+			this.#onChangeRefFieldIdRow(rowIndex);
 			logger.log("ret = ", ret);
 		}
 	}

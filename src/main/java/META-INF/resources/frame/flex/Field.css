@@ -442,3 +442,7 @@ table.calendarTable td.selected {
 	border-width: 1px;
  }
  
+ /** autocompleteの選択肢をダイアログの前に表示する。 */
+.ui-autocomplete {
+	z-index: 2050 !important; 
+}

@@ -31,6 +31,7 @@ public class FieldSingleSelectField extends VarcharSingleSelectField {
 		super(id, 128);
 		this.setComment("フィールドID");
 		this.autoOption = autoOption;
+		this.setBlankOption(true);
 	}
 	
 	
