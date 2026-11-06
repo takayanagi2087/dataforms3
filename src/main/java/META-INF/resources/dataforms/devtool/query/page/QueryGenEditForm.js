@@ -214,14 +214,16 @@ export class QueryGenEditForm extends EditForm {
 		logger.log("#selectField = ", list);
 		let slist = [];
 		for (let i = 0; i < list.length; i++) {
-			let m  = {};
-			m.fieldId = list[i].fieldId;
-			m.refFieldId = list[i].tableAlias + "." + list[i].fieldId;
-			m.funcFieldClassName = "1";
-			m.fieldClassName = list[i].fieldFullClassName;
-			m.tableClassName = list[i].tableClassName;
-			m.comment = list[i].comment;
-			slist.push(m);
+			if (list[i].sel == "1") {
+				let m  = {};
+				m.fieldId = list[i].fieldId;
+				m.refFieldId = list[i].tableAlias + "." + list[i].fieldId;
+				m.funcFieldClassName = "1";
+				m.fieldClassName = list[i].fieldFullClassName;
+				m.tableClassName = list[i].tableClassName;
+				m.comment = list[i].comment;
+				slist.push(m);
+			}
 		}
 		logger.log("#selectField = ", slist);
 		let ftbl = this.getComponent("fieldList");

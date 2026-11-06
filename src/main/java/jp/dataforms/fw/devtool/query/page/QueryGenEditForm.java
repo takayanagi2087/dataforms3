@@ -499,7 +499,7 @@ public class QueryGenEditForm extends EditForm {
 		for (int i = 0; i < sellist.size(); i++) {
 			Map<String, Object> m = sellist.get(i);
 			String fieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
-			String type = FieldClassSelectField.getFieldType(fieldClass);
+			String type = FieldClassSelectField.getType(fieldClass);
 			if (FieldClassSelectField.DATEFUNC.equals(type)) {
 				this.checkDateFunc(ret, i, m);
 			} else if (FieldClassSelectField.SQLFUNC.equals(type)) {
@@ -991,10 +991,11 @@ public class QueryGenEditForm extends EditForm {
 		logger.debug("this.propertyMap={}", this.propertyMap);
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
-			String sel = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
+			String funcFieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
+			String funcFieldType = FieldClassSelectField.getType(funcFieldClass);
 			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
 			String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
-			if (sel.length() <= 1) {
+			if (funcFieldClass.length() <= 1) {
 				implist.add(fieldClassName);
 			}
 			ret.add(m);
@@ -1012,7 +1013,7 @@ public class QueryGenEditForm extends EditForm {
 				propName = tableClassName;
 			}
 			String alias = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
-			if ("1".equals(sel)) {
+			if (funcFieldType == null) {
 				// テーブルフィールドの参照の展開。
 				if (alias.equals(rf.fieldId())) {
 					// そのまま転記した場合
@@ -1027,15 +1028,16 @@ public class QueryGenEditForm extends EditForm {
 					sb.append(this.getTableVariableName(propName) + ".");
 					sb.append(this.getFieldMethod(rf.fieldId()) + this.getCommentCode(m) + ")\n");
 				}
-			} else {
-				String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
+			} else if (FieldClassSelectField.SUMMARY.equals(funcFieldType)) {
+				// 集計フィールドの出力処理
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
 				if (alias.length() > 0) {
 					fieldId = alias;
 				}
-				Class<?> cls = Class.forName(sel);
+				Class<?> cls = Class.forName(funcFieldClass);
 				implist.add(cls.getName());
 				sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
-					+ "." + this.getFieldMethod((String) m.get(TableFieldHtmlTable.ID_FIELD_ID)) + ")"
+					+ "." + this.getFieldMethod((String) m.get(FieldListHtmlTable.ID_FIELD_ID)) + ")"
 					+ this.getCommentCode(m) + "\n");
 			}
 		}

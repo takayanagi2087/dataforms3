@@ -96,7 +96,7 @@ public class FieldClassSelectField extends VarcharSingleSelectField {
 	 * @param cls フィールドクラス。
 	 * @return フィールドタイプ。
 	 */
-	public static String getFieldType(final String cls) {
+	public static String getType(final String cls) {
 		String ret = null;
 		for (String[] opt: FieldClassSelectField.OPTIONS) {
 			if (cls.equals(opt[0])) {

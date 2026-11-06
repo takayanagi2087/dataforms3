@@ -5,6 +5,7 @@ import jp.dataforms.fw.devtool.field.FieldIdField;
 import jp.dataforms.fw.devtool.field.FieldSingleSelectField;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
+import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.validator.RequiredValidator;
 
@@ -52,6 +53,7 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	public FieldListHtmlTable(String id) {
 		super(id);
 		FieldList flist = new FieldList();
+		flist.addField(new IntegerField("no")); // No.
 		flist.addField(new FieldClassSelectField(ID_FUNC_FIELD_CLASS_NAME)); // 機能フィールドクラス。
 		flist.addField(new FieldIdField()).addValidator(new RequiredValidator());	// フィールドID(fieldのAlias)。
 		flist.addField(new FieldSingleSelectField(ID_REF_FIELD_ID)); // 参照フィールドID。
