@@ -89,9 +89,16 @@ export class QueryGenEditForm extends EditForm {
 		if (fld.isRefFieldSelectable()) {
 			rfld.lock(false);
 		} else {
-			rfld.setValue(null);
 			rfld.lock(true);
 		}
+		let ofld = flist.getRowField(rowIndex, "optionText");
+		if (fld.isOption()) {
+			let msg = MessagesUtil.getMessage("message.clickoption");
+			ofld.get().attr("placeholder", msg);
+		} else {
+			ofld.get().attr("placeholder", "");
+		}
+		rfld.setValue(null);
 	}
 	
 	/**

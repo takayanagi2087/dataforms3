@@ -64,6 +64,21 @@ export class FieldClassSelectField extends VarcharSingleSelectField {
 		}
 	}
 	
+	/**
+	 * オプション設定フィールドを取得します。
+	 * @return オプション設定フィールドの場合true。
+	 */
+	isOption() {
+		let sidx = this.get().prop("selectedIndex");
+		logger.log("sidx = " + sidx);
+		logger.log("fieldType = " + this.optionList[sidx].type);
+		if (this.optionList[sidx].type == "datefunc" ||
+			this.optionList[sidx].type == "sqlfunc") {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	// 独自のWebメソッドを呼び出す場合は、以下のコメントを参考にしてください。
 	/**
