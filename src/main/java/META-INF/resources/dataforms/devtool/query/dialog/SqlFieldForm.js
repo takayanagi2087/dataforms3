@@ -28,14 +28,27 @@ export class SqlFieldForm extends OkCancelForm {
 	attach() {
 		super.attach();
 		// 独自のボタン(id="webMethodButton")を追加しサーバサイドのメソッドを呼び出す場合は以下の様にしてください。
-/*
-		this.get("webMethodButton").click(() => {
-			this.callWebMethod();
+		this.get("fieldId").change((ev) => {
+			this.#onChangeFieldId(ev);
 			return false;
 		});
-*/
 	}
 
+	/**
+	 * フィールドIDの変更処理。
+	 */
+	#onChangeFieldId(ev) {
+		logger.log("ev=", ev);
+		let clsname = this.get("newFieldClassName").val();
+		if (clsname.length == 0) {
+			let v = $(ev.currentTarget).val();
+			if (v.length > 0) {
+				v = v.charAt(0).toUpperCase() + v.slice(1) + "Field";
+				this.get("newFieldClassName").val(v);
+			}
+		}
+	}
+	
 	// 独自のWebメソッドを呼び出す場合は、以下のコードを参考にしてください。
 	/**
 	 * Webメソッドの呼び出しサンプル。
