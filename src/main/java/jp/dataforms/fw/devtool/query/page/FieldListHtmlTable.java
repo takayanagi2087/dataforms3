@@ -47,6 +47,12 @@ public class FieldListHtmlTable extends EditableHtmlTable {
 	public static final String ID_COMMENT = "comment";
 
 	/**
+	 * SqlFieldのTargetClassの名前。
+	 */
+	public static final String ID_TARGET_FIELD_CLASS = "targetFieldClass";
+	
+	
+	/**
 	 * コンストラクタ。
 	 * @param id　テーブルID。
 	 */

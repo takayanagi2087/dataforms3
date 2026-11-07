@@ -1017,7 +1017,7 @@ public class QueryGenEditForm extends EditForm {
 	 * @param sqlFieldType フィールドの基本クラス。
 	 * @param fieldClassName 生成するインナークラス名。
 	 */
-	private record SqlFieldOption(String sqlFieldType, String fieldClassName) {}
+	private record SqlFieldOption(String sqlFieldType, String newFieldClassName, String fieldClassName) {}
 
 	/**
 	 * Sqlフィールドのオプションを取得します。
@@ -1030,8 +1030,10 @@ public class QueryGenEditForm extends EditForm {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
 			String sqlFieldType = (String) map.get("sqlFieldType");
+			String newFieldClassName = (String) map.get("newFieldClassName");
+			String packageName = (String) map.get("packageName");
 			String fieldClassName = (String) map.get("fieldClassName");
-			ret = new SqlFieldOption(sqlFieldType, fieldClassName);
+			ret = new SqlFieldOption(sqlFieldType, newFieldClassName, packageName + "." + fieldClassName);
 		}
 		return ret;
 	}
@@ -1125,7 +1127,8 @@ public class QueryGenEditForm extends EditForm {
 				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
 				String optionJson = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
 				SqlFieldOption opt = this.getSqlFieldOption(optionJson);
-				sb.append("new " + opt.fieldClassName() + "(\"" + fieldId + "\")" + this.getCommentCode(m) + "\n");
+				m.put(FieldListHtmlTable.ID_TARGET_FIELD_CLASS, opt.fieldClassName);
+				sb.append("new " + opt.newFieldClassName() + "(\"" + fieldId + "\")" + this.getCommentCode(m) + "\n");
 				this.sqlFieldOptionList.add(opt);
 			}
 		}
@@ -1274,6 +1277,30 @@ public class QueryGenEditForm extends EditForm {
 		return ret;
 	}
 
+	/**
+	 * SqlField系のInnerClassを作成します。
+	 * @param implist インポートクラスのリスト。
+	 * @return SqlFieldのクラス定義。
+	 * @throws Exception 例外。
+	 */
+	private String getInnerClass(ImportUtil implist) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		for (SqlFieldOption opt: this.sqlFieldOptionList) {
+			String sqlType = opt.sqlFieldType();
+			if ("SqlField".equals(sqlType)) {
+				implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
+			} else if ("CaseField".equals(sqlType)) {
+				implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+			}
+			String resname = "template/" + sqlType + ".java.template";
+			logger.debug("resname=" + resname);
+			String javasrc = this.getStringResourse(resname);
+			javasrc = javasrc.replaceAll("\\$\\{className\\}", opt.newFieldClassName());
+			javasrc = javasrc.replaceAll("\\$\\{targetClassName\\}", opt.fieldClassName());
+			sb.append(javasrc);
+		}
+		return sb.toString();
+	}
 
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
@@ -1321,6 +1348,10 @@ public class QueryGenEditForm extends EditForm {
 					if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(sel)) {
 						fcls = WebComponent.BASE_PACKAGE + ".field.sqltype.BigintField";
 					}
+					String tcls = (String) m.get(FieldListHtmlTable.ID_TARGET_FIELD_CLASS);
+					if (!StringUtil.isBlank(tcls)) {
+						fcls = tcls;
+					}
 					logger.debug("fcls=" + fcls);
 					return fcls;
 				}
@@ -1330,6 +1361,12 @@ public class QueryGenEditForm extends EditForm {
 			javasrc = javasrc.replaceAll("\\$\\{entity\\}", "");
 		}
 
+		if (this.sqlFieldOptionList != null && this.sqlFieldOptionList.size() > 0) {
+			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", this.getInnerClass(implist));
+		} else {
+			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", "");
+		}
+		
 		javasrc = javasrc.replaceAll("\\$\\{importList\\}", implist.getImportText(javasrc));
 
 		FileUtil.writeTextFileWithBackup(querySrc, javasrc, DataFormsServlet.getEncoding());

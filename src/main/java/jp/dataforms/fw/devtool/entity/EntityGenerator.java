@@ -42,9 +42,12 @@ public class EntityGenerator extends WebComponent {
 	 */
 	public String generate(final ImportUtil implist, final ImportUtil implistfg, final GetFieldIdFunctionalInterface func, final GetClassNameFunctionalInterface cfunc) throws Exception {
 		String javasrc = this.getStringResourse("template/Entity.java.template");
-		javasrc = javasrc.replaceAll("\\$\\{idConstants\\}", FieldListUtil.generateFieldIdConstant(this.fieldList, func));
-		javasrc = javasrc.replaceAll("\\$\\{valueGetterSetter\\}", FieldListUtil.generateFieldValueGetterSetter(fieldList, func, cfunc, implist));
-		javasrc = javasrc.replaceAll("\\$\\{fieldGetter\\}", FieldListUtil.generateFieldGetter(fieldList, func, implistfg));
+		javasrc = javasrc.replaceAll("\\$\\{idConstants\\}"
+				, FieldListUtil.generateFieldIdConstant(this.fieldList, func));
+		javasrc = javasrc.replaceAll("\\$\\{valueGetterSetter\\}"
+				, FieldListUtil.generateFieldValueGetterSetter(this.fieldList, func, cfunc, implist));
+		javasrc = javasrc.replaceAll("\\$\\{fieldGetter\\}"
+				, FieldListUtil.generateFieldGetter(this.fieldList, func, implistfg));
 		return javasrc;
 	}
 }
