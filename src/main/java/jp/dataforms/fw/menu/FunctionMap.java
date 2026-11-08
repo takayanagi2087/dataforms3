@@ -806,4 +806,27 @@ public class FunctionMap {
 		}
 		return ret;
 	}
+	
+	
+	/**
+	 * Packageに対応したPathを取得します。
+	 * @param pkg パッケージ名。
+	 * @return パス。
+	 */
+	public String getPackagePath(final String pkg) {
+		List<PathPackage> list = new ArrayList<PathPackage>();
+		list.addAll(this.pathPackageList);
+		list.sort((a, b) -> {
+			int la = a.getBasePackage().length();
+			int lb = b.getBasePackage().length();
+			return (lb - la);
+		});
+		String ret = null;
+		for (PathPackage pp: list) {
+			if (pkg.indexOf(pp.getBasePackage()) >= 0) {
+				ret = pp.getPath();
+			}
+		}
+		return ret;
+	}
 }

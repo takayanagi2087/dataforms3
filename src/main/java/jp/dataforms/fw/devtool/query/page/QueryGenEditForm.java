@@ -210,7 +210,11 @@ public class QueryGenEditForm extends EditForm {
 				} else if (JoinInfo.RIGHT_JOIN.equals(jinfo.getJoinType())) {
 					m.put(JoinHtmlTable.ID_JOIN_TYPE, JoinTypeField.RIGHT_JOIN);
 				}
-				m.put(ID_PACKAGE_NAME, ClassNameUtil.getPackageName(t.getClass().getName()));
+				{
+					String pkg = ClassNameUtil.getPackageName(t.getClass().getName());
+					m.put(ID_PACKAGE_NAME, pkg);
+					m.put("functionSelect", WebComponent.getFunctionMap().getPackagePath(pkg));
+				}
 				m.put(JoinHtmlTable.ID_TABLE_CLASS_NAME, t.getClass().getSimpleName());
 				m.put(JoinHtmlTable.ID_ALIAS_NAME, t.getAlias());
 				m.put(JoinHtmlTable.ID_JOIN_CONDITION, jinfo.getGeneratedCondition());
@@ -271,6 +275,9 @@ public class QueryGenEditForm extends EditForm {
 
 		logger.debug("flags=" + JsonUtil.encode(ret));
 
+		String path = WebComponent.getFunctionMap().getPackagePath(packageName);
+		
+		ret.put("functionSelect", path);
 		ret.put(ID_JAVA_SOURCE_PATH, DeveloperPage.getJavaSourcePath());
 		ret.put(ID_PACKAGE_NAME, packageName);
 		ret.put(ID_QUERY_CLASS_NAME, queryClassName);
@@ -282,8 +289,12 @@ public class QueryGenEditForm extends EditForm {
 		ret.put(ID_QUERY_COMMENT, q.getComment());
 //		ret.put(ID_FORCE_OVERWRITE, "0");
 		ret.put(ID_OVERWRITE_MODE, OverwriteModeField.ERROR);
-
-		ret.put(ID_MAIN_TABLE_PACKAGE_NAME, q.getMainTable().getClass().getPackage().getName());
+		{
+			String pkg = q.getMainTable().getClass().getPackage().getName();
+			ret.put(ID_MAIN_TABLE_PACKAGE_NAME, pkg);
+			String pkgpath = WebComponent.getFunctionMap().getPackagePath(pkg);
+			ret.put(ID_MAIN_TABLE_FUNCTION_SELECT, pkgpath);
+		}
 		ret.put(ID_MAIN_TABLE_CLASS_NAME, q.getMainTable().getClass().getSimpleName());
 		ret.put(ID_ALIAS_NAME, q.getMainTable().getAlias());
 		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q.getJoinInfoList()));
