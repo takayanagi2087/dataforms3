@@ -71,8 +71,10 @@ export class QueryGenEditForm extends EditForm {
 		let rfld = tbl.getRowField(rowIndex, "refFieldId");
 		let tfield = rfld.getTableFieldInfo();
 		logger.log("field info = ", tfield);
-		tbl.getRowField(rowIndex, "fieldClassName").setValue(tfield.fieldFullClassName);
-		tbl.getRowField(rowIndex, "tableClassName").setValue(tfield.tableClassName);
+		if (tfield != null) {
+			tbl.getRowField(rowIndex, "fieldClassName").setValue(tfield.fieldFullClassName);
+			tbl.getRowField(rowIndex, "tableClassName").setValue(tfield.tableClassName);
+		}
 	}
 	
 	/**
