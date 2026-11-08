@@ -38,7 +38,7 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
-import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
+import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.SqlField;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
@@ -265,6 +265,39 @@ public class QueryGenEditForm extends EditForm {
 		}
 	}
 
+	/**
+	 * 問い合わせフィールドリストから出力フィールドリストを作成します。
+	 * @param qfl 問い合わせのフィールドリスト。
+	 * @return 出力フィールドリスト。
+	 */
+	private List<Map<String, Object>> getQueryFieldList(FieldList qfl) {
+		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+		for (Field<?> f: qfl) {
+			Map<String, Object> m = new HashMap<String, Object>();
+			if (f instanceof SqlField) {
+				m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
+			} else {
+				Field<?> refField = null;
+				if (f instanceof FunctionField) {
+					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
+					refField = ((FunctionField) f).getTargetField();
+				} else {
+					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
+					refField = f;
+				}
+				String alias = refField.getTable().getAlias();
+				String fid = refField.getId();
+				m.put(FieldListHtmlTable.ID_REF_FIELD_ID, alias + "." + fid);
+				m.put(FieldListHtmlTable.ID_FIELD_CLASS_NAME, refField.getClass().getName());
+				m.put(FieldListHtmlTable.ID_TABLE_CLASS_NAME, refField.getTable().getClass().getSimpleName());
+			}
+			m.put(FieldListHtmlTable.ID_FIELD_ID, f.getId());
+			m.put(FieldListHtmlTable.ID_COMMENT, f.getComment());
+			ret.add(m);
+		}
+		return ret;
+	}
+	
 	@Override
 	protected Map<String, Object> queryData(final Map<String, Object> data) throws Exception {
 		String packageName = (String) data.get(ID_PACKAGE_NAME);
@@ -298,77 +331,12 @@ public class QueryGenEditForm extends EditForm {
 		ret.put(ID_MAIN_TABLE_CLASS_NAME, q.getMainTable().getClass().getSimpleName());
 		ret.put(ID_ALIAS_NAME, q.getMainTable().getAlias());
 		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q.getJoinInfoList()));
-		List<Map<String, Object>> flist = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> sflist = new ArrayList<Map<String, Object>>();
-		flist.addAll(this.queryTableFieldList(ret));
+//		List<Map<String, Object>> flist = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> tflist = this.queryTableFieldList(ret);
+		ret.put(ID_TABLE_FIELD_LIST, tflist);
 		FieldList qfl = q.getFieldList();
-		List<Map<String, Object>> selflist = new ArrayList<Map<String, Object>>();
-		for (Field<?> f: qfl) {
-			if (f instanceof SqlField) {
-				SqlField sf = (SqlField) f;
-				Field<?> tf = sf.getTargetField();
-				Map<String, Object> sfmap = new HashMap<String, Object>();
-				sfmap.put(SqlFieldHtmlTable.ID_FIELD_ID, tf.getId());
-				sfmap.put(SqlFieldHtmlTable.ID_FIELD_CLASS_NAME, tf.getClass().getName());
-				if (tf.hasLengthParameter()) {
-					sfmap.put(SqlFieldHtmlTable.ID_FIELD_LENGTH, tf.getLengthParameter());
-				}
-				sfmap.put(SqlFieldHtmlTable.ID_SQL, sf.getSql());
-				sfmap.put(SqlFieldHtmlTable.ID_COMMENT, sf.getComment());
-				sflist.add(sfmap);
-			} else {
-				for (Map<String, Object> m: flist) {
-					String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
-					logger.debug("fieldId=" + fieldId + ", f=" + f.getClass().getName());
-					if (f instanceof AliasField) {
-						AliasField af = (AliasField) f;
-						String id = af.getTargetField().getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							fmap.put(TableFieldHtmlTable.ID_ALIAS, af.getId());
-							fmap.put(TableFieldHtmlTable.ID_SEL, "1");
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							break;
-						}
-					} else if (f instanceof GroupSummaryField) {
-						GroupSummaryField<?> sf = (GroupSummaryField<?>) f;
-						String id = sf.getTargetField().getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							if (!sf.getId().equals(sf.getTargetField().getId())) {
-								fmap.put(TableFieldHtmlTable.ID_ALIAS, sf.getId());
-							}
-							fmap.put(TableFieldHtmlTable.ID_SEL, sf.getClass().getName());
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							break;
-						}
-					} else {
-						String id = f.getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							fmap.put(TableFieldHtmlTable.ID_SEL, "1");
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							flist.remove(m);
-							break;
-						}
-					}
-				}
-			}
-		}
-		for (Map<String, Object> m: flist) {
-			m.put(TableFieldHtmlTable.ID_SEL, "0");
-			selflist.add(m);
-		}
-		ret.put(ID_TABLE_FIELD_LIST, selflist);
-//		ret.put(ID_SQL_FIELD_LIST, sflist);
-
-
+		List<Map<String, Object>> sflist = this.getQueryFieldList(qfl);
+		ret.put(ID_FIELD_LIST, sflist);
 		return ret;
 	}
 
