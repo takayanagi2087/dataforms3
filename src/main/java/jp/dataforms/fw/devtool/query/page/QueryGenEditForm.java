@@ -46,6 +46,8 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
+import jp.dataforms.fw.util.JavaSrcUtil;
+import jp.dataforms.fw.util.JavaSrcUtil.InnerClassInfo;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -1122,41 +1124,6 @@ public class QueryGenEditForm extends EditForm {
 	}
 
 	/**
-	 * SQLフィールドリストを作成します。
-	 * @param sqllist SQLフィールドリスト。
-	 * @param sb ソースを展開する文字列バッファ。
-	 * @param implist インポートリスト。
-	 * @return フィールドリスト。
-	 * @throws Exception 例外。
-	 */
-	private List<Map<String, Object>> genSqlFieldList(List<Map<String, Object>> sqllist, StringBuilder sb, final ImportUtil implist) throws Exception {
-		for (Map<String, Object> m: sqllist) {
-			implist.add(SqlField.class.getName());
-			if (sb.length() > 0) {
-				sb.append("\t\t\t, ");
-			} else {
-				sb.append("\t\t\t");
-			}
-			String fieldId = (String) m.get(SqlFieldHtmlTable.ID_FIELD_ID);
-			String fieldClassName = (String) m.get(SqlFieldHtmlTable.ID_FIELD_CLASS_NAME);
-			implist.add(fieldClassName);
-			@SuppressWarnings("unchecked")
-			Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
-			String fieldLength = (String) m.get(SqlFieldHtmlTable.ID_FIELD_LENGTH);
-			String sql = (String) m.get(SqlFieldHtmlTable.ID_SQL);
-			String len = "";
-			if (!StringUtil.isBlank(fieldLength)) {
-				len = "," + fieldLength;
-			}
-			String comment = (String) m.get(SqlFieldHtmlTable.ID_COMMENT);
-			sb.append("new SqlField(new " + cls.getSimpleName() + "(\"" + fieldId + "\"" + len + "), \"" + sql + "\")"
-					+ (StringUtil.isBlank(comment) ? "" : (".setComment(\"" + comment + "\")"))
-					+ "\n");
-		}
-		return sqllist;
-	}
-
-	/**
 	 * 選択フィールド設定ソースを生成します。
 	 * @param data POSTされたデータ。
 	 * @param implist インポート必要なクラス。
@@ -1263,31 +1230,59 @@ public class QueryGenEditForm extends EditForm {
 		return ret;
 	}
 
+	
 	/**
 	 * SqlField系のInnerClassを作成します。
 	 * @param implist インポートクラスのリスト。
+	 * @param innerClassMap 内部クラスマップ。
 	 * @return SqlFieldのクラス定義。
 	 * @throws Exception 例外。
 	 */
-	private String getInnerClass(ImportUtil implist) throws Exception {
+	private String getInnerClass(final ImportUtil implist, final Map<String, InnerClassInfo> innerClassMap) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		for (SqlFieldOption opt: this.sqlFieldOptionList) {
-			String sqlType = opt.sqlFieldType();
-			if ("SqlField".equals(sqlType)) {
-				implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
-			} else if ("CaseField".equals(sqlType)) {
-				implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+			String newClassName = opt.newFieldClassName();
+			InnerClassInfo existClass = innerClassMap.get(newClassName);
+			if (existClass != null) {
+				sb.append(existClass.src());
+				if ("SqlField".equals(existClass.superClassName())) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
+				} else if ("CaseField".equals(existClass.superClassName())) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+				}
+			} else {
+				String sqlType = opt.sqlFieldType();
+				if ("SqlField".equals(sqlType)) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
+				} else if ("CaseField".equals(sqlType)) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+				}
+				String resname = "template/" + sqlType + ".java.template";
+				logger.debug("resname=" + resname);
+				String javasrc = this.getStringResourse(resname);
+				javasrc = javasrc.replaceAll("\\$\\{className\\}", opt.newFieldClassName());
+				javasrc = javasrc.replaceAll("\\$\\{targetClassName\\}", opt.fieldClassName());
+				sb.append(javasrc);
 			}
-			String resname = "template/" + sqlType + ".java.template";
-			logger.debug("resname=" + resname);
-			String javasrc = this.getStringResourse(resname);
-			javasrc = javasrc.replaceAll("\\$\\{className\\}", opt.newFieldClassName());
-			javasrc = javasrc.replaceAll("\\$\\{targetClassName\\}", opt.fieldClassName());
-			sb.append(javasrc);
 		}
 		return sb.toString();
 	}
 
+	/**
+	 * Innerクラスのマップを更新します。
+	 * @param querySrc 問い合わせヒースパス。
+	 * @return　Innerクラスのマップ
+	 * @throws Exception 例外。
+	 */
+	private Map<String, InnerClassInfo> getInnerClassMap(final String querySrc) throws Exception {
+		Map<String, InnerClassInfo> ret = null;
+		File qsrc = new File(querySrc);
+		if (qsrc.exists()) {
+			ret = JavaSrcUtil.getInnerClass(querySrc);
+		}
+		return ret;
+	}
+	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 
@@ -1302,6 +1297,8 @@ public class QueryGenEditForm extends EditForm {
 		String srcPath = javaSrc + "/" + packageName.replaceAll("\\.", "/");
 		String querySrc = srcPath + "/" + queryClassName + ".java";
 
+		Map<String, InnerClassInfo> innerClassMap = this.getInnerClassMap(querySrc);
+		
 		this.setTableProperties(data);
 
 		javasrc = javasrc.replaceAll("\\$\\{queryComment\\}", (String) data.get(ID_QUERY_COMMENT));
@@ -1348,7 +1345,7 @@ public class QueryGenEditForm extends EditForm {
 		}
 
 		if (this.sqlFieldOptionList != null && this.sqlFieldOptionList.size() > 0) {
-			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", this.getInnerClass(implist));
+			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", this.getInnerClass(implist, innerClassMap));
 		} else {
 			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", "");
 		}
