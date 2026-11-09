@@ -1,5 +1,7 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.Map;
+
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 
@@ -117,5 +119,14 @@ public abstract class GroupSummaryField<TYPE> extends Field<TYPE>  implements Fu
 			distinct = cf.isDistinct();
 		}
 		return this.getFunctionName() + "(" + (distinct ? "distinct " : "") + t + "." + this.getTargetField().getDbColumnName() + ")";
+	}
+	
+	/**
+	 * オプションを取得します。
+	 * @return null オプションはnull。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		return null;
 	}
 }

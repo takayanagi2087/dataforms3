@@ -1,5 +1,8 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.DateTimeField;
 import jp.dataforms.fw.field.base.Field;
@@ -51,4 +54,20 @@ public class TimestampAddField extends TimestampField implements DateTimeAddFunc
 		return gen.generateDateAddFunction(this);
 	}
 
+	/**
+	 * FIXME:Optionを実装。
+	 * @return Option。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		String fieldId = this.getId();
+		FieldType type = this.type;
+		String refFieldId = this.getTargetField().getId();
+		Map<String, Object> m = new HashMap<String, Object>();
+		m.put("fieldId", fieldId);
+		m.put("dateFieldType", type.name());
+		m.put("refFieldId", refFieldId);
+		m.put("addValue", this.getAddValue());
+		return m;
+	}
 }

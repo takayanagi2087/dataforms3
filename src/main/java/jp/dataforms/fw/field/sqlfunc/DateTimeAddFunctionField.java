@@ -9,4 +9,5 @@ public interface DateTimeAddFunctionField extends DateFunctionField {
 	 * @return 加算する値。
 	 */
 	Integer getAddValue();
+
 }

@@ -1,5 +1,8 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jp.dataforms.fw.dao.Query;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
@@ -93,5 +96,25 @@ public class SqlField extends Field<Object> implements FunctionField {
 	public String getFunctionSql(SqlGenerator gen) {
 		String sql = this.getSql();
 		return gen.convertSqlExp(this.query, sql);
+	}
+	
+	/**
+	 * FIXME:Optionを実装。
+	 * @return Option。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		String fieldId = this.getId();
+		Map<String, Object> m = new HashMap<String, Object>();
+		m.put("fieldId", fieldId);
+		m.put("sqlFieldType", this.getClass().getSuperclass().getSimpleName());
+		m.put("newFieldClassName", this.getClass().getSimpleName());
+		String pkg = this.getTargetField().getClass().getPackageName();
+		String path = SqlField.getFunctionMap().getPackagePath(pkg);
+		String scls = this.getTargetField().getClass().getSimpleName();
+		m.put("functionSelect", path);
+		m.put("packageName", pkg);
+		m.put("fieldClassName", scls);
+		return m;
 	}
 }

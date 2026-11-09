@@ -1,6 +1,7 @@
 package jp.dataforms.fw.field.sqlfunc;
 
 import java.util.List;
+import java.util.Map;
 
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
@@ -60,4 +61,36 @@ public interface FunctionField {
 	 * @return 関数SQL.
 	 */
 	String getFunctionSql(final SqlGenerator gen);
+	
+
+	/**
+	 * フィールドオプションを取得します。
+	 * @return フィールドオプション。
+	 */
+	Map<String, Object> getOption();
+	
+	
+	/**
+	 * フィールドオプションテキストを取得します。
+	 * @return フィールドオプションテキスト。
+	 */
+	default String getOptionText() {
+		String ret = null;
+		Map<String, Object> map = this.getOption();
+		if (map != null) {
+			String sqlFieldType = (String) map.get("sqlFieldType");
+			if (sqlFieldType != null) {
+				String fieldClassName = (String) map.get("fieldClassName");
+				ret = fieldClassName + " -> " + sqlFieldType;
+			} else {
+				ret = (String) map.get("dateFieldType");
+				Integer addValue = (Integer) map.get("addValue");
+				if (addValue != null) {
+					ret = ret + " + " + addValue;
+				}
+
+			}
+		}
+		return ret;
+	}
 }

@@ -275,12 +275,21 @@ public class QueryGenEditForm extends EditForm {
 		for (Field<?> f: qfl) {
 			Map<String, Object> m = new HashMap<String, Object>();
 			if (f instanceof SqlField) {
-				m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
+				m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, SqlField.class.getName());
+				SqlField sqlf = (SqlField) f;
+				String json = JsonUtil.encode(sqlf.getOption());
+				m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
+				m.put(FieldListHtmlTable.ID_OPTION_TEXT, sqlf.getOptionText());
+				
 			} else {
 				Field<?> refField = null;
 				if (f instanceof FunctionField) {
 					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
-					refField = ((FunctionField) f).getTargetField();
+					FunctionField ff = (FunctionField) f;
+					refField = ff.getTargetField();
+					String json = JsonUtil.encode(ff.getOption());
+					m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
+					m.put(FieldListHtmlTable.ID_OPTION_TEXT, ff.getOptionText());
 				} else {
 					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
 					refField = f;
@@ -320,7 +329,6 @@ public class QueryGenEditForm extends EditForm {
 			ret.put(ID_DISTINCT_FLAG, "0");
 		}
 		ret.put(ID_QUERY_COMMENT, q.getComment());
-//		ret.put(ID_FORCE_OVERWRITE, "0");
 		ret.put(ID_OVERWRITE_MODE, OverwriteModeField.ERROR);
 		{
 			String pkg = q.getMainTable().getClass().getPackage().getName();
@@ -331,7 +339,6 @@ public class QueryGenEditForm extends EditForm {
 		ret.put(ID_MAIN_TABLE_CLASS_NAME, q.getMainTable().getClass().getSimpleName());
 		ret.put(ID_ALIAS_NAME, q.getMainTable().getAlias());
 		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q.getJoinInfoList()));
-//		List<Map<String, Object>> flist = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> tflist = this.queryTableFieldList(ret);
 		ret.put(ID_TABLE_FIELD_LIST, tflist);
 		FieldList qfl = q.getFieldList();

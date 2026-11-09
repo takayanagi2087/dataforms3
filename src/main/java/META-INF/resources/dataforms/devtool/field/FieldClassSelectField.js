@@ -53,12 +53,16 @@ export class FieldClassSelectField extends VarcharSingleSelectField {
 	 */
 	isRefFieldSelectable() {
 		let sidx = this.get().prop("selectedIndex");
-		logger.log("sidx = " + sidx);
-		logger.log("fieldType = " + this.optionList[sidx].type);
-		if (this.optionList[sidx].type == null || 
-			this.optionList[sidx].type == "summary" ||
-			this.optionList[sidx].type == "datefunc") {
-			return true;
+		if (sidx >= 0) {
+			logger.log("sidx = " + sidx);
+			logger.log("fieldType = " + this.optionList[sidx].type);
+			if (this.optionList[sidx].type == null || 
+				this.optionList[sidx].type == "summary" ||
+				this.optionList[sidx].type == "datefunc") {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -70,11 +74,15 @@ export class FieldClassSelectField extends VarcharSingleSelectField {
 	 */
 	isOption() {
 		let sidx = this.get().prop("selectedIndex");
-		logger.log("sidx = " + sidx);
-		logger.log("fieldType = " + this.optionList[sidx].type);
-		if (this.optionList[sidx].type == "datefunc" ||
-			this.optionList[sidx].type == "sqlfunc") {
-			return true;
+		if (sidx >= 0) {
+			logger.log("sidx = " + sidx);
+			logger.log("fieldType = " + this.optionList[sidx].type);
+			if (this.optionList[sidx].type == "datefunc" ||
+				this.optionList[sidx].type == "sqlfunc") {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

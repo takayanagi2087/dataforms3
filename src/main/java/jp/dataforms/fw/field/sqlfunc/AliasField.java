@@ -1,5 +1,7 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.Map;
+
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 
@@ -71,5 +73,14 @@ public class AliasField extends Field<Object> implements FunctionField {
 			ret = t + "." + this.getTargetField().getDbColumnName();
 		}
 		return ret;
+	}
+	
+	/**
+	 * オプションを取得します。
+	 * @return null オプションは無(nullを返す)。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		return null;
 	}
 }
