@@ -62,17 +62,49 @@ export class TableFieldHtmlTable extends HtmlTable {
 	}
 	
 	/**
+	 * 選択肢として追加するか銅貨を判定します。
+	 * @param {Obejct} data テーブルフィールドリストの行。
+	 * @param {String} fclass 関数フィールドクラス。
+	 * @return 追加対象の場合true。
+	 */
+	#addCheck(data, fclass) {
+		if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
+			if (data.fieldType == "date" 
+				|| data.fieldType == "time"
+				|| data.fieldType == "timestamp") {
+				return true;
+			} else {
+				return false;
+			}
+		} else if ("jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass) {
+			if (data.fieldType == "date") {
+				return true;
+			} else {
+				return false;
+			}
+		} else if ("jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
+			if (data.fieldType == "timestamp") {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	/**
 	 * フィールドの選択選択肢リストを作成します。
-	 * @param {Function} func 追加判定関数。
+	 * @param {Function} fclass 関数フィールドクラス。
 	 * @return {Object} 選択肢リスト。
 	 */
-	getFieldSelectOption(func) {
+	getFieldSelectOption(fclass) {
 		let list = this.getTableData();
 		let optlist = [];
 		logger.log("tableFieldList=", list);
 		for (let i = 0; i < list.length; i++) {
-			if (func != null) {
-				if (func(list[i]) == false) {
+			if (fclass != null) {
+				if (this.#addCheck(list[i], fclass) == false) {
 					continue;
 				}
 			}

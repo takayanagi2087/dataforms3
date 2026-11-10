@@ -53,7 +53,8 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 	setOption() {
 		let tbl = this.getParentForm().getComponent("tableFieldList");
 		logger.log("tbl=", tbl);
-		let optlist = tbl.getFieldSelectOption();
+		let fclass = this.parent.getSameRowField(this, "funcFieldClassName").getValue();
+		let optlist = tbl.getFieldSelectOption(fclass);
 		this.setOptionList(optlist);
 	}
 	

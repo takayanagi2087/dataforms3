@@ -123,30 +123,7 @@ export class QueryGenEditForm extends EditForm {
 		let p = {};
 		
 		let flist = this.getComponent("tableFieldList");
-		p.optlist = flist.getFieldSelectOption((data) => {
-			if ("jp.dataforms.fw.field.sqlfunc.ExtractField" == fclass) {
-				if (data.fieldType == "date" 
-					|| data.fieldType == "time"
-					|| data.fieldType == "timestamp") {
-					return true;
-				} else {
-					return false;
-				}
-			} else if ("jp.dataforms.fw.field.sqlfunc.DateAddField" == fclass) {
-				if (data.fieldType == "date") {
-					return true;
-				} else {
-					return false;
-				}
-			} else if ("jp.dataforms.fw.field.sqlfunc.TimestampAddField" == fclass) {
-				if (data.fieldType == "timestamp") {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			return false;
-		});
+		p.optlist = flist.getFieldSelectOption(fclass);
 		p.fclass = fclass;
 		p.formData = {};
 		p.formData.fieldId = fieldId;
@@ -332,6 +309,17 @@ export class QueryGenEditForm extends EditForm {
 			if (data.joinTableList != null) {
 				logger.log("data=", data);
 				await this.getJoinCondition();
+			}
+			let fieldList = this.getComponent("fieldList");
+			for (let i = 0; i < fieldList.getRowCount(); i++) {
+				let fld = fieldList.getRowField(i, "funcFieldClassName");
+				let rfld = fieldList.getRowField(i, "refFieldId");
+				logger.log("rfld = ", rfld);
+				if (fld.isRefFieldSelectable()) {
+					rfld.lock(false);
+				} else {
+					rfld.lock(true);
+				}
 			}
 		} catch (e) {
 			currentPage.reportError(e);
