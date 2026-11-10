@@ -993,7 +993,7 @@ public class Query {
 	 * @param arg 条件式の引数。
 	 * @return 条件式。
 	 */
-	public static String sqlExp(final String ex, String ...arg) {
+	public static String sqlExp(final String ex, Object ...arg) {
 		return String.format(ex, (Object[]) arg);
 	}
 }
