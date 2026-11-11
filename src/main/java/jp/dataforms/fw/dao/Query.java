@@ -978,12 +978,12 @@ public class Query {
 	 * query.setConditon("{f:fieldId}: = {p:fieldId}");
 	 * {f:fieldId}はQueryクラス知友のフィールドを検索し、その内容を展開します。
 	 * 単純なフィールドの場合"m.field_id"のように展開されます。
-	 * またSqlFieldのようなフィル度の場合、その式に展開されます。
+	 * またSqlFieldのようなフィールドの場合、その式に展開されます。
 	 * {p:fieldId}は条件パラメータを指定する形式で":field_id"のようにパラメータとして展開されます。
 	 * TableやQueryのソースを生成すると、自動的にEntityクラスにフィールドIDの定数が定義されます。
 	 * "fieldId"を手打ちするとミスタイプでエラーする可能性があるので、この定数を使用したい場合このメソッドを以下の様に使用します。
 	 * 
-	 * String cond = Query.sqlExp("{f:%s}: = {p:%s}", XxxTable.Entity.ID_FIELD_ID, XxxTable.Entity.ID_FIELD_ID);
+	 * String cond = Query.sqlExp("{f:%s} = {p:%s}", XxxTable.Entity.ID_FIELD_ID, XxxTable.Entity.ID_FIELD_ID);
 	 * query.setConditon(cond);
 	 * 
 	 * このメソッドはString.formatを利用しています。
@@ -994,6 +994,6 @@ public class Query {
 	 * @return 条件式。
 	 */
 	public static String sqlExp(final String ex, Object ...arg) {
-		return String.format(ex, (Object[]) arg);
+		return String.format(ex, arg);
 	}
 }
