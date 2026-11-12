@@ -1606,7 +1606,6 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		while (m.find()) {
 			var g = m.group(1);
 			if (g != null) {
-				logger.debug("find group = " + g);
 				int srart = m.start(1);
 				sb.append(cond.subSequence(idx, srart));
 				sb.append(this.convertConditionField(query, g));
