@@ -282,22 +282,28 @@ public class QueryGenEditForm extends EditForm {
 				String json = JsonUtil.encode(sqlf.getOption());
 				m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
 				m.put(FieldListHtmlTable.ID_OPTION_TEXT, sqlf.getOptionText());
-				
 			} else {
 				Field<?> refField = null;
 				if (f instanceof FunctionField) {
-					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
-					FunctionField ff = (FunctionField) f;
-					refField = ff.getTargetField();
-					String json = JsonUtil.encode(ff.getOption());
-					m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
-					m.put(FieldListHtmlTable.ID_OPTION_TEXT, ff.getOptionText());
+					if (f instanceof AliasField) {
+						m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
+						FunctionField ff = (FunctionField) f;
+						refField = ff.getTargetField();
+					} else {
+						m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
+						FunctionField ff = (FunctionField) f;
+						refField = ff.getTargetField();
+						String json = JsonUtil.encode(ff.getOption());
+						m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
+						m.put(FieldListHtmlTable.ID_OPTION_TEXT, ff.getOptionText());
+					}
 				} else {
 					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
 					refField = f;
 				}
 				String alias = refField.getTable().getAlias();
 				String fid = refField.getId();
+				logger.info("*** refFieldId = " + alias + "." + fid);
 				m.put(FieldListHtmlTable.ID_REF_FIELD_ID, alias + "." + fid);
 				m.put(FieldListHtmlTable.ID_FIELD_CLASS_NAME, refField.getClass().getName());
 				m.put(FieldListHtmlTable.ID_TABLE_CLASS_NAME, refField.getTable().getClass().getSimpleName());
