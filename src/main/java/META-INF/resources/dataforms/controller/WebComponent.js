@@ -585,4 +585,16 @@ export class WebComponent {
 		return window.navigator.userLanguage || window.navigator.language || window.navigator.browserLanguage;
 	}
 	
+	/**
+	 * イベントが発生した要素のIDをWebComponentに設定します。
+	 * <pre>
+	 * 編集中のテーブルのWebComponentはWebComponentのIDがずれることがあるので、
+	 * イベントの発生時にIDを合わせるために使用します。
+	 * <pre>
+	 * @param {Event} ev イベント情報。
+	 */
+	setEventId(ev) {
+		this.id = $(ev.currentTarget).attr(this.getIdAttribute());
+		this.realId = $(ev.currentTarget).attr("id");
+	}
 }

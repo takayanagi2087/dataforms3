@@ -46,5 +46,10 @@ export class FieldListHtmlTable extends EditableHtmlTable {
 			}
 		}
 	}
+	
+	onAddTr(rowid) {
+		super.onAddTr(rowid);
+		logger.log("onAddTr(" + rowid + ")");
+	}
 }
 

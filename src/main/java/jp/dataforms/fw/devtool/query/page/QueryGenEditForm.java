@@ -303,7 +303,6 @@ public class QueryGenEditForm extends EditForm {
 				}
 				String alias = refField.getTable().getAlias();
 				String fid = refField.getId();
-				logger.info("*** refFieldId = " + alias + "." + fid);
 				m.put(FieldListHtmlTable.ID_REF_FIELD_ID, alias + "." + fid);
 				m.put(FieldListHtmlTable.ID_FIELD_CLASS_NAME, refField.getClass().getName());
 				m.put(FieldListHtmlTable.ID_TABLE_CLASS_NAME, refField.getTable().getClass().getSimpleName());

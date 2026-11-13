@@ -35,6 +35,9 @@ export class QueryGenEditForm extends EditForm {
 		this.get("selectButton").click(() => {
 			this.#selectField();
 		});
+		this.get("clearButton").click(() => {
+			this.#clearField();
+		});
 		
 		this.get("tableFieldList").on("click", "input.fieldSelect", () => {
 			this.#setSelectButtonStatus();
@@ -52,6 +55,14 @@ export class QueryGenEditForm extends EditForm {
 		this.#setSelectButtonStatus();
 	}
 
+	/**
+	 * フィールドのクリアを行います。
+	 */
+	#clearField() {
+		let tbl = this.getComponent("fieldList");
+		tbl.setTableData([]);
+	}
+	
 	/**
 	 * 参照フィールドID変更時の処理。
 	 * @param {Event} ev イベント情報。
@@ -207,7 +218,8 @@ export class QueryGenEditForm extends EditForm {
 		let tbl = this.getComponent("tableFieldList");
 		let list = tbl.getTableData();
 		logger.log("#selectField = ", list);
-		let slist = [];
+		let ftbl = this.getComponent("fieldList");
+		let slist = ftbl.getTableData();
 		for (let i = 0; i < list.length; i++) {
 			if (list[i].sel == "1") {
 				let m  = {};
@@ -221,7 +233,6 @@ export class QueryGenEditForm extends EditForm {
 			}
 		}
 		logger.log("#selectField = ", slist);
-		let ftbl = this.getComponent("fieldList");
 		ftbl.setTableData(slist);
 	}
 	

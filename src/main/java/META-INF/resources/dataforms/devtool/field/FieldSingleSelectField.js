@@ -28,7 +28,9 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 	attach() {
 		super.attach();
 		if (this.autoOption) {
-			this.get().focus(() => {
+			this.get().focus((ev) => {
+				this.setEventId(ev);
+				logger.log("this.id=" + this.id);
 				let v = this.getValue();
 				this.setOption();
 				if (v != null) {
@@ -55,6 +57,8 @@ export class FieldSingleSelectField extends VarcharSingleSelectField {
 		logger.log("tbl=", tbl);
 		let fclass = this.parent.getSameRowField(this, "funcFieldClassName").getValue();
 		let optlist = tbl.getFieldSelectOption(fclass);
+		logger.log("fieldId=" + this.id);
+		logger.log("optlist=", optlist);
 		this.setOptionList(optlist);
 	}
 	

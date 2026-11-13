@@ -99,6 +99,7 @@ export class TableFieldHtmlTable extends HtmlTable {
 	 * @return {Object} 選択肢リスト。
 	 */
 	getFieldSelectOption(fclass) {
+		logger.log("fclass = " + fclass);
 		let list = this.getTableData();
 		let optlist = [];
 		logger.log("tableFieldList=", list);
