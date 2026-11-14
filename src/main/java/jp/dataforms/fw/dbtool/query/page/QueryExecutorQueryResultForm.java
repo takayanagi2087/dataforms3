@@ -17,6 +17,7 @@ import jp.dataforms.fw.field.common.SortOrderField;
 import jp.dataforms.fw.field.sqltype.BigintField;
 import jp.dataforms.fw.field.sqltype.CharField;
 import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.DoubleField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.NumericField;
 import jp.dataforms.fw.field.sqltype.SmallintField;
@@ -54,6 +55,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		this.addField(new SmallintField("dummySmallint"));
 		this.addField(new IntegerField("dummyInteger"));
 		this.addField(new BigintField("dummyBigint"));
+		this.addField(new DoubleField("dummyDouble"));
 		this.addField(new NumericField("dummyNumeric", 16, 2));
 		this.addField(new CharField("dummyChar", 1));
 		this.addField(new SortOrderField("dummySortOrder"));
