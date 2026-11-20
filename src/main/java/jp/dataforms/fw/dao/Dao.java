@@ -1208,6 +1208,23 @@ public class Dao implements JDBCConnectableObject {
 	}
 
 	/**
+	 * テーブル中のレコードを更新します。
+	 * <pre>
+	 * 指定したフィールドリストのフィールドを更新します。
+	 * 更新対象のレコードはPKで限定します。
+	 * </pre>
+	 * @param table テーブル。
+	 * @param updateFieldList　更新対象フィールドリスト。
+	 * @param data 更新データ。
+	 * @return 更新数。
+	 * @throws Exception 例外。
+	 */
+	public int executeUpdate(final Table table, final FieldList updateFieldList, final Map<String, Object> data) throws Exception {
+		int ret = this.executeUpdate(table, updateFieldList, table.getPkFieldList(), data, true);
+		return ret;
+	}
+	
+	/**
 	 * テーブル中の指定レコードを削除します。
 	 * <pre>
 	 * テーブルに対応した、適切なdelete文を作成し実行します。
