@@ -55,7 +55,7 @@ public class TimestampAddField extends TimestampField implements DateTimeAddFunc
 	}
 
 	/**
-	 * FIXME:Optionを実装。
+	 * Optionを取得します。
 	 * @return Option。
 	 */
 	@Override

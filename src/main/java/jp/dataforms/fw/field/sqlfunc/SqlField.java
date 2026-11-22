@@ -99,7 +99,7 @@ public class SqlField extends Field<Object> implements FunctionField {
 	}
 	
 	/**
-	 * FIXME:Optionを実装。
+	 * Optionを取得します。
 	 * @return Option。
 	 */
 	@Override

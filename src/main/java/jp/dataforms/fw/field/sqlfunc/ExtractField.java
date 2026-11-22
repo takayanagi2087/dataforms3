@@ -49,7 +49,7 @@ public class ExtractField extends IntegerField implements DateFunctionField {
 	}
 
 	/**
-	 * FIXME:Optionを実装。
+	 * Optionを取得します。
 	 * @return Option。
 	 */
 	@Override
