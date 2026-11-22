@@ -3,6 +3,8 @@ package jp.dataforms.fw.devtool.query.page;
 import jp.dataforms.fw.dao.Dao;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.devtool.base.page.SrcGenPage;
+import jp.dataforms.fw.devtool.query.dialog.DateFunctionFieldDialog;
+import jp.dataforms.fw.devtool.query.dialog.SqlFieldDialog;
 
 
 /**
@@ -16,6 +18,8 @@ public class QueryGeneratorPage extends SrcGenPage {
 		this.addForm(new QueryGeneratorQueryForm());
 		this.addForm(new QueryGeneratorQueryResultForm());
 		this.addForm(new QueryGeneratorEditForm());
+		this.addDialog(new DateFunctionFieldDialog());
+		this.addDialog(new SqlFieldDialog());
 	}
 
 	/**

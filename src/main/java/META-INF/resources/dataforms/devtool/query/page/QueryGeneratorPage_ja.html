@@ -92,7 +92,7 @@
 						<div class="field"><input type="text" id="queryClassName" /></div>
 					</div>
 					<div class="fieldDiv">
-						<div class="label"><label for="queryComment">queryComment</label></div>
+						<div class="label"><label for="queryComment">コメント</label></div>
 						<div class="field"><input type="text" id="queryComment" /></div>
 					</div>
 					<div class="fieldDiv">
@@ -136,10 +136,8 @@
 					<thead>
 						<tr>
 							<th class="buttonColumn" nowrap>
-
 							</th>
 							<th class="buttonColumn" nowrap>
-
 							</th>
 							<th nowrap>
 								No.
@@ -205,137 +203,132 @@
 						</tr>
 					</tfoot>
 				</table>
-				<h2>選択フィールドリスト</h2>
-				<table id="selectFieldList" class="editableTable">
-					<thead>
-						<tr>
-							<th class="buttonColumn" nowrap>
-							</th>
-							<th class="buttonColumn" nowrap>
-							</th>
-							<th>
-								<input type="checkbox" id="selectAll" value="1"/>
-							</th>
-							<th>
-								No.
-							</th>
-							<th>
-								フィールドID
-							</th>
-							<th>
-								フィールドクラス
-							</th>
-							<th>
-								フィールド別名
-							</th>
-							<th>
-								テーブルクラス
-							</th>
-							<th>
-								テーブル別名
-							</th>
-							<th>
-								コメント
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td style="width: 32px;">
-								<button type="button" id="selectFieldList[0].addButton">+</button>
-							</td>
-							<td style="width: 32px;">
-								<button type="button" id="selectFieldList[0].deleteButton">-</button>
-							</td>
-							<td style="width: 100px; text-align: center;">
-								<select id="selectFieldList[0].sel"></select>
-								<input type="hidden" id="selectFieldList[0].tableFullClassName" >
-								<input type="hidden" id="selectFieldList[0].sortOrder" >
-							</td>
-							<td style="text-align: right; width: 32px;">
-								<span id="selectFieldList[0].no" ></span>
-							</td>
-							<td style="width: 180px;">
-								<input type="text" id="selectFieldList[0].fieldId"/>
-							</td>
-							<td style="width: 300px;">
-								<input type="text" id="selectFieldList[0].fieldClassName" />
-							</td>
-							<td style="width: 100px;">
-								<input type="text" id="selectFieldList[0].alias"/>
-							</td>
-							<td style="width: 200px;">
-								<input type="text" id="selectFieldList[0].tableClassName" />
-							</td>
-							<td style="width: 100px;">
-								<input type="text" id="selectFieldList[0].tableAlias" />
-							</td>
-							<td style="width: 300px;">
-								<input type="text"  id="selectFieldList[0].comment" />
-							</td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th class="buttonColumn" nowrap>
-								<button type="button" id="selectFieldList.addButton">+</button>
-							</th>
-							<th colspan="9">
-							</th>
-						</tr>
-					</tfoot>
-				</table>
-				<h2>SQLフィールドリスト</h2>
-				<table id="sqlFieldList" class="editableTable">
-					<thead>
-						<tr>
-							<th class="buttonColumn" nowrap></th>
-							<th class="buttonColumn" nowrap></th>
-							<th>No.</th>
-							<th>フィールドID</th>
-							<th>フィールドクラス</th>
-							<th>長さ</th>
-							<th>SQL</th>
-							<th>コメント</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td style="width: 32px;">
-								<button type="button" id="sqlFieldList[0].addButton">+</button>
-							</td>
-							<td style="width: 32px;">
-								<button type="button" id="sqlFieldList[0].deleteButton">-</button>
-							</td>
-							<td style="text-align: right; width: 32px;">
-								<span id="sqlFieldList[0].no" ></span>
-							</td>
-							<td style="width: 180px;">
-								<input type="text" id="sqlFieldList[0].fieldId"/>
-							</td>
-							<td style="width: 200px;">
-								<select id="sqlFieldList[0].fieldClassName"></select>
-							</td>
-							<td style="width: 54px;">
-								<input type="text"  id="sqlFieldList[0].fieldLength" />
-							</td>
-							<td style="width: 500px;">
-								<input type="text" id="sqlFieldList[0].sql" />
-							</td>
-							<td style="width: 300px;">
-								<input type="text" id="sqlFieldList[0].comment" />
-							</td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th class="buttonColumn" nowrap>
-								<button type="button" id="sqlFieldList.addButton">+</button>
-							</th>
-							<th colspan="7"></th>
-						</tr>
-					</tfoot>
-				</table>
+				<div style="display: flex; flex-flow: row;">
+					<div style="width: calc(40% - 4px); display: grid; grid-template-columns: 1fr 1fr;">
+						<h2 style="width: calc(100% - 100px);">テーブルフィールドリスト</h2>
+						<div style="text-align: right;">
+							<button type="button" id="selectButton" style="margin-top: 20px; margin-right: 32px;"> 追加 → </button>
+						</div>
+						<table id="tableFieldList" style="height: 320px; grid-column: span 2;">
+							<thead>
+								<tr>
+									<th>
+										<input type="checkbox" id="selectAll" value="1"/>
+									</th>
+									<th>
+										フィールドID
+									</th>
+									<th>
+										フィールドクラス
+									</th>
+									<th>
+										テーブルクラス
+									</th>
+									<th>
+										コメント
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style="width: 32px; text-align: center;">
+										<input type="checkbox" id="tableFieldList[0].sel" value="1" class="fieldSelect" />
+										<input type="hidden" id="tableFieldList[0].fieldFullClassName" />
+										<input type="hidden" id="tableFieldList[0].fieldType" />
+										<input type="hidden" id="tableFieldList[0].tableFullClassName" />
+									</td>
+									<td style="width: 140px;">
+										<span id="tableFieldList[0].fieldId"></span>
+									</td>
+									<td style="width: 200px;">
+										<span id="tableFieldList[0].fieldClassName" ></span>
+									</td>
+									<td style="width: 200px;">
+										<span id="tableFieldList[0].tableClassName" ></span>
+										(<span id="tableFieldList[0].tableAlias"></span>)
+									</td>
+									<td style="width: 200px;">
+										<span id="tableFieldList[0].comment"></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div style="width: calc(60% - 4px); display: grid; grid-template-columns: 1fr 1fr;">
+						<h2 style="width: calc(100% - 100px);">出力フィールドリスト</h2>
+						<div style="text-align: right;">
+							<button type="button" id="clearButton" style="margin-top: 20px; margin-right: 32px;"> クリア </button>
+						</div>
+						<table id="fieldList" class="editableTable" style="height: 320px; grid-column: span 2;">
+							<thead>
+								<tr>
+									<th colspan="2" nowrap>
+										
+									</th>
+									<th>
+										No.
+									</th>
+									<th>
+										タイプ
+									</th>
+									<th>
+										出力フィールドID
+									</th>
+									<th>
+										参照フィールドID
+									</th>
+									<th>
+										オプション
+									</th>
+									<th>
+										コメント
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="buttonColumn">
+										<input type="button" id="fieldList[0].addButton" value="+"/>
+									</td>
+									<td class="buttonColumn">
+										<input type="button" id="fieldList[0].deleteButton" value="-"/>
+									</td>
+									<td style="width: 32px; text-align: right;">
+										<span id="fieldList[0].no"></span>
+									</td>
+									<td style="width: 200px;">
+										<select id="fieldList[0].funcFieldClassName" class="funcFieldClassName"></select>
+									</td>
+									<td style="width: 140px;">
+										<input type="text" id="fieldList[0].fieldId"/>
+									</td>
+									<td style="width: 200px;">
+										<select id="fieldList[0].refFieldId" class="refFieldId"></select>
+										<input type="hidden" id="fieldList[0].fieldClassName">
+										<input type="hidden" id="fieldList[0].tableClassName">
+									</td>
+									<td style="width: 200px;" class="option">
+										<input type="text" id="fieldList[0].optionText" />
+										<input type="hidden" id="fieldList[0].optionJson" />
+									</td>
+									<td style="width: 200px;">
+										<input type="text" id="fieldList[0].comment" ></input>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th class="buttonColumn">
+										<input type="button" id="fieldList.addButton" value="+"/>
+									</th>
+									<th colspan="7">
+									</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+				
 				<input type="button" id="confirmButton" class="largeButton" value="確認"/>
 				<input type="button" id="saveButton" class="largeButton" value="登録"/>
 				<input type="button" id="backButton" class="largeButton" value="戻る"/>
