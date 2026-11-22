@@ -1,6 +1,7 @@
 package jp.dataforms.fw.devtool.query.page;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,11 @@ import jp.dataforms.fw.validator.ValidationError;
  *
  */
 public class QueryGeneratorEditForm extends EditForm {
+
+	/**
+	 * 問い合わせクラスの状態フィールドID。
+	 */
+	private static final String ID_QUERY_STATUS = "queryStatus";
 
 	/**
 	 * コンストラクタを更新しない。
@@ -157,6 +163,7 @@ public class QueryGeneratorEditForm extends EditForm {
 	 * コンストラクタ。
 	 */
 	public QueryGeneratorEditForm() {
+		this.addField(new TextField(ID_QUERY_STATUS));
 		this.addField(new JavaSourcePathField());
 		((FunctionSelectField) this.addField(new FunctionSelectField())).setPackageOption("dao.query");
 		this.addField(new PackageNameField()).addValidator(new RequiredValidator());
@@ -356,6 +363,18 @@ public class QueryGeneratorEditForm extends EditForm {
 		
 		logger.debug("joinTableList=" + JsonUtil.encode(ret, true));
 		
+		String javaSrc = DeveloperPage.getJavaSourcePath();
+		String srcPath = javaSrc + "/" + packageName.replaceAll("\\.", "/");
+		String querySrc = srcPath + "/" + queryClassName + ".java";
+		logger.debug("javaSrcPath = " + querySrc);
+		String javaSrcText = this.readQuerySrc(querySrc);
+		var innerClassMap = this.getInnerClassMap(javaSrcText);
+		var specialJoinList = this.getSpecialJoinList(javaSrcText);
+		if (innerClassMap.isEmpty() == false || specialJoinList.size() > 0) {
+			ret.put(ID_QUERY_STATUS, "1");
+		} else {
+			ret.put(ID_QUERY_STATUS, "0");
+		}
 		return ret;
 	}
 
@@ -1345,9 +1364,8 @@ public class QueryGeneratorEditForm extends EditForm {
 	 * @throws Exception 例外。
 	 */
 	private Map<String, InnerClassInfo> getInnerClassMap(final String querySrc) throws Exception {
-		Map<String, InnerClassInfo> ret = null;
-		File qsrc = new File(querySrc);
-		if (qsrc.exists()) {
+		Map<String, InnerClassInfo> ret = new HashMap<String, InnerClassInfo>();
+		if (querySrc != null) {
 			ret = JavaSrcUtil.getInnerClass(querySrc);
 		}
 		return ret;
@@ -1356,13 +1374,12 @@ public class QueryGeneratorEditForm extends EditForm {
 	/**
 	 * 特殊Joinのリストを取得します。
 	 * @param querySrc 問い合わせヒースパス。
-	 * @return　Innerクラスのマップ
+	 * @return　特殊Joinのリスト。
 	 * @throws Exception 例外。
 	 */
 	private List<SpecialJoinInfo> getSpecialJoinList(final String querySrc) throws Exception {
-		List<SpecialJoinInfo> ret = null;
-		File qsrc = new File(querySrc);
-		if (qsrc.exists()) {
+		List<SpecialJoinInfo> ret = new ArrayList<SpecialJoinInfo>();
+		if (querySrc != null) {
 			ret = JavaSrcUtil.getSpecialJoinMethod(querySrc);
 			for (SpecialJoinInfo join: ret) {
 				logger.debug("special join: " + JsonUtil.encode(join));
@@ -1371,7 +1388,23 @@ public class QueryGeneratorEditForm extends EditForm {
 		return ret;
 	}
 
-
+	/**
+	 * Javaのソースファイルを読み込みます。
+	 * @param querySrc 問い合わせソース。
+	 * @return　Javaソース。
+	 * @throws Exception 例外。
+	 */
+	private String readQuerySrc(final String querySrc) throws Exception {
+		String ret = null;
+		File qsrc = new File(querySrc);
+		if (qsrc.exists()) {
+			logger.debug("enconding = " + StandardCharsets.UTF_8.name());
+			ret = FileUtil.readTextFile(querySrc, StandardCharsets.UTF_8.name());
+		}
+		return ret;
+	}
+	
+	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 
@@ -1386,8 +1419,9 @@ public class QueryGeneratorEditForm extends EditForm {
 		String srcPath = javaSrc + "/" + packageName.replaceAll("\\.", "/");
 		String querySrc = srcPath + "/" + queryClassName + ".java";
 
-		Map<String, InnerClassInfo> innerClassMap = this.getInnerClassMap(querySrc);
-		List<SpecialJoinInfo> specialJoinList = this.getSpecialJoinList(querySrc);
+		String querySrcText = this.readQuerySrc(querySrc);
+		Map<String, InnerClassInfo> innerClassMap = this.getInnerClassMap(querySrcText);
+		List<SpecialJoinInfo> specialJoinList = this.getSpecialJoinList(querySrcText);
 		
 		this.setTableProperties(data);
 

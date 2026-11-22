@@ -438,6 +438,48 @@ export class QueryGeneratorEditForm extends EditForm {
 	setJoinCondition(data) {
 		this.#setJoinConditionToTable(this.getComponent("joinTableList"), data.joinTableList);
 	}
+	
+	
+	/**
+	 * 保存ボタンのイベント処理を行います。
+	 * <pre>
+	 * 対応するFormのsaveメソッドを呼び出し、保存処理を行います。
+	 * ファイルアップロードフィールドもサーバーに送信されます。
+	 * </pre>
+	 */
+	async save() {
+		try {
+			if (this.validate()) {
+				let ok = true;
+				if (this.get("queryStatus").val().length > 0) {
+					// 更新の場合警告を表示。
+					let msg = MessagesUtil.getMessage("message.updatewarn0");
+					if (this.get("queryStatus").val() == "1") {
+						msg = MessagesUtil.getMessage("message.updatewarn1");
+					}
+					ok = await currentPage.confirm(null, msg);
+				}
+				if (ok) {
+					this.get("saveMode").val(this.saveMode);
+					let result = await this.submit("save");
+					this.parent.resetErrorStatus();
+					if (result.status == JsonResponse.SUCCESS) {
+						if (result.result != null && result.result.length > 0) {
+							await currentPage.alert(null, result.result);
+							this.changeStateForAfterUpdate();
+						} else {
+							this.changeStateForAfterUpdate();
+						}
+					} else {
+						this.parent.setErrorInfo(this.getValidationResult(result), this);
+					}
+				}
+			}
+		} catch (e) {
+			currentPage.reportError(e);
+		}
+	}
+
 }
 
 

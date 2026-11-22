@@ -1,6 +1,5 @@
 package jp.dataforms.fw.util;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +48,8 @@ public class JavaSrcUtil {
 	 */
 	public static Map<String, InnerClassInfo> getInnerClass(final String javasrc) throws Exception {
 		var ret = new HashMap<String, InnerClassInfo>();
-		File file = new File(javasrc);
-		CompilationUnit cu = StaticJavaParser.parse(file);
+//		File file = new File(javasrc);
+		CompilationUnit cu = StaticJavaParser.parse(javasrc);
 		List<ClassOrInterfaceDeclaration> classes = cu.findAll(ClassOrInterfaceDeclaration.class);
 		for (ClassOrInterfaceDeclaration clazz : classes) {
 			// 最上位のクラス（アウターステージ）はスキップし、インナークラスのみを対象にする
@@ -114,7 +113,7 @@ public class JavaSrcUtil {
 	 */
 	public static List<SpecialJoinInfo> getSpecialJoinMethod(final String javasrc) throws Exception {
 		List<SpecialJoinInfo> ret = new ArrayList<>();
-		CompilationUnit cu = StaticJavaParser.parse(new File(javasrc));
+		CompilationUnit cu = StaticJavaParser.parse(javasrc);
 		cu.findAll(ConstructorDeclaration.class).forEach(constructor -> {
 			constructor.findAll(MethodCallExpr.class).forEach(call -> {
 				// スコープが存在し、かつ "this" であるか判定
