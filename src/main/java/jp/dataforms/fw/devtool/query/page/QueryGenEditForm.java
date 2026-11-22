@@ -48,6 +48,7 @@ import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
 import jp.dataforms.fw.util.JavaSrcUtil;
 import jp.dataforms.fw.util.JavaSrcUtil.InnerClassInfo;
+import jp.dataforms.fw.util.JavaSrcUtil.SpecialJoinInfo;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -1144,25 +1145,70 @@ public class QueryGenEditForm extends EditForm {
 		return "\t\tthis.setFieldList(new FieldList(\n" + sb.toString() + "\t\t));";
 	}
 
+	/**
+	 * 特殊Joinの場合その情報を取得します。
+	 * @param tableName テーブル変数名。
+	 * @param specialJoinList 特殊Joinリスト。
+	 * @return　存在する場合特殊Join情報。
+	 */
+	private SpecialJoinInfo getSpecialJoinList(final String tableName, final List<SpecialJoinInfo> specialJoinList) {
+		SpecialJoinInfo ret = null;
+		for (SpecialJoinInfo info: specialJoinList) {
+			String tbl = info.arglist().get(0);
+			if (tableName.equals(tbl)) {
+				ret = info;
+				break;
+			}
+		}
+		return ret;
+	}
 
+	/**
+	 * ラクダ式を整形します。
+	 * @param arg ラムダ式の文字列。
+	 * @return 整形後の文字列。
+	 */
+	private String lambdaFormat(final String arg) {
+		String ret = arg;
+		if (arg.indexOf("->") >= 0) {
+			ret = arg.replace("    ", "\t");
+			ret = ret.replaceAll("(\\r\\n|\\n|\\r)(?=[\\s\\S])", "$1\t\t");
+		}
+		return ret;
+	}
+	
 	/**
 	 * JOINの設定ソースを生成します。
 	 * @param data POSTされたデータ。
+	 * @param specialJoinList 特殊Joinリスト。
 	 * @return JOINの設定ソース。
 	 */
 	@SuppressWarnings("unchecked")
-	private String generateJoinTables(final Map<String, Object> data) {
+	private String generateJoinTables(final Map<String, Object> data, final List<SpecialJoinInfo> specialJoinList) {
 		StringBuilder sb = new StringBuilder();
 		List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(ID_JOIN_TABLE_LIST);
 		for (Map<String, Object> m: list) {
 			String joinType = (String) m.get(JoinHtmlTable.ID_JOIN_TYPE);
 			String tableName = this.getTableVariableName((String) m.get(ID_TABLE_PROP));
-			if (JoinTypeField.INNER_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addInnerJoin(" + tableName + ");\n");
-			} else if (JoinTypeField.LEFT_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addLeftJoin(" + tableName + ");\n");
-			} else if (JoinTypeField.RIGHT_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addRightJoin(" + tableName + ");\n");
+			SpecialJoinInfo joinInfo = this.getSpecialJoinList(tableName, specialJoinList);
+			if (joinInfo != null) {
+				String joinSrc = "\t\tthis." + joinInfo.methodName() + "(";
+				for (int i = 0; i < joinInfo.arglist().size(); i++) {
+					joinSrc += this.lambdaFormat(joinInfo.arglist().get(i));
+					if (i < (joinInfo.arglist().size() - 1)) {
+						joinSrc += ", ";
+					}
+				}
+				joinSrc += ");";
+				sb.append(joinSrc);
+			} else {
+				if (JoinTypeField.INNER_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addInnerJoin(" + tableName + ");\n");
+				} else if (JoinTypeField.LEFT_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addLeftJoin(" + tableName + ");\n");
+				} else if (JoinTypeField.RIGHT_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addRightJoin(" + tableName + ");\n");
+				}
 			}
 		}
 		return sb.toString();
@@ -1288,6 +1334,25 @@ public class QueryGenEditForm extends EditForm {
 		return ret;
 	}
 	
+	/**
+	 * 特殊Joinのリストを取得します。
+	 * @param querySrc 問い合わせヒースパス。
+	 * @return　Innerクラスのマップ
+	 * @throws Exception 例外。
+	 */
+	private List<SpecialJoinInfo> getSpecialJoinList(final String querySrc) throws Exception {
+		List<SpecialJoinInfo> ret = null;
+		File qsrc = new File(querySrc);
+		if (qsrc.exists()) {
+			ret = JavaSrcUtil.getSpecialJoinMethod(querySrc);
+			for (SpecialJoinInfo join: ret) {
+				logger.debug("special join: " + JsonUtil.encode(join));
+			}
+		}
+		return ret;
+	}
+
+
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 
@@ -1303,6 +1368,7 @@ public class QueryGenEditForm extends EditForm {
 		String querySrc = srcPath + "/" + queryClassName + ".java";
 
 		Map<String, InnerClassInfo> innerClassMap = this.getInnerClassMap(querySrc);
+		List<SpecialJoinInfo> specialJoinList = this.getSpecialJoinList(querySrc);
 		
 		this.setTableProperties(data);
 
@@ -1316,7 +1382,7 @@ public class QueryGenEditForm extends EditForm {
 		implist.add(Map.class.getName());
 		List<Map<String, Object>> fieldList = new ArrayList<Map<String, Object>>();
 		logger.debug("notUpdateConstractor=" + notUpdateConstractor);
-		String constructor = this.generateConstructor(data, fieldList, implist);
+		String constructor = this.generateConstructor(data, fieldList, implist, specialJoinList);
 		if ("0".equals(notUpdateConstractor)) {
 			javasrc = javasrc.replaceAll("\\$\\{constructor\\}", constructor);
 		} else {
@@ -1366,10 +1432,13 @@ public class QueryGenEditForm extends EditForm {
 	 * @param data データ。
 	 * @param fieldList フィールドリスト。
 	 * @param implist インポートリスト。
+	 * @param specialJoinList 特殊Join List。
 	 * @return コンストラクタ。
 	 * @throws Exception 例外。
 	 */
-	private String generateConstructor(final Map<String, Object> data, final List<Map<String, Object>> fieldList, final ImportUtil implist) throws Exception {
+	private String generateConstructor(final Map<String, Object> data
+			, final List<Map<String, Object>> fieldList, final ImportUtil implist
+			, final List<SpecialJoinInfo> specialJoinList) throws Exception {
 		String javasrc = this.getStringResourse("template/Constructor.java.template");
 		javasrc = javasrc.replaceAll("\\$\\{newTables\\}", this.generateNewTables(data));
 		javasrc = javasrc.replaceAll("\\$\\{selectFields\\}", this.generateSelectFieldList(data, implist, fieldList));
@@ -1382,7 +1451,7 @@ public class QueryGenEditForm extends EditForm {
 			javasrc = javasrc.replaceAll("\\$\\{distinctFlag\\}", "false");
 		}
 		javasrc = javasrc.replaceAll("\\$\\{queryComment\\}", (String) data.get(ID_QUERY_COMMENT));
-		javasrc = javasrc.replaceAll("\\$\\{joinTables\\}", this.generateJoinTables(data));
+		javasrc = javasrc.replaceAll("\\$\\{joinTables\\}", this.generateJoinTables(data, specialJoinList));
 		return javasrc;
 	}
 
