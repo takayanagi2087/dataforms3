@@ -301,6 +301,7 @@ export class QueryGenEditForm extends EditForm {
 	 * @param {Object} data 設定するデータ。
 	 */
 	async setFormData(data) {
+		logger.log("setFormData data=", data);
 		try {
 			logger.log("this.saveMode=" + this.saveMode);
 			if (this.saveMode == "new") {
@@ -417,12 +418,15 @@ export class QueryGenEditForm extends EditForm {
 	 * @param {Table} table HTMLテーブルのインスタンス。
 	 * @param {Array} list 結合条件リスト。
 	 */
-	setJoinConditionToTable(table, list) {
+	#setJoinConditionToTable(table, list) {
 		if (list != null) {
 			let cf = table.getColumnField("joinCondition");
 			for (let i = 0; i < list.length; i++) {
 				let f = table.getRowField(i, cf);
-				f.setValue(list[i].joinCondition);
+				let v = f.getValue();
+				if (v == null || v.length == 0) {
+					f.setValue(list[i].joinCondition);
+				}
 			}
 		}
 	}
@@ -432,9 +436,7 @@ export class QueryGenEditForm extends EditForm {
 	 * @param {Object} data データ。
 	 */
 	setJoinCondition(data) {
-		this.setJoinConditionToTable(this.getComponent("joinTableList"), data.joinTableList);
-		this.setJoinConditionToTable(this.getComponent("leftJoinTableList"), data.leftJoinTableList);
-		this.setJoinConditionToTable(this.getComponent("rightJoinTableList"), data.rightJoinTableList);
+		this.#setJoinConditionToTable(this.getComponent("joinTableList"), data.joinTableList);
 	}
 }
 

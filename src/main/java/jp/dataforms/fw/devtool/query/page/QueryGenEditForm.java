@@ -197,10 +197,11 @@ public class QueryGenEditForm extends EditForm {
 
 	/**
 	 * JOINテーブルリストのデータを取得します。
-	 * @param list JOINテーブルリスト。
+	 * @param q 問い合わせ。
 	 * @return JOINテーブルリストのデータ。
 	 */
-	private List<Map<String, Object>> getJoinTableData(final List<Query.JoinInfo> list) {
+	private List<Map<String, Object>> getJoinTableData(final Query q) {
+		List<Query.JoinInfo> list = q.getJoinInfoList();
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		if (list != null) {
 			for (Query.JoinInfo jinfo: list) {
@@ -346,12 +347,15 @@ public class QueryGenEditForm extends EditForm {
 		}
 		ret.put(ID_MAIN_TABLE_CLASS_NAME, q.getMainTable().getClass().getSimpleName());
 		ret.put(ID_ALIAS_NAME, q.getMainTable().getAlias());
-		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q.getJoinInfoList()));
+		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q));
 		List<Map<String, Object>> tflist = this.queryTableFieldList(ret);
 		ret.put(ID_TABLE_FIELD_LIST, tflist);
 		FieldList qfl = q.getFieldList();
 		List<Map<String, Object>> sflist = this.getQueryFieldList(qfl);
 		ret.put(ID_FIELD_LIST, sflist);
+		
+		logger.debug("joinTableList=" + JsonUtil.encode(ret, true));
+		
 		return ret;
 	}
 
