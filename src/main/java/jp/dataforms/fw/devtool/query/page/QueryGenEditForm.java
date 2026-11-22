@@ -935,6 +935,12 @@ public class QueryGenEditForm extends EditForm {
 	}
 
 
+	/**
+	 * コメントの設定コードを設定します。
+	 * @param m フィールド情報マップ。
+	 * @return　コメントを追加下コード。
+	 * @throws Exception 例外。
+	 */
 	private String getCommentCode(final Map<String, Object> m) throws Exception {
 		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
 		if (!StringUtil.isBlank(fieldClassName)) {
@@ -945,12 +951,20 @@ public class QueryGenEditForm extends EditForm {
 			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
 			if (!StringUtil.isBlank(comment0)) {
 				if (!comment0.equals(comment)) {
-					return ".setComment(\"" + comment + "\")";
+					if (!StringUtil.isBlank(comment)) {
+						return ".setComment(\"" + comment + "\")";
+					} else {
+						return "";
+					}
 				}
 			}
 		} else {
 			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
-			return ".setComment(\"" + comment + "\")";
+			if (!StringUtil.isBlank(comment)) {
+				return ".setComment(\"" + comment + "\")";
+			} else {
+				return "";
+			}
 		}
 		return "";
 	}
@@ -1085,7 +1099,8 @@ public class QueryGenEditForm extends EditForm {
 					implist.add(AliasField.class.getName());
 					sb.append("new AliasField(\"" + alias + "\", ");
 					sb.append(this.getTableVariableName(propName) + ".");
-					sb.append(this.getFieldMethod(rf.fieldId()) + this.getCommentCode(m) + ")\n");
+					sb.append(this.getFieldMethod(rf.fieldId()) + ")"
+						+ this.getCommentCode(m) + "\n");
 				}
 			} else if (FieldClassSelectField.SUMMARY.equals(funcFieldType)) {
 				// 集計フィールドの出力処理
