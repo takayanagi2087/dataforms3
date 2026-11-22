@@ -1333,7 +1333,7 @@ public class QueryGeneratorEditForm extends EditForm {
 			String newClassName = opt.newFieldClassName();
 			InnerClassInfo existClass = innerClassMap.get(newClassName);
 			if (existClass != null) {
-				sb.append(existClass.src());
+				sb.append(existClass.src() + "\n\n");
 				if ("SqlField".equals(existClass.superClassName())) {
 					implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
 				} else if ("CaseField".equals(existClass.superClassName())) {
