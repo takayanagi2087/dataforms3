@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link type="text/css" href="../css/document.css" rel="stylesheet" />
+		<title>3.1.基本的な考え方</title>
+	</head>
+	<body>
+		<h1><span>3.1.</span>基本的な考え方</h1>
+		<h2>Webページの構造定義</h2>
+		<p>
+			dataforms3.jarではWebページの構造はhtmlで定義するのではなくJavaのクラスで定義します。
+			JavaのページクラスにFormクラスを配置し、そのFormクラスには各種フィールドクラスを配置してページの基本的な構造を定義します。
+			dataforms3.jar中の開発ツールを使用すると、そのページクラスを元にhtmlを生成することができます。
+			このhtmlはonxxxのようなイベントアトリビュートを記述しない、ページのレイアウトを定義するものになっています。
+			そのページの動作はJavaのPage,Form,Fieldと同じ名前を持つJavaScriptのクラスが規定します。
+			DataFormsServletはhtmlファイルをリクエストされると、そのhtmlの元となったJavaのページクラスを探します。
+			ページクラスが存在するとそのページ内のFormやFieldに対応したJavaScriptクラスをhtmlに追加して送信します。
+			dataforms3.jar中のJavaScriptクラスだけでもDBの検索や編集は動作しますが、これらのクラスから派生したクラスを作成することによって
+			アプリケーション独自の機能を追加することができます。
+		</p>
+		<h2>DBの構造定義</h2>
+		<p>
+			DBの構造もまたJavaのクラスで定義します。先ずTableクラスにFieldクラスを配置します。
+			dataform3.jarの持つDBツールを使うと、このクラスを元に接続したDBサーバーに対してデーブルを作成することができます。
+			テーブルの各種インデックスや外部キーの設定、標準的なテーブルの結合条件等もJavaで定義します。
+			これらの情報を変更する場合、Javaのクラスを修正し、DBツールでその内容をDBサーバーに転写するだけでDBの構造を変更することができます。
+			標準的なselect文作成するためのQueryクラスも用意してあります。
+			TableクラスやQueryクラスを操作するDaoクラスは各種DBサーバーの方言を吸収してくれるため、
+			DBの仕様の違いを意識することなくシステムを構築することができます。
+		</p>
+	</body>
+</html>

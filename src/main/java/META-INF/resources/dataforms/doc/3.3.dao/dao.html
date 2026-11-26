@@ -13,7 +13,7 @@
 			QueryクラスはSQLのselect文に対応するクラスです。
 			複数のテーブルクラスを結合した問合せクラスを作成することができるようになっています。
 			DaoクラスはTableクラスのレコード追加・更新・削除、Queryクラスで定義した問合せを実行する機能を持っています。
-			jp.dataforms.fw.daoパッケージは複数のデータベースサーバ(Apache Derby, PostgreSQL, MySQL, Oracle, Microsoft SQL Server)に対応しています。
+			jp.dataforms.fw.daoパッケージは複数のデータベースサーバ(H2, Apache Derby, PostgreSQL, MySQL, Oracle, Microsoft SQL Server)に対応しています。
 			各データベースのサーバのSQLには方言があり、直接データベースをアクセスする場合その文法の違いを考慮してSQLを記述する必要がありました。
 			dataforms3.jarでは、これらのJavaクラスを使用することによって、データベースに依存するコードを排除することができます。
 			実際「単体テストまでは環境構築が簡単なApache Derbyで作業し、結合テスト以降はPostgreSQLサーバを用意して実行」という開発を問題なく進めた実績があります。
@@ -34,8 +34,19 @@
 		<div class="wrappre">
 			<pre>
 "dbcpConfig": {
-  "mainDataSource": "derbyEmbedded",
-  "dataSourceMap": {
+    "mainDataSource": "h2Embedded",
+    "dataSourceMap": {
+    "h2Embedded": {
+        "driverClassName": "org.h2.Driver"
+        , "url": "jdbc:h2:${dataBasePath}/h2;AUTO_SERVER=TRUE;WRITE_DELAY=0;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=VALUE"
+        , "user": "sa"
+        , "password": ""
+        , "initialSize": 5
+        , "maxTotal": 20
+        , "maxMaxIdle": 20
+        , "duplicateErrorMessage": "INDEX .+\\.(.+?) ON"
+        , "foreignKeyErrorMessage": "violation: \"(.+?):"
+    },
     "derbyEmbedded": {
       "driverClassName": "org.apache.derby.jdbc.EmbeddedDriver",
       "url": "jdbc:derby:C:/eclipse/pleiades/workspace/sample/javadb;create\u003dtrue",
