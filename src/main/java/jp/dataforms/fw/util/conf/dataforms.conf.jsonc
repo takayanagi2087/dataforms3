@@ -105,10 +105,22 @@
 		, "dbcpConfig": {
 			// このシステムで使用するデーターソースの名称を設定します。
 			// nullを指定した場合はjdniDataSourceの設定を試用します。
-			"mainDataSource": "derbyEmbedded"
+			"mainDataSource": "h2Embedded"
 			, "dataSourceMap": {
+				// 組み込み　H2 データソースの設定例
+				"h2Embedded": {
+					"driverClassName": "org.h2.Driver"
+					, "url": "jdbc:h2:${dataBasePath}/h2;AUTO_SERVER=TRUE;WRITE_DELAY=0;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=VALUE"
+					, "user": "sa"
+					, "password": ""
+					, "initialSize": 5
+					, "maxTotal": 20
+					, "maxMaxIdle": 20
+					, "duplicateErrorMessage": "INDEX .+\\.(.+?) ON"
+					, "foreignKeyErrorMessage": "violation: \"(.+?):"
+				}
 				// 組み込み　Apache derby データソースの設定例
-				"derbyEmbedded": {
+				, "derbyEmbedded": {
 					"driverClassName": "org.apache.derby.jdbc.EmbeddedDriver"
 					, "url": "jdbc:derby:${dataBasePath};create=true"
 					, "user": ""
@@ -154,7 +166,7 @@
 				// MySQL　データソースの設定例
 				, "mySQL": {
 					"driverClassName": "com.mysql.jdbc.Driver"
-					, "url": "jdbc:mysql://dbserver/${dbname}?zeroDateTimeBehavior=CONVERT_TO_NULL&amp;generateSimpleParameterMetadata=true&amp;useInformationSchema=true&amp;useOldAliasMetadataBehavior=true&amp;characterEncoding=utf8"
+					, "url": "jdbc:mysql://dbserver/${dbname}?zeroDateTimeBehavior=CONVERT_TO_NULL&generateSimpleParameterMetadata=true&useInformationSchema=true&useOldAliasMetadataBehavior=true&characterEncoding=utf8"
 					, "user": ""
 					, "password": ""
 					, "initialSize": 5

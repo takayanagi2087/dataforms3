@@ -97,18 +97,21 @@ export class QueryForm extends Form {
 	async exportData() {
 		try {
 			if (this.validate()) {
-				let sortOrder = this.getSortOrder();
-				logger.log("sortOrder=" + sortOrder);
-				this.setHiddenField("sortOrder", sortOrder);
-				let result = await this.submit("exportData");
-				this.parent.resetErrorStatus();
-				if (result != null) {
-					if (result.status == JsonResponse.INVALID) {
-						this.parent.setErrorInfo(this.getValidationResult(result), this);
+				try {
+					let sortOrder = this.getSortOrder();
+					logger.log("sortOrder=" + sortOrder);
+					this.setHiddenField("sortOrder", sortOrder);
+					let result = await this.submit("exportData");
+					this.parent.resetErrorStatus();
+					if (result != null) {
+						if (result.status == JsonResponse.INVALID) {
+							this.parent.setErrorInfo(this.getValidationResult(result), this);
+						}
 					}
+				} finally {
+					logger.log("remove sortOrder");
+					this.get("sortOrder").remove();
 				}
-				logger.log("remove sortOrder");
-				this.get("sortOrder").remove();
 			}
 		} catch (e) {
 			currentPage.reportError(e);

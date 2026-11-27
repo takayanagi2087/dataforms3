@@ -56,4 +56,14 @@ public class MariaDbSqlGenerator extends MysqlSqlGenerator {
 	public String getColumnName(ResultSetMetaData meta, int idx) throws Exception {
 		return meta.getColumnLabel(idx);
 	}
+	
+	/**
+	 * mysqlでサポートされているREGEXP_LIKE()がmariadbでサポートされていないため、
+	 * mariadbのみREGEXP_LIKE()関数を作成するスクリプトを実行する。
+	 */
+	@Override
+	public String getRebildSqlFolder() {
+		return "/WEB-INF/dbRebuild/mariadb";
+	}
+
 }

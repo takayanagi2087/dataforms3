@@ -2,20 +2,23 @@
 
 ## Description
 
-dataforms3.jarはまだ開発中です。
-
-
-dataforms2.jarから以下の点を変更する予定です。
+dataforms2.jarからの変更点をまとめます。
 
 * Tomcat10以上に対応。Tomcat9以下では動作しません。
 * IE11, MS EDGE対応スクリプトを削除。(Chromium版EDGEはサポートします)
 * 非推奨機能を削除。
-* javascriptのmodule対応。
+* JavascriptのModule対応。
 * func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)
-* 設定ファイルの形式をjsoncにする。
-* 認証のpasskey対応。
+* 設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを外部から提供する機能を追加。。
+* 多要素認証(TOTP,Passkey)対応。
+* Derbyのバージョンアップが止まったのでH2に対応。
+* DBCP2を使用したデータベース接続をサポート。(JNDIデータソースも利用可能)。
+* Queryクラスの機能追加。
+* FileField階層が複雑で使いにくいのでUploadFieldクラスを追加。(最終的にFileFieldは非推奨にするつもりです)
+　　
 
-dataforms2.jarと考え方は同じですが、細かい点が異なるため互換性はありません。
+dataforms2.jarと考え方は同じですが、Javascriptをモジュール化したため互換性はありません。
+
 
 特徴を以下にまとめます。
 
@@ -59,30 +62,11 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 	</repositories>
 	<dependencies>
 		<!-- 利用するJDBCドライバーを追加 -->
-		<!--　Apache derby JDBCドライバー　-->
-		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
+		<!-- Source: https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>${derby.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbyshared</artifactId>
-			<version>${derby.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbytools</artifactId>
-			<version>${derby.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_ja_JP -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbyLocale_ja_JP</artifactId>
-			<version>${derby.version}</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>2.5.252</version>
 		</dependency>
 		<!-- datafoms3.jarを追加 -->
 		<dependency>
@@ -104,6 +88,7 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 
 対応しているデータベースサーバは、以下の通りです。
 
+* H2 Database Engine
 * Apache Derby
 * PostgreSQL
 * MariaDB
@@ -115,12 +100,8 @@ dataforms2.jarと考え方は同じですが、細かい点が異なるため互
 [MIT](https://github.com/takayanagi2087/dataforms/blob/master/LICENSE)
 
 ## Application
-以下のサイトはdataforms2.jarで作成されています。
+以下のサイトはdataforms3.jarで作成されています。
 
-* [ココ散歩](https://cocosampo.net/sampo/)　360度動画を使用した散歩システム
-
-入口はWordPressですが、「登録された散歩コース一覧」等のメニューのリンク先はdataforms2.jarで作成されたアプリケーションになっています。
-dataforms2.jarのサンプルは事務処理向けのアプリケーションの印象があるかもしれませんが、このようなWebアプリケーションにも応用されています。
-
+* [ココ散歩](https://sv01.cocosampo.net/walking360/walking/page/ContentsListPage.html)　360度動画を使用した散歩システム
 
 

@@ -20,6 +20,7 @@ import jp.dataforms.fw.field.common.MultiSelectField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
 import jp.dataforms.fw.response.JsonResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
+import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -231,4 +232,24 @@ public class TableManagementQueryResultForm extends QueryResultForm {
 		JsonResponse ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.backupTableDroped"));
 		return ret;
 	}
+	
+	/**
+	 * 複数のバックアップテーブルを削除します。
+	 * @param param パラメータ。
+	 * @return 応答情報。
+	 * @throws Exception 例外。
+	 */
+	@SuppressWarnings("unchecked")
+	@WebMethod
+	public JsonResponse dropBackupTables(final Map<String, Object> param) throws Exception {
+		logger.debug("p = " + JsonUtil.encode(param));
+		List<String> list = (List<String>) param.get("list");
+		TableManagerDao dao = new TableManagerDao(this);
+		for (String table: list) {
+			dao.dropBackupTable(table);
+		}
+		JsonResponse ret = new JsonResponse(JsonResponse.SUCCESS, MessagesUtil.getMessage(this.getPage(), "message.backupTableDroped"));
+		return ret;
+	}
+
 }

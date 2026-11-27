@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>jp.dataforms</groupId>
 	<artifactId>dataforms3</artifactId>
-	<version>3.1.0</version>
+	<version>3.2.0</version>
 	<name>dataforms version 3</name>
 	<!--
 		以下の環境変数を設定してください。
@@ -17,7 +17,7 @@
 		<!-- Java VMのパス　-->
 		<buildDate>${maven.build.timestamp}</buildDate>
 		<maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-		<log4j.version>2.25.2</log4j.version>
+		<log4j.version>2.26.1</log4j.version>
 		<poi.version>5.5.1</poi.version>
 	</properties>
 	<repositories>
@@ -189,6 +189,21 @@
 			<artifactId>totp</artifactId>
 			<version>1.7.1</version>
 		</dependency>
+		<!-- Source:
+		https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-core</artifactId>
+			<version>3.28.2</version>
+			<!--
+			<scope>compile</scope>
+			-->
+		</dependency>
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-symbol-solver-core</artifactId>
+			<version>3.28.2</version>
+		</dependency>		
 		<dependency>
 			<groupId>jp.dataforms</groupId>
 			<artifactId>ExcelToXSLFO</artifactId>

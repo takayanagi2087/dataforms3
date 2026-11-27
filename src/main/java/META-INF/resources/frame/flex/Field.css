@@ -355,6 +355,16 @@ div.audioPlayer {
 	border: 2px solid #0B85A1;
 }
 
+.uploadReceiver {
+	width: auto;
+	border: 2px dotted #0B85A1;
+}
+
+.uploadReceiverActive {
+	border: 2px solid #0B85A1;
+}
+
+
 /**
  * カレンダーテーブルのスタイル。
  */
@@ -432,3 +442,7 @@ table.calendarTable td.selected {
 	border-width: 1px;
  }
  
+ /** autocompleteの選択肢をダイアログの前に表示する。 */
+.ui-autocomplete {
+	z-index: 2050 !important; 
+}

@@ -13,6 +13,8 @@ import jp.dataforms.fw.field.sqlfunc.AliasField;
 import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
 import jp.dataforms.fw.field.sqlfunc.SqlField;
 import jp.dataforms.fw.util.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -49,18 +51,6 @@ public class Query {
 	 * 結合元のテーブル。
 	 */
 	private Table mainTable = null;
-	/**
-	 * 内部結合テーブルリスト。
-	 */
-	private TableList joinTableList = null;
-	/**
-	 * 左外部結合テーブルリスト。
-	 */
-	private TableList leftJoinTableList = null;
-	/**
-	 * 右外部結合テーブルリスト。
-	 */
-	private TableList rightJoinTableList = null;
 
 	/**
 	 * 問い合わせフォームフィールドリスト。
@@ -87,6 +77,19 @@ public class Query {
 	private boolean autoFieldCondition = true;
 
 	/**
+	 * Group byに指定するフィールドリスト。
+	 */
+	@Setter
+	private FieldList groupByFieldList = null;
+	
+	/**
+	 * Having条件式。
+	 */
+	@Getter
+	@Setter
+	private String having = null;
+	
+	/**
 	 * ソートフィールドリスト。
 	 */
 	private FieldList orderByFieldList = null;
@@ -97,7 +100,7 @@ public class Query {
 	private List<JoinInfo> joinInfoList = null;
 
 	/**
-	 * フィールドとテーブル別名とのマップ。
+	 * フィールドIDととテーブル別名とのマップ。
 	 */
 	private Map<String, String> fieldTableAliasMap = null;
 
@@ -121,6 +124,20 @@ public class Query {
 	 */
 	private Operator conditionOperator = Operator.AND;
 
+	/**
+	 * 取得開始位置。
+	 */
+	@Getter
+	@Setter
+	private Integer offset = null;
+	
+	/**
+	 * 取得件数。
+	 */
+	@Getter
+	@Setter
+	private Integer limit = null;
+	
 	/**
 	 * コンストラクタ。
 	 */
@@ -191,6 +208,13 @@ public class Query {
 	 */
 	public void setFieldList(final FieldList fieldList) {
 		this.fieldList = fieldList;
+		// SQLフィールドにはQueryへの参照を設定する。
+		for (Field<?> f: this.fieldList) {
+			if (f instanceof SqlField) {
+				SqlField sqlf = (SqlField) f;
+				sqlf.setQuery(this);
+			}
+		}
 	}
 
 	/**
@@ -455,31 +479,6 @@ public class Query {
 	}
 
 	/**
-	 * 旧形式のjoinTableListをjoinInfoListに展開する。
-	 * @param type 結合タイプ。
-	 * @param tlist テーブルリスト。
-	 */
-	private void addJoinTableList(final String type, final TableList tlist) {
-		if (tlist != null) {
-			for (Table t: tlist) {
-				this.addJoinInfo(new JoinInfo(type, t, (JoinConditionInterface) null));
-			}
-		}
-	}
-
-	/**
-	 * setXXXJoinTableListで設定した、結合情報をjoinInfoListに転記する。
-	 */
-	public void buildJoinInfoList() {
-		this.addJoinTableList(JoinInfo.INNER_JOIN, this.joinTableList);
-		this.addJoinTableList(JoinInfo.LEFT_JOIN, this.leftJoinTableList);
-		this.addJoinTableList(JoinInfo.RIGHT_JOIN, this.rightJoinTableList);
-		this.joinTableList = null;
-		this.leftJoinTableList = null;
-		this.rightJoinTableList = null;
-	}
-
-	/**
 	 * 結合情報リストを取得します。
 	 * @return 結合情報リスト。
 	 */
@@ -685,10 +684,14 @@ public class Query {
 	 */
 	public String getGroupByFieldSql(final Field<?> field) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(field.getTable().getAlias());
-		sb.append(".");
-		if (field instanceof AliasField) {
-			sb.append(StringUtil.camelToSnake(((AliasField) field).getTargetField().getId()));
+		if (field.getTable() != null) {
+			sb.append(field.getTable().getAlias());
+			sb.append(".");
+			if (field instanceof AliasField) {
+				sb.append(StringUtil.camelToSnake(((AliasField) field).getTargetField().getId()));
+			} else {
+				sb.append(StringUtil.camelToSnake(field.getId()));
+			}
 		} else {
 			sb.append(StringUtil.camelToSnake(field.getId()));
 		}
@@ -718,6 +721,7 @@ public class Query {
 	 */
 	public FieldList getGroupByFieldList() {
 		FieldList ret = new FieldList();
+		// Group byが必要なQueryか判定する。
 		boolean flg = false;
 		for (Field<?> f : this.fieldList) {
 			if (f instanceof GroupSummaryField) {
@@ -726,10 +730,17 @@ public class Query {
 			}
 		}
 		if (flg) {
-			for (Field<?> f : this.fieldList) {
-				if (!(f instanceof GroupSummaryField)) {
-					ret.add(f);
+			// Group byが必要な場合
+			if (this.groupByFieldList == null) {
+				// 集計関数以外のフィールドのリストを作成する。
+				for (Field<?> f : this.fieldList) {
+					if (!(f instanceof GroupSummaryField)) {
+						ret.add(f);
+					}
 				}
+			} else {
+				// Group Byが指定されていた場合それを優先する。
+				ret = this.groupByFieldList;
 			}
 		}
 		return ret;
@@ -933,5 +944,56 @@ public class Query {
 			}
 		}
 		return table;
+	}
+	
+	/**
+	 * 指定されたIDに対応するフィールドを取得します。
+	 * @param id フィールドID。
+	 * @return フィールド。
+	 */
+	public Field<?> findField(final String id) {
+		Field<?> ret = null;
+		ret = this.fieldList.get(id);
+		if (ret == null) {
+			if (this.joinInfoList != null) {
+				for (JoinInfo joinInfo: this.joinInfoList) {
+					var t = joinInfo.getJoinTable();
+					ret = t.getFieldList().get(id);
+					if (ret != null) {
+						break;
+					}
+				}
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * SQL式を生成します。
+	 * <pre>
+	 * JavaのフィールドIDは"fieldId"のようなキャメル形式ですがSQLのカラム名は"field_id"のようなスネーク形式になるため、
+	 * setConditionメソッドに記述する条件式は以下のようになります。
+	 * query.setConditon("m.field_id = :field_id");
+	 * これをキャメル形式で記述するには以下のように記述します。
+	 * query.setConditon("{f:fieldId}: = {p:fieldId}");
+	 * {f:fieldId}はQueryクラス知友のフィールドを検索し、その内容を展開します。
+	 * 単純なフィールドの場合"m.field_id"のように展開されます。
+	 * またSqlFieldのようなフィールドの場合、その式に展開されます。
+	 * {p:fieldId}は条件パラメータを指定する形式で":field_id"のようにパラメータとして展開されます。
+	 * TableやQueryのソースを生成すると、自動的にEntityクラスにフィールドIDの定数が定義されます。
+	 * "fieldId"を手打ちするとミスタイプでエラーする可能性があるので、この定数を使用したい場合このメソッドを以下の様に使用します。
+	 * 
+	 * String cond = Query.sqlExp("{f:%s} = {p:%s}", XxxTable.Entity.ID_FIELD_ID, XxxTable.Entity.ID_FIELD_ID);
+	 * query.setConditon(cond);
+	 * 
+	 * このメソッドはString.formatを利用しています。
+	 * 
+	 * </pre>
+	 * @param ex 条件式のフォーマット。
+	 * @param arg 条件式の引数。
+	 * @return 条件式。
+	 */
+	public static String sqlExp(final String ex, Object ...arg) {
+		return String.format(ex, arg);
 	}
 }

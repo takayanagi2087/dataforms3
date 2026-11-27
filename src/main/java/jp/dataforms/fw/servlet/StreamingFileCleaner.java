@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 import jp.dataforms.fw.field.common.FileField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadFile;
 
 /**
  * セッションタイムアウト時に残っているストリーミングファイルの残骸を削除するための
@@ -39,16 +41,24 @@ public class StreamingFileCleaner implements HttpSessionListener {
 
 	@Override
 	public void sessionDestroyed(final HttpSessionEvent se) {
+		logger.debug("sessionDestroyed");
 		HttpSession session = se.getSession();
 		Enumeration<String> e = session.getAttributeNames();
 		while (e.hasMoreElements()) {
 			String name = e.nextElement();
+			// TODO:FileField対応のそょりなので、非推奨だが互換性のために当分残す。
 			if (Pattern.matches("^" + FileField.DOWNLOADING_FILE + ".+", name)) {
 				logger.debug(() -> "attribute name=" + name);
 				String filename = (String) session.getAttribute(name);
 				logger.debug(() -> "filename=" + filename);
 				File f = new File(filename);
 				f.delete();
+			}
+			// UploadFieldストリーミング対応のセッション削除
+			if (Pattern.matches("^" + UploadField.DOWNLOADING_UPLOAD_FILE + ".+", name)) {
+				logger.debug(() -> "attribute name=" + name);
+				UploadFile uploadFile = (UploadFile) session.getAttribute(name);
+				uploadFile.deleteServerFile();
 			}
 		}
 	}

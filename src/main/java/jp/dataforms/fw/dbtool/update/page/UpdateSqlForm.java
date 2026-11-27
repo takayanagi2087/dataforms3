@@ -14,7 +14,7 @@ import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.devtool.field.FunctionSelectField;
 import jp.dataforms.fw.devtool.field.PackageNameField;
-import jp.dataforms.fw.devtool.field.SqlField;
+import jp.dataforms.fw.devtool.field.SqlTextField;
 import jp.dataforms.fw.devtool.field.TableClassNameField;
 import jp.dataforms.fw.devtool.field.UpdateSqlTypeField;
 import jp.dataforms.fw.devtool.field.UpdateSqlTypeField.UpdateSqlType;
@@ -55,7 +55,7 @@ public class UpdateSqlForm extends Form {
 		this.addField(new PackageNameField());
 		this.addField(new TableClassNameField()).setAutocomplete(true).setRelationDataAcquisition(true);
 		this.addField(this.updateSqlTypeField = new UpdateSqlTypeField());
-		this.addField(new SqlField(ID_SQL)).addValidator(new RequiredValidator());
+		this.addField(new SqlTextField(ID_SQL)).addValidator(new RequiredValidator());
 	}
 
 	@Override

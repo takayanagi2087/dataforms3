@@ -129,9 +129,55 @@ export class TableManagementQueryResultForm extends QueryResultForm {
 			let dlg = this.parent.getComponent("importDataDialog");
 			dlg.showModal();
 		});
+		
+		this.get("dropBackupTableButton").click(() => {
+			this.dropBackupTables();
+		})
+		
 		this.controlButton();
 	}
+	
+	/**
+	 * 複数のバックアップテーブルを削除します。
+	 */
+	async dropBackupTables() {
+		let msg = MessagesUtil.getMessage("message.dropBackupConfirm");
+		let ck = await currentPage.confirm(null, msg);
+		if (ck) {
+			logger.log("this.formData=", this.formData);
+			let list = this.#getCheckedBackupTable();
+			let ret = false;
+			if (list.length > 0) {
+				let m = this.getWebMethod("dropBackupTables");
+				let p = {};
+				p.list = list;
+				let r = await m.execute(p);
+				if (r.status == JsonResponse.SUCCESS) {
+					ret = true;
+				}
+			}
+			if (ret) {
+				this.changePage();
+			}
+		}
+	}
 
+	/**
+	 * バックアップテーブルがありチェックされているテーブルの一覧を取得します。。
+	 * @return バックアップテーブルがありチェックされているテーブルの一覧。
+	 */
+	#getCheckedBackupTable() {
+		let list = [];
+		this.find("[name='checkedClass']").each((i, el) => {
+			if ($(el).prop("checked")) {
+				if (this.find("#" + this.selectorEscape("queryResult[" + i + "].dropButton")).is(":visible")) {
+					list.push($(el).val());
+				}
+			}
+		});
+		return list;
+	}
+	
 	/**
 	 * ボタンのenable/disable制御を行います。
 	 */
@@ -163,6 +209,13 @@ export class TableManagementQueryResultForm extends QueryResultForm {
 			this.get("exportAsInitialDataButton").prop("disabled", true);
 			this.get("exportTableButton").prop("disabled", true);
 			this.get("importTableButton").prop("disabled", true);
+		}
+		let list = this.#getCheckedBackupTable();
+		logger.log("list = ", list);
+		if (list.length > 0) {
+			this.get("dropBackupTableButton").prop("disabled", false);
+		} else {
+			this.get("dropBackupTableButton").prop("disabled", true);
 		}
 	}
 
@@ -309,7 +362,13 @@ export class TableManagementQueryResultForm extends QueryResultForm {
 				if (clsname.html() == result.className) {
 					result.rowNo = (i + 1);
 					let rt = this.getComponent("queryResult");
+					logger.log("result=", result);
 					rt.updateRowData(i, result);
+					if (result.backupTable == "1") {
+						this.find("span.backupButtons").eq(i).show();
+					} else {
+						this.find("span.backupButtons").eq(i).hide();
+					}
 					if (result.differenceVal == "1") {
 						this.find("#queryResult tbody tr:eq(" + i + ")").addClass("warnTr");
 					} else {
@@ -339,6 +398,7 @@ export class TableManagementQueryResultForm extends QueryResultForm {
 				this.updateTableInfo(tlist[i]);
 			}
 		}
+		this.controlButton();
 	}
 
 	/**

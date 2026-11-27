@@ -1,6 +1,7 @@
 package jp.dataforms.fw.devtool.query.page;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.devtool.base.page.DeveloperPage;
 import jp.dataforms.fw.devtool.entity.EntityGenerator;
 import jp.dataforms.fw.devtool.field.AliasNameField;
+import jp.dataforms.fw.devtool.field.FieldClassSelectField;
 import jp.dataforms.fw.devtool.field.FunctionSelectField;
 import jp.dataforms.fw.devtool.field.JavaSourcePathField;
 import jp.dataforms.fw.devtool.field.JoinTypeField;
@@ -37,7 +39,7 @@ import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FlagField;
 import jp.dataforms.fw.field.sqlfunc.AliasField;
-import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
+import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.SqlField;
 import jp.dataforms.fw.htmltable.EditableHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
@@ -45,6 +47,9 @@ import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassNameUtil;
 import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.ImportUtil;
+import jp.dataforms.fw.util.JavaSrcUtil;
+import jp.dataforms.fw.util.JavaSrcUtil.InnerClassInfo;
+import jp.dataforms.fw.util.JavaSrcUtil.SpecialJoinInfo;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.MessagesUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -56,6 +61,11 @@ import jp.dataforms.fw.validator.ValidationError;
  *
  */
 public class QueryGeneratorEditForm extends EditForm {
+
+	/**
+	 * 問い合わせクラスの状態フィールドID。
+	 */
+	private static final String ID_QUERY_STATUS = "queryStatus";
 
 	/**
 	 * コンストラクタを更新しない。
@@ -121,12 +131,12 @@ public class QueryGeneratorEditForm extends EditForm {
 	/**
 	 * 選択フィールドリストのID。
 	 */
-	private static final String ID_SELECT_FIELD_LIST = "selectFieldList";
+	private static final String ID_TABLE_FIELD_LIST = "tableFieldList";
 
 	/**
 	 * SQLフィールドリストのID。
 	 */
-	private static final String ID_SQL_FIELD_LIST = "sqlFieldList";
+//	private static final String ID_SQL_FIELD_LIST = "sqlFieldList";
 
 	/**
 	 * 結合テーブルリストID。
@@ -139,6 +149,11 @@ public class QueryGeneratorEditForm extends EditForm {
 	private static final String ID_TABLE_PROP = "tableProp";
 
 	/**
+	 * 問い合わせクラスのフィールドリストテーブルID。
+	 */
+	private static final String ID_FIELD_LIST = "fieldList";
+
+	/**
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(QueryGeneratorEditForm.class);
@@ -148,8 +163,9 @@ public class QueryGeneratorEditForm extends EditForm {
 	 * コンストラクタ。
 	 */
 	public QueryGeneratorEditForm() {
+		this.addField(new TextField(ID_QUERY_STATUS));
 		this.addField(new JavaSourcePathField());
-		((FunctionSelectField) this.addField(new FunctionSelectField())).setPackageOption("dao");
+		((FunctionSelectField) this.addField(new FunctionSelectField())).setPackageOption("dao.query");
 		this.addField(new PackageNameField()).addValidator(new RequiredValidator());
 		this.addField(new QueryClassNameField()).setAutocomplete(false).addValidator(new RequiredValidator());
 
@@ -169,13 +185,11 @@ public class QueryGeneratorEditForm extends EditForm {
 		EditableHtmlTable joinTableList = new JoinHtmlTable(ID_JOIN_TABLE_LIST);
 		joinTableList.setCaption("JOINするテーブルリスト");
 		this.addHtmlTable(joinTableList);
-		SelectFieldHtmlTable slectFieldList = new SelectFieldHtmlTable(ID_SELECT_FIELD_LIST);
-		slectFieldList.setCaption("選択フィールドリスト");
+		TableFieldHtmlTable slectFieldList = new TableFieldHtmlTable(ID_TABLE_FIELD_LIST);
+		slectFieldList.setCaption("テーブルフィールドリスト");
 		this.addHtmlTable(slectFieldList);
-		SqlFieldHtmlTable sqlFieldList = new SqlFieldHtmlTable(ID_SQL_FIELD_LIST);
-		sqlFieldList.setCaption("SQLフィールドリスト");
-		this.addHtmlTable(sqlFieldList);
-
+		FieldListHtmlTable fieldListTable = new FieldListHtmlTable(ID_FIELD_LIST);
+		this.addHtmlTable(fieldListTable);
 		this.addField(new FlagField(ID_NOT_UPDATE_CONSTRACTOR));
 		this.addField(new FlagField(ID_NOT_GENERATE_ENTITY));
 	}
@@ -190,10 +204,11 @@ public class QueryGeneratorEditForm extends EditForm {
 
 	/**
 	 * JOINテーブルリストのデータを取得します。
-	 * @param list JOINテーブルリスト。
+	 * @param q 問い合わせ。
 	 * @return JOINテーブルリストのデータ。
 	 */
-	private List<Map<String, Object>> getJoinTableData(final List<Query.JoinInfo> list) {
+	private List<Map<String, Object>> getJoinTableData(final Query q) {
+		List<Query.JoinInfo> list = q.getJoinInfoList();
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		if (list != null) {
 			for (Query.JoinInfo jinfo: list) {
@@ -206,7 +221,11 @@ public class QueryGeneratorEditForm extends EditForm {
 				} else if (JoinInfo.RIGHT_JOIN.equals(jinfo.getJoinType())) {
 					m.put(JoinHtmlTable.ID_JOIN_TYPE, JoinTypeField.RIGHT_JOIN);
 				}
-				m.put(ID_PACKAGE_NAME, ClassNameUtil.getPackageName(t.getClass().getName()));
+				{
+					String pkg = ClassNameUtil.getPackageName(t.getClass().getName());
+					m.put(ID_PACKAGE_NAME, pkg);
+					m.put("functionSelect", WebComponent.getFunctionMap().getPackagePath(pkg));
+				}
 				m.put(JoinHtmlTable.ID_TABLE_CLASS_NAME, t.getClass().getSimpleName());
 				m.put(JoinHtmlTable.ID_ALIAS_NAME, t.getAlias());
 				m.put(JoinHtmlTable.ID_JOIN_CONDITION, jinfo.getGeneratedCondition());
@@ -231,7 +250,7 @@ public class QueryGeneratorEditForm extends EditForm {
 			@SuppressWarnings("unchecked")
 			Class<? extends Query> clazz  = (Class<? extends Query>) Class.forName(packageName + "." + queryClassName);
 			q = clazz.getDeclaredConstructor().newInstance();
-			q.buildJoinInfoList();
+//			q.buildJoinInfoList();
 			Dao dao = new Dao(this);
 			dao.getSqlGenerator().generateQuerySql(q);
 		} catch (ClassNotFoundException e) {
@@ -257,6 +276,53 @@ public class QueryGeneratorEditForm extends EditForm {
 		}
 	}
 
+	/**
+	 * 問い合わせフィールドリストから出力フィールドリストを作成します。
+	 * @param qfl 問い合わせのフィールドリスト。
+	 * @return 出力フィールドリスト。
+	 */
+	private List<Map<String, Object>> getQueryFieldList(FieldList qfl) {
+		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+		for (Field<?> f: qfl) {
+			Map<String, Object> m = new HashMap<String, Object>();
+			if (f instanceof SqlField) {
+				m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, SqlField.class.getName());
+				SqlField sqlf = (SqlField) f;
+				String json = JsonUtil.encode(sqlf.getOption());
+				m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
+				m.put(FieldListHtmlTable.ID_OPTION_TEXT, sqlf.getOptionText());
+			} else {
+				Field<?> refField = null;
+				if (f instanceof FunctionField) {
+					if (f instanceof AliasField) {
+						m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
+						FunctionField ff = (FunctionField) f;
+						refField = ff.getTargetField();
+					} else {
+						m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, f.getClass().getName());
+						FunctionField ff = (FunctionField) f;
+						refField = ff.getTargetField();
+						String json = JsonUtil.encode(ff.getOption());
+						m.put(FieldListHtmlTable.ID_OPTION_JSON, json);
+						m.put(FieldListHtmlTable.ID_OPTION_TEXT, ff.getOptionText());
+					}
+				} else {
+					m.put(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME, "1");
+					refField = f;
+				}
+				String alias = refField.getTable().getAlias();
+				String fid = refField.getId();
+				m.put(FieldListHtmlTable.ID_REF_FIELD_ID, alias + "." + fid);
+				m.put(FieldListHtmlTable.ID_FIELD_CLASS_NAME, refField.getClass().getName());
+				m.put(FieldListHtmlTable.ID_TABLE_CLASS_NAME, refField.getTable().getClass().getSimpleName());
+			}
+			m.put(FieldListHtmlTable.ID_FIELD_ID, f.getId());
+			m.put(FieldListHtmlTable.ID_COMMENT, f.getComment());
+			ret.add(m);
+		}
+		return ret;
+	}
+	
 	@Override
 	protected Map<String, Object> queryData(final Map<String, Object> data) throws Exception {
 		String packageName = (String) data.get(ID_PACKAGE_NAME);
@@ -267,6 +333,9 @@ public class QueryGeneratorEditForm extends EditForm {
 
 		logger.debug("flags=" + JsonUtil.encode(ret));
 
+		String path = WebComponent.getFunctionMap().getPackagePath(packageName);
+		
+		ret.put("functionSelect", path);
 		ret.put(ID_JAVA_SOURCE_PATH, DeveloperPage.getJavaSourcePath());
 		ret.put(ID_PACKAGE_NAME, packageName);
 		ret.put(ID_QUERY_CLASS_NAME, queryClassName);
@@ -276,84 +345,36 @@ public class QueryGeneratorEditForm extends EditForm {
 			ret.put(ID_DISTINCT_FLAG, "0");
 		}
 		ret.put(ID_QUERY_COMMENT, q.getComment());
-//		ret.put(ID_FORCE_OVERWRITE, "0");
 		ret.put(ID_OVERWRITE_MODE, OverwriteModeField.ERROR);
-
-		ret.put(ID_MAIN_TABLE_PACKAGE_NAME, q.getMainTable().getClass().getPackage().getName());
+		{
+			String pkg = q.getMainTable().getClass().getPackage().getName();
+			ret.put(ID_MAIN_TABLE_PACKAGE_NAME, pkg);
+			String pkgpath = WebComponent.getFunctionMap().getPackagePath(pkg);
+			ret.put(ID_MAIN_TABLE_FUNCTION_SELECT, pkgpath);
+		}
 		ret.put(ID_MAIN_TABLE_CLASS_NAME, q.getMainTable().getClass().getSimpleName());
 		ret.put(ID_ALIAS_NAME, q.getMainTable().getAlias());
-		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q.getJoinInfoList()));
-		List<Map<String, Object>> flist = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> sflist = new ArrayList<Map<String, Object>>();
-		flist.addAll(this.queryTableFieldList(ret));
+		ret.put(ID_JOIN_TABLE_LIST, this.getJoinTableData(q));
+		List<Map<String, Object>> tflist = this.queryTableFieldList(ret);
+		ret.put(ID_TABLE_FIELD_LIST, tflist);
 		FieldList qfl = q.getFieldList();
-		List<Map<String, Object>> selflist = new ArrayList<Map<String, Object>>();
-		for (Field<?> f: qfl) {
-			if (f instanceof SqlField) {
-				SqlField sf = (SqlField) f;
-				Field<?> tf = sf.getTargetField();
-				Map<String, Object> sfmap = new HashMap<String, Object>();
-				sfmap.put(SqlFieldHtmlTable.ID_FIELD_ID, tf.getId());
-				sfmap.put(SqlFieldHtmlTable.ID_FIELD_CLASS_NAME, tf.getClass().getName());
-				if (tf.hasLengthParameter()) {
-					sfmap.put(SqlFieldHtmlTable.ID_FIELD_LENGTH, tf.getLengthParameter());
-				}
-				sfmap.put(SqlFieldHtmlTable.ID_SQL, sf.getSql());
-				sfmap.put(SqlFieldHtmlTable.ID_COMMENT, sf.getComment());
-				sflist.add(sfmap);
-			} else {
-				for (Map<String, Object> m: flist) {
-					String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-					logger.debug("fieldId=" + fieldId + ", f=" + f.getClass().getName());
-					if (f instanceof AliasField) {
-						AliasField af = (AliasField) f;
-						String id = af.getTargetField().getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							fmap.put(SelectFieldHtmlTable.ID_ALIAS, af.getId());
-							fmap.put(SelectFieldHtmlTable.ID_SEL, "1");
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							break;
-						}
-					} else if (f instanceof GroupSummaryField) {
-						GroupSummaryField<?> sf = (GroupSummaryField<?>) f;
-						String id = sf.getTargetField().getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							if (!sf.getId().equals(sf.getTargetField().getId())) {
-								fmap.put(SelectFieldHtmlTable.ID_ALIAS, sf.getId());
-							}
-							fmap.put(SelectFieldHtmlTable.ID_SEL, sf.getClass().getName());
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							break;
-						}
-					} else {
-						String id = f.getId();
-						if (id.equals(fieldId)) {
-							Map<String, Object> fmap = new HashMap<String, Object>();
-							fmap.putAll(m);
-							fmap.put(SelectFieldHtmlTable.ID_SEL, "1");
-							fmap.put(SqlFieldHtmlTable.ID_COMMENT, f.getComment());
-							selflist.add(fmap);
-							flist.remove(m);
-							break;
-						}
-					}
-				}
-			}
+		List<Map<String, Object>> sflist = this.getQueryFieldList(qfl);
+		ret.put(ID_FIELD_LIST, sflist);
+		
+		logger.debug("joinTableList=" + JsonUtil.encode(ret, true));
+		
+		String javaSrc = DeveloperPage.getJavaSourcePath();
+		String srcPath = javaSrc + "/" + packageName.replaceAll("\\.", "/");
+		String querySrc = srcPath + "/" + queryClassName + ".java";
+		logger.debug("javaSrcPath = " + querySrc);
+		String javaSrcText = this.readQuerySrc(querySrc);
+		var innerClassMap = this.getInnerClassMap(javaSrcText);
+		var specialJoinList = this.getSpecialJoinList(javaSrcText);
+		if (innerClassMap.isEmpty() == false || specialJoinList.size() > 0) {
+			ret.put(ID_QUERY_STATUS, "1");
+		} else {
+			ret.put(ID_QUERY_STATUS, "0");
 		}
-		for (Map<String, Object> m: flist) {
-			m.put(SelectFieldHtmlTable.ID_SEL, "0");
-			selflist.add(m);
-		}
-		ret.put(ID_SELECT_FIELD_LIST, selflist);
-		ret.put(ID_SQL_FIELD_LIST, sflist);
-
-
 		return ret;
 	}
 
@@ -401,45 +422,112 @@ public class QueryGeneratorEditForm extends EditForm {
 	private List<ValidationError> validateFieldId(final Map<String, Object> data) {
 		Set<String> set = new HashSet<String>();
 		List<ValidationError> ret = new ArrayList<ValidationError>();
-		{
-			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_SELECT_FIELD_LIST);
-			for (int i = 0; i < sellist.size(); i++) {
-				Map<String, Object> m = sellist.get(i);
-				String sel = (String) m.get(SelectFieldHtmlTable.ID_SEL);
-				if (!StringUtil.isBlank(sel)) {
-					if ((!"0".equals(sel))) {
-						String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-						if (!StringUtil.isBlank(m.get(SelectFieldHtmlTable.ID_ALIAS))) {
-							fieldId = (String) m.get(SelectFieldHtmlTable.ID_ALIAS);
-						}
-						if (!set.contains(fieldId)) {
-							set.add(fieldId);
-						} else {
-							String fid = ID_SELECT_FIELD_LIST + "[" + i + "].fieldId";
-							ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
-						}
-					}
-				}
-			}
-		}
-		{
-			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> sqllist = (List<Map<String, Object>>) data.get(ID_SQL_FIELD_LIST);
-			for (int i = 0; i < sqllist.size(); i++) {
-				Map<String, Object> m = sqllist.get(i);
-				String fieldId = (String) m.get(SqlFieldHtmlTable.ID_FIELD_ID);
-				if (!set.contains(fieldId)) {
-					set.add(fieldId);
-				} else {
-					String fid = ID_SQL_FIELD_LIST + "[" + i + "].fieldId";
-					ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
-				}
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
+		for (int i = 0; i < sellist.size(); i++) {
+			Map<String, Object> m = sellist.get(i);
+			String fieldId = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
+			if (!set.contains(fieldId)) {
+				set.add(fieldId);
+			} else {
+				String fid = ID_FIELD_LIST + "[" + i + "].fieldId";
+				ret.add(new ValidationError(fid, MessagesUtil.getMessage(this.getPage(), "error.duplicatefieldid", fieldId)));
 			}
 		}
 		return ret;
 	}
 
+	/**
+	 * 日付関数フィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkDateFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_REF_FIELD_ID
+						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
+					)
+				);
+			}
+		}
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_OPTION_TEXT
+						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * SQLフィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkSqlFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_OPTION_TEXT
+						, MessagesUtil.getMessage(this.getPage(), "error.nooption")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * 日付関数フィールドのチェック。
+	 * @param list 確認結果リスト。
+	 * @param idx 行インデックス。
+	 * @param m 行データ。
+	 */
+	private void checkSummaryFunc(final List<ValidationError> list, final int idx, final Map<String, Object> m) {
+		{
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			if (StringUtil.isBlank(refFieldId)) {
+				list.add(new ValidationError(
+						ID_FIELD_LIST + "[" + idx + "]." + FieldListHtmlTable.ID_REF_FIELD_ID
+						, MessagesUtil.getMessage(this.getPage(), "error.noreffieldid")
+					)
+				);
+			}
+		}
+	}
+	
+	/**
+	 * フィールドタイプ毎のチェックを実装。
+	 * @param data　フォームデータ。
+	 * @return チェック結果。
+	 */
+	private List<ValidationError> validateFieldType(final Map<String, Object> data) {
+		List<ValidationError> ret = new ArrayList<ValidationError>();
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
+		for (int i = 0; i < sellist.size(); i++) {
+			Map<String, Object> m = sellist.get(i);
+			String fieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
+			String type = FieldClassSelectField.getType(fieldClass);
+			if (FieldClassSelectField.DATEFUNC.equals(type)) {
+				this.checkDateFunc(ret, i, m);
+			} else if (FieldClassSelectField.SQLFUNC.equals(type)) {
+				this.checkSqlFunc(ret, i, m);
+			} else if (FieldClassSelectField.SUMMARY.equals(type)) {
+				this.checkSummaryFunc(ret, i, m);
+			}
+		}
+		return ret;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<ValidationError> validateForm(final Map<String, Object> data) throws Exception {
@@ -450,6 +538,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		}
 		ret.addAll(this.validateJoinTable(ID_JOIN_TABLE_LIST, (List<Map<String, Object>>) data.get(ID_JOIN_TABLE_LIST)));
 		ret.addAll(this.validateFieldId(data));
+		ret.addAll(this.validateFieldType(data));
 		// 問合せソースファイルの存在チェック
 		String packageName = (String) data.get(ID_PACKAGE_NAME);
 		String queryClassName = (String) data.get(ID_QUERY_CLASS_NAME);
@@ -478,7 +567,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		Class<? extends Table> clazz = (Class<? extends Table>) Class.forName(tableClass);
 		Table table = clazz.getDeclaredConstructor().newInstance();
 		FieldList flist = table.getFieldList();
-		List<Map<String, Object>> ret = SelectFieldHtmlTable.getTableData(flist, alias);
+		List<Map<String, Object>> ret = TableFieldHtmlTable.getTableData(flist, alias);
 		return ret;
 
 	}
@@ -803,7 +892,9 @@ public class QueryGeneratorEditForm extends EditForm {
 	}
 
 	/**
-	 * プロパティ名称マップ。
+	 * テーブルのインスタンスを記録した変数マップ。
+	 * キーはTableのクラス名(パッケージ無)+Alias
+	 * 値は変数名。
 	 */
 	private Map<String, String> propertyMap = new HashMap<String, String>();
 
@@ -867,21 +958,122 @@ public class QueryGeneratorEditForm extends EditForm {
 	}
 
 
+	/**
+	 * コメントの設定コードを設定します。
+	 * @param m フィールド情報マップ。
+	 * @return　コメントを追加下コード。
+	 * @throws Exception 例外。
+	 */
 	private String getCommentCode(final Map<String, Object> m) throws Exception {
-		String fieldClassName = (String) m.get("fieldClassName");
-		@SuppressWarnings("unchecked")
-		Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
-		Field<?> f = Field.newFieldInstance(cls);
-		String comment0 = f.getComment();
-		String comment = (String) m.get(SelectFieldHtmlTable.ID_COMMENT);
-		if (!StringUtil.isBlank(comment0)) {
-			if (!comment0.equals(comment)) {
+		String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
+		if (!StringUtil.isBlank(fieldClassName)) {
+			@SuppressWarnings("unchecked")
+			Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
+			Field<?> f = Field.newFieldInstance(cls);
+			String comment0 = f.getComment();
+			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
+			if (!StringUtil.isBlank(comment0)) {
+				if (!comment0.equals(comment)) {
+					if (!StringUtil.isBlank(comment)) {
+						return ".setComment(\"" + comment + "\")";
+					} else {
+						return "";
+					}
+				}
+			}
+		} else {
+			String comment = (String) m.get(TableFieldHtmlTable.ID_COMMENT);
+			if (!StringUtil.isBlank(comment)) {
 				return ".setComment(\"" + comment + "\")";
+			} else {
+				return "";
 			}
 		}
 		return "";
 	}
 
+	/**
+	 * 参照フィールド。
+	 * @param tableAlias テーブル別名。
+	 * @param fieldId フィールドID。
+	 */
+	private record RefField(String tableAlias, String fieldId) {}
+
+	/**
+	 * 参照フィールドIDを分解します。
+	 * @param refFieldId 参照フィールドID。
+	 * @return　分解した参照フィールドID。
+	 */
+	private RefField getRefField(final String refFieldId) {
+		RefField ret = null;
+		if (refFieldId != null) {
+			String[] sp = refFieldId.split("\\.");
+			if (sp.length == 2) {
+				ret = new RefField(sp[0], sp[1]);
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * 日付機能オプション。
+	 * @param dateFieldType 操作する日付フィールド。
+	 * @param addValue 加算値。
+	 */
+	private record DateFuncOption(String dateFieldType, Integer addValue) {}
+	
+	/**
+	 * 日付関数のオプションを取得します。
+	 * @param json JSON形式のオプション。
+	 * @return　日付関数のオプション。
+	 */
+	private DateFuncOption getDateFuncOption(final String json) {
+		DateFuncOption ret = null;
+		if (!StringUtil.isBlank(json)) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+			String fieldType = (String) map.get("dateFieldType");
+			Double addValue = (Double) map.get("addValue");
+			if (addValue == null) {
+				ret = new DateFuncOption(fieldType, null);
+			} else {
+				ret = new DateFuncOption(fieldType, addValue.intValue());
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * SqlFieldのオプション。
+	 * @param sqlFieldType フィールドの基本クラス。
+	 * @param fieldClassName 生成するインナークラス名。
+	 */
+	private record SqlFieldOption(String sqlFieldType, String newFieldClassName, String fieldClassName) {}
+
+	/**
+	 * Sqlフィールドのオプションを取得します。
+	 * @param json JSON形式のオプション。
+	 * @return　Sqlフィールドのオプションのオプション。
+	 */
+	private SqlFieldOption getSqlFieldOption(final String json) {
+		SqlFieldOption ret = null;
+		if (!StringUtil.isBlank(json)) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = (Map<String, Object>) JsonUtil.decode(json, HashMap.class);
+			String sqlFieldType = (String) map.get("sqlFieldType");
+			String newFieldClassName = (String) map.get("newFieldClassName");
+			String packageName = (String) map.get("packageName");
+			String fieldClassName = (String) map.get("fieldClassName");
+			ret = new SqlFieldOption(sqlFieldType, newFieldClassName, packageName + "." + fieldClassName);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Sqlフィールドのサブクラスリスト。
+	 */
+	private List<SqlFieldOption> sqlFieldOptionList = null;
+	
 	/**
 	 * フィールドリストの作成します。
 	 * @param list 選択フィールドリスト。
@@ -892,90 +1084,87 @@ public class QueryGeneratorEditForm extends EditForm {
 	 */
 	private List<Map<String, Object>> genSelectFieldList(List<Map<String, Object>> list, StringBuilder sb, final ImportUtil implist) throws Exception {
 		logger.debug("this.propertyMap={}", this.propertyMap);
+		this.sqlFieldOptionList = new ArrayList<SqlFieldOption>();
 		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> m: list) {
-			String sel = (String) m.get(SelectFieldHtmlTable.ID_SEL);
-			if (sel != null && (!"0".equals(sel))) {
-				String fieldClassName = (String) m.get(SelectFieldHtmlTable.ID_FIELD_CLASS_NAME);
-				if (sel.length() <= 1) {
-					implist.add(fieldClassName);
-				}
-				ret.add(m);
-				if (sb.length() > 0) {
-					sb.append("\t\t\t, ");
-				} else {
-					sb.append("\t\t\t");
-				}
-				String tableClassName = (String) m.get(SelectFieldHtmlTable.ID_TABLE_CLASS_NAME);
-				String tableAlias = (String) m.get(SelectFieldHtmlTable.ID_TABLE_ALIAS);
-				String propName = this.propertyMap.get(tableClassName + tableAlias);
-				logger.debug("propName={}", propName);
-				if (propName == null) {
-					propName = tableClassName;
-				}
-				String alias = (String) m.get(SelectFieldHtmlTable.ID_ALIAS);
-				if ("1".equals(sel)) {
-					logger.debug("alias=" + alias);
-					if (StringUtil.isBlank(alias)) {
-						String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-						sb.append(this.getTableVariableName(propName) + ".");
-						sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + "\n");
-					} else {
-						String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-						implist.add(AliasField.class.getName());
-						sb.append("new AliasField(\"" + alias + "\", ");
-						sb.append(this.getTableVariableName(propName) + ".");
-						sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + ")\n");
-					}
-				} else {
-					String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-					if (alias.length() > 0) {
-						fieldId = alias;
-					}
-					Class<?> cls = Class.forName(sel);
-					implist.add(cls.getName());
-					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
-						+ "." + this.getFieldMethod((String) m.get(SelectFieldHtmlTable.ID_FIELD_ID)) + ")"
-						+ this.getCommentCode(m) + "\n");
-				}
+			String funcFieldClass = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
+			String funcFieldType = FieldClassSelectField.getType(funcFieldClass);
+			String refFieldId = (String) m.get(FieldListHtmlTable.ID_REF_FIELD_ID);
+			String fieldClassName = (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
+			if (funcFieldClass.length() <= 1) {
+				implist.add(fieldClassName);
 			}
-		}
-		return ret;
-	}
-
-	/**
-	 * SQLフィールドリストを作成します。
-	 * @param sqllist SQLフィールドリスト。
-	 * @param sb ソースを展開する文字列バッファ。
-	 * @param implist インポートリスト。
-	 * @return フィールドリスト。
-	 * @throws Exception 例外。
-	 */
-	private List<Map<String, Object>> genSqlFieldList(List<Map<String, Object>> sqllist, StringBuilder sb, final ImportUtil implist) throws Exception {
-		for (Map<String, Object> m: sqllist) {
-			implist.add(SqlField.class.getName());
+			ret.add(m);
 			if (sb.length() > 0) {
 				sb.append("\t\t\t, ");
 			} else {
 				sb.append("\t\t\t");
 			}
-			String fieldId = (String) m.get(SqlFieldHtmlTable.ID_FIELD_ID);
-			String fieldClassName = (String) m.get(SqlFieldHtmlTable.ID_FIELD_CLASS_NAME);
-			implist.add(fieldClassName);
-			@SuppressWarnings("unchecked")
-			Class<? extends Field<?>> cls = (Class<? extends Field<?>>) Class.forName(fieldClassName);
-			String fieldLength = (String) m.get(SqlFieldHtmlTable.ID_FIELD_LENGTH);
-			String sql = (String) m.get(SqlFieldHtmlTable.ID_SQL);
-			String len = "";
-			if (!StringUtil.isBlank(fieldLength)) {
-				len = "," + fieldLength;
+			String tableClassName = (String) m.get(FieldListHtmlTable.ID_TABLE_CLASS_NAME);
+			RefField rf = this.getRefField(refFieldId);
+			String tableAlias = (rf != null ? rf.tableAlias() : null);
+			String propName = (rf != null ? this.propertyMap.get(tableClassName + tableAlias) : null);
+			logger.debug("propName={}", propName);
+			if (propName == null) {
+				propName = tableClassName;
 			}
-			String comment = (String) m.get(SqlFieldHtmlTable.ID_COMMENT);
-			sb.append("new SqlField(new " + cls.getSimpleName() + "(\"" + fieldId + "\"" + len + "), \"" + sql + "\")"
-					+ (StringUtil.isBlank(comment) ? "" : (".setComment(\"" + comment + "\")"))
-					+ "\n");
+			String alias = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+			if (funcFieldType == null) {
+				// テーブルフィールドの参照の展開。
+				if (alias.equals(rf.fieldId())) {
+					// そのまま転記した場合
+					String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+					sb.append(this.getTableVariableName(propName) + ".");
+					sb.append(this.getFieldMethod(fieldId) + this.getCommentCode(m) + "\n");
+				} else {
+					// フィールドIDとテーブルフィールドのIDが異なる場合はAliasFieldを展開
+					// String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+					implist.add(AliasField.class.getName());
+					sb.append("new AliasField(\"" + alias + "\", ");
+					sb.append(this.getTableVariableName(propName) + ".");
+					sb.append(this.getFieldMethod(rf.fieldId()) + ")"
+						+ this.getCommentCode(m) + "\n");
+				}
+			} else if (FieldClassSelectField.SUMMARY.equals(funcFieldType)) {
+				// 集計フィールドの出力処理
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+				Class<?> cls = Class.forName(funcFieldClass);
+				implist.add(cls.getName());
+				sb.append("new " + cls.getSimpleName() + "(\"" + fieldId + "\", " + this.getTableVariableName(propName)
+					+ "." + this.getFieldMethod((String) m.get(FieldListHtmlTable.ID_FIELD_ID)) + ")"
+					+ this.getCommentCode(m) + "\n");
+			} else if (FieldClassSelectField.DATEFUNC.equals(funcFieldType)) {
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+				String optionJson = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+				DateFuncOption opt = this.getDateFuncOption(optionJson);
+				Class<?> cls = Class.forName(funcFieldClass);
+				implist.add(cls.getName());
+				implist.add("jp.dataforms.fw.field.sqlfunc.DateFunctionField.FieldType");
+				if (funcFieldClass.indexOf("ExtractField") >= 0) {
+					// 日時フィールド抽出
+					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId 
+							+ "\", FieldType." + opt.dateFieldType() 
+							+ ", " + this.getTableVariableName(propName) + "." + this.getFieldMethod(rf.fieldId()) 
+							+ ")" + this.getCommentCode(m) + "\n");
+					
+				} else {
+					// 日時要素加算
+					sb.append("new " + cls.getSimpleName() + "(\"" + fieldId 
+							+ "\", FieldType." + opt.dateFieldType() 
+							+ ", " + this.getTableVariableName(propName) + "." + this.getFieldMethod(rf.fieldId()) 
+							+ ", " + opt.addValue() 
+							+ ")" + this.getCommentCode(m) + "\n");
+				}
+			} else if (FieldClassSelectField.SQLFUNC.equals(funcFieldType)) {
+				String fieldId = (String) m.get(FieldListHtmlTable.ID_FIELD_ID);
+				String optionJson = (String) m.get(FieldListHtmlTable.ID_OPTION_JSON);
+				SqlFieldOption opt = this.getSqlFieldOption(optionJson);
+				m.put(FieldListHtmlTable.ID_TARGET_FIELD_CLASS, opt.fieldClassName);
+				sb.append("new " + opt.newFieldClassName() + "(\"" + fieldId + "\")" + this.getCommentCode(m) + "\n");
+				this.sqlFieldOptionList.add(opt);
+			}
 		}
-		return sqllist;
+		return ret;
 	}
 
 	/**
@@ -989,33 +1178,75 @@ public class QueryGeneratorEditForm extends EditForm {
 	private String generateSelectFieldList(final Map<String, Object> data, final ImportUtil implist, final List<Map<String, Object>> fieldList) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_SELECT_FIELD_LIST);
+		List<Map<String, Object>> sellist = (List<Map<String, Object>>) data.get(ID_FIELD_LIST);
 		fieldList.addAll(this.genSelectFieldList(sellist, sb, implist));
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> sqllist = (List<Map<String, Object>>) data.get(ID_SQL_FIELD_LIST);
-		fieldList.addAll(this.genSqlFieldList(sqllist, sb, implist));
 		return "\t\tthis.setFieldList(new FieldList(\n" + sb.toString() + "\t\t));";
 	}
 
+	/**
+	 * 特殊Joinの場合その情報を取得します。
+	 * @param tableName テーブル変数名。
+	 * @param specialJoinList 特殊Joinリスト。
+	 * @return　存在する場合特殊Join情報。
+	 */
+	private SpecialJoinInfo getSpecialJoinList(final String tableName, final List<SpecialJoinInfo> specialJoinList) {
+		SpecialJoinInfo ret = null;
+		for (SpecialJoinInfo info: specialJoinList) {
+			String tbl = info.arglist().get(0);
+			if (tableName.equals(tbl)) {
+				ret = info;
+				break;
+			}
+		}
+		return ret;
+	}
 
+	/**
+	 * ラクダ式を整形します。
+	 * @param arg ラムダ式の文字列。
+	 * @return 整形後の文字列。
+	 */
+	private String lambdaFormat(final String arg) {
+		String ret = arg;
+		if (arg.indexOf("->") >= 0) {
+			ret = arg.replace("    ", "\t");
+			ret = ret.replaceAll("(\\r\\n|\\n|\\r)(?=[\\s\\S])", "$1\t\t");
+		}
+		return ret;
+	}
+	
 	/**
 	 * JOINの設定ソースを生成します。
 	 * @param data POSTされたデータ。
+	 * @param specialJoinList 特殊Joinリスト。
 	 * @return JOINの設定ソース。
 	 */
 	@SuppressWarnings("unchecked")
-	private String generateJoinTables(final Map<String, Object> data) {
+	private String generateJoinTables(final Map<String, Object> data, final List<SpecialJoinInfo> specialJoinList) {
 		StringBuilder sb = new StringBuilder();
 		List<Map<String, Object>> list = (List<Map<String, Object>>) data.get(ID_JOIN_TABLE_LIST);
 		for (Map<String, Object> m: list) {
 			String joinType = (String) m.get(JoinHtmlTable.ID_JOIN_TYPE);
 			String tableName = this.getTableVariableName((String) m.get(ID_TABLE_PROP));
-			if (JoinTypeField.INNER_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addInnerJoin(" + tableName + ");\n");
-			} else if (JoinTypeField.LEFT_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addLeftJoin(" + tableName + ");\n");
-			} else if (JoinTypeField.RIGHT_JOIN.equals(joinType)) {
-				sb.append("\t\tthis.addRightJoin(" + tableName + ");\n");
+			SpecialJoinInfo joinInfo = this.getSpecialJoinList(tableName, specialJoinList);
+			if (joinInfo != null) {
+				String joinSrc = "\t\tthis." + joinInfo.methodName() + "(";
+				for (int i = 0; i < joinInfo.arglist().size(); i++) {
+					joinSrc += this.lambdaFormat(joinInfo.arglist().get(i));
+					if (i < (joinInfo.arglist().size() - 1)) {
+						joinSrc += ", ";
+					}
+				}
+				joinSrc += ");";
+				sb.append(joinSrc);
+			} else {
+				if (JoinTypeField.INNER_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addInnerJoin(" + tableName + ");\n");
+				} else if (JoinTypeField.LEFT_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addLeftJoin(" + tableName + ");\n");
+				} else if (JoinTypeField.RIGHT_JOIN.equals(joinType)) {
+					sb.append("\t\tthis.addRightJoin(" + tableName + ");\n");
+				}
 			}
 		}
 		return sb.toString();
@@ -1080,15 +1311,100 @@ public class QueryGeneratorEditForm extends EditForm {
 	 * @return フィールドID。
 	 */
 	private String getFieldId(final Map<String, Object> m) {
-		String ret = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
-		String alias = (String) m.get(SelectFieldHtmlTable.ID_ALIAS);
+		String ret = (String) m.get(TableFieldHtmlTable.ID_FIELD_ID);
+		String alias = (String) m.get(TableFieldHtmlTable.ID_ALIAS);
 		if (!StringUtil.isBlank(alias)) {
 			ret = alias;
 		}
 		return ret;
 	}
 
+	
+	/**
+	 * SqlField系のInnerClassを作成します。
+	 * @param implist インポートクラスのリスト。
+	 * @param innerClassMap 内部クラスマップ。
+	 * @return SqlFieldのクラス定義。
+	 * @throws Exception 例外。
+	 */
+	private String getInnerClass(final ImportUtil implist, final Map<String, InnerClassInfo> innerClassMap) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		for (SqlFieldOption opt: this.sqlFieldOptionList) {
+			String newClassName = opt.newFieldClassName();
+			InnerClassInfo existClass = innerClassMap.get(newClassName);
+			if (existClass != null) {
+				sb.append(existClass.src() + "\n\n");
+				if ("SqlField".equals(existClass.superClassName())) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
+				} else if ("CaseField".equals(existClass.superClassName())) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+				}
+			} else {
+				String sqlType = opt.sqlFieldType();
+				if ("SqlField".equals(sqlType)) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.SqlField");
+				} else if ("CaseField".equals(sqlType)) {
+					implist.add("jp.dataforms.fw.field.sqlfunc.CaseField");
+				}
+				String resname = "template/" + sqlType + ".java.template";
+				logger.debug("resname=" + resname);
+				String javasrc = this.getStringResourse(resname);
+				javasrc = javasrc.replaceAll("\\$\\{className\\}", opt.newFieldClassName());
+				javasrc = javasrc.replaceAll("\\$\\{targetClassName\\}", opt.fieldClassName());
+				sb.append(javasrc);
+			}
+		}
+		return sb.toString();
+	}
 
+	/**
+	 * Innerクラスのマップを更新します。
+	 * @param querySrc 問い合わせヒースパス。
+	 * @return　Innerクラスのマップ
+	 * @throws Exception 例外。
+	 */
+	private Map<String, InnerClassInfo> getInnerClassMap(final String querySrc) throws Exception {
+		Map<String, InnerClassInfo> ret = new HashMap<String, InnerClassInfo>();
+		if (querySrc != null) {
+			ret = JavaSrcUtil.getInnerClass(querySrc);
+		}
+		return ret;
+	}
+	
+	/**
+	 * 特殊Joinのリストを取得します。
+	 * @param querySrc 問い合わせヒースパス。
+	 * @return　特殊Joinのリスト。
+	 * @throws Exception 例外。
+	 */
+	private List<SpecialJoinInfo> getSpecialJoinList(final String querySrc) throws Exception {
+		List<SpecialJoinInfo> ret = new ArrayList<SpecialJoinInfo>();
+		if (querySrc != null) {
+			ret = JavaSrcUtil.getSpecialJoinMethod(querySrc);
+			for (SpecialJoinInfo join: ret) {
+				logger.debug("special join: " + JsonUtil.encode(join));
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Javaのソースファイルを読み込みます。
+	 * @param querySrc 問い合わせソース。
+	 * @return　Javaソース。
+	 * @throws Exception 例外。
+	 */
+	private String readQuerySrc(final String querySrc) throws Exception {
+		String ret = null;
+		File qsrc = new File(querySrc);
+		if (qsrc.exists()) {
+			logger.debug("enconding = " + StandardCharsets.UTF_8.name());
+			ret = FileUtil.readTextFile(querySrc, StandardCharsets.UTF_8.name());
+		}
+		return ret;
+	}
+	
+	
 	@Override
 	protected void insertData(final Map<String, Object> data) throws Exception {
 
@@ -1103,6 +1419,10 @@ public class QueryGeneratorEditForm extends EditForm {
 		String srcPath = javaSrc + "/" + packageName.replaceAll("\\.", "/");
 		String querySrc = srcPath + "/" + queryClassName + ".java";
 
+		String querySrcText = this.readQuerySrc(querySrc);
+		Map<String, InnerClassInfo> innerClassMap = this.getInnerClassMap(querySrcText);
+		List<SpecialJoinInfo> specialJoinList = this.getSpecialJoinList(querySrcText);
+		
 		this.setTableProperties(data);
 
 		javasrc = javasrc.replaceAll("\\$\\{queryComment\\}", (String) data.get(ID_QUERY_COMMENT));
@@ -1115,7 +1435,7 @@ public class QueryGeneratorEditForm extends EditForm {
 		implist.add(Map.class.getName());
 		List<Map<String, Object>> fieldList = new ArrayList<Map<String, Object>>();
 		logger.debug("notUpdateConstractor=" + notUpdateConstractor);
-		String constructor = this.generateConstructor(data, fieldList, implist);
+		String constructor = this.generateConstructor(data, fieldList, implist, specialJoinList);
 		if ("0".equals(notUpdateConstractor)) {
 			javasrc = javasrc.replaceAll("\\$\\{constructor\\}", constructor);
 		} else {
@@ -1130,10 +1450,14 @@ public class QueryGeneratorEditForm extends EditForm {
 					return this.getFieldId(m);
 				}
 				, (Map<String, Object> m) -> {
-					String fcls =  (String) m.get(SelectFieldHtmlTable.ID_FIELD_CLASS_NAME);
-					String sel = (String) m.get(SelectFieldHtmlTable.ID_SEL);
+					String fcls =  (String) m.get(FieldListHtmlTable.ID_FIELD_CLASS_NAME);
+					String sel = (String) m.get(FieldListHtmlTable.ID_FUNC_FIELD_CLASS_NAME);
 					if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(sel)) {
 						fcls = WebComponent.BASE_PACKAGE + ".field.sqltype.BigintField";
+					}
+					String tcls = (String) m.get(FieldListHtmlTable.ID_TARGET_FIELD_CLASS);
+					if (!StringUtil.isBlank(tcls)) {
+						fcls = tcls;
 					}
 					logger.debug("fcls=" + fcls);
 					return fcls;
@@ -1144,6 +1468,12 @@ public class QueryGeneratorEditForm extends EditForm {
 			javasrc = javasrc.replaceAll("\\$\\{entity\\}", "");
 		}
 
+		if (this.sqlFieldOptionList != null && this.sqlFieldOptionList.size() > 0) {
+			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", this.getInnerClass(implist, innerClassMap));
+		} else {
+			javasrc = javasrc.replaceAll("\\$\\{innerClass\\}", "");
+		}
+		
 		javasrc = javasrc.replaceAll("\\$\\{importList\\}", implist.getImportText(javasrc));
 
 		FileUtil.writeTextFileWithBackup(querySrc, javasrc, DataFormsServlet.getEncoding());
@@ -1155,10 +1485,13 @@ public class QueryGeneratorEditForm extends EditForm {
 	 * @param data データ。
 	 * @param fieldList フィールドリスト。
 	 * @param implist インポートリスト。
+	 * @param specialJoinList 特殊Join List。
 	 * @return コンストラクタ。
 	 * @throws Exception 例外。
 	 */
-	private String generateConstructor(final Map<String, Object> data, final List<Map<String, Object>> fieldList, final ImportUtil implist) throws Exception {
+	private String generateConstructor(final Map<String, Object> data
+			, final List<Map<String, Object>> fieldList, final ImportUtil implist
+			, final List<SpecialJoinInfo> specialJoinList) throws Exception {
 		String javasrc = this.getStringResourse("template/Constructor.java.template");
 		javasrc = javasrc.replaceAll("\\$\\{newTables\\}", this.generateNewTables(data));
 		javasrc = javasrc.replaceAll("\\$\\{selectFields\\}", this.generateSelectFieldList(data, implist, fieldList));
@@ -1171,7 +1504,7 @@ public class QueryGeneratorEditForm extends EditForm {
 			javasrc = javasrc.replaceAll("\\$\\{distinctFlag\\}", "false");
 		}
 		javasrc = javasrc.replaceAll("\\$\\{queryComment\\}", (String) data.get(ID_QUERY_COMMENT));
-		javasrc = javasrc.replaceAll("\\$\\{joinTables\\}", this.generateJoinTables(data));
+		javasrc = javasrc.replaceAll("\\$\\{joinTables\\}", this.generateJoinTables(data, specialJoinList));
 		return javasrc;
 	}
 

@@ -7,10 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
-import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.Table;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.sqlfunc.DateAddField;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -93,8 +94,8 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 	 * </pre>
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		if ("int2".equals(ret)) {
 			return "smallint";
 		} else if ("int4".equals(ret)) {
@@ -196,16 +197,6 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 		return "current_timestamp";
 	}
 
-	@Override
-	public String generateGetPageSql(final QueryPager qp) {
-		String orgsql = this.getOrgSql(qp);
-//		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
-		Integer rowFrom = qp.getRowFrom();
-		Integer rowTo = qp.getRowTo();
-		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset " + rowFrom.intValue() + " limit " + (rowTo.intValue() - rowFrom.intValue() + 1);
-		return sql;
-	}
-
 	/**
 	 * Like文のEscape指定文字列を取得します。
 	 * <pre>
@@ -262,4 +253,22 @@ public class PgsqlSqlGenerator extends SqlGenerator {
 		}
 		return null;
 	}
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = tf + " + interval '" + field.getAddValue().toString() + " " + type + "'";
+		if (field instanceof DateAddField) {
+			sql = "date(" + sql + ")";
+		}
+		return sql;
+	}
+
+
 }

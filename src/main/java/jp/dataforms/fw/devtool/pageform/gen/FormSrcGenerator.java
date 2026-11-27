@@ -182,4 +182,23 @@ public abstract class FormSrcGenerator extends JavaSrcGenerator {
 		return flist;
 	}
 
+	/**
+	 * デフォルト表示モードと設定が同じかどうかを判定します。
+	 * @param m フィールド情報マップ。
+	 * @return デフォルト表示モードの場合true。
+	 * @throws Exception 例外。
+	 */
+	@SuppressWarnings("unchecked")
+	protected Boolean isDefaultType(final Map<String, Object> m) throws Exception {
+		String tableName = (String) m.get(SelectFieldHtmlTable.ID_TABLE_FULL_CLASS_NAME);
+		Class<? extends Table> tcls = (Class<? extends Table>) Class.forName(tableName);
+		Table table = tcls.getConstructor().newInstance();
+		String fieldId = (String) m.get(SelectFieldHtmlTable.ID_FIELD_ID);
+		logger.info("table=" + tableName + ", field=" + fieldId);
+		Display ddisp = table.getField(fieldId).getEditFormDefaultDisplay();
+		String disp = (String) m.get(SelectFieldHtmlTable.ID_EDIT_FIELD_DISPLAY);
+		logger.info("disp=" + disp + ", ddisp=" + ddisp.name() + ":" + disp.equals(ddisp.name()));
+		return disp.equals(ddisp.name());
+	}
+
 }

@@ -4,6 +4,11 @@
 		<meta charset="UTF-8">
 		<title>テーブル管理</title>
 		<meta name="description" content="テーブルJavaクラスに対応したテーブルをDB上に作成します。">
+		<style>
+			span.backupButtons {
+				padding-left: 90px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="mainDiv">
@@ -86,7 +91,7 @@
 								</td>
 								<td>
 									<span id="queryResult[0].backupTable"></span>&nbsp;
-									<span style="float: right;" class="backupButtons">
+									<span class="backupButtons">
 										<button type="button" id="queryResult[0].dropButton" class="dropButton" >削除</button>
 									</span>
 								</td>
@@ -101,6 +106,7 @@
 					<input type="button" id="updateTableButton" class="largeButton" value="更新"/>&nbsp;
 					<input type="button" id="initTableButton" class="largeButton" value="初期化"/>&nbsp;
 					<input type="button" id="dropTableButton" class="largeButton" value="削除"/>&nbsp;
+					<input type="button" id="dropBackupTableButton" class="largeButton" value="バックアップテーブル削除"/>&nbsp;
 					<input type="button" id="exportAsInitialDataButton" class="largeButton" value="初期化データとしてエクスポート"/>&nbsp;
 					<input type="button" id="exportTableButton" class="largeButton" value="エクスポート"/>&nbsp;
 					<input type="button" id="importTableButton" class="largeButton" value="インポート"/>&nbsp;

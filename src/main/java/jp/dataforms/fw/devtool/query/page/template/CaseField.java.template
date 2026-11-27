@@ -1,0 +1,25 @@
+	/**
+	 * Case文を実行するフィールドクラス。
+	 */
+	private class ${className} extends CaseField {
+		/**
+		 * コンストラクタ。
+		 * @param fieldId フィールドID。
+		 */
+		public ${className}(final String fieldId) {
+			super(new ${targetClassName}(fieldId));
+			// {f:fildId} はQueryクラス内のフィールド情報を元に、m.field_id等の適切なSQLに変換します。
+			// 単純CASE式の場合
+			/*
+				this.setCondExp(Query.sqlExp("{f:fildId}"));
+				this.addWhenThen(new WhenThen("1", "'aaa'"));
+				this.addWhenThen(new WhenThen("2", "'bbb'"));
+				this.addWhenThen(new WhenThen(null, "'ccc'"));
+			*/
+			// 条件CASE式の場合
+			/*
+				this.addWhenThen(new WhenThen("{f:fidldId} > 100", "'aaa'"));
+				this.addWhenThen(new WhenThen(null, "'bbb'"));
+			*/
+		}
+	}

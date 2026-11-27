@@ -14,7 +14,7 @@
 				text-align: left;
 			}
 			.confField {
-				width: calc(100% - 300px) !important;
+				width: calc(100%) !important;
 			}
 			@media screen and (max-width: 768px) {
 				.confField {
@@ -38,7 +38,7 @@
 							</tr>
 							<tr>
 								<th>/src/webapp/META-INF/context.xml</th>
-								<td>Create a sample configuration for the Apache Derby database.</td>
+								<td>This outputs a commented-out example of the configuration when using JNDI.</td>
 								<th>/src/webapp/WEB-INF/dataforms.conf.jsonc</th>
 								<td>Create a configuration file for dataforms3.jar.</td>
 							</tr>
@@ -59,35 +59,30 @@
 						<div class="label"><label for="javaSrcPath">Java Source Path</label></div>
 						<div class="field">
 							<input type="text" id="javaSrcPath" class="confField" />
-							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="webSrcPath">Web Source Path</label></div>
 						<div class="field">
 							<input type="text" id="webSrcPath" class="confField" />
-							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="jndiPrefix">JNDI Prefix</label></div>
 						<div class="field">
 							<input type="text" id="jndiPrefix" class="confField" />
-							dataforms.conf.jsonc settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="dataSource">Data Source Name</label></div>
 						<div class="field">
 							<input type="text" id="dataSource" class="confField" />
-							dataforms.conf.jsonc and context.xml settings
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="derbyDbPath">Derby Data Path</label></div>
 						<div class="field">
 							<input type="text" id="derbyDbPath" class="confField" />
-							context.xml settings
 						</div>
 					</div>
 				</div>

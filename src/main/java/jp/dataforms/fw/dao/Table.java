@@ -383,6 +383,24 @@ public class Table {
 	}
 
 	/**
+	 * UploadField用のファイル情報フィールドを除外したリストを作成します。
+	 * @param collist カラムリスト。
+	 * @return ファイル情報フィールドを除外したリスト。
+	 */
+	private List<Map<String, Object>> removeUfInfo(final List<Map<String, Object>> collist) {
+		logger.debug("collist=" + JsonUtil.encode(collist, true));
+		List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+		for (Map<String, Object> m: collist) {
+			String colname = (String) m.get("columnName");
+			if (Field.isFileInfoColumn(colname)) {
+				continue;
+			}
+			ret.add(m);
+		}
+		return ret;
+	}
+	
+	/**
 	 * 対応するDB中のテーブルとカラム構造の違いがあるかを確認します。
 	 * @param dao データアクセスオブジェクト。
 	 * @return 一致する場合true。
@@ -390,7 +408,7 @@ public class Table {
 	 */
 	public boolean structureAccords(final Dao dao) throws Exception {
 		SqlGenerator gen = dao.getSqlGenerator();
-		List<Map<String, Object>> collist = dao.getTableColumnList(this.getTableName());
+		List<Map<String, Object>> collist = this.removeUfInfo(dao.getTableColumnList(this.getTableName()));
 		List<String> pklist = dao.getTablePkList(this);
 		if (this.columnListAccords(gen, collist)) {
 			if (this.pkFieldList.size() != pklist.size()) {

@@ -18,6 +18,7 @@ import jp.dataforms.fw.dao.sqldatatype.SqlSmallint;
 import jp.dataforms.fw.dao.sqldatatype.SqlTime;
 import jp.dataforms.fw.dao.sqldatatype.SqlTimestamp;
 import jp.dataforms.fw.dao.sqldatatype.SqlVarchar;
+import jp.dataforms.fw.devtool.query.page.FieldListHtmlTable;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.common.CharSingleSelectField;
 import jp.dataforms.fw.field.common.FileObjectField;
@@ -167,7 +168,10 @@ public final class FieldListUtil {
 	 * @return フィールドのgetter/setter。
 	 * @throws Exception 例外。
 	 */
-	public static String generateFieldValueGetterSetter(final List<Map<String, Object>> list, final GetFieldIdFunctionalInterface func, final GetClassNameFunctionalInterface cfunc, final ImportUtil implist) throws Exception {
+	public static String generateFieldValueGetterSetter(final List<Map<String, Object>> list
+			, final GetFieldIdFunctionalInterface func
+			, final GetClassNameFunctionalInterface cfunc
+			, final ImportUtil implist) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		for (Map<String, Object> m: list) {
 			String fieldClassName = cfunc.getClassName(m);
@@ -256,6 +260,10 @@ public final class FieldListUtil {
 			if ((WebComponent.BASE_PACKAGE + ".field.sqlfunc.CountField").equals(fsel)) {
 				BigintField bifld = new BigintField(fieldId);
 				fieldClassName = bifld.getClass().getName();
+			}
+			String tcls = (String) m.get(FieldListHtmlTable.ID_TARGET_FIELD_CLASS);
+			if (!StringUtil.isBlank(tcls)) {
+				fieldClassName = tcls;
 			}
 			if (implist != null) {
 				implist.add(fieldClassName);

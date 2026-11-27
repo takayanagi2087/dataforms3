@@ -1,15 +1,17 @@
 package jp.dataforms.fw.devtool.db.dao;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -46,12 +47,14 @@ import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.ExpFileInfo;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.response.BinaryResponse;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
-import jp.dataforms.fw.util.FileUtil;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.NumberUtil;
 import jp.dataforms.fw.util.StringUtil;
@@ -437,7 +440,23 @@ public class TableManagerDao extends Dao {
 										String id = fld.getId();
 										Object value = m.get(id);
 										logger.debug("id=" + id + ", value=" + value + ", class=" + fld.getClass().getName());
-										if (fld instanceof FileField) {
+										if (fld instanceof UploadField) {
+											UploadField uff = (UploadField) fld;
+											ExpFileInfo finfo = uff.getExpFileInfo(m, filePath);
+											if (finfo != null) {
+												writer.name(id);
+												writer.beginObject();
+												try {
+													writer.name("filename").value(finfo.filenamem());
+													writer.name("length").value(finfo.length());
+													writer.name("saveFile").value(finfo.saveFile());
+												} finally {
+													writer.endObject();
+												}
+											} else {
+												writer.name(id).nullValue();
+											}
+										} else if (fld instanceof FileField) {
 											if (value != null) {
 												writer.name(id);
 												Map<String, Object> finfo = TableManagerDao.this.getFileInfo((FileField<?>) fld, value, filePath, tbl, m);
@@ -507,7 +526,17 @@ public class TableManagerDao extends Dao {
 	private void convertImportData(final Map<String, Object> data, final String datadir, final Table table) throws Exception {
 		String filePath = datadir + "/" + table.getClass().getName().replaceAll("\\.", "/");
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileField) {
+			if (f instanceof UploadField) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> m = (Map<String, Object>) data.get(f.getId());
+				if (m != null) {
+					UploadField uf = (UploadField) f;
+					UploadFile obj = uf.getFileObjectFromImportMap(m, filePath);
+					data.put(f.getId(), obj);
+					String fid = StringUtil.snakeToCamel(f.getFileInfoColumnName());
+					data.put(fid, obj.getInfoColumnData());
+				}
+			} else if (f instanceof FileField) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> m = (Map<String, Object>) data.get(f.getId());
 				if (m != null) {
@@ -963,7 +992,7 @@ public class TableManagerDao extends Dao {
 		int scale = rs.getInt("DECIMAL_DIGITS");
 		int t = rs.getInt("DATA_TYPE");
 		String remarks = rs.getString("REMARKS");
-		String dataType = gen.converTypeNameForDatabaseMetaData(type);
+		String dataType = gen.convertTypeNameForDatabaseMetaData(type);
 		if (t == Types.CHAR) {
 			colinfo.put("superSimpleClassName", "CharField");
 			colinfo.put("fieldLength", size);
@@ -1072,27 +1101,68 @@ public class TableManagerDao extends Dao {
 	 * @throws Exception 例外。
 	 */
 	public void executeSqlScript(final String script) throws Exception {
-		File f = new File(script);
-		if (f.exists()) {
-			String sql = FileUtil.readTextFile(script, "utf-8");
-
-			Pattern p = Pattern.compile("--.*$", Pattern.MULTILINE);
-			Matcher m = p.matcher(sql);
-			sql = m.replaceAll("");
-			String [] scriptList = sql.split(";");
-			Connection conn = this.getConnection();
-			for (String s: scriptList) {
-				String sc = s.trim();
-				if (sc.length() > 0) {
-					logger.info(() -> "script=" + s);
-					try (PreparedStatement st = conn.prepareStatement(s)) {
-						st.execute();
-					}
+		Connection conn = this.getConnection();
+		try (BufferedReader reader = new BufferedReader(new FileReader(script));
+				Statement stmt = conn.createStatement()) {
+	
+			StringBuilder sqlBuilder = new StringBuilder();
+			String line;
+			boolean inFunctionBlock = false; // ストアドファンクション(BEGIN...END)の中にいるかどうかのフラグ
+	
+			while ((line = reader.readLine()) != null) {
+				String trimmedLine = line.trim();
+	
+				// 1. 空行や通常のSQLコメント行（--, /* */）は処理をスキップ
+				if (trimmedLine.isEmpty() || trimmedLine.startsWith("--") || trimmedLine.startsWith("/*")) {
+					continue;
 				}
+	
+				// 2. 行の内容をバッファに追加（改行を維持）
+				sqlBuilder.append(line).append("\n");
+				String lowerLine = trimmedLine.toLowerCase();
+	
+				// 3. 関数ブロック（BEGIN）の開始を検知
+				if (lowerLine.equals("begin") || lowerLine.startsWith("begin ")) {
+					inFunctionBlock = true;
+				}
+	
+				// 4. 関数ブロック（END;）の終了を検知
+				if (inFunctionBlock && lowerLine.startsWith("end;")) {
+					inFunctionBlock = false;
+				}
+	
+				// 5. 関数の外側、かつ行末がセミコロン（;）の場合のみ、SQLの区切りとみなして実行
+				if (!inFunctionBlock && trimmedLine.endsWith(";")) {
+					String sql = sqlBuilder.toString().trim();
+	
+					// 末尾のセミコロンを取り除く（JDBCドライバの互換性向上のため）
+					if (sql.endsWith(";")) {
+						sql = sql.substring(0, sql.length() - 1);
+					}
+	
+					// 空でなければ実行
+					if (!sql.isEmpty()) {
+						logger.debug("executeSqlScript sql = " + sql);
+						stmt.execute(sql);
+					}
+	
+					// 次のSQLステートメントのためにバッファをクリア
+					sqlBuilder.setLength(0);
+				}
+			}
+	
+			// 6. ファイル末尾にセミコロンがなく、バッファに残った最後のSQLがあれば実行
+			String remainingSql = sqlBuilder.toString().trim();
+			if (!remainingSql.isEmpty()) {
+				if (remainingSql.endsWith(";")) {
+					remainingSql = remainingSql.substring(0, remainingSql.length() - 1);
+				}
+				logger.debug("executeSqlScript sql = " + remainingSql);
+				stmt.execute(remainingSql);
 			}
 		}
 	}
-
+	
 	/**
 	 * テーブル再構築前のSQLの実行。
 	 * @throws Exception 例外。

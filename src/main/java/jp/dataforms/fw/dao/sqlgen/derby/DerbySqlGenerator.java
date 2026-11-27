@@ -9,8 +9,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.annotation.SqlGeneratorImpl;
-import jp.dataforms.fw.dao.QueryPager;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
+import jp.dataforms.fw.field.sqlfunc.DateAddField;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
+import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.TimeField;
+
+
+//日付の部分取得
+//select extract_field('month',timestamp(test_date, '00:00:00')) y from data_type
+//日付の加算
+//select date({fn timestampadd(sql_tsi_day, 3, timestamp(current_date, '00:00:00'))}) from sysibm.sysdummy1
 
 /**
  * Apache Derby用SQL Generator.
@@ -133,14 +143,6 @@ public class DerbySqlGenerator extends SqlGenerator {
 	}
 
 	@Override
-	public String generateGetPageSql(final QueryPager qp) {
-		String orgsql = this.getOrgSql(qp);
-		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m where (:row_from + 1) <= m.row_no and m.row_no <= (:row_to + 1)";
-		return sql;
-	}
-
-
-	@Override
 	public String getRebildSqlFolder() {
 		return "/WEB-INF/dbRebuild/derby";
 	}
@@ -156,5 +158,45 @@ public class DerbySqlGenerator extends SqlGenerator {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getDbColumnName();
+		if (field.getTable() != null) {
+			tf = field.getTable().getAlias() + "." + tf;
+		}
+		if (field.getTargetField() instanceof DateField) {
+			tf = "timestamp(" + tf + " || ' 00:00:00')";
+		} else if (field.getTargetField() instanceof TimeField) {
+			tf = "timestamp(current_date || ' ' || " + tf + ")";
+		}
+		String sql = "extract_field('" + type + "', " + tf + ")";
+		return sql;
+	}
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = null;
+		if (field instanceof DateAddField) {
+			tf = "timestamp(" + tf + " || ' 00:00:00')";
+			sql = "date(date_add_field('" + type + "', " + field.getAddValue().toString() + ", " + tf + "))";
+		} else {
+			sql = "date_add_field('" + type + "', " + field.getAddValue().toString() + ", " + tf + ")";
+		}
+		return sql;
 	}
 }

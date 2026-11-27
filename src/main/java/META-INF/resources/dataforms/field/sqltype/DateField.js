@@ -59,6 +59,30 @@ export class DateField extends DateTimeField {
 	}
 
 	/**
+	 * Datepickerで年月を変更したときに呼び出されます。
+	 * @param {Number} year 年。
+	 * @param {Number} month 月。
+	 * @param {Object} inst Datepickerのインスタンス。
+	 */
+	onChangeMonth(year, month, inst) {
+		logger.log("year=" + year + ", month=" + month + ", inst=", inst);
+	}
+	
+	/**
+	 * 各日付毎にスタイルを返します。
+	 * @param {Date} date 日付。
+	 * @return {Array} [選択可否, CSSクラス名, ツールチップ]。
+	 */
+	beforeShowDay(date) {
+		// return this.beforeShowDay(date);
+		return [true, ""];
+	}
+	
+	beforeShow(input,  inst) {
+		
+	}
+	
+	/**
 	 * Datepickerの設定を行います。
 	 */
 	setDatepicker() {
@@ -73,10 +97,25 @@ export class DateField extends DateTimeField {
 				, autoSize: true
 				, showOn: "button"
 				, buttonText: "..."
-				, beforeShow: (_, __) => {
+				, changeYear: true
+				, changeMonth: true
+				, beforeShow: (input,  inst) => {
+					this.beforeShow(input, inst);
 				}
+				, beforeShowDay: (date) => {
+					return this.beforeShowDay(date);
+				}
+				// 年月の変更イベント
+				, onChangeMonthYear: (year, month, inst) => {
+					this.onChangeMonth(year, month, inst);
+					setTimeout(() => {
+						$("button.ui-datepicker-trigger").focus();
+					}, 10);
+				} 
 				, onSelect: (datetext, inst) => {
 					this.onSelect(datetext, inst);
+				}
+				, onClose: () => {
 				}
 			});
 		}

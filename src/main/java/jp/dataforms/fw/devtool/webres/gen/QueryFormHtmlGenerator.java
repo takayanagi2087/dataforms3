@@ -23,7 +23,7 @@ public class QueryFormHtmlGenerator extends FormHtmlGenerator {
 	}
 
 	@Override
-	protected String getFormButtionHtml() {
+	protected String getFormButtonHtml() {
 		String tabs = this.getTabs();
 		String ret = tabs + "\t<input type=\"submit\" id=\"queryButton\" class=\"largeButton\" value=\"検索\">\n" +
 				tabs + "\t<input type=\"button\" id=\"exportButton\" class=\"largeButton\" value=\"エクスポート\">\n" +

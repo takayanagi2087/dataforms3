@@ -80,7 +80,7 @@ public class EditFormHtmlGenerator extends FormHtmlGenerator {
 	}
 
 	@Override
-	protected String getFormButtionHtml() {
+	protected String getFormButtonHtml() {
 		String tabs = this.getTabs();
 		String ret = tabs + "\t<input type=\"button\" id=\"confirmButton\" class=\"largeButton\" value=\"確認\"/>\n" +
 				tabs + "\t<input type=\"button\" id=\"saveButton\" class=\"largeButton\" value=\"登録\"/>\n" +

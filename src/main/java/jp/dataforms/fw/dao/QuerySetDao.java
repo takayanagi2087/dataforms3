@@ -219,7 +219,7 @@ public class QuerySetDao extends Dao {
 
 
 	/**
-	 * QueryFormから入力された条件から、テーブルを検索し、指定されたページの情報を返します。
+	 * QueryFormから入力された条件からテーブルを検索し、QueryResultFormに表示する情報を返します。
 	 * @param data 条件データ。
 	 * @param flist 条件フィールドリスト。
 	 * @return 検索結果。
@@ -239,6 +239,7 @@ public class QuerySetDao extends Dao {
 
 	/**
 	 * QueryFormから入力された条件から、テーブルを検索し、マッチするすべてのデータを返します。
+	 * データをエクスポートするタイミングで呼び出されます。
 	 * @param data 条件データ。
 	 * @param flist 条件フィールドリスト。
 	 * @return 検索結果。
@@ -274,6 +275,7 @@ public class QuerySetDao extends Dao {
 
 	/**
 	 * PKでレコードを限定し、データを取得します。
+	 * EditFormで編集データを取得式に呼び出されます。
 	 * @param data 条件データ PKの情報をすべて含むマップ。
 	 * @return ヒットしたレコード。
 	 * @throws Exception 例外。

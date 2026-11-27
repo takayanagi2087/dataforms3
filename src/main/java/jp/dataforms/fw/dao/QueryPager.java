@@ -100,6 +100,7 @@ public class QueryPager {
 		ret.put("rowTo", (page + 1) * this.linesParPage - 1);
 		this.setRowFrom(page * this.linesParPage);
 		this.setRowTo((page + 1) * this.linesParPage - 1);
+		ret.put("limitCount", this.getRowTo().intValue() - this.getRowFrom().intValue() + 1);
 		return ret;
 	}
 

@@ -17,6 +17,10 @@ import jp.dataforms.fw.dao.sqldatatype.SqlTimestamp;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.Store;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -138,8 +142,8 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	 * </pre>
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
 		if ("int".equals(ret)) {
 			return "integer";
 		} else if ("varbinary".equals(ret)) {
@@ -213,6 +217,9 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	 * @return order by句。
 	 */
 	private String getRowNumberOrderBy(final Query query) {
+		if (query == null) {
+			return "order by (select null)";
+		}
 		FieldList flist = query.getOrderByFieldList();
 		if (flist == null || flist.size() == 0) {
 			// order byが無かった場合はPK順。
@@ -285,6 +292,13 @@ public class MssqlSqlGenerator extends SqlGenerator {
 		String type = super.getDatabaseType(field);
 		if (field instanceof SqlTimestamp) {
 			type = "datetime";
+		} else if (field instanceof UploadField) {
+			UploadField uf = (UploadField) field;
+			if (uf.getStore() == Store.BLOB) {
+				type = "varbinary(max)";
+			} else {
+				type = "varchar(1024)";
+			}
 		} else if (field instanceof SqlBlob) {
 			type = "varbinary(max)";
 		} else if (field instanceof SqlClob) {
@@ -320,4 +334,34 @@ public class MssqlSqlGenerator extends SqlGenerator {
 	public String generateDropUniqueSql(Table table, String idxName) {
 		return null;
 	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getDbColumnName();
+		if (field.getTable() != null) {
+			tf = field.getTable().getAlias() + "." + tf;
+		}
+		String sql = "datepart(" + type + ", " + tf + ")";
+		return sql;
+	}
+
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = "DATEADD(" + type + ", " + field.getAddValue().toString() + ", " + tf + ")";
+		return sql;
+	}
+
 }

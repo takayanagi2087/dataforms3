@@ -20,7 +20,7 @@ export class TextField extends Field {
 	 * @param {String} value 設定値。
 	 */
 	setValue(value) {
-		let ut = $('<div>').html(value).text(); //unescape
+		let ut = this.safeUnescape(value);
 		super.setValue(ut);
 	}
 }

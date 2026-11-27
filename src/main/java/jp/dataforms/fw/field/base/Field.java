@@ -21,6 +21,8 @@ import jp.dataforms.fw.util.StringUtil;
 import jp.dataforms.fw.validator.FieldValidator;
 import jp.dataforms.fw.validator.RequiredValidator;
 import jp.dataforms.fw.validator.ValidationError;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * フィールドの基本クラス。
@@ -113,6 +115,10 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 		 * </pre>
 		 */
 		IN,
+		/**
+		 * 正規表現マッチング。
+		 */
+		REGEXP_LIKE
 	}
 
 
@@ -172,6 +178,16 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	 */
 	private MatchType matchType = Field.MatchType.FULL;
 
+	/**
+	 * matchTypeにREGEXP_LIKEが指定された場合の正規表現フラグ。
+	 * <pre>
+	 * Pattern.CASE_INSENSITIVEとPattern.MULTILINEが有効。
+	 * </pre>
+	 */
+	@Getter
+	@Setter
+	private int regexpFlags = 0;
+	
 	/**
 	 * 問合せ結果フォームのフィールドタグ生成方法。
 	 */
@@ -297,7 +313,7 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 	}
 
 	/**
-	 * 問合せ時のNot条件フラグを取得します。
+	 * 問合せ時のNot条件フラグを設定します。
 	 * @param notConditon 問合せ時のNot条件フラグ。
 	 * @return 設定したフィールド。
 	 */
@@ -1559,7 +1575,14 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 
 		qcb.setCondition(query, id, data, ids);
 		Dao dao = new Dao(this);
-		List<Map<String, Object>> list = dao.executeQuery(query);
+		List<Map<String, Object>> dlist = dao.executeQuery(query);
+		FieldList flist = query.getFieldList();
+		// データをサニタイズする。
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (Map<String, Object> m: dlist) {
+			list.add(flist.convertServerToClient(m));
+		}
+		// labelとvalueを作成。
 		for (Map<String, Object> m: list) {
 			m.put("label", lb.getLabel(m, ids));
 		}
@@ -1783,5 +1806,60 @@ public abstract class Field<TYPE> extends WebComponent implements Cloneable {
 		return (Field<?>) cns.newInstance(p);
 	}
 
+	//
+	// UploadField対応のメソッド。
+	// BlobStoreFileFieldはFileObjectクラスのインスタンスを使用し、ファイル名+ファイルサイズ+ファイルの内容をまとめてBLOBに保身するため複雑なクラス構成になっていました。
+	// それに対しUploadFieldはBlobのほかにファイル情報フィールドを用意して、そこにファイル名とファイルサイズを記録します。
+	// 以下はUploadFieldクラスに対応する定数やメソッドです。
+	
+	/**
+	 * ファイル情報カラムの接尾後。
+	 */
+	public static final String FILE_INFO_SUFFIX = "finfo";
+	
+	
+	/**
+	 * ファイル情報カラムの有無を返します。。
+	 * <pre>
+	 * 通常のフィールドではfalseを返します。
+	 * このメソッドがtrue以外の文字列を返す場合、テーブル中に対応するフィールドの他に、
+	 * 接尾後("_xxxfinfoxxx")をつけた情報フィールドを生成します。
+	 * </pre>
+	 * @return 情報カラムの接尾語。
+	 */
+	public boolean hasFileInfoColumn() {
+		return false;
+	}
+	
+	
+	/**
+	 * アップロードファイル情報カラムかどうかを判定します。
+	 * @param colname カラム名。
+	 * @return アップロードファイル情報カラムの場合true。
+	 */
+	public static boolean isFileInfoColumn(final String colname) {
+		return colname.matches(".+_" + Field.FILE_INFO_SUFFIX + "$");
+	}
 
+	/**
+	 * 情報カラムの接尾後を除去します。
+	 * @param infoColumnName 情報カラム名。
+	 * @return 情報カラムの接尾後を除去した名称。
+	 */
+	public static String removeFileInfoSuffix(final String infoColumnName) {
+		return infoColumnName.replaceAll("_" + Field.FILE_INFO_SUFFIX + "$", "");
+	}
+	
+	/**
+	 * 情報カラムの名称を取得します。
+	 * @return 情報カラム名称。
+	 */
+	public String getFileInfoColumnName() {
+		String ret = null;
+		if (this.hasFileInfoColumn()) {
+			ret = this.getDbColumnName() + "_" + Field.FILE_INFO_SUFFIX;
+		}
+		return ret;
+	}
+	
 }

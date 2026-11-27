@@ -14,6 +14,8 @@ import jp.dataforms.fw.dao.sqldatatype.SqlBlob;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
 import jp.dataforms.fw.field.common.FileField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.htmltable.HtmlTable;
 import jp.dataforms.fw.menu.ContextMenu;
 import jp.dataforms.fw.servlet.DataFormsServlet;
@@ -374,6 +376,7 @@ public  class Form extends WebComponent {
 			}
 		}
 		this.convertedServerData = ret;
+		logger.debug("convertToServerData = {}", ret.toString());
 		return ret;
 	}
 
@@ -391,13 +394,23 @@ public  class Form extends WebComponent {
 			f.setClientValue(v);
 			Object cv = f.getValue();
 			m.put(f.getId(), cv);
-			if (f instanceof FileField) {
+/*			if (cv != null) {
+				logger.debug("{}: cv = {}", f.getId(), cv.getClass().getName());
+			}
+*/			if (f instanceof FileField || f instanceof UploadField) {
 				m.put(f.getId() + "Kf", "0"); // 更新を実行する.
+			}
+			// UploadFileの場合情報カラムを展開する。
+			if (cv instanceof UploadFile) {
+				UploadFile uf = (UploadFile) cv;
+				String fid = StringUtil.snakeToCamel(f.getFileInfoColumnName());
+//				logger.debug("m.put({}, {})", fid, uf.getInfoColumnData());
+				m.put(fid, uf.getInfoColumnData());
 			}
 		} else {
 			// ファイルが指定されていない場合
 			Object cv = v;
-			if (f instanceof FileField) {
+			if (f instanceof FileField || f instanceof UploadField) {
 				cv = param.get(id + "_fn");
 				if (!StringUtil.isBlank(cv)) {
 					// ファイルが指定されておらず、削除も設定されていない場合、データをキープする.
@@ -420,8 +433,15 @@ public  class Form extends WebComponent {
 	 * @throws Exception 例外。
 	 */
 	protected void setDownloadParameter(final SqlBlob field, final Map<String, Object> m) throws Exception {
-		FileObject v = (FileObject) m.get(field.getId());
-		v.setDownloadParameter(field.getBlobDownloadParameter(m));
+		Object obj = m.get(field.getId());
+		if (obj instanceof UploadFile) {
+			UploadFile v = (UploadFile) m.get(field.getId());
+			v.setDownloadParameter(field.getBlobDownloadParameter(m));
+			logger.debug("UploadFile v.downloadParameter=" + v.getDownloadParameter());
+		} else if (obj instanceof FileObject) {
+			FileObject v = (FileObject) m.get(field.getId());
+			v.setDownloadParameter(field.getBlobDownloadParameter(m));
+		}
 	}
 
 

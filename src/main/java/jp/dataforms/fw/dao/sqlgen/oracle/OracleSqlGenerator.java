@@ -22,6 +22,8 @@ import jp.dataforms.fw.dao.sqldatatype.SqlVarchar;
 import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.dao.sqlgen.SqlParser;
 import jp.dataforms.fw.field.base.Field;
+import jp.dataforms.fw.field.sqlfunc.DateFunctionField.FieldType;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -94,11 +96,11 @@ public class OracleSqlGenerator extends SqlGenerator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String converTypeNameForDatabaseMetaData(final String type) {
-		String ret = super.converTypeNameForDatabaseMetaData(type);
-		/*if ("varchar2".equals(ret)) {
+	public String convertTypeNameForDatabaseMetaData(final String type) {
+		String ret = super.convertTypeNameForDatabaseMetaData(type);
+		if ("varchar2".equals(ret)) {
 			return "varchar";
-		} else*/ if ("char".equals(ret)) {
+		} else if ("char".equals(ret)) {
 				return "char";
 		} else if ("float".equals(ret)) {
 			return "real";
@@ -295,5 +297,25 @@ public class OracleSqlGenerator extends SqlGenerator {
 		} else {
 			return super.getLiteral(value);
 		}
+	}
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	@Override
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = null;
+		if (field.getType() == FieldType.YEAR) {
+			sql = "add_months(" + tf + ", " + field.getAddValue() * 12 + ")";
+		} else if (field.getType() == FieldType.MONTH) {
+			sql = "add_months(" + tf + ", " + field.getAddValue() + ")";
+		} else {
+			sql = tf + " + numtodsinterval(" + field.getAddValue() + ", '" + type + "')";
+		}
+		return sql;
 	}
 }

@@ -275,13 +275,6 @@ export class Field extends WebComponent {
 		let tag = comp.prop("tagName");
 		if ("INPUT" == tag || "TEXTAREA" == tag || "SELECT" == tag) {
 			this.setInputValue(comp, value);
-			if ("SELECT" == tag) {
-				if (this.readonly) {
-					let v = this.find("option:selected").text()
-					let span = this.addSpan(comp);
-					span.text(v);
-				}
-			}
 		} else {
 			this.setTextValue(comp, value);
 		}
@@ -468,15 +461,21 @@ export class Field extends WebComponent {
 	 */
 	lockSelect(lk) {
 		let comp = this.get();
-		let v = this.find("option:selected").text();
-		let span = this.addSpan(comp);
 		if (lk) {
-			comp.hide();
-			span.show();
-			span.text(v);
+			comp.css("border-style", "none");
+			comp.css("outline", "none");
+			comp.css("pointer-events", "none");
+			comp.css("appearance", "none");
+			comp.on("keydown keypress keyup", (event) => {
+				event.preventDefault();
+				return false;
+			});
 		} else {
-			comp.show();
-			span.hide();
+			comp.css("border-style", "");
+			comp.css("outline", "");
+			comp.css("pointer-events", "auto");
+			comp.css("appearance", "auto");
+			comp.off("keydown keypress keyup");
 		}
 	}
 
@@ -586,7 +585,19 @@ export class Field extends WebComponent {
 			let param = this.getAjaxParameter();
 			let ret = await method.execute(param,);
 			if (ret.status == JsonResponse.SUCCESS) {
-				res(ret.result);
+				let list = [];
+				for (let i = 0; i < ret.result.length; i++) {
+					let m = ret.result[i];
+					for (let key in m) {
+						let v = m[key];
+						if (typeof v === 'string') {
+							// サニタイズをエスケープする。
+							m[key] = this.safeUnescape(v);
+						}
+					}
+					list.push(m);
+				}
+				res(list);
 			}
 		} catch (e) {
 			currentPage.reportError(e);
@@ -687,6 +698,23 @@ export class Field extends WebComponent {
 		}
 	}
 
+
+	/**
+	 * 安全なunescape処理。
+	 * @param {String} 入力文字列。
+	 * @return {String} unescape結果。
+	 * 
+	 */	
+	safeUnescape(escapedValue) {
+		if (!escapedValue) return "";
+		
+		// 文字列を「text/html」としてブラウザのメモリ上で安全にパース
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(escapedValue, 'text/html');
+		
+		// パースされたドキュメントのbodyからテキストのみを抽出して返す
+		return doc.body.textContent || "";
+	}
 }
 
 

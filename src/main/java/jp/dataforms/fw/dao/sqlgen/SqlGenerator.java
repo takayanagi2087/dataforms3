@@ -53,11 +53,11 @@ import jp.dataforms.fw.field.common.FileField;
 import jp.dataforms.fw.field.common.RecordIdField;
 import jp.dataforms.fw.field.common.UpdateTimestampField;
 import jp.dataforms.fw.field.common.UpdateUserIdField;
-import jp.dataforms.fw.field.sqlfunc.AliasField;
-import jp.dataforms.fw.field.sqlfunc.CountField;
-import jp.dataforms.fw.field.sqlfunc.GroupSummaryField;
+import jp.dataforms.fw.field.sqlfunc.DateTimeAddFunctionField;
+import jp.dataforms.fw.field.sqlfunc.ExtractField;
+import jp.dataforms.fw.field.sqlfunc.FunctionField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
-import jp.dataforms.fw.field.sqlfunc.SqlField;
+import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.util.ClassFinder;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -227,7 +227,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
      * @param type データタイプ。
      * @return 変換結果。
      */
-    public String converTypeNameForDatabaseMetaData(final String type) {
+    public String convertTypeNameForDatabaseMetaData(final String type) {
     	return type.toLowerCase();
     }
 
@@ -362,6 +362,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			ret = "time";
 		} else if (field instanceof SqlTimestamp) {
 			ret = "timestamp";
+		} else if (field instanceof UploadField) {
+			// UploadFieldの場合はstoreプロパティで、Blobを使うかどうかを判定する。
+			UploadField uf = (UploadField) field;
+			String type = uf.getDatabaseType();
+			ret = type;
 		} else if (field instanceof SqlBlob) {
 			ret = "blob";
 		} else if (field instanceof SqlClob) {
@@ -443,10 +448,19 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 			if (cols.length() > 0) {
 				cols.append(",");
 			}
-			String sqltype = this.getDatabaseType(f);
-			cols.append(f.getDbColumnName());
-			cols.append(" ");
-			cols.append(sqltype);
+			if (f.hasFileInfoColumn()) {
+				// UploadFieldのフィールド展開
+				cols.append(f.getFileInfoColumnName() + " varchar(1024)");
+				String sqltype = this.getDatabaseType(f);
+				cols.append("\n," + f.getDbColumnName());
+				cols.append(" ");
+				cols.append(sqltype);
+			} else {
+				String sqltype = this.getDatabaseType(f);
+				cols.append(f.getDbColumnName());
+				cols.append(" ");
+				cols.append(sqltype);
+			}
 			if (f instanceof RecordIdField) {
 				if (!this.isSequenceSupported() && table.isAutoIncrementId()) {
 					// SequenceがサポートされていないDBMSでシーケンスを使用する場合
@@ -771,6 +785,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
 		sb.append(") values (");
@@ -784,6 +802,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(":");
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			if (f instanceof CreateTimestampField || f instanceof UpdateTimestampField) {
 				sb.append(this.generateSysTimestampSql());
 			} else {
@@ -798,6 +821,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 
 	/**
 	 * 指定したテーブルのInsert文を作成します。
+	 * <pre>
+	 * データのインポート用のSQLを生成します。
+	 * CreateTimestampField,UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
+	 * </pre>
 	 * @param table テーブル。
 	 * @return insert文。
 	 */
@@ -822,6 +849,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
 		sb.append(") values (");
@@ -835,6 +866,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				sb.append(",");
 			}
 			first = false;
+			if (f.hasFileInfoColumn()) {
+				sb.append(":");
+				sb.append(f.getFileInfoColumnName());
+				sb.append(",");
+			}
 			sb.append(":");
 			sb.append(StringUtil.camelToSnake(f.getId()));
 		}
@@ -1138,7 +1174,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		StringBuilder sb = new StringBuilder();
 		Map<String, Object> p = query.getConditionData();
 		if (query.getCondition() != null) {
-			sb.append(query.getCondition());
+			sb.append(this.convertSqlExp(query, query.getCondition()));
 		}
 		if (query.isAutoFieldCondition()) {
 			ConditionExpression ce = query.getConditionExpression();
@@ -1177,85 +1213,187 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		String id = f.getId();
 		Object v = p.get(id);
 		if (v == null) {
+			// 入力されていない項目の条件は生成しない。
 			return ex;
 		}
 		String sv = v.toString();
 		if (StringUtil.isBlank(sv)) {
+			// 入力されていない項目の条件は生成しない。
 			return ex;
 		}
 		String spexp = query.getConditonExpression(f, p);
 		if (spexp != null) {
+			// 特殊なフィールド条件が返ってきた場合それをそのまま返す。
 			return spexp;
 		}
 		//logger.debug("field id=" + id + ",matchType=" + f.getMatchType() + ",v=" + v.toString());
 		if (f.getMatchType() == MatchType.FULL) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (!f.isCaseInsensitive()) {
-					if (!f.isNotConditon()) {
-						ex = colname + " = :" + StringUtil.camelToSnake(id);
-					} else {
-						ex = colname + " <> :" + StringUtil.camelToSnake(id);
-					}
-				} else {
-					String lower = this.getLowerMethod();
-					if (!f.isNotConditon()) {
-						ex = lower + "(" + colname + ") = " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
-					} else {
-						ex = lower + "(" + colname + ") <> " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
-					}
-				}
-			}
+			ex = this.getFullMatchCondition(query, f);
 		} else if (f.getMatchType() == MatchType.BEGIN
 				|| f.getMatchType() == MatchType.END
 				|| f.getMatchType() == MatchType.PART) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (!f.isCaseInsensitive()) {
-					if (!f.isNotConditon()) {
-						ex = colname + " like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
-					} else {
-						ex = colname + " not like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+			ex = this.getLikeCondition(query, f);
+		} else if (f.getMatchType() == MatchType.RANGE_FROM) {
+			ex = this.getRengeFromCondition(query, f);
+		} else if (f.getMatchType() == MatchType.RANGE_TO) {
+			ex = this.getRangeToCondition(query, f);
+		} else if (f.getMatchType() == MatchType.IN) {
+			ex = this.getInCondition(query, f, v);
+		} else if (f.getMatchType() == MatchType.REGEXP_LIKE) {
+			// 正規表現マッチング
+			ex = this.getRegexpLikeCondition(query, f);
+		}
+		return ex;
+	}
+	
+	/**
+	 * 正規表現マッチングの条件式。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 例外。
+	 */
+	protected String getRegexpLikeCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			int flags = f.getRegexpFlags();
+			String flg = "";
+			if ((flags & Pattern.CASE_INSENSITIVE) != 0) {
+				flg += "i";
+			}
+			if ((flags & Pattern.MULTILINE) != 0) {
+				flg += "m";
+			}
+/*			if ((flags | Pattern.DOTALL) != 0) {
+				flg += "s";
+			}*/
+			if (flg.length() == 0) {
+				flg = "c";
+			}
+			ex = "regexp_like(" + colname + ", :" + StringUtil.camelToSnake(id)+ ", '" + flg + "')";
+		}
+		return ex;
+	}
+
+	/**
+	 * INの条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @param v　値リスト>
+	 * @return　INの条件式。
+	 */
+	protected String getInCondition(Query query, Field<?> f, Object v) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (v instanceof List) {
+				@SuppressWarnings("rawtypes")
+				List l = (List) v;
+				if (l.size() > 0) {
+					StringBuilder ary = new StringBuilder();
+					for (int i = 0; i < l.size(); i++) {
+						if (ary.length() > 0) {
+							ary.append(",");
+						}
+						ary.append(":" + StringUtil.camelToSnake(id) + "[" + i + "]");
 					}
-				} else {
-					String lower = this.getLowerMethod();
 					if (!f.isNotConditon()) {
-						ex = lower + "(" + colname + ") like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+						ex = colname + " in (" + ary.toString() + ")";
 					} else {
-						ex = lower + "(" + colname + ") not like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+						ex = colname + " not in (" + ary.toString() + ")";
 					}
 				}
 			}
-		} else if (f.getMatchType() == MatchType.RANGE_FROM) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				ex = colname + " >= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * 範囲終了の条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 範囲終了の条件式。
+	 */
+	protected String getRangeToCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			ex = colname + " <= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * 範囲開始の条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return 範囲開始の条件式。
+	 */
+	protected String getRengeFromCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			ex = colname + " >= :" + StringUtil.camelToSnake(id);
+		}
+		return ex;
+	}
+
+	/**
+	 * LIKE条件式を作成します。
+	 * @param query 問い合わせ。
+	 * @param f フィールド。
+	 * @return LIKE条件式。
+	 */
+	protected String getLikeCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (!f.isCaseInsensitive()) {
+				if (!f.isNotConditon()) {
+					ex = colname + " like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+				} else {
+					ex = colname + " not like :" + StringUtil.camelToSnake(id) + this.getLikeEscape();
+				}
+			} else {
+				String lower = this.getLowerMethod();
+				if (!f.isNotConditon()) {
+					ex = lower + "(" + colname + ") like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+				} else {
+					ex = lower + "(" + colname + ") not like " + lower + "(:" +StringUtil.camelToSnake(id) + ")" +  this.getLikeEscape();
+				}
 			}
-		} else if (f.getMatchType() == MatchType.RANGE_TO) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				ex = colname + " <= :" + StringUtil.camelToSnake(id);
-			}
-		} else if (f.getMatchType() == MatchType.IN) {
-			String colname = query.getMatchFieldSql(f);
-			if (colname != null) {
-				if (v instanceof List) {
-					@SuppressWarnings("rawtypes")
-					List l = (List) v;
-					if (l.size() > 0) {
-						StringBuilder ary = new StringBuilder();
-						for (int i = 0; i < l.size(); i++) {
-							if (ary.length() > 0) {
-								ary.append(",");
-							}
-							ary.append(":" + StringUtil.camelToSnake(id) + "[" + i + "]");
-						}
-						if (!f.isNotConditon()) {
-							ex = colname + " in (" + ary.toString() + ")";
-						} else {
-							ex = colname + " not in (" + ary.toString() + ")";
-						}
-					}
+		}
+		return ex;
+	}
+
+	/**
+	 * 完全一致の条件式を作成します。
+	 * @param query　問い合わせクラス。
+	 * @param f フィールド。
+	 * @return　完全一致の条件式。
+	 */
+	protected String getFullMatchCondition(Query query, Field<?> f) {
+		String ex = null;
+		String id = f.getId();
+		String colname = query.getMatchFieldSql(f);
+		if (colname != null) {
+			if (!f.isCaseInsensitive()) {
+				if (!f.isNotConditon()) {
+					ex = colname + " = :" + StringUtil.camelToSnake(id);
+				} else {
+					ex = colname + " <> :" + StringUtil.camelToSnake(id);
+				}
+			} else {
+				String lower = this.getLowerMethod();
+				if (!f.isNotConditon()) {
+					ex = lower + "(" + colname + ") = " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
+				} else {
+					ex = lower + "(" + colname + ") <> " + lower + "(:" + StringUtil.camelToSnake(id) + ")";
 				}
 			}
 		}
@@ -1365,32 +1503,20 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		if (field.getTable() != null) {
 			 t = field.getTable().getAlias();
 		}
-		if (field instanceof GroupSummaryField) {
-			GroupSummaryField<?> gsf = (GroupSummaryField<?>) field;
-			//String t = query.getFieldTableAliasMap().get(gsf.getTargetField().getId());
-			if (t != null) {
-				boolean distinct = false;
-				if (gsf instanceof CountField) {
-					CountField cf = (CountField) gsf;
-					distinct = cf.isDistinct();
-				}
-				String ret = gsf.getFunctionName() + "(" + (distinct ? "distinct " : "") + t + "." + gsf.getTargetField().getDbColumnName() + ")" + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-				return ret;
+		if (field instanceof FunctionField) {
+			FunctionField ff = (FunctionField) field;
+			String ret = ff.getFunctionSql(this);
+			if (ret != null) {
+				return ret + this.getAsAliasSql() + field.getDbColumnName() + "\n";
 			}
-		} else if (field instanceof AliasField) {
-			AliasField af = (AliasField) field;
-			if (t != null) {
-				String ret = t + "." + af.getTargetField().getDbColumnName() + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-				return ret;
-			}
-		} else if (field instanceof SqlField) {
-			SqlField sqlf = (SqlField) field;
-			String ret = sqlf.getSql() + this.getAsAliasSql() + field.getDbColumnName() + "\n";
-			return ret;
 		} else {
-			//String t = query.getFieldTableAliasMap().get(field.getId());
 			if (t != null) {
-				String ret = t + "." + field.getDbColumnName() + this.getAsAliasSql()  + field.getDbColumnName() + "\n";
+				String ret = "";
+				if (field.hasFileInfoColumn()) {
+					// 情報カラムがあるフィールドの場合はそれを検索する。
+					ret = t + "." + field.getFileInfoColumnName() + this.getAsAliasSql() + field.getFileInfoColumnName() + ", ";
+				}
+				ret += t + "." + field.getDbColumnName() + this.getAsAliasSql()  + field.getDbColumnName() + "\n";
 				return ret;
 			}
 		}
@@ -1434,17 +1560,81 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	}
 
 	/**
+	 * 条件フィールドを変換します。
+	 * @param query 問い合わせ。
+	 * @param field フィールドID。
+	 * @return　フィールド変換結果。
+	 */
+	private String convertConditionField(final Query query, final String field) {
+		String type = "f";
+		String id = field;
+		// {x:fieldId}からxとfieldIdを取得する。
+		Pattern p = Pattern.compile("\\{([fp]):([^}]+)\\}");
+		Matcher m = p.matcher(field);
+		if (m.find()) {
+			type = m.group(1).trim();
+			id = m.group(2).trim();
+		}
+		String fld = "";
+		Field<?> f = query.findField(id);
+		if (f != null) {
+			if ("f".equals(type)) {
+				if (f instanceof FunctionField) {
+					FunctionField ff = (FunctionField) f;
+					fld = ff.getFunctionSql(this);
+				} else {
+					fld = f.getQueryColumnName();
+				}
+			} else if ("p".equals(type)) {
+				fld = ":" + f.getDbColumnName();
+			}
+		}
+		return fld;
+	}
+	
+	/**
+	 * SQL式を変換します。
+	 * @param query 問い合わせ。
+	 * @param cond 条件式。
+	 * @return 変換した条件式。
+	 */
+	public String convertSqlExp(final Query query, final String cond) {
+		StringBuilder sb = new StringBuilder();
+		Pattern p = Pattern.compile("'[^']*'|(\\{[fp]:([^}]+)\\})");
+		Matcher m = p.matcher(cond);
+		int idx = 0;
+		while (m.find()) {
+			var g = m.group(1);
+			if (g != null) {
+				int srart = m.start(1);
+				sb.append(cond.subSequence(idx, srart));
+				sb.append(this.convertConditionField(query, g));
+				idx = m.end(1);
+			}
+		}
+		if (idx < cond.length()) {
+			sb.append(cond.substring(idx));
+		}
+		return sb.toString();
+	}
+	
+	
+	/**
 	 * Group by 句を取得します。
 	 * @param query 問い合わせ・
 	 * @return Group By 句。
 	 */
 	protected String getGroupBySql(final Query query) {
+		String ret = "";
 		FieldList flist = query.getGroupByFieldList();
 		if (flist.size() > 0) {
-			return " group by " + this.getFieldSequence(query, flist, false);
-		} else {
-			return "";
+			ret = " group by " + this.getFieldSequence(query, flist, false);
+			String having = query.getHaving();
+			if (having != null) {
+				ret += " having " + this.convertSqlExp(query, having);
+			}
 		}
+		return ret;
 	}
 
 	/**
@@ -1456,7 +1646,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		FieldList flist = query.getOrderByFieldList();
 		if (flist != null) {
 			if (flist.size() > 0) {
-				return " order by " + this.getFieldSequence(query, flist, true);
+				return "\n order by " + this.getFieldSequence(query, flist, true);
 			}
 		}
 		return "";
@@ -1480,6 +1670,25 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	}
 
 	/**
+	 * Limit/offsetの設定。
+	 * @param query 問い合わせ。
+	 * @return offset limit 構文。
+	 */
+	protected String getLimitOffsetSql(final Query query) {
+		StringBuilder sb = new StringBuilder();
+		Integer offset = query.getOffset();
+		if (offset == null) {
+			offset = Integer.valueOf(0);
+		}
+		sb.append("\n offset " + offset + " rows");
+		Integer limit = query.getLimit();
+		if (limit != null) {
+			sb.append("\n fetch next " + limit + " rows only");
+		}
+		return sb.toString();
+	}
+	
+	/**
 	 * 問い合わせのSQLを取得します。
 	 * @param query 問い合わせ。
 	 * @param orderBy trueの場合、order byを生成する。
@@ -1487,7 +1696,7 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 */
 	public String generateQuerySql(final Query query, final boolean orderBy) {
 //		String joinTable = this.generateJoinTableSql(query);
-		query.buildJoinInfoList();
+//		query.buildJoinInfoList();
 		String joinTable = this.generateJoinTableSql(query);
 		FieldList flist = query.getFieldList();
 		StringBuilder collist = new StringBuilder();
@@ -1514,6 +1723,9 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		sb.append(this.getGroupBySql(query));
 		if (orderBy) {
 			sb.append(this.getOrderBySql(query));
+		}
+		if (query.getOffset() != null || query.getLimit() != null) {
+			sb.append(this.getLimitOffsetSql(query));
 		}
 		// UNIONが設定されいる場合それを展開する。
 		if (query.getUnionQueryList() != null) {
@@ -1543,6 +1755,26 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 		String pid = StringUtil.camelToSnake(id);
 		String ret = "case when :" + pid + "_kf = '1' then " + pid + " else :" + pid + " end ";
 		return ret;
+	}
+
+	/**
+	 * UploadField用の更新用SQLを作成します。
+	 * <pre>
+	 * 既にファイルが登録されており、ファイルが送信されない場合は、そのままの値を保持するSQLを生成します。
+	 * </pre>
+	 * @param f フィールド.
+	 * @return SQL.
+	 */
+	protected String generateUpdateUploadFileSql(final Field<?> f) {
+		String pid = StringUtil.camelToSnake(f.getId());
+		StringBuilder usb = new StringBuilder();
+		usb.append(f.getFileInfoColumnName());
+		usb.append(" = ");
+		usb.append(" case when :" + pid + "_kf = '1' then " + f.getFileInfoColumnName() + " else :" + f.getFileInfoColumnName() + " end, ");
+		usb.append(pid);
+		usb.append(" = ");
+		usb.append(" case when :" + pid + "_kf = '1' then " + pid + " else :" + pid + " end ");
+		return usb.toString();
 	}
 
 
@@ -1638,6 +1870,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				usb.append(" = ");
 				usb.append(this.generateUpdateFileFieldSql(f.getId()));
 				usb.append("\n");
+			} else if (f instanceof UploadField) {
+				usb.append(this.generateUpdateUploadFileSql(f));
 			} else {
 				usb.append(StringUtil.camelToSnake(f.getId()));
 				usb.append(" = :");
@@ -1668,6 +1902,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * <pre>
 	 * dataがnullの場合condFieldに指定されたフィールドに完全一致する条件式が作成されます。
 	 * dataかnot nullの場合、generateQuerySqlと同様にcondFieldに対応するデータが存在するフィールド条件のみ作成されます。
+	 * データのインポート用のSQLを生成します。
+	 * UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
 	 * </pre>
 	 * @return sql。
 	 */
@@ -1692,6 +1928,8 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 				usb.append(" = ");
 				usb.append(this.generateUpdateFileFieldSql(f.getId()));
 				usb.append("\n");
+			} else if (f instanceof UploadField) {
+				usb.append(this.generateUpdateUploadFileSql(f));
 			} else {
 				usb.append(StringUtil.camelToSnake(f.getId()));
 				usb.append(" = :");
@@ -1728,6 +1966,10 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 
 	/**
 	 * 標準的な更新SQLを取得します。
+	 * <pre>
+	 * データのインポート用のSQLを生成します。
+	 * UpdateTimestampFieldにcurrent_timestampを使用しないバージョンです。
+	 * </pre>
 	 * @param table テーブル。
 	 * @return sql。
 	 */
@@ -1928,7 +2170,11 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	 * @param qp QueryPager。
 	 * @return SQL。
 	 */
-	public abstract String generateGetPageSql(final QueryPager qp);
+	public String generateGetPageSql(final QueryPager qp) {
+		String orgsql = this.getOrgSql(qp);
+		String sql = "select * from (select row_number() over() as row_no, m.* from (" + orgsql + ") as m) as m offset :row_from rows fetch next :limit_count rows only";
+		return sql;
+	}
 
 	/**
 	 * 指定項目の指定条件での最大値を作成します。
@@ -2282,4 +2528,30 @@ public abstract class SqlGenerator implements JDBCConnectableObject {
 	public String getColumnName(final ResultSetMetaData meta, final int idx) throws Exception {
 		return meta.getColumnName(idx);
 	}
+	
+	/**
+	 * Extract関数を作成します。
+	 * @param field ExtractField。
+	 * @return Extract関数。
+	 */
+	public String generateExtractFunction(final ExtractField field) {
+		String type = field.getTypeName();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = "extract(" + type + " from " + tf + ")";
+		return sql;
+	}
+	
+	
+	/**
+	 * 日時の加算SQLを作成します。
+	 * @param field 日時加算フィールド。
+	 * @return Extract関数。
+	 */
+	public String generateDateAddFunction(final DateTimeAddFunctionField field) {
+		String type = field.getType().name().toLowerCase();
+		String tf = field.getTargetField().getQueryColumnName();
+		String sql = tf + " + interval " + field.getAddValue().toString() + " " + type;
+		return sql;
+	}
+
 }

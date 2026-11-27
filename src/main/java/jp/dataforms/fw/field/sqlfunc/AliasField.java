@@ -1,5 +1,8 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.Map;
+
+import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 
 // TODO:このフィールドをFormに配置した場合、POSTデータがnullになる不具合があるので後で修正。
@@ -57,5 +60,27 @@ public class AliasField extends Field<Object> implements FunctionField {
 		Field<?> ret =  this.targetField.clone();
 		ret.setId(this.getId());
 		return ret;
+	}
+	
+	@Override
+	public String getFunctionSql(SqlGenerator gen) {
+		String ret = null;
+		String t = null;
+		if (this.getTable() != null) {
+			 t = this.getTable().getAlias();
+		}
+		if (t != null) {
+			ret = t + "." + this.getTargetField().getDbColumnName();
+		}
+		return ret;
+	}
+	
+	/**
+	 * オプションを取得します。
+	 * @return null オプションは無(nullを返す)。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		return null;
 	}
 }

@@ -34,6 +34,7 @@ export class FunctionSelectField extends SingleSelectField {
 		this.get().change((ev) => {
 			this.setPackageName($(ev.currentTarget))
 		});
+		logger.log("FunctionSelectField this = ", this);
 	}
 
 	/**

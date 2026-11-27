@@ -42,7 +42,7 @@ import jp.dataforms.fw.exception.ApplicationException;
 import jp.dataforms.fw.exception.ConstraintViolationException;
 import jp.dataforms.fw.field.base.Field;
 import jp.dataforms.fw.field.base.FieldList;
-import jp.dataforms.fw.field.common.BlobStoreFileField;
+import jp.dataforms.fw.field.base.TextField;
 import jp.dataforms.fw.field.common.FileObjectField;
 import jp.dataforms.fw.field.sqlfunc.MaxField;
 import jp.dataforms.fw.field.sqltype.BigintField;
@@ -56,6 +56,9 @@ import jp.dataforms.fw.field.sqltype.SmallintField;
 import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
 import jp.dataforms.fw.field.sqltype.VarcharField;
+import jp.dataforms.fw.field.upload.UploadField;
+import jp.dataforms.fw.field.upload.UploadField.Store;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.servlet.DataFormsServlet;
 import jp.dataforms.fw.util.ConfUtil.DbcpDataSource;
 import jp.dataforms.fw.util.ConfUtil.JndiDataSource;
@@ -379,18 +382,25 @@ public class Dao implements JDBCConnectableObject {
 		private int scale = 0;
 
 		/**
+		 * UploadFileフラグ。
+		 */
+		private Boolean uploadField = null;
+		
+		/**
 		 * コンストラクタ。
 		 * @param id フィールドID。
 		 * @param type データタイプ。
 		 * @param precision データタイプ。
 		 * @param scale データタイプ。
+		 * @param uf UploadFieldフラグ。
 		 *
 		 */
-		public ColumnInfo(final String id, final int type, final int precision, final int scale) {
+		public ColumnInfo(final String id, final int type, final int precision, final int scale, final boolean uf) {
 			this.id = StringUtil.snakeToCamel(id);
 			this.type = type;
 			this.precision = precision;
 			this.scale = scale;
+			this.uploadField = uf;
 		}
 
 		/**
@@ -432,13 +442,15 @@ public class Dao implements JDBCConnectableObject {
 		 */
 		public Field<?> getDefaultFieldInstance() {
 			Field<?> ret = null;
-			if (this.getType() == Types.BIGINT) {
+			if (this.uploadField) {
+				ret = new UploadField(this.getId());
+			} else if (this.getType() == Types.BIGINT) {
 				ret = new BigintField(this.getId());
 			} else if (this.getType() == Types.BLOB
 					 || this.getType() == Types.BINARY
 					 || this.getType() == Types.LONGVARBINARY
 					 || this.getType() == Types.VARBINARY) {
-				ret = new BlobStoreFileField(this.getId());
+//				ret = new BlobStoreFileField(this.getId());
 			} else if (this.getType() == Types.CHAR) {
 				ret = new CharField(this.getId(), this.getPrecision());
 			} else if (this.getType() == Types.CLOB) {
@@ -459,8 +471,10 @@ public class Dao implements JDBCConnectableObject {
 				ret = new TimeField(this.getId());
 			} else if (this.getType() == Types.TIMESTAMP) {
 				ret = new TimestampField(this.getId());
-			} else if (this.getType() == Types.VARCHAR) {
+			} else if (this.getType() == Types.VARCHAR || this.getType() == Types.LONGVARCHAR) {
 				ret = new VarcharField(this.getId(), this.getPrecision());
+			} else if (this.getType() == Types.BOOLEAN) {
+				ret = new TextField(this.getId());
 			}
 			return ret;
 		}
@@ -479,10 +493,16 @@ public class Dao implements JDBCConnectableObject {
 	private void setResultSetMetaData(final ResultSetMetaData meta) throws Exception {
 		this.resultSetColumnList = new ArrayList<ColumnInfo>();
 		for (int i = 1; i <= meta.getColumnCount(); i++) {
-//			String name = meta.getColumnName(i);
 			String name = this.sqlGenerator.getColumnName(meta, i);
 			int type = meta.getColumnType(i);
-			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i));
+			boolean uf = false;
+			if (type == Types.VARCHAR && Field.isFileInfoColumn(name.toLowerCase())) {
+				uf = true;
+				i++;
+				name = this.sqlGenerator.getColumnName(meta, i);
+			}
+			logger.debug("setResultSetMetaData name=" + name + ", type=" + type);
+			ColumnInfo ci = new ColumnInfo(name, type, meta.getPrecision(i), meta.getScale(i), uf);
 			this.resultSetColumnList.add(ci);
 		}
 	}
@@ -505,7 +525,70 @@ public class Dao implements JDBCConnectableObject {
 		}
 		return ret;
 	}
+	
+	/**
+	 * UploadFieldの情報カラムから情報を読み込みます。
+	 * @param rset 結果セット。
+	 * @param idx ラカムインデックス。
+	 * @return　情報を読み込んだアップロードファイルのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	protected UploadFile readInfoColumnValue(final ResultSet rset, final int idx) throws Exception {
+		UploadFile obj = null;
+		String info = (String) rset.getObject(idx);
+		if (info != null) {
+			obj = new UploadFile();
+			obj.setInfoColumnData(info);
+		}
+		return obj;
+	}
 
+	/**
+	 * UploadFieldの情報カラムからUploadFileを読み込みます。
+	 * @param rset 結果セット。
+	 * @param idx ラカムインデックス。
+	 * @return　情報を読み込んだアップロードファイルのインスタンス。
+	 * @throws Exception 例外。
+	 */
+	protected UploadFile readUploadFile(final ResultSet rset, final int idx) throws Exception {
+		ResultSetMetaData meta = rset.getMetaData();
+		UploadFile ret = this.readInfoColumnValue(rset, idx);
+		if (this.getBlobReadMode() == BlobReadMode.FOR_DOWNLOAD) {
+			// ファイルを読み込むと遅いので、ダウンロードモードの時のみ読み込む。
+			if (ret != null) {
+				int type = meta.getColumnType(idx + 1);
+				if (type == Types.BLOB) {
+					Blob blob = rset.getBlob(idx + 1);
+					if (blob != null) {
+						try (InputStream is = blob.getBinaryStream()) {
+							ret.setContents(is);
+						}
+					}
+				} else if (meta.getColumnType(idx + 1) == Types.BINARY
+						 || meta.getColumnType(idx + 1) == Types.LONGVARBINARY
+						 || meta.getColumnType(idx + 1) == Types.VARBINARY) {
+					InputStream is = rset.getBinaryStream(idx + 1);
+					if (is != null) {
+						try {
+							ret.setContents(is);
+						} finally {
+							is.close();
+						}
+					}
+				} 
+			}
+		} else {
+			if (ret != null) {
+				int type = meta.getColumnType(idx + 1);
+				if (type == Types.VARCHAR) {
+					ret.setSavedFilePath(rset.getString(idx + 1));
+					logger.debug("ret savedFilePath = " + ret.getSavedFilePath());
+				}
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Queryを実行し、その結果の各レコードをRecordProcessorに渡します。
 	 * @param sql SQL。
@@ -526,9 +609,12 @@ public class Dao implements JDBCConnectableObject {
 				while (rset.next()) {
 					Map<String, Object> m = new HashMap<String, Object>();
 					for (int i = 1; i <= meta.getColumnCount(); i++) {
-//						String name = meta.getColumnName(i);
-						String name = this.sqlGenerator.getColumnName(meta, i);
-						if (meta.getColumnType(i) == Types.BLOB) {
+						String name = this.sqlGenerator.getColumnName(meta, i).toLowerCase();
+						if (Field.isFileInfoColumn(name)) {
+							UploadFile obj = this.readUploadFile(rset, i);
+							m.put(StringUtil.snakeToCamel(Field.removeFileInfoSuffix(name)), obj);
+							i++;
+						} else if (meta.getColumnType(i) == Types.BLOB) {
 							Blob blob = rset.getBlob(i);
 							FileObject obj = null;
 							if (blob != null) {
@@ -914,6 +1000,7 @@ public class Dao implements JDBCConnectableObject {
 	public int executeInsert0(final Table table, final Map<String, Object> data) throws Exception {
 		SqlGenerator gen = this.getSqlGenerator();
 		String sql = gen.generateInsertSql0(table);
+		logger.debug("executeInsert0 sql=" + sql);
 		this.setNewSequenceValue(table, data);
 		int ret = this.executeUpdate(sql, this.convertToDBValue(table.getFieldList(), data));
 		this.getAutoIncrementValue(table, data);
@@ -944,6 +1031,24 @@ public class Dao implements JDBCConnectableObject {
 	}
 
 	/**
+	 * OS中のフォルダーに記録されたファイルフィールドであるかを判定します。
+	 * @param f フィールド。
+	 * @return OS中のフォルダーに記録されたファイルフィールドである場合true。
+	 */
+	private Boolean isFolderFile(final Field<?> f) {
+		Boolean ret = false;
+		if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			ret = true;
+		} else if (f instanceof UploadField) {
+			UploadField uf = (UploadField) f;
+			if (uf.getStore() == Store.FILE) {
+				ret = true;
+			}
+		}
+		return ret;
+	}
+	
+	/**
 	 * 削除ファイルリスト。
 	 * @param table テーブル。
 	 * @param data データ。
@@ -954,17 +1059,29 @@ public class Dao implements JDBCConnectableObject {
 	private List<String> getOldFileList(final Table table, final Map<String, Object> data, final boolean forDelete) throws Exception {
 		List<String> ret = new ArrayList<String>();
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			// if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			if (this.isFolderFile(f)) {
 				String kf = (String) data.get(f.getId() + "Kf");
 				if ("0".equals(kf) || forDelete) {
 					FileObjectQuery query = new FileObjectQuery(table, f.getId(), data);
 					Map<String, Object> map = this.executeRecordQuery(query);
-					FileObject oldfile = (FileObject) map.get(f.getId());
-					if (oldfile != null) {
-						File tf = oldfile.getTempFile();
-						if (tf != null) {
-							ret.add(tf.getAbsolutePath());
-							logger.info(() -> "deleteFile=" + tf.getAbsolutePath() + "," + kf);
+					Object o = map.get(f.getId());
+					if (o instanceof UploadFile) {
+						UploadFile oldfile = (UploadFile) map.get(f.getId());
+						if (oldfile != null) {
+							String upBase = DataFormsServlet.getConf().getApplication().getUploadDataFolder();
+							String path = upBase + oldfile.getSavedFilePath();
+							ret.add(path);
+							logger.info(() -> "deleteFile=" + path + "," + kf);
+						}
+					} else if (o instanceof FileObject) {
+						FileObject oldfile = (FileObject) map.get(f.getId());
+						if (oldfile != null) {
+							File tf = oldfile.getTempFile();
+							if (tf != null) {
+								ret.add(tf.getAbsolutePath());
+								logger.info(() -> "deleteFile=" + tf.getAbsolutePath() + "," + kf);
+							}
 						}
 					}
 				}
@@ -1091,6 +1208,23 @@ public class Dao implements JDBCConnectableObject {
 	}
 
 	/**
+	 * テーブル中のレコードを更新します。
+	 * <pre>
+	 * 指定したフィールドリストのフィールドを更新します。
+	 * 更新対象のレコードはPKで限定します。
+	 * </pre>
+	 * @param table テーブル。
+	 * @param updateFieldList　更新対象フィールドリスト。
+	 * @param data 更新データ。
+	 * @return 更新数。
+	 * @throws Exception 例外。
+	 */
+	public int executeUpdate(final Table table, final FieldList updateFieldList, final Map<String, Object> data) throws Exception {
+		int ret = this.executeUpdate(table, updateFieldList, table.getPkFieldList(), data, true);
+		return ret;
+	}
+	
+	/**
 	 * テーブル中の指定レコードを削除します。
 	 * <pre>
 	 * テーブルに対応した、適切なdelete文を作成し実行します。
@@ -1175,7 +1309,7 @@ public class Dao implements JDBCConnectableObject {
 	private boolean folderStoreFileExists(final Table table) {
 		boolean ret = false;
 		for (Field<?> f: table.getFieldList()) {
-			if (f instanceof FileObjectField && f instanceof SqlVarchar) {
+			if (this.isFolderFile(f)) {
 				ret = true;
 				break;
 			}
@@ -1298,7 +1432,7 @@ public class Dao implements JDBCConnectableObject {
 		int size = rs.getInt("COLUMN_SIZE");
 		int scale = rs.getInt("DECIMAL_DIGITS");
 		int nullable = rs.getInt("NULLABLE");
-		String dataType = gen.converTypeNameForDatabaseMetaData(type);
+		String dataType = gen.convertTypeNameForDatabaseMetaData(type);
 		if ("char".equals(dataType) || "nchar".equals(dataType) || "varchar".equals(dataType) || "varchar2".equals(dataType) || "nvarchar".equals(dataType) || "nvarchar2".equals(dataType)) {
 			dataType += "(" + gen.convertColumnSize(size) + ")";
 		} else if ("numeric".equals(dataType) || "number".equals(dataType)) {
@@ -2074,6 +2208,22 @@ public class Dao implements JDBCConnectableObject {
 		Map<String, Object> ret = (Map<String, Object>) this.executeRecordQuery(query);
 		this.setBlobReadMode(BlobReadMode.FOR_DISPLAY_FILE_INFO);
 		return (FileObject) ret.get(fieldId);
+	}
+
+	/**
+	 * BLOBデータを取得します。
+	 * @param table テーブル。
+	 * @param fieldId BLOBフィールドID。
+	 * @param data パラメータ。
+	 * @return BLOBデータ。
+	 * @throws Exception 例外。
+	 */
+	public UploadFile queryBlobUploadFile(final Table table, final String fieldId, final Map<String, Object> data) throws Exception {
+		this.setBlobReadMode(BlobReadMode.FOR_DOWNLOAD);
+		FileObjectQuery query = new FileObjectQuery(table, fieldId, data);
+		Map<String, Object> ret = (Map<String, Object>) this.executeRecordQuery(query);
+		this.setBlobReadMode(BlobReadMode.FOR_DISPLAY_FILE_INFO);
+		return (UploadFile) ret.get(fieldId);
 	}
 
 

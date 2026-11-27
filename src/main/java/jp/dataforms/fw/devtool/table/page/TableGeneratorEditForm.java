@@ -83,7 +83,7 @@ public class TableGeneratorEditForm extends EditForm {
 	public TableGeneratorEditForm() {
 		this.addField(new JavaSourcePathField());
 //		this.addField(new ExistingFolderField("javaSourcePath")).setReadonly(true).addValidator(new RequiredValidator());
-		this.addField((new FunctionSelectField()).setPackageOption("dao"));
+		this.addField((new FunctionSelectField()).setPackageOption("dao.table"));
 		this.addField(new PackageNameField()).addValidator(new RequiredValidator());
 		this.addField(new VarcharField("tableComment", 256));
 		this.addField(new TableClassNameField()).setComment("テーブルクラス名").setAutocomplete(false).addValidator(new RequiredValidator());

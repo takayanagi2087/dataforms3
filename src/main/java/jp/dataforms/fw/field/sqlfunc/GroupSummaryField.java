@@ -1,5 +1,8 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.Map;
+
+import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
 
 /**
@@ -102,5 +105,28 @@ public abstract class GroupSummaryField<TYPE> extends Field<TYPE>  implements Fu
 		Field<?> field = this.getTargetField();
 		field.setComment(comment);
 		return super.setComment(comment);
+	}
+	
+	@Override
+	public String getFunctionSql(final SqlGenerator gen) {
+		String t = null;
+		if (this.getTable() != null) {
+			 t = this.getTable().getAlias();
+		}
+		boolean distinct = false;
+		if (this instanceof CountField) {
+			CountField cf = (CountField) this;
+			distinct = cf.isDistinct();
+		}
+		return this.getFunctionName() + "(" + (distinct ? "distinct " : "") + t + "." + this.getTargetField().getDbColumnName() + ")";
+	}
+	
+	/**
+	 * オプションを取得します。
+	 * @return null オプションはnull。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		return null;
 	}
 }

@@ -1,16 +1,22 @@
 package jp.dataforms.fw.field.sqlfunc;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import jp.dataforms.fw.dao.Query;
+import jp.dataforms.fw.dao.sqlgen.SqlGenerator;
 import jp.dataforms.fw.field.base.Field;
+import lombok.Setter;
 
 /**
  * SQLフィールドクラス。
  * <pre>
- * QueryのfieldListにnew SqlField("yyy", "to_char(x.fuge_hoge)")を追加すると、以下のようなsqlを作成します。
+ * QueryのfieldListにnew SqlField(new CharField("yyy"), "to_char(x.fuge_hoge)")を追加すると、以下のようなsqlを作成します。
  * select to_char(x.fuge_hoge) as yyy ...
  * 任意の関数やサブクエリでフィールド値を取得するときに使用します。
  * </pre>
  */
-public class SqlField extends Field<Object>  implements FunctionField {
+public class SqlField extends Field<Object> implements FunctionField {
 	/**
 	 * SQL。
 	 */
@@ -20,6 +26,22 @@ public class SqlField extends Field<Object>  implements FunctionField {
 	 * ターゲットフィールド。
 	 */
 	private Field<?> targetField = null;
+
+	/**
+	 * このフィールドを保持する問い合わせ。
+	 */
+	@Setter
+	private Query query = null;
+
+	/**
+	 * コンストラクタ。
+	 * @param field フィールド。
+	 */
+	public SqlField(final Field<?> field) {
+		super(field.getId());
+		this.targetField = field;
+		this.sql = null;
+	}
 
 	/**
 	 * コンストラクタ。
@@ -70,4 +92,29 @@ public class SqlField extends Field<Object>  implements FunctionField {
 		return ret;
 	}
 
+	@Override
+	public String getFunctionSql(SqlGenerator gen) {
+		String sql = this.getSql();
+		return gen.convertSqlExp(this.query, sql);
+	}
+	
+	/**
+	 * Optionを取得します。
+	 * @return Option。
+	 */
+	@Override
+	public Map<String, Object> getOption() {
+		String fieldId = this.getId();
+		Map<String, Object> m = new HashMap<String, Object>();
+		m.put("fieldId", fieldId);
+		m.put("sqlFieldType", this.getClass().getSuperclass().getSimpleName());
+		m.put("newFieldClassName", this.getClass().getSimpleName());
+		String pkg = this.getTargetField().getClass().getPackageName();
+		String path = SqlField.getFunctionMap().getPackagePath(pkg);
+		String scls = this.getTargetField().getClass().getSimpleName();
+		m.put("functionSelect", path);
+		m.put("packageName", pkg);
+		m.put("fieldClassName", scls);
+		return m;
+	}
 }

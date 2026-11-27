@@ -2,6 +2,7 @@ package jp.dataforms.fw.servlet;
 
 import java.io.File;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -22,6 +23,11 @@ public class Log4jContextListener implements ServletContextListener {
 	 * Logger.
 	 */
 	private static Logger logger = LogManager.getLogger(Log4jContextListener.class);
+
+	/**
+	 * DBCPデータソースのキー。
+	 */
+	public static final String DBCP_DATASOURCE = "dbcpDatasource";
 
 	/**
 	 * サーバーのlog4j2.xmlのパス。
@@ -67,12 +73,26 @@ public class Log4jContextListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		// サーブレットが万が一クローズし忘れていた場合、ここで確実にクローズする
+		logger.info("DBCP DataSource check");
+		BasicDataSource ds = (BasicDataSource) sce.getServletContext().getAttribute(DBCP_DATASOURCE);
+		if (ds != null && !ds.isClosed()) {
+			try {
+				ds.close();
+				logger.info("DBCP datasource closed");
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
 		// Log4jのLoggerContextを確実にシャットダウン
 		logger.info("Shutting down Log4j...");
 		LoggerContext context = (LoggerContext) LogManager.getContext(false);
 		context.stop();
 		logger.info("context.stop");
 		LogManager.shutdown();
+		
+
 	}
 
 }

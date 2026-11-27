@@ -1,0 +1,16 @@
+	/**
+	 * SQL式を実行するフィールドクラス。
+	 */
+	private class ${className} extends SqlField {
+		/**
+		 * コンストラクタ。
+		 * @param fieldId フィールドID。
+		 */
+		public ${className}(final String fieldId) {
+			super(new ${targetClassName}(fieldId)); // 式の実行結果を処理するフィールドクラス
+			// 以下のようにSQL式を指定することができます。
+			// this.setSql("m.field_id　+ 1"); // 純粋なSQL式を記述するパターン
+			// this.setSql("{f:fieldId} + 1"); // {f:fieldId}でQueryクラス内のfieldIdに対応したSQL式に変換されます。
+			// this.setSql(Query.sqlExp("{f:%s} + 1", Entity.ID_FIELD_ID)); // Entityに定義された定数を使いたい場合の記述
+		}
+	}

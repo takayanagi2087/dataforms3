@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jp.dataforms.fw.dao.file.FileObject;
+import jp.dataforms.fw.field.upload.UploadFile;
 import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
 
@@ -172,6 +173,35 @@ public class SqlParser {
 		}
 	}
 
+	/**
+	 * UploadFieldのパラメータ設定を行います。
+	 * <pre>
+	 * パラメータメタデータがサポートされていないOracle JDBCのドライバの場合組み直して使用します。
+	 * </pre>
+	 * @param st SQLステートメント。
+	 * @param idx パラメータインデックス。
+	 * @param v 値。
+	 * @param meta パラメータメタデータ。
+	 * @throws Exception 例外。
+	 */
+	protected void setBlobData(final PreparedStatement st, final int idx, final UploadFile v, final ParameterMetaData meta) throws Exception {
+		InputStream is = v.getInputStream();
+		if (is != null) {
+			this.blobIsList.add(is);
+			// FIXME: oracleはParameterMetaDataがサポートされていないので対策を行う。
+//			int type = meta.getParameterType(idx);
+			int type = this.getParameterType(meta, idx);
+			if (type == java.sql.Types.BLOB) {
+				st.setBlob(idx, is);
+			} else {
+				st.setBinaryStream(idx, is, is.available());
+			}
+		} else {
+			int type = meta.getParameterType(idx);
+			st.setNull(idx, type);
+		}
+		
+	}
 
 	/**
 	 * statementにパラメータを設定します。
@@ -181,18 +211,27 @@ public class SqlParser {
 	 */
 	public void setParameter(final PreparedStatement st, final  Map<String, Object> param) throws Exception {
 		if (this.paramnames != null && param != null) {
+			logger.debug("setParameter param = {}", param);
 			int idx = 1;
 			ParameterMetaData meta = getParameterMetaData(st);
-			for (String p : this.paramnames) {
+			for (int i = 0; i < this.paramnames.size(); i++) {
+				String p = this.paramnames.get(i);
 				Object v = this.getParam(p, param);
-				if (logger.isDebugEnabled()) {
-					logger.debug(idx + " :" + p + "=" + v);
-				}
+				logger.debug("{}:{}={}", idx, p , v);
 				if (v == null) {
 					st.setNull(idx, this.getParameterType(meta, idx));
 				} else {
-					if (v instanceof FileObject) {
-						logger.debug(() -> "valueClass=" + v.getClass().getName());
+					if (v instanceof UploadFile) {
+						UploadFile uf = (UploadFile) v;
+						if (uf.getSavedFilePath() != null) {
+							// フォルダーにファイルが保存されている場合。
+							st.setObject(idx, uf.getSavedFilePath());
+						} else {
+							// BLOBにファイルを保存。
+							this.setBlobData(st, idx, (UploadFile) v, meta);
+						}
+					} else if (v instanceof FileObject) {
+						// 将来的には非推奨
 						this.setBlobData(st, idx, (FileObject) v, meta);
 					} else {
 						st.setObject(idx, v);
@@ -235,7 +274,10 @@ public class SqlParser {
 			for (String p : this.paramnames) {
 				Object v = this.getParam(p, param);
 				if (v != null) {
-					if (v instanceof FileObject) {
+					if (v instanceof UploadFile) {
+						UploadFile uf = (UploadFile) v;
+						uf.deleteServerFile();
+					} else if (v instanceof FileObject) {
 						logger.debug(() -> "removeBlobTempFile class=" + v.getClass().getName());
 						FileObject f = (FileObject) v;
 						if (f.getTempFile() != null) {

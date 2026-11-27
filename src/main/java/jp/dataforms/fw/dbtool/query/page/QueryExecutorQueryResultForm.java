@@ -17,13 +17,15 @@ import jp.dataforms.fw.field.common.SortOrderField;
 import jp.dataforms.fw.field.sqltype.BigintField;
 import jp.dataforms.fw.field.sqltype.CharField;
 import jp.dataforms.fw.field.sqltype.DateField;
+import jp.dataforms.fw.field.sqltype.DoubleField;
 import jp.dataforms.fw.field.sqltype.IntegerField;
 import jp.dataforms.fw.field.sqltype.NumericField;
 import jp.dataforms.fw.field.sqltype.SmallintField;
+import jp.dataforms.fw.field.sqltype.TimeField;
 import jp.dataforms.fw.field.sqltype.TimestampField;
+import jp.dataforms.fw.field.upload.UploadField;
 import jp.dataforms.fw.htmltable.PageScrollHtmlTable;
 import jp.dataforms.fw.response.JsonResponse;
-import jp.dataforms.fw.util.JsonUtil;
 import jp.dataforms.fw.util.StringUtil;
 
 
@@ -49,12 +51,15 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		// TODO: jsでimportを利用して改善したい。
 		this.addField(new DateField("dummyDate"));
 		this.addField(new TimestampField("dummyTimestamp"));
+		this.addField(new TimeField("dummyTime"));
 		this.addField(new SmallintField("dummySmallint"));
 		this.addField(new IntegerField("dummyInteger"));
 		this.addField(new BigintField("dummyBigint"));
+		this.addField(new DoubleField("dummyDouble"));
 		this.addField(new NumericField("dummyNumeric", 16, 2));
 		this.addField(new CharField("dummyChar", 1));
 		this.addField(new SortOrderField("dummySortOrder"));
+		this.addField(new UploadField("dummyUpload"));
 		
 		this.htmlTable = new PageScrollHtmlTable(Page.ID_QUERY_RESULT);
 //		this.htmlTable.setFixedColumns(2);
@@ -111,7 +116,6 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 		}
 		this.htmlTable.getFieldList().getOrderByFieldList(sortOrder);
 		ret.put("htmlTable", htmlTable.getProperties());
-		logger.debug("result=" + JsonUtil.encode(ret, true));
 		return ret;
 	}
 
@@ -173,6 +177,7 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 			r.put("htmlTable", this.htmlTable.getProperties());
 			return ret;
 		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			Map<String, Object> einfo = new HashMap<String, Object>();
 			einfo.put("message", e.getMessage());
 			JsonResponse ret = new JsonResponse(JsonResponse.APPLICATION_EXCEPTION, einfo);

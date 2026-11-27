@@ -14,7 +14,7 @@
 				text-align: left;
 			}
 			.confField {
-				width: calc(100% - 300px) !important;
+				width: calc(100%) !important;
 			}
 			@media screen and (max-width: 768px) {
 				.confField {
@@ -38,7 +38,7 @@
 							</tr>
 							<tr>
 								<th>/src/webapp/META-INF/context.xml</th>
-								<td>データベースApache Derby用の設定例を作成します。</td>
+								<td>JNDIを使う場合のコメントアウトされた設定例を出力します。</td>
 								<th>/src/webapp/WEB-INF/dataforms.conf.jsonc</th>
 								<td>dataforms3.jarの設定ファイルを作成します。</td>
 							</tr>
@@ -59,35 +59,30 @@
 						<div class="label"><label for="javaSrcPath">Javaソースパス</label></div>
 						<div class="field">
 							<input type="text" id="javaSrcPath" class="confField" />
-							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="webSrcPath">Webソースパス</label></div>
 						<div class="field">
 							<input type="text" id="webSrcPath" class="confField" />
-							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="jndiPrefix">JNDI 接頭辞</label></div>
 						<div class="field">
 							<input type="text" id="jndiPrefix" class="confField" />
-							dataforms.conf.jsoncの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="dataSource">データソース名</label></div>
 						<div class="field">
 							<input type="text" id="dataSource" class="confField" />
-							dataforms.conf.jsoncとcontext.xmlの設定値
 						</div>
 					</div>
 					<div class="fieldDiv">
 						<div class="label"><label for="derbyDbPath">Derbyのデータパス</label></div>
 						<div class="field">
 							<input type="text" id="derbyDbPath" class="confField" />
-							context.xmlの設定値
 						</div>
 					</div>
 				</div>

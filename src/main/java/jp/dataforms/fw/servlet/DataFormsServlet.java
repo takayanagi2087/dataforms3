@@ -592,6 +592,9 @@ public class DataFormsServlet extends HttpServlet {
 			try {
 				if (dataSourceName != null) {
 					this.dataSource = DataFormsServlet.getDataSource(jndiPrefix, dataSourceName, dbcpConfig);
+					if (DataFormsServlet.isDbcp) {
+						this.getServletContext().setAttribute(Log4jContextListener.DBCP_DATASOURCE, this.dataSource);
+					}
 				}
 			} catch (NameNotFoundException e) {
 				// アプリケーションサーバにデータソースの設定が無い場合。
@@ -1409,6 +1412,24 @@ public class DataFormsServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * org.apache.derby.jdbc.EmbeddedDriver特有のシャットダウンを行います。
+	 */
+	private void embDerbyShutdown() {
+		try {
+			// 全てのデータベースとDerbyエンジン自体を安全に終了させるコマンド
+			DriverManager.getConnection("jdbc:derby:;shutdown=true");
+		} catch (SQLException se) {
+			// シャットダウンが成功すると、エラーコード「XJ015」がスローされます。
+			if ("XJ015".equals(se.getSQLState())) {
+				logger.info("Derby shutdown normally.");
+			} else {
+				logger.error(se.getMessage(), se);
+			}
+		}
+	}
+	
+	
 	@Override
 	public void destroy() {
 		logger.info("DataFormsServlet destroy");
@@ -1423,7 +1444,14 @@ public class DataFormsServlet extends HttpServlet {
 			if (this.dataSource instanceof BasicDataSource) {
 				try {
 					logger.info("cleanup dbcp data source");
-					((BasicDataSource) this.dataSource).close();
+					if (((BasicDataSource) this.dataSource).isClosed() == false) {
+						((BasicDataSource) this.dataSource).close();
+					}
+					String drvname = ((BasicDataSource) this.dataSource).getDriverClassName();
+					logger.info("drvname=" + drvname);
+					if ("org.apache.derby.jdbc.EmbeddedDriver".equals(drvname)) {
+						this.embDerbyShutdown();
+					}
 					this.deregisterDrivers();
 				} catch (Exception e) {
 					logger.error(() -> e.getMessage(), e);
