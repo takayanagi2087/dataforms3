@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"rootDir": "./src/main/ts",
+		"outDir": "./src/main/java/META-INF/resources",
+		"declaration": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"types":["jquery", "jqueryui"]
+	},
+	"include": ["src/main/ts/**/*"]
+}
