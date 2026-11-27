@@ -11,7 +11,7 @@ export class QueryStringUtil {
 	 * @param qs 問合せ文字列
 	 * @returns 変換されたObject
 	 */
-	static parse(qs: string | null | undefined): Record<string, string> {
+	public static parse(qs: string | null | undefined): Record<string, string> {
 		const vars: Record<string, string> = {};
 
 		if (qs != null && qs.length > 0) {
