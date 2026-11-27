@@ -19,14 +19,17 @@
 		<h2>dataforms2.jarからの変更点</h2>
 		基本的にdataforms2.jarの構想を踏襲していますが、互換性はありません。
 		<ol>
-			<li>Tomcat10以降に対応(Tomcat9以前には対応しません)。</li>
+			<li>Tomcat10以上に対応。Tomcat9以下では動作しません。</li>
 			<li>IE11, MS EDGE対応コードの削除(Chromium版EDGEはサポートします)。</li>
 			<li>非推奨機能を削除。</li>
 			<li>JavascriptのModule対応。</li>
 			<li>func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)。</li>
 			<li>設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを外部から提供する機能を追加。</li>
 			<li>多要素認証(TOTP,Passkey)対応。</li>
+			<li>Derbyのバージョンアップが止まったのでH2に対応。</li>
 			<li>DBCP2を使用したデータベース接続をサポート。(JNDIデータソースも利用可能)</li>
+			<li>Queryクラスの機能追加。</li>
+			<li>FileField階層が複雑で使いにくいのでUploadFieldクラスを追加。(最終的にFileFieldは非推奨にするつもりです)</li>
 		</ol>
 		<h2>特徴</h2>
 		<p>
@@ -65,7 +68,7 @@
 						これらのクラスを利用することによって、SQLを意識しない開発が可能になっています。
 						またdataforms3.jarは以下のデータベースに対応しています。
 						<p>
-							Apache Derby, MySQL, PostgreSQL, Oracle, Microsoft SQL Server
+							H2 Database Engine, Apache Derby, MySQL, PostgreSQL, Oracle, Microsoft SQL Server
 						</p>
 						SQLの方言はライブラリで吸収する構造になっているため、データベースの接続先に応じたSQLを発行します。
 					</td>
@@ -82,7 +85,7 @@
 					<td style="width: 300px;">ユーザの管理と最新の認証機能</td>
 					<td style="width: 500px;">
 						dataforms3.jarはWebアプリケーションのユーザの管理や認証の為の機能を持っており、	ログイン画面やユーザ管理画面を作る必要はありません。
-						またログイン画面は多要素認証にも対応しており、端末の生体認証でログイン可能なWebアプリケーションを作ることができます。
+						またログイン画面はパスキーとTOTPにも対応しており、端末の生体認証でログイン可能なWebアプリケーションを作ることができます。
 					</td>
 				</tr>
 				<tr>

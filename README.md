@@ -7,12 +7,12 @@ dataforms2.jarからの変更点をまとめます。
 * Tomcat10以上に対応。Tomcat9以下では動作しません。
 * IE11, MS EDGE対応スクリプトを削除。(Chromium版EDGEはサポートします)
 * 非推奨機能を削除。
-* javascriptのmodule対応。
+* JavascriptのModule対応。
 * func_tableを削除し、Javaのコードで対応。(webのpathとjavaのpackageの対応表を追加)
-* 設定ファイルの形式をjsoncにする。
-* 認証のPasskey,TOTP対応。
+* 設定ファイルの形式をjsoncに変更し、運用環境用の設定ファイルを外部から提供する機能を追加。。
+* 多要素認証(TOTP,Passkey)対応。
 * Derbyのバージョンアップが止まったのでH2に対応。
-* DBCPに対応を追加。
+* DBCP2を使用したデータベース接続をサポート。(JNDIデータソースも利用可能)。
 * Queryクラスの機能追加。
 * FileField階層が複雑で使いにくいのでUploadFieldクラスを追加。(最終的にFileFieldは非推奨にするつもりです)
 　　
