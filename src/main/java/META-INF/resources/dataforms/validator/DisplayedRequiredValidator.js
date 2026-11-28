@@ -1,40 +1,29 @@
 /**
- * @fileOverview {@link DisplayedRequiredValidator}クラスを記述したファイルです。
+ * @fileoverview {@link DisplayedRequiredValidator}クラスを記述したファイルです。
  */
-
-'use strict';
-
-import { RequiredValidator } from './RequiredValidator.js';
-
-
+import { RequiredValidator } from "./RequiredValidator.js";
 /**
- * @class DisplayedRequiredValidator
+ * 表示中の項目だけを必須とするバリデータクラス。
  *
  * @extends RequiredValidator
  */
 export class DisplayedRequiredValidator extends RequiredValidator {
-	/**
-	 * HTMLエレメントとの対応付けを行います。
-	 */
-	attach() {
-		super.attach(this);
-	}
-
-	/**
-	 * バリデーションを行ないます。
-	 * @param {String} v 値。
-	 * @returns {Boolean} バリデーション結果。
-	 */
-	validate(v) {
-		var f = this.getParentForm();
-		var vflg = f.get(this.parent.id).is(":visible");
-		if (vflg) {
-			return (this.isBlank(v) == false);
-		} else {
-			return true;
-		}
-	}
+    /**
+     * バリデーションを行ないます。
+     * @param v 値。
+     * @returns バリデーション結果。
+     */
+    validate(v) {
+        const form = this.getParentForm();
+        if (form != null) {
+            const parent = form.get(this.parent.id);
+            if (parent != null) {
+                const visible = parent.is(":visible");
+                if (visible) {
+                    return !this.isBlank(v);
+                }
+            }
+        }
+        return true;
+    }
 }
-
-
-

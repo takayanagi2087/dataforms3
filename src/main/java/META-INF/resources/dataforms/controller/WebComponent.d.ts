@@ -44,7 +44,7 @@ declare global {
  */
 export declare class WebComponent {
     #private;
-    id: string | null;
+    id: string;
     realId: string;
     parent: WebComponent | null;
     parentDivId: string | null;

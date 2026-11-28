@@ -13,7 +13,7 @@ export class TimeValidator extends DateTimeValidator {
 	/**
 	 * コンストラクタ。
 	 */
-	constructor() {
+	public constructor() {
 		super();
 		this.dateFormatKey = "format.timefield";
 	}

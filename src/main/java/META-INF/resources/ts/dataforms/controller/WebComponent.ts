@@ -59,7 +59,7 @@ declare global {
  * ユニークな値になります。
  */
 export class WebComponent {
-	declare id: string | null;
+	declare id: string;
 	declare realId: string;
 	declare parent: WebComponent | null;
 	declare parentDivId: string | null;
@@ -84,7 +84,7 @@ export class WebComponent {
 	 * コンストラクタ。
 	 */
 	constructor() {
-		this.id = null;
+		this.id = '';
 		this.realId = '';
 		this.parent = null;
 		this.parentDivId = null;
@@ -231,14 +231,13 @@ export class WebComponent {
 	 */
 	get(id?: string): JQuery | null {
 		let ret: JQuery | null = null;
-
 		if (this.parent == null) {
 			const escapedId = this.selectorEscape(this.id ?? '');
 			let sel = '#' + escapedId;
 
 			if (id != null) {
 				sel += ' #' + id;
-		 }
+			}
 
 			sel = this.convertSelector(sel);
 			ret = $(sel);
@@ -273,15 +272,15 @@ export class WebComponent {
 	 */
 	#getChildImportJs(map: Record<string, PageInfoComponent>): PageInfoComponent[] {
 		const list: PageInfoComponent[] = [];
-
-        for (const key in map) {
-            const obj = map[key];
-            list.push(...this.#getImportJs(obj));
-            list.push(obj);
-        }
-
-        return list;
-    }
+	
+		for (const key in map) {
+			const obj = map[key];
+			list.push(...this.#getImportJs(obj));
+			list.push(obj);
+		}
+		
+		return list;
+	}
 
 	/**
 	 * ダイナミックインポートが必要なモジュールのリストを取得する。
@@ -684,7 +683,7 @@ export class WebComponent {
 	public setEventId(ev: JQuery.TriggeredEvent): void {
 		const target = ev.currentTarget as Element | null;
 		if (target != null) {
-			this.id = $(target).attr(this.getIdAttribute()) ?? null;
+			this.id = $(target).attr(this.getIdAttribute()) ?? '';
 			this.realId = $(target).attr('id') ?? '';
 		}
 	}

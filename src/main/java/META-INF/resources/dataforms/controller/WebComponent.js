@@ -38,7 +38,7 @@ export class WebComponent {
      * コンストラクタ。
      */
     constructor() {
-        this.id = null;
+        this.id = '';
         this.realId = '';
         this.parent = null;
         this.parentDivId = null;
@@ -541,7 +541,7 @@ export class WebComponent {
     setEventId(ev) {
         const target = ev.currentTarget;
         if (target != null) {
-            this.id = $(target).attr(this.getIdAttribute()) ?? null;
+            this.id = $(target).attr(this.getIdAttribute()) ?? '';
             this.realId = $(target).attr('id') ?? '';
         }
     }
