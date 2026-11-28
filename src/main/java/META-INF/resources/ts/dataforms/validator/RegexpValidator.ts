@@ -11,6 +11,24 @@ import { FieldValidator } from "./FieldValidator.js";
  */
 export class RegexpValidator extends FieldValidator {
 	/**
+	 * 正規表現パターン。
+	 */
+	declare pattern: string; 
+	/**
+	 * 複数行。
+	 */
+	declare multiline: boolean;  
+
+	/**
+	 * "."が改行にも待ったするモード。
+	 */
+	declare dotAll: boolean;  
+
+	/**
+	 * 大文字小文字無視。
+	 */
+	declare caseInsensitive: boolean;
+	/**
 	 * バリデーションを行ないます。
 	 * @param v 値。
 	 * @returns バリデーション結果。
