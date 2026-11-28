@@ -30,14 +30,12 @@ interface JsonResponseData {
  * @prop method メソッド名。
  * @prop init fetchのinitパラメータ。
  * 初期設定は以下になっています。
- * {
  * 	method: "POST"
- * 	, mode: "cors"
- * 	, cache: "no-cache"
- * 	, credentials: "same-origin"
- * 	, redirect: "follow"
- * 	, headers: {}
- * }
+ * 	mode: "cors"
+ * 	cache: "no-cache"
+ * 	credentials: "same-origin"
+ * 	redirect: "follow"
+ * 	headers:
  * @prop {String} contentType 応答のcontent-type。
  *
  */
