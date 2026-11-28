@@ -10,6 +10,9 @@ declare global {
 /**
  * @class MessagesUtil
  * メッセージユーティリティ。
+ * 各種メッセージを取得します。
+ * ClientMessages.properties, Page.properties中のメッセージは初期化時にサーバから取得します。
+ * 以下の仕様は同期通信を使用するため削除。
  */
 export declare class MessagesUtil {
     /**
@@ -21,7 +24,7 @@ export declare class MessagesUtil {
      */
     private static set messageMap(value);
     /**
-     * ClientMessages.properties, <Page>.propertiesに指定されたメッセージを読み込みます。
+     * ClientMessages.properties, Page.propertiesに指定されたメッセージを読み込みます。
      */
     static init(map: MessageMap): void;
     /**

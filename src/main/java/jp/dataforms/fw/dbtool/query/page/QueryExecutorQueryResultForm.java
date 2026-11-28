@@ -147,19 +147,13 @@ public class QueryExecutorQueryResultForm extends QueryResultForm {
 			} else {
 				sb.append("<td>");
 			}
-			if (Page.getUseUniqueId()) {
-				sb.append("<span data-id=\"queryResult[0].");
-				sb.append(f.getId());
-				sb.append("\" ");
-				sb.append(" id=\"mainDiv.queryResultForm.queryResult[0].");
-				sb.append(f.getId());
-				sb.append("\" ");
-				sb.append("></span>");
-			} else {
-				sb.append("<span id=\"queryResult[0].");
-				sb.append(f.getId());
-				sb.append("\"></span>");
-			}
+			sb.append("<span data-id=\"queryResult[0].");
+			sb.append(f.getId());
+			sb.append("\" ");
+			sb.append(" id=\"mainDiv.queryResultForm.queryResult[0].");
+			sb.append(f.getId());
+			sb.append("\" ");
+			sb.append("></span>");
 			sb.append("</td>");
 		}
 		return sb.toString();

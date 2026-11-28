@@ -2,7 +2,8 @@
  * @fileOverview QueryStringUtilクラスを記述したファイルです。
  */
 /**
- * 問合せ文字列ユーティリティ。
+ * QueryStringユーティリティ。
+ * QueryString操作ユーティリティクラス。
  */
 export class QueryStringUtil {
     /**

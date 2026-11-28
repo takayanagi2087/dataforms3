@@ -807,32 +807,6 @@ public class WebComponent implements JDBCConnectableObject {
 	    return ret;
 	}
 
-	/**
-	 * ユニークidア使用フラグ。
-	 * <pre>
-	 * 全てのidアトリビュートをdata-idに変換し、idにはユニークなidを設定する場合true。
-	 * </pre>
-	 */
-	private static Boolean useUniqueId = true;
-
-
-	/**
-	 * ユニークidア使用フラグを取得します。
-	 * @return ユニークidア使用フラグ。
-	 */
-	public static Boolean getUseUniqueId() {
-		return useUniqueId;
-	}
-
-
-	/**
-	 * ユニークidア使用フラグを設定します。
-	 * @param useUniqueId ユニークidア使用フラグ使用フラグ。
-	 */
-/*	public static void setUseUniqueId(final Boolean useUniqueId) {
-		WebComponent.useUniqueId = useUniqueId;
-	}
-*/
 
 	/**
 	 * htmlのidアトリビュートをdata-idに変更する。
@@ -844,11 +818,7 @@ public class WebComponent implements JDBCConnectableObject {
 	 * @return idアトリビュートを変換したhtml。
 	 */
 	public String convertIdAttribute(final String htmltext) {
-		if (WebComponent.useUniqueId) {
-			return htmltext.replaceAll("(<.+?)(\\s+)(id)(\\s*?=)(.*?>)", "$1$2data-id$4$5");
-		} else {
-			return htmltext;
-		}
+		return htmltext.replaceAll("(<.+?)(\\s+)(id)(\\s*?=)(.*?>)", "$1$2data-id$4$5");
 	}
 
 	/**

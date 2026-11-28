@@ -20,11 +20,9 @@ export class FlagField extends CharField {
 	 */
 	attach() {
 		super.attach();
-		if (currentPage.useUniqueId) {
-			let lbl = this.getParentForm().find("label[for='" + this.id + "']");
-			if (lbl.length > 0) {
-				lbl.attr("for", this.realId);
-			}
+		let lbl = this.getParentForm().find("label[for='" + this.id + "']");
+		if (lbl.length > 0) {
+			lbl.attr("for", this.realId);
 		}
 	}
 

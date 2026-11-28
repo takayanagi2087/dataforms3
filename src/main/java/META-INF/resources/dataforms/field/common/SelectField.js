@@ -140,15 +140,9 @@ export class SelectField extends Field {
 		let opthtml = "";
 		for (let i = 0; i < this.optionList.length; i++) {
 			let opt = this.optionList[i];
-			if (currentPage.useUniqueId) {
-				opthtml +=
-					"<input type='radio' id='" + this.realId + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-						+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-			} else {
-				opthtml +=
-					"<input type='radio' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-						+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-			}
+			opthtml +=
+				"<input type='radio' id='" + this.realId + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+					+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
 		}
 		pl.html(opthtml);
 	}
@@ -163,15 +157,9 @@ export class SelectField extends Field {
 		let opthtml = "";
 		for (let i = 0; i < this.optionList.length; i++) {
 			let opt = this.optionList[i];
-			if (currentPage.useUniqueId) {
-				opthtml +=
-					"<input type='checkbox' id='" + this.realId  + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-						+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-			} else {
-				opthtml +=
-					"<input type='checkbox' id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
-						+ "<label for='" + this.id + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
-			}
+			opthtml +=
+				"<input type='checkbox' id='" + this.realId  + "[" + i + "]' data-id='" + this.id + "[" + i + "]' name='" + this.id + "' value='" + opt.value + "'/>"
+					+ "<label for='" + this.realId + "[" + i + "]'>" + opt.name + "&nbsp;</label>";
 		}
 		pl.html(opthtml);
 	}

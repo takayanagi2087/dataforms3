@@ -4,6 +4,9 @@
 /**
  * @class MessagesUtil
  * メッセージユーティリティ。
+ * 各種メッセージを取得します。
+ * ClientMessages.properties, Page.properties中のメッセージは初期化時にサーバから取得します。
+ * 以下の仕様は同期通信を使用するため削除。
  */
 export class MessagesUtil {
     /**
@@ -19,7 +22,7 @@ export class MessagesUtil {
         window._df_messageMap = map;
     }
     /**
-     * ClientMessages.properties, <Page>.propertiesに指定されたメッセージを読み込みます。
+     * ClientMessages.properties, Page.propertiesに指定されたメッセージを読み込みます。
      */
     static init(map) {
         MessagesUtil.messageMap = map;

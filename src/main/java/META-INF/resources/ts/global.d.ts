@@ -1,8 +1,12 @@
+/**
+ * まだTypescript化されていないクラスのとりあえずの型設定。
+ */
+
+
 interface Page {
 	contextPath: string;
 	errorPage: string;
 	csrfToken?: string | null;
-	useUniqueId: boolean;
 	contextPath: string;
 	lock(): void;
 	unlock(): void;

@@ -1033,7 +1033,6 @@ public class Page extends DataForms implements WebEntryPoint {
 			}
 		}
 		map.put(WebEntryPoint.USER_INFO, userInfo);
-		map.put("useUniqueId", WebComponent.getUseUniqueId());
 		
 		{
 //			String ts = WebResourceUtil.getLastUpdate("/dataforms/menu/Menu.js");

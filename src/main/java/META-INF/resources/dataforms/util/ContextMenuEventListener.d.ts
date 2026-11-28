@@ -1,10 +1,8 @@
 type ContextMenuCallback = (ev: JQuery.Event) => void;
 /**
  * ContextMenuイベント設定クラス。
- * <pre>
  * iOS、iPadOSはcontextmenuイベントをサポートしていないため、
  * 長押しを検出して動作します。
- * </pre>
  */
 export declare class ContextMenuEventListener {
     /**

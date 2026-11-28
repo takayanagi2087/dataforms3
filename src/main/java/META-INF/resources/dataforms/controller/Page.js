@@ -480,20 +480,18 @@ export class Page extends DataForms {
 	 * @param {Function} func コンポーネント判定関数。
 	 */
 	setRealIdToElement(cmp, func) {
-		if (this.useUniqueId) {
-			for (let key in cmp.componentMap) {
-				let ch = cmp.componentMap[key];
-				if (func(ch)) {
-					ch.find("[data-id]").each((_, el) => {
-						let id = $(el).attr("id");
-						if (id == null) {
-							let realId = ch.realId + "." + $(el).attr("data-id");
-							$(el).attr("id", realId);
-						}
-					});
-				} else {
-					this.setRealIdToElement(ch, func);
-				}
+		for (let key in cmp.componentMap) {
+			let ch = cmp.componentMap[key];
+			if (func(ch)) {
+				ch.find("[data-id]").each((_, el) => {
+					let id = $(el).attr("id");
+					if (id == null) {
+						let realId = ch.realId + "." + $(el).attr("data-id");
+						$(el).attr("id", realId);
+					}
+				});
+			} else {
+				this.setRealIdToElement(ch, func);
 			}
 		}
 	}

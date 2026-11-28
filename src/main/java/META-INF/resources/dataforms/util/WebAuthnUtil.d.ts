@@ -1,5 +1,5 @@
 /**
- * WebAuthn生体認証ユーティリティクラス。
+ * @fileOverview {@link WebAuthnUtil}クラスを記述したファイルです。
  */
 interface CreateOptionsInput {
     challenge: string;

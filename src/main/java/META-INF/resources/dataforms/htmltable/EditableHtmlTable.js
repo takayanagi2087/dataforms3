@@ -124,10 +124,7 @@ export class EditableHtmlTable extends HtmlTable {
 		if (this.isSortableSwitching()) {
 			// タッチパネルの場合は行入替のOn/Off切り替え機能が必要。
 			let label = MessagesUtil.getMessage("message.table.sortablelabel");
-			let cb = '<input type="checkbox" id="' + ckid + '"><label for="' + ckid + '">' + label + '</label>';
-			if (currentPage.useUniqueId) {
-				cb = '<input type="checkbox" ' + this.getIdAttribute() + '="' + ckid + '" id="' + this.realId + '.sortable" "><label for="' + this.realId + '.sortable">' + label + '</label>';
-			}
+			let cb = '<input type="checkbox" ' + this.getIdAttribute() + '="' + ckid + '" id="' + this.realId + '.sortable" "><label for="' + this.realId + '.sortable">' + label + '</label>';
 //			this.get().before(cb);
 			this.find("thead th:first").append(cb);
 			this.parent.get(ckid).click((ev) => {

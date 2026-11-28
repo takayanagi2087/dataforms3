@@ -28,13 +28,11 @@ export class PageScrollHtmlTable extends HtmlTable {
 				$(el).attr("name", id);
 			}
 		});
-		if (currentPage.useUniqueId) {
-			// TODO: ページャーの構造は見直した方がよいかも。
-			// ページャー関連のユニークIDを設定します。
-			this.setPageControllerRealId("hitCount");
-			this.setPageControllerRealId("pageNo");
-			this.setPageControllerRealId("linesPerPage");
-		}
+		// TODO: ページャーの構造は見直した方がよいかも。
+		// ページャー関連のユニークIDを設定します。
+		this.setPageControllerRealId("hitCount");
+		this.setPageControllerRealId("pageNo");
+		this.setPageControllerRealId("linesPerPage");
 		this.sortOrder = this.getSortOrder();
 	}
 

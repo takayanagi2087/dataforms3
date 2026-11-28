@@ -1,6 +1,22 @@
 /**
  * @fileOverview {@link SimpleDateFormat}クラスを記述したファイルです。
  */
+/**
+ * @class SimpleDateFormat
+ *
+ * 日付フォーマットクラス。
+ *
+ * java.text.SimpleDateFormatのサブセットで、以下の書式をサポートします。
+ * yyyy 年(4桁).
+ * yy 年(2桁).
+ * MM 月
+ * dd 日
+ * HH 時
+ * mm 分
+ * ss 秒
+ * SSS ミリ秒
+ *
+ */
 export declare class SimpleDateFormat {
     /** フォーマット文字列。 */
     private readonly formatString;

@@ -91,9 +91,7 @@ export class Field extends WebComponent {
 	 */
 	adjustIdIndex(jq) {
 		this.id = jq.attr(this.getIdAttribute())
-		if (currentPage.useUniqueId) {
-			this.realId = jq.attr("id");
-		}
+		this.realId = jq.attr("id");
 	}
 
 	/**
@@ -348,11 +346,7 @@ export class Field extends WebComponent {
 		let spanid = this.id + "_span";
 		let span = this.parent.get(spanid);
 		if (span.length == 0) {
-			if (currentPage.useUniqueId) {
-				comp.after("<span data-id='" + spanid + "' id='" + this.realId + "_span' class='selectSpan'></span>");
-			} else {
-				comp.after("<span id='" + spanid + "' class='selectSpan'></span>");
-			}
+			comp.after("<span data-id='" + spanid + "' id='" + this.realId + "_span' class='selectSpan'></span>");
 			span = this.parent.get(spanid);
 		}
 		return span;

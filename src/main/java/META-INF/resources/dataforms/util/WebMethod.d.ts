@@ -26,6 +26,20 @@ interface JsonResponseData {
  * @class WebMethod
  *
  * async, await対応のサーバメソッドクラス。
+ * @prop serverUrl location.pathnameの値。
+ * @prop method メソッド名。
+ * @prop init fetchのinitパラメータ。
+ * 初期設定は以下になっています。
+ * {
+ * 	method: "POST"
+ * 	, mode: "cors"
+ * 	, cache: "no-cache"
+ * 	, credentials: "same-origin"
+ * 	, redirect: "follow"
+ * 	, headers: {}
+ * }
+ * @prop {String} contentType 応答のcontent-type。
+ *
  */
 export declare class WebMethod {
     private static get PARAM_TYPE_URLENCODED();

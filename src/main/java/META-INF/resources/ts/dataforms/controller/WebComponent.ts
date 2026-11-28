@@ -26,7 +26,6 @@ interface ComponentClassInfo {
 }
 
 interface PageRuntime {
-	useUniqueId: boolean;
 	contextPath: string;
 }
 
@@ -95,27 +94,52 @@ export class WebComponent {
 		this.#idPrepared = false;
 	}
 
-	isDataForms(): boolean {
+	/**
+	 * DataFormsから派生したクラスかどうかを判定します。
+	 * @return DataFormsから派生したクラスの場合true。
+	 */
+	public isDataForms(): boolean {
 		return false;
 	}
 
-	isForm(): boolean {
+	/**
+	 * Formから派生したクラスかどうかを判定します。
+	 * @return Formから派生したクラスの場合true。
+	 */
+	public isForm(): boolean {
 		return false;
 	}
 
-	isHtmlTable(): boolean {
+	/**
+	 * HtmlTableから派生したクラスかどうかを判定します。
+	 * @return HtmlTableから派生したクラスの場合true。
+	 */
+	public isHtmlTable(): boolean {
 		return false;
 	}
 
-	isDialog(): boolean {
+	/**
+	 * Dialogから派生したクラスかどうかを判定します。
+	 * @return Dialogから派生したクラスの場合true。
+	 */
+	public isDialog(): boolean {
 		return false;
 	}
 
-	isPage(): boolean {
+	/**
+	 * Pagegから派生したクラスかどうかを判定します。
+	 * @return Pageから派生したクラスの場合true。
+	 */
+	public isPage(): boolean {
 		return false;
 	}
 
-	getParentForm(): WebComponent {
+	/**
+	 * 親フォームを取得します。
+	 * @returns  親フォーム。
+	 * FIXME: 最終的に戻り値をFormに限定する。
+	 */
+	public getParentForm(): WebComponent {
 		let component: WebComponent | null = this;
 
 		while (component != null && !component.isForm()) {
@@ -129,7 +153,11 @@ export class WebComponent {
 		return component;
 	}
 
-	getParentDataForms(): WebComponent {
+	/**
+	 * 親となるページまたはダイアログを取得します。
+	 * @returns 親となるページまたはダイアログ。
+	 */
+	public getParentDataForms(): WebComponent {
 		let component: WebComponent | null = this;
 
 		while (component != null && !component.isDataForms()) {
@@ -143,34 +171,64 @@ export class WebComponent {
 		return component;
 	}
 
-	getQueryString(): Record<string, string | null> {
+	/**
+	 * QueryStringを取得します。
+	 * @returns QueryStringを展開したオブジェクト。
+	 */
+	public getQueryString(): Record<string, string | null> {
 		return QueryStringUtil.parse(window.location.search);
 	}
 
-	getWebMethod(method: string): WebMethod {
+	/**
+	 * WebMethodを取得します。
+	 * @param method メソッド名。
+	 * @returns WebMethodのインスタンス。
+	 */
+	public getWebMethod(method: string): WebMethod {
 		return new WebMethod(this.getUniqId() + '.' + method);
 	}
 
-	getIdAttribute(): string {
-		if (currentPage.useUniqueId) {
-			return 'data-id';
-		}
-		return 'id';
+	/**
+	 * idアトリビュートを返します。
+	 * @return idアトリビュート。
+	 */
+	public getIdAttribute(): string {
+		return 'data-id';
 	}
 
+	
+	/**
+	 * jQueryのselectorを適切に変換します。
+	 * <pre>
+	 * idに関するセレクタをdata-idに変換する。
+	 * </pre>
+	 * @param {String} q セレクター。
+	 * @returns 変換されたセレクター。
+	 */
 	convertSelector(q: string): string {
-		if (currentPage.useUniqueId) {
-			let ret = q.replace(/#([0-9A-Za-z\-_:.\[\]\\]+)/g, "[data-id='$1']");
-			ret = ret.replace(/\[id([\$\~\!\*\^]?)=['"](.*)['"]\]/g, "[data-id$1='$2']");
-			return ret;
-		}
-		return q;
+		let ret = q.replace(/#([0-9A-Za-z\-_:.\[\]\\]+)/g, "[data-id='$1']");
+		ret = ret.replace(/\[id([\$\~\!\*\^]?)=['"](.*)['"]\]/g, "[data-id$1='$2']");
+		return ret;
 	}
 
+	/**
+	 * jQueryオブジェクトの検索を行います。
+	 * jQueryセレクタを指定して、セレクタに合致する子を検索します。
+	 * @param q jQueryのセレクタ。
+	 * @returns jQueryオブジェクト。
+	 */
 	find(q: string): JQuery {
 		return this.get()!.find(this.convertSelector(q));
 	}
 
+	/**
+	 * jQueryオブジェクトを取得します。
+	 * コンポーネントに対応したjQueryオブジェクトを取得します。
+	 * @param id コンポーネントのID。
+	 * 	省略した場合このインスタンスのIDで検索します。
+	 *  idを指定した場合、このコンポーネントが内包する要素を検索します。
+	 * @returns jQueryオブジェクト。
+	 */
 	get(id?: string): JQuery | null {
 		let ret: JQuery | null = null;
 
@@ -185,7 +243,7 @@ export class WebComponent {
 			sel = this.convertSelector(sel);
 			ret = $(sel);
 		} else {
-			if (currentPage.useUniqueId && this.#idPrepared) {
+			if (this.#idPrepared) {
 				let sel = '#' + this.selectorEscape(this.realId);
 
 				if (id != null) {
@@ -208,221 +266,290 @@ export class WebComponent {
 		return ret;
 	}
 
+	/**
+	 * ダイナミックインポートが必要な子モジュールのリストを取得する。
+	 * @param  map ページ情報。
+	 * @returns jsファイル名のリスト。
+	 */
 	#getChildImportJs(map: Record<string, PageInfoComponent>): PageInfoComponent[] {
 		const list: PageInfoComponent[] = [];
 
-		for (const key in map) {
-			const obj = map[key];
-			list.push(...this.#getImportJs(obj));
-			list.push(obj);
-	 }
+        for (const key in map) {
+            const obj = map[key];
+            list.push(...this.#getImportJs(obj));
+            list.push(obj);
+        }
 
-		return list;
-	}
+        return list;
+    }
 
+	/**
+	 * ダイナミックインポートが必要なモジュールのリストを取得する。
+	 * @param obj ページ情報。
+	 * @returns jsファイル名のリスト。
+	 */
 	#getImportJs(obj: PageInfoComponent): PageInfoComponent[] {
 		let list: PageInfoComponent[] = [];
-
+		
 		if (obj.formMap != null) {
 			list = list.concat(this.#getChildImportJs(obj.formMap));
-	 }
-
+		}
+		
 		if (obj.dialogMap != null) {
 			list = list.concat(this.#getChildImportJs(obj.dialogMap));
-	 }
-
+		}
+		
 		if (obj.fieldList != null) {
 			list = list.concat(this.#getChildImportJs(obj.fieldList));
-	 }
-
+		}
+		
 		if (obj.htmlTableList != null) {
 			list = list.concat(this.#getChildImportJs(obj.htmlTableList));
-	 }
-
+		}
+		
 		if (obj.contextMenuList != null) {
 			list = list.concat(this.#getChildImportJs(obj.contextMenuList));
-	 }
-
+		}
+		
 		if (obj.validatorList != null) {
 			list = list.concat(this.#getChildImportJs(obj.validatorList));
-	 }
-
+		}
+		
 		return list;
 	}
 
+	/**
+	 * 配列内の重複する情報を削除した配列を作成します。
+	 * @param list 入力配列。
+	 * @return 出力配列。
+	 */
 	uniq<T>(list: T[]): T[] {
 		const ret: T[] = [];
-
-		for (let i = 0; i < list.length; i++) {
+		
+		for (let i = 0;i < list.length;i++) {
 			if (ret.indexOf(list[i]) < 0) {
 				ret.push(list[i]);
 			}
-	 }
-
+		}
+		
 		return ret;
 	}
 
+	/**
+	 * ダイナミックインポートしたモジュールマップ。
+	 */
 	static #moduleMap: Record<string, unknown> = {};
 
-	async dynamicImport(pageInfo: PageInfoComponent): Promise<void> {
+	/**
+	 * ページ情報に含まれるJavascriptクラスの内インポートされていないものをダイナミックインポートする。
+	 * @param pageInfo ページ情報。
+	 */
+	public async dynamicImport(pageInfo: PageInfoComponent): Promise<void> {
 		logger.log('pageInfo=', pageInfo);
-
+		
 		let list = this.#getImportJs(pageInfo);
 		list = this.uniq(list);
-
+		
 		logger.log('jsImportList:', list);
-
-		for (let i = 0; i < list.length; i++) {
+		
+		for (let i = 0;i < list.length;i++) {
 			const obj = list[i];
-
+			
 			if (obj.jsPath == null || obj.jsClass == null) {
-				continue;
-		 }
-
+			    continue;
+			}
+			
 			const module = await import(currentPage.contextPath + obj.jsPath);
 			WebComponent.#moduleMap[obj.jsClass] = module;
-	 }
-
+		}
+		
 		if (this.menuJs != null) {
 			logger.log('menuJs=' + this.menuJs);
 			const module = await import(currentPage.contextPath + this.menuJs);
 			WebComponent.#moduleMap.Menu = module;
-	 }
-
+		}
+		
 		if (this.sideMenuJs != null) {
 			logger.log('sideMenuJs=' + this.sideMenuJs);
 			const module = await import(currentPage.contextPath + this.sideMenuJs);
 			WebComponent.#moduleMap.SideMenu = module;
-	 }
-
+		}
+		
 		logger.log('#moduleMap=', WebComponent.#moduleMap);
 	}
 
-	newInstance(clazz: ComponentClassInfo): WebComponent {
+	/**
+	 * サーバから送信されたクラス情報から、そのクラスのインスタンスを作成します。
+	 * @param clszz クラス情報。
+	 * @returns 作成されたインスタンス。
+	 */
+	public newInstance(clazz: ComponentClassInfo): WebComponent {
 		const classname = clazz.jsClass;
 		const module = WebComponent.#moduleMap[classname];
-
+		
 		if (module == null) {
 			throw new Error(`Module was not found: ${classname}`);
-	 }
-
+		}
+		
 		const constructor = (module as Record<string, unknown>)[classname];
-
+		
 		if (typeof constructor !== 'function') {
 			throw new Error(`Class was not found: ${classname}`);
-	 }
-
+		}
+		
 		const obj = new (constructor as new () => WebComponent)();
 		Object.assign(obj, clazz);
 		obj.parent = this;
 		this.componentMap[obj.id ?? ''] = obj;
-
+		
 		return obj;
 	}
 
-	isHtmlTableElementId(id: string): boolean {
+	/**
+	 * HtmlTable中の要素のIDかどうかをチェックします。
+	 * @param id 判定するID。
+	 * @returns HtmlTable中の要素の場合true.
+	 */
+	public isHtmlTableElementId(id: string): boolean {
 		return /^[A-Za-z0-9]+\[[0-9]+\]\.[A-Za-z0-9]+$/.test(id);
 	}
 
-	getHtmlTableId(id: string): string | null {
+	/**
+	 * テーブルのID部分を取得します。
+	 * @param id HtmlTable中の各要素のID。
+	 * @returns テーブルのID.
+	 */
+	public getHtmlTableId(id: string): string | null {
 		if (this.isHtmlTableElementId(id)) {
 			const sp = id.split(/[\[\]\.]/);
 			return sp[0];
-	 }
+		}
 		return null;
 	}
 
-	getHtmlTableColumnId(id: string): string | null {
+	/**
+	 * テーブルのカラムID部分を取得します。
+	 * @param id HtmlTable中の各要素のID。
+	 * @returns テーブルのカラムID。
+	 */
+	public getHtmlTableColumnId(id: string): string | null {
 		if (this.isHtmlTableElementId(id)) {
 			const sp = id.split(/[\[\]\.]/);
 			const lidx = sp.length - 1;
 			return lidx >= 0 ? sp[lidx] : null;
-	 }
+		}
 		return null;
 	}
 
-	getComponent(id: string): WebComponent | null {
+	/**
+	 * 所有コンポーネントのインスタンスを取得します。
+	 * @param id コンポーネントのID。
+	 * @returns コンポーネントのインスタンス。
+	 */
+	public getComponent(id: string): WebComponent | null {
 		const tblid = this.getHtmlTableId(id);
-
+		
 		if (tblid != null) {
 			const colid = this.getHtmlTableColumnId(id);
 			const tbl = this.componentMap[tblid];
-
+			
 			if (tbl == null || colid == null) {
 				return null;
-		 }
-
+			}
+			
 			const fields = (tbl as unknown as {
 				fields: Array<WebComponent & { id: string }>;
 			}).fields;
-
-			for (let i = 0; i < fields.length; i++) {
+			
+			for (let i = 0;i < fields.length;i++) {
 				if (fields[i].id === colid) {
 					const field = new (fields[i].constructor as new () => WebComponent)();
 					Object.assign(field, fields[i]);
 					field.id = id;
 					return field;
-			 }
+				}
 			}
-
+			
 			return null;
-	 }
-
+		}
+		
 		return this.componentMap[id] ?? null;
 	}
 
-	selectorEscape(val: string): string {
+	/**
+	 * JQueryのセレクタをエスケープします。
+	 * @param val エスケープする文字列。
+	 * @returns エスケープされた文字列。
+	 */
+	public selectorEscape(val: string): string {
 		return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&');
 	}
 
-	getIndent(): string {
+	/**
+	 * コンポーネントの親子関係から、インデント文字列を作成します。
+	 * ログ出力用の機能です。
+	 * @returns インデント文字列。
+	 */
+	private getIndent(): string {
 		let t = '';
 		let p: WebComponent | null = this;
 
 		while (p != null) {
 			t += '\t';
 			p = p.parent;
-	 }
-
+		}
 		return t;
 	}
 
-	init(): void {
+	/**
+	 * オブジェクトの初期化を行います。
+	 */
+	public init(): void {
 	}
 
-	setRealId(): void {
-		if (currentPage.useUniqueId) {
-			if (this.realId.indexOf('[0]') >= 0) {
-				const arg = this.id?.match(/\[\d\]/)?.[0];
-				this.realId = arg == null
-					? this.realId
-					: this.realId.replace(/\[0\]/, arg);
-		 }
-
-			let jq: JQuery;
-
-			if (this.parent == null) {
-				jq = $(this.convertSelector('#' + this.selectorEscape(this.id ?? '')));
-			} else {
-				const sel = this.getUniqSelector();
-				jq = $(this.convertSelector(sel));
-		 }
-
-			jq.attr('id', this.realId);
-	 }
-
+	/**
+	 * 一意なidを設定します。
+	 */
+	private setRealId(): void {
+		if (this.realId.indexOf('[0]') >= 0) {
+			const arg = this.id?.match(/\[\d\]/)?.[0];
+			this.realId = arg == null
+				? this.realId
+				: this.realId.replace(/\[0\]/, arg);
+		}
+		
+		let jq: JQuery;
+		
+		if (this.parent == null) {
+			jq = $(this.convertSelector('#' + this.selectorEscape(this.id ?? '')));
+		} else {
+			const sel = this.getUniqSelector();
+			jq = $(this.convertSelector(sel));
+		}
+		
+		jq.attr('id', this.realId);
+		
 		this.#idPrepared = true;
 	}
 
-	attach(): void {
+	/**
+	 * エレメントとの対応付けを行います。
+	 * 各オブジェクトとHTMLの各エレメントへの対応付けを行い、イベント登録等の設定を行います。
+	 */
+	public attach(): void {
 		this.setRealId();
 
 		for (const id in this.componentMap) {
 			this.componentMap[id].attach();
-	 }
+		}
 	}
 
-	getCookie(name: string): string | null {
+	/**
+	 * Cookieを取得します。
+	 * @param name Cookie名称。
+	 * @returns Cookie値。
+	 */
+	public getCookie(name: string): string | null {
 		let result: string | null = null;
 		const cookieName = name + '=';
 		const allcookies = document.cookie;
@@ -437,12 +564,16 @@ export class WebComponent {
 				result = c.substring(cookieName.length);
 				break;
 			}
-	 }
-
+		}
 		return result == null ? null : decodeURIComponent(result);
 	}
 
-	setCookie(name: string, val: string): void {
+	/**
+	 * Cookieを設定します。
+	 * @param name Cookie名称。
+	 * @param val Cookie値。
+	 */
+	public setCookie(name: string, val: string): void {
 		const now = new Date();
 		const expires = new Date();
 		expires.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000);
@@ -462,72 +593,95 @@ export class WebComponent {
 		logger.log('document.cookie=' + document.cookie);
 	}
 
-	getUniqSelector(): string {
+	/**
+	 * 一意に対応するセレクタを作成します。
+	 * <pre>
+	 * コンポーネントの階層を辿り、一意になるjQueryセレクタを作成します。
+	 * </pre>
+	 * @returns jQueryセレクタ。
+	 */
+	private getUniqSelector(): string {
 		let t: WebComponent | null = this;
 		let sel = '';
-
+		
 		while (t != null && !t.isDataForms()) {
 			sel = '#' + this.selectorEscape(t.id ?? '') + ' ' + sel;
-
+			
 			if (t.isForm()) {
 				if (t.parentDivId != null) {
 					sel = '#' + this.selectorEscape(t.parentDivId) + ' ' + sel;
 					return sel;
-			 }
-		 }
-
+				}
+			}
+			
 			t = t.parent;
-	 }
-
+		}
+		
 		if (t == null) {
 			return sel.trim();
-	 }
-
+		}
+		
 		sel = '#' + this.selectorEscape(t.id ?? '') + ' ' + sel;
 		return sel.trim();
 	}
 
-	getUniqId(): string {
+	/**
+	 * 一意なIDを取得します。
+	 * このIDはWebMethodを呼び出す際に各コンポーネントを区別するために使用します。
+	 * コンポーネントの階層を辿り、各コンポーネントのidを"."で繋げた文字列を返します。
+	 * @returns 一意なID。
+	 */
+	public getUniqId(): string {
 		let t: WebComponent | null = this;
 		let sel = '';
-
+		
 		if (t.isHtmlTable()) {
 			while (t != null && !t.isDataForms()) {
 				if (sel.length > 0) {
 					sel = '.' + sel;
-			 }
+				}
 				sel = (t.id ?? '') + sel;
 				t = t.parent;
-		 }
+			}
 		} else {
 			while (t != null && !t.isDataForms()) {
 				if (!t.isHtmlTable()) {
 					if (sel.length > 0) {
 						sel = '.' + sel;
-				 }
+					}
 					sel = (t.id ?? '') + sel;
-			 }
+				}
 				t = t.parent;
-		 }
-	 }
-
+			}
+		}
+		
 		if (t != null && t.isDialog()) {
 			if (sel.length > 0) {
 				sel = '.' + sel;
-		 }
+			}
 			sel = (t.id ?? '') + sel;
-	 }
-
+		}
+		
 		return sel;
 	}
 
-	getLanguage(): string | undefined {
+	/**
+	 * ブラウザの言語コードを取得します。
+	 * @returns ブラウザの言語コード。
+	 */
+	public getLanguage(): string | undefined {
 		return window.navigator.userLanguage
-			?? window.navigator.language
-			?? window.navigator.browserLanguage;
+			|| window.navigator.language
+			|| window.navigator.browserLanguage;
 	}
 
-	setEventId(ev: JQuery.TriggeredEvent): void {
+	/**
+	 * イベントが発生した要素のIDをWebComponentに設定します。
+	 * 編集中のテーブルのWebComponentはWebComponentのIDがずれることがあるので、
+	 * イベントの発生時にIDを合わせるために使用します。
+	 * @param ev イベント情報。
+	 */
+	public setEventId(ev: JQuery.TriggeredEvent): void {
 		const target = ev.currentTarget as Element | null;
 		if (target != null) {
 			this.id = $(target).attr(this.getIdAttribute()) ?? null;
