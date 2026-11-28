@@ -1,0 +1,1 @@
+{"version":3,"file":"ValidationError.d.ts","sourceRoot":"","sources":["../../ts/dataforms/validator/ValidationError.ts"],"names":[],"mappings":"AAAA;;GAEG;AAIH;;;GAGG;AACH,qBAAa,eAAe;IAC3B,QAAQ,CAAC,OAAO,EAAE,MAAM,CAAC;IACzB,QAAQ,CAAC,OAAO,EAAE,MAAM,CAAC;IAEzB;;;;OAIG;IACH,YAAY,GAAG,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM,EAGnC;CACD"}
