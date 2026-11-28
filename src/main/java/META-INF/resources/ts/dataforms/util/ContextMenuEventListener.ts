@@ -25,7 +25,7 @@ export class ContextMenuEventListener {
 	 * @param jq jqueryオブジェクト。
 	 * @param contextmenu contextmenuイベント処理メソッド。
 	 */
-	constructor(jq: JQuery, contextmenu: ContextMenuCallback) {
+	public constructor(jq: JQuery, contextmenu: ContextMenuCallback) {
 		const platform = currentPage.getPlatform();
 
 		if (platform === 'ipados' || platform === 'ios') {

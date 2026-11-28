@@ -36,7 +36,7 @@ export class ClickHandler {
 	 * @param click クリック処理メソッド。
 	 * @param dblclick ダブルクリック処理メソッド。
 	 */
-	constructor(jq: JQuery, click: ClickCallback, dblclick: ClickCallback) {
+	public constructor(jq: JQuery, click: ClickCallback, dblclick: ClickCallback) {
 		this.#click = click;
 		this.#dblclick = dblclick;
 

@@ -32,7 +32,7 @@ export class MessagesUtil {
 	/**
 	 * ClientMessages.properties, <Page>.propertiesに指定されたメッセージを読み込みます。
 	 */
-	static init(map: MessageMap): void {
+	public static init(map: MessageMap): void {
 		MessagesUtil.messageMap = map;
 	}
 
@@ -42,7 +42,7 @@ export class MessagesUtil {
 	 * @param args メッセージ引数（複数指定可）
 	 * @returns メッセージ
 	 */
-	static getMessage(key: string, ...args: string[]): string | undefined {
+	public static getMessage(key: string, ...args: string[]): string | undefined {
 		let msg = MessagesUtil.messageMap[key];
 
 		if (msg != null) {

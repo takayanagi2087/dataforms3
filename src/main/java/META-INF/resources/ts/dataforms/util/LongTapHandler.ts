@@ -28,7 +28,7 @@ export class LongTapHandler {
 	 * @param jq jqueryオブジェクト。
 	 * @param longtap ロングタップ処理メソッド。
 	 */
-	constructor(jq: JQuery, longtap: (ev: JQuery.Event) => void) {
+	public constructor(jq: JQuery, longtap: (ev: JQuery.Event) => void) {
 		this.#longtap = longtap;
 
 		jq.on('touchstart', (ev: JQuery.Event) => {
