@@ -7,19 +7,6 @@
 import { MessagesUtil } from './MessagesUtil.js';
 import { JsonResponse } from '../response/JsonResponse.js';
 
-interface Page {
-	contextPath: string;
-	errorPage: string;
-	csrfToken?: string | null;
-	lock(): void;
-	unlock(): void;
-	alert?(title: unknown, message: string): void | Promise<void>;
-}
-
-interface Logger {
-	log(message: string): void;
-	error(message: string, error?: unknown): void;
-}
 
 interface JQueryElementCollection {
 	length: number;
@@ -34,15 +21,7 @@ interface JQueryForm {
 	get(index: number): Element;
 }
 
-declare global {
-	interface Window {
-		currentPage: Page | null;
-	}
 
-	const currentPage: Page;
-	const logger: Logger;
-//	function $(element: Element): JQueryElementCollection;
-}
 type WebMethodParam =
 	| string
 	| FormData

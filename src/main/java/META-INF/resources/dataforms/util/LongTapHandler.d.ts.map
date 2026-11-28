@@ -1,1 +1,1 @@
-{"version":3,"file":"LongTapHandler.d.ts","sourceRoot":"","sources":["../../ts/dataforms/util/LongTapHandler.ts"],"names":[],"mappings":"AASA;;GAEG;AACH,qBAAa,cAAc;;IAa1B;;;;OAIG;IACH,YAAmB,EAAE,EAAE,MAAM,EAAE,OAAO,EAAE,CAAC,EAAE,EAAE,MAAM,CAAC,KAAK,KAAK,IAAI,EAqBjE;CAwBD"}
+{"version":3,"file":"LongTapHandler.d.ts","sourceRoot":"","sources":["../../ts/dataforms/util/LongTapHandler.ts"],"names":[],"mappings":"AAKA;;GAEG;AACH,qBAAa,cAAc;;IAa1B;;;;OAIG;IACH,YAAmB,EAAE,EAAE,MAAM,EAAE,OAAO,EAAE,CAAC,EAAE,EAAE,MAAM,CAAC,KAAK,KAAK,IAAI,EAqBjE;CAwBD"}

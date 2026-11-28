@@ -3,10 +3,6 @@
  */
 'use strict';
 
-declare const logger: {
-	log(message: string, ...values: unknown[]): void;
-};
-
 /**
  * ロングタップを検出するためのクラスです。
  */

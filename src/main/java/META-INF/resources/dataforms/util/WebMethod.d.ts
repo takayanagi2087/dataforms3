@@ -1,18 +1,6 @@
 /**
  * @fileOverview {@link WebMethod}クラスを記述したファイルです。
  */
-interface Page {
-    contextPath: string;
-    errorPage: string;
-    csrfToken?: string | null;
-    lock(): void;
-    unlock(): void;
-    alert?(title: unknown, message: string): void | Promise<void>;
-}
-interface Logger {
-    log(message: string): void;
-    error(message: string, error?: unknown): void;
-}
 interface JQueryElementCollection {
     length: number;
     attr(name: string): string | undefined;
@@ -23,13 +11,6 @@ interface JQueryForm {
     find(selector: string): JQueryElementCollection;
     serialize(): string;
     get(index: number): Element;
-}
-declare global {
-    interface Window {
-        currentPage: Page | null;
-    }
-    const currentPage: Page;
-    const logger: Logger;
 }
 type WebMethodParam = string | FormData | Record<string, unknown> | null | undefined;
 interface JsonResult {

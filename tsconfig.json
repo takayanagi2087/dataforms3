@@ -12,6 +12,9 @@
 		"forceConsistentCasingInFileNames": true,
 		"types":["jquery", "jqueryui"]
 	},
-	"include": ["src/main/java/META-INF/resources/ts/**/*"],
+	"include": [
+		"src/main/java/META-INF/resources/ts/**/*.ts"
+		, "src/main/java/META-INF/resources/ts/**/*.d.ts"
+	],
 	"exclude": []
 }
