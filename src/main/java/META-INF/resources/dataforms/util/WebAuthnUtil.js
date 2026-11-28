@@ -17,7 +17,7 @@ export class WebAuthnUtil {
     }
     /**
      * 資格情報を取得します。
-     * @param opt 鯖からのOption情報。
+     * @param opt サーバーからのOption情報。
      * @return 資格情報。
      */
     async create(opt) {

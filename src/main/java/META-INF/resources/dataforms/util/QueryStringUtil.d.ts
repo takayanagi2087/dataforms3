@@ -12,3 +12,4 @@ export declare class QueryStringUtil {
      */
     static parse(qs: string | null | undefined): Record<string, string>;
 }
+//# sourceMappingURL=QueryStringUtil.d.ts.map

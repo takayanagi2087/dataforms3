@@ -71,3 +71,4 @@ export declare class SimpleDateFormat {
      */
     parse(dstr: string): Date | null;
 }
+//# sourceMappingURL=SimpleDateFormat.d.ts.map

@@ -40,10 +40,10 @@ export declare class WebAuthnUtil {
      * @param src 変換元文字列。
      * @return 変換結果。
      */
-    stringToArrayBuffer(src: string): ArrayBuffer;
+    private stringToArrayBuffer;
     /**
      * 資格情報を取得します。
-     * @param opt 鯖からのOption情報。
+     * @param opt サーバーからのOption情報。
      * @return 資格情報。
      */
     create(opt: CreateOptionsInput): Promise<CreateResult | null>;
@@ -55,3 +55,4 @@ export declare class WebAuthnUtil {
     get(opt: GetOptionsInput): Promise<GetResult | null>;
 }
 export {};
+//# sourceMappingURL=WebAuthnUtil.d.ts.map

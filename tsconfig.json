@@ -5,6 +5,7 @@
 		"rootDir": "./src/main/ts",
 		"outDir": "./src/main/java/META-INF/resources",
 		"declaration": true,
+		"declarationMap": true,
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
