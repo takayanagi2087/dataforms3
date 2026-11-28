@@ -1,54 +1,42 @@
 /**
- * @fileOverview {@link RegexpValidator}クラスを記述したファイルです。
+ * @fileoverview {@link RegexpValidator}クラスを記述したファイルです。
  */
-
-'use strict';
-
-import { FieldValidator } from './FieldValidator.js';
-
-
+import { FieldValidator } from "./FieldValidator.js";
 /**
- * @class RegexpValidator
  * 正規表現パターンバリデータ。
- * <pre>
- * </pre>
+ *
  * @extends FieldValidator
  */
 export class RegexpValidator extends FieldValidator {
-	/**
-	 * バリデーションを行ないます。
-	 * @param {String} v 値。
-	 * @returns {Boolean} バリデーション結果。
-	 */
-	validate(v) {
-		if (this.isBlank(v)) {
-			return true;
-		}
-		if (this.multiline || this.caseInsensitive || this.dotAll ) {
-			let flags = "";
-			if (this.multiline) {
-				flags += "m"
-			}
-			if (this.caseInsensitive) {
-				flags += "i"
-			}
-			if (this.dotAll) {
-				flags += "s"
-			}
-			logger.log("flags=" + flags);
-			logger.log("pattern=" + this.pattern);
-			let regex = new RegExp(this.pattern, flags);
-			if (regex.test(v)) {
-				return true;
-			}
-		} else {
-			logger.log("pattern=" + this.pattern);
-			let regex = new RegExp(this.pattern);
-			if (regex.test(v)) {
-				return true;
-			}
-		}
-	    return false;
-	}
+    /**
+     * バリデーションを行ないます。
+     * @param v 値。
+     * @returns バリデーション結果。
+     */
+    validate(v) {
+        if (this.isBlank(v)) {
+            return true;
+        }
+        let regex;
+        if (this.multiline || this.caseInsensitive || this.dotAll) {
+            let flags = "";
+            if (this.multiline) {
+                flags += "m";
+            }
+            if (this.caseInsensitive) {
+                flags += "i";
+            }
+            if (this.dotAll) {
+                flags += "s";
+            }
+            logger.log("flags=" + flags);
+            logger.log("pattern=" + this.pattern);
+            regex = new RegExp(this.pattern, flags);
+        }
+        else {
+            logger.log("pattern=" + this.pattern);
+            regex = new RegExp(this.pattern);
+        }
+        return regex.test(v);
+    }
 }
-
