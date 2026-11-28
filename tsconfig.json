@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ES2022",
 		"module": "ES2022",
-		"rootDir": "./src/main/ts",
+		"rootDir": "./src/main/java/META-INF/resources/ts",
 		"outDir": "./src/main/java/META-INF/resources",
 		"declaration": true,
 		"declarationMap": true,
@@ -12,5 +12,6 @@
 		"forceConsistentCasingInFileNames": true,
 		"types":["jquery", "jqueryui"]
 	},
-	"include": ["src/main/ts/**/*"]
+	"include": ["src/main/java/META-INF/resources/ts/**/*"],
+	"exclude": []
 }
